@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title> on 技术改变生活，学习成就未来</title>
+        <link>http://blog.mospan.cn/</link>
+        <language>zh-CN</language>
+        <author>Mospan</author>
+        <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
+        <updated>Sun, 24 Jan 2016 09:34:08 CST</updated>
+        
+        <item>
+            <title>我的独立博客今天正式上线啦</title>
+            <link>http://blog.mospan.cn/2016/01/01/my-blog-online/</link>
+            <pubDate>Sun, 24 Jan 2016 09:34:08 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://blog.mospan.cn/2016/01/01/my-blog-online/</guid>
+            <description>&lt;p&gt;原来的博客都是在&lt;a href=&#34;www.csdn.net&#34;&gt;CSDN&lt;/a&gt;与&lt;a href=&#34;http://www.cnblogs.com/mosp/&#34;&gt;博客园&lt;/a&gt;里写的，都是按照模板进行编写，能自己自定义的比较少，没有自己的独立域名，用emacs/vim编写上面的博客不是很方便，比较难坚持下来。 很早就萌生了自己做的独立博客的想法，由于各种原因没有弄，直到最近自己学习GO语言有了一些认识，想尝试一下GO语言编写自己的独立博客系统，在调研的过程中发现已经有前辈已经使用GO编写了&lt;a href=&#34;http://gohugo.io/&#34;&gt;hugo&lt;/a&gt;博客系统，于是乎决定在其之上搭建自己的博客系统，以便记录与分享自己的学习心得与轨迹。&lt;/p&gt;
+
+&lt;p&gt;本博客主要记录与分享自己的读书笔记、技术文章、自己参与或分析的开源项目、经验总结、自己的人生记录与思考感悟等，目标为每周一篇以上，希望自己能坚持下来,记录下自己的点点滴滴。也欢迎道友们一起讨论与交流。&lt;/p&gt;
+
+&lt;p&gt;该博客系统架构是基于&lt;a href=&#34;http://blog.coderzh.com/&#34;&gt;coderzh&lt;/a&gt;之上修改而来的，在此对其作者表示感谢与分享。目前hugo只支持了markdown语法格式编写了，尚未支持org-mode语言格式，如有精力的话我将尝试对其进行修改以便支持org-mode语法格式的编写，能满足更加丰富的编写要求, 与完善hugo源码，让其能更拥有更多有用的功能与特性。&lt;/p&gt;
+
+&lt;p&gt;今天我的独立博客系统&lt;a href=&#34;blog.mospan.cn&#34;&gt;mospan&lt;/a&gt;正式上线, 欢迎大家光临指导与交流。&lt;/p&gt;
+</description>
+        </item>
+        
+        <item>
+            <title>关于我</title>
+            <link>http://blog.mospan.cn/about/</link>
+            <pubDate>Fri, 01 Jan 2016 08:55:31 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://blog.mospan.cn/about/</guid>
+            <description>
+
+&lt;p class=&#34;message&#34;&gt;
+大家好，我叫mospan，是一名IT男。
+&lt;/p&gt;
+
+&lt;h3 id=&#34;我的经历:6083a88ee3411b0d17ce02d738f69d47&#34;&gt;我的经历&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;2002-2006 北京印刷学院自动化专业&lt;/li&gt;
+&lt;li&gt;2006-2009 北京金奔腾汽车科技有限公司(汽车诊断仪软件研发)。&lt;/li&gt;
+&lt;li&gt;2009-2011 瑞斯康达科技发展股份有限公司(光通信产品软件研发)。&lt;/li&gt;
+&lt;li&gt;2011-2014 联想网御(北京)科技有限公司(防火墙软件研发)。&lt;/li&gt;
+&lt;li&gt;2014- 至今 世纪互联集团快网CDN事业部(CDN调度与DNS服务器软件研发)。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;我的技能:6083a88ee3411b0d17ce02d738f69d47&#34;&gt;我的技能&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;编程语言：C、Go、shell、Lua、Python。&lt;/li&gt;
+&lt;li&gt;掌握技能：Linux下应用(常用知识技术、DPDK、nginx、openResty)与内核(TCP/IP协议栈、netfilter)开发。&lt;/li&gt;
+&lt;li&gt;网站开发：略懂前端，偶尔折腾css+js+javaScript，更专注后端。&lt;/li&gt;
+&lt;li&gt;常用工具: emacs(emacs+evil)、vim。&lt;/li&gt;
+&lt;li&gt;技术目标：专注于三高(高性能、高并发、高可用)互联网服务端架构学习研究, 努力打通微全栈(自己关注的某领域产品的前后端知识)的一专多能的T型人才。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;生活中的我:6083a88ee3411b0d17ce02d738f69d47&#34;&gt;生活中的我&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;喜欢运动： 篮球、乒乓球、游泳。&lt;/li&gt;
+&lt;li&gt;工作之余大部分都在家陪伴家人，整理家务事和倒腾点技术相关的东西。&lt;/li&gt;
+&lt;li&gt;喜欢旅游，喜欢丰富多姿多彩的生活，但苦于时间与金钱的问题能成行的很少。生活的终极理想目标是有四个自由的人（财务自由、时间自由、人身自由、言论自由), 知道这只是空想幻想而已，还是活在现实努力的奋斗吧，骚年。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;一些链接:6083a88ee3411b0d17ce02d738f69d47&#34;&gt;一些链接&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;我的独立博客：&lt;a href=&#34;http://blog.mospan.cn&#34;&gt;blog.mospan.cn&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;博客园博客：&lt;a href=&#34;http://www.cnblogs.com/mosp/&#34;&gt;mosp.cnblogs.com&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Github: &lt;a href=&#34;https://github.com/yanwushuang&#34;&gt;github.com/yanwushuang&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Email：moshengping@163.com(moshengping@163.com)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;声明:6083a88ee3411b0d17ce02d738f69d47&#34;&gt;声明&lt;/h3&gt;
+
+&lt;p&gt;本博客所有文章(除精品转载外）皆为原创。转载请注明原文链接，并最好与本人联系。谢谢！&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>
