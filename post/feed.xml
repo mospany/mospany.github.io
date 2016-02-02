@@ -6,21 +6,42 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Sun, 24 Jan 2016 09:34:08 CST</updated>
+        <updated>Mon, 25 Jan 2016 23:24:08 CST</updated>
         
         <item>
-            <title>我的独立博客今天正式上线啦</title>
-            <link>http://blog.mospan.cn/2016/01/01/my-blog-online/</link>
+            <title>我的博客演进之路(02)--架构与部署概述</title>
+            <link>http://blog.mospan.cn/2016/01/25/my-blog-architecture/</link>
+            <pubDate>Mon, 25 Jan 2016 23:24:08 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://blog.mospan.cn/2016/01/25/my-blog-architecture/</guid>
+            <description>
+
+&lt;h1 id=&#34;部署图总览:812215bbbaf57eccfdc3cdda103f11ef&#34;&gt;部署图总览&lt;/h1&gt;
+
+&lt;p&gt;经过调研与分析，能满足我博客需求的大致部署图如下：
+   &lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/my-blog-deploy.jpg&#34; alt=&#34;架构与部署图&#34; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;角色说明:812215bbbaf57eccfdc3cdda103f11ef&#34;&gt;角色说明&lt;/h1&gt;
+
+&lt;h2 id=&#34;github:812215bbbaf57eccfdc3cdda103f11ef&#34;&gt;github&lt;/h2&gt;
+
+&lt;h1 id=&#34;服务过程:812215bbbaf57eccfdc3cdda103f11ef&#34;&gt;服务过程&lt;/h1&gt;
+</description>
+        </item>
+        
+        <item>
+            <title>我的博客演进之路(01)--正式上线</title>
+            <link>http://blog.mospan.cn/2016/01/24/my-blog-online/</link>
             <pubDate>Sun, 24 Jan 2016 09:34:08 CST</pubDate>
             <author>Mospan</author>
-            <guid>http://blog.mospan.cn/2016/01/01/my-blog-online/</guid>
+            <guid>http://blog.mospan.cn/2016/01/24/my-blog-online/</guid>
             <description>&lt;p&gt;原来的博客都是在&lt;a href=&#34;www.csdn.net&#34;&gt;CSDN&lt;/a&gt;与&lt;a href=&#34;http://www.cnblogs.com/mosp/&#34;&gt;博客园&lt;/a&gt;里写的，都是按照模板进行编写，能自己自定义的比较少，没有自己的独立域名，用emacs/vim编写上面的博客不是很方便，比较难坚持下来。 很早就萌生了自己做的独立博客的想法，由于各种原因没有弄，直到最近自己学习GO语言有了一些认识，想尝试一下GO语言编写自己的独立博客系统，在调研的过程中发现已经有前辈已经使用GO编写了&lt;a href=&#34;http://gohugo.io/&#34;&gt;hugo&lt;/a&gt;博客系统，于是乎决定在其之上搭建自己的博客系统，以便记录与分享自己的学习心得与轨迹。&lt;/p&gt;
 
 &lt;p&gt;本博客主要记录与分享自己的读书笔记、技术文章、自己参与或分析的开源项目、经验总结、自己的人生记录与思考感悟等，目标为每周一篇以上，希望自己能坚持下来,记录下自己的点点滴滴。也欢迎道友们一起讨论与交流。&lt;/p&gt;
 
 &lt;p&gt;该博客系统架构是基于&lt;a href=&#34;http://blog.coderzh.com/&#34;&gt;coderzh&lt;/a&gt;之上修改而来的，在此对其作者表示感谢与分享。目前hugo只支持了markdown语法格式编写了，尚未支持org-mode语言格式，如有精力的话我将尝试对其进行修改以便支持org-mode语法格式的编写，能满足更加丰富的编写要求, 与完善hugo源码，让其能更拥有更多有用的功能与特性。&lt;/p&gt;
 
-&lt;p&gt;今天我的独立博客系统&lt;a href=&#34;blog.mospan.cn&#34;&gt;mospan&lt;/a&gt;正式上线, 欢迎大家光临指导与交流。&lt;/p&gt;
+&lt;p&gt;我的独立博客系统&lt;a href=&#34;blog.mospan.cn&#34;&gt;mospan&lt;/a&gt;今天(2015-01-24)正式上线, 欢迎大家光临指导与交流。&lt;/p&gt;
 </description>
         </item>
         
