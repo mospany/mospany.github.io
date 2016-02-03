@@ -71,7 +71,7 @@
 
 &lt;ul&gt;
 &lt;li&gt;编程语言：掌握C、Go和shell，熟悉Python和Lua。&lt;/li&gt;
-&lt;li&gt;掌握技能：Linux下应用(常用知识技术、DPDK、nginx、openResty)与内核(TCP/IP协议栈、netfilter)开发。&lt;/li&gt;
+&lt;li&gt;掌握技能：Linux下应用(常用知识技术、DPDK、nginx/openResty)与内核(TCP/IP协议栈、netfilter)开发。&lt;/li&gt;
 &lt;li&gt;网站开发：略懂前端，偶尔折腾html+css+js，更专注后端。&lt;/li&gt;
 &lt;li&gt;常用工具: emacs(emacs+evil)、vim。&lt;/li&gt;
 &lt;li&gt;技术目标：专注于三高(高性能、高并发、高可用)互联网服务端架构学习研究, 努力打通微全栈(自己关注的某领域产品的前后端知识)的一专多能的T型“人才”。&lt;/li&gt;
