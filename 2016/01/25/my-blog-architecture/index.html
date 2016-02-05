@@ -198,8 +198,8 @@
                   <h1 class="post-title">我的博客演进之路(02)--架构与部署概述</h1>
 
                   <p class="post-byline">
-                    by  · 2016年01月25日 · 322 Words ·
-                    ~1min reading time |
+                    by  · 2016年01月25日 · 566 Words ·
+                    ~2min reading time |
                     <a href="https://github.com/yanwushuang/mospan-hugo-blog/blob/master/content/post/2016/2016-01-25-my-blog-architecture.md"
                        target="_blank">Improve on <i class="fa fa-github"></i></a>
                   </p>
@@ -247,6 +247,14 @@
    <img src="http://7xqi7h.com1.z0.glb.clouddn.com/newdefend-main-page.png" alt="牛盾云加速主页" /></p>
 
 <h1 id="服务过程:812215bbbaf57eccfdc3cdda103f11ef">服务过程</h1>
+
+<ul>
+<li>用户在浏览器上输入本博客域名：blog.mospan.cn</li>
+<li>浏览器先发起对该域名的DNS请求本地运营商LocalDNS, 由LocalDNS迭代查询最终到CloudXNS上，LocalDNS查询合并后最终得到博客的地址。</li>
+<li>浏览器向本博客地址发起HTTP请求，经过牛盾云加速，如果它没有缓存，将继续向github/gitcafe请求内容响应给用户，途经牛盾云加速时被缓存。</li>
+<li>浏览器得到页面后经过浏览器解析，哪些内容链接还需进行再一次获取，如图片将从七牛云存储上获取下来。</li>
+<li>浏览器最后把结果呈现给用户。</li>
+</ul>
 <div class="footnotes">
 
 <hr />
