@@ -44,7 +44,7 @@
 &lt;h1 id=&#34;发表文章:80bf101a45698ed0e18357cc849951e7&#34;&gt;发表文章&lt;/h1&gt;
 
 &lt;ol&gt;
-&lt;li&gt;在chrome或firefox浏览器安装markdown here插件。&lt;/li&gt;
+&lt;li&gt;在chrome或firefox浏览器安装&lt;a href=&#34;http://markdown-here.com/&#34;&gt;markdown here&lt;/a&gt; 插件。&lt;/li&gt;
 &lt;li&gt;登陆微信公众平台控制后台的”群发消息“-&amp;gt;”新建群发消息“-&amp;gt;”新建图文消息“进行markdown格式编辑或直接拷贝好的markdown文章过来。&lt;/li&gt;
 &lt;li&gt;按住快捷键Ctrl+Alt+M，对Markdown文章进行渲染。&lt;/li&gt;
 &lt;li&gt;编辑好后，点击”保存并群发“即可, 效果见如下：
