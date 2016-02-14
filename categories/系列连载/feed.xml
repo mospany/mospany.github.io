@@ -6,7 +6,53 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Sun, 14 Feb 2016 12:22:12 CST</updated>
+        <updated>Sun, 14 Feb 2016 16:57:25 CST</updated>
+        
+        <item>
+            <title>pango设计与实现(02)--快速开始</title>
+            <link>http://blog.mospan.cn/2016/02/14/pango-development-quick-start/</link>
+            <pubDate>Sun, 14 Feb 2016 16:57:25 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://blog.mospan.cn/2016/02/14/pango-development-quick-start/</guid>
+            <description>
+
+&lt;h1 id=&#34;安装:3fe95db2894425b27181d51a9caeb1d1&#34;&gt;安装&lt;/h1&gt;
+
+&lt;h2 id=&#34;安装前准备:3fe95db2894425b27181d51a9caeb1d1&#34;&gt;安装前准备&lt;/h2&gt;
+
+&lt;p&gt;确保你的本地环境已经安装好如下软件：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;git.&lt;/li&gt;
+&lt;li&gt;Go 1.4+&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;源码安装:3fe95db2894425b27181d51a9caeb1d1&#34;&gt;源码安装&lt;/h2&gt;
+
+&lt;h3 id=&#34;下载源码到本地:3fe95db2894425b27181d51a9caeb1d1&#34;&gt;下载源码到本地&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;   git clone https://github.com/yanwushuang/pango.git
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;设置好环境变量:3fe95db2894425b27181d51a9caeb1d1&#34;&gt;设置好环境变量&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;   cd pango
+   export GOPATH=`pwd`
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;编译:3fe95db2894425b27181d51a9caeb1d1&#34;&gt;编译&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;   make
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;如果编译成功，将在当前目录下生成目标可执行二进制程序：pango&lt;/p&gt;
+
+&lt;h3 id=&#34;安装-1:3fe95db2894425b27181d51a9caeb1d1&#34;&gt;安装&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;   make install
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+        </item>
         
         <item>
             <title>pango设计与实现(01)--介绍</title>
