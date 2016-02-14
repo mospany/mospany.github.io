@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Pango on 技术改变生活，学习成就未来</title>
+        <link>http://blog.mospan.cn/tags/pango/</link>
+        <language>zh-CN</language>
+        <author>Mospan</author>
+        <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
+        <updated>Sun, 14 Feb 2016 12:22:12 CST</updated>
+        
+        <item>
+            <title>pango设计与实现(01)--介绍</title>
+            <link>http://blog.mospan.cn/2016/02/14/pango-development-introduce/</link>
+            <pubDate>Sun, 14 Feb 2016 12:22:12 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://blog.mospan.cn/2016/02/14/pango-development-introduce/</guid>
+            <description>
+
+&lt;h1 id=&#34;概述:af1bb8b5afa1a162a212c80a37a5cb9e&#34;&gt;概述&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/yanwushuang/pango&#34;&gt;pango&lt;/a&gt;我个人发起的基于&lt;a href=&#34;http://gohugo.io/&#34;&gt;hugo&lt;/a&gt;的变种开源项目，是一个快速与灵活的静态网页生成器，使用GO语言开发。&lt;/p&gt;
+
+&lt;p&gt;主要基于如下目的：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;巩固学习web前后端相关知识。&lt;/li&gt;
+&lt;li&gt;巩固学习GO语言并解决实际问题。&lt;/li&gt;
+&lt;li&gt;满足我个人博客所需的私人定制要求。&lt;/li&gt;
+&lt;li&gt;加入hugo开源项目, 发现并解决bug，希望能贡献一点微薄之力。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;开发特性:af1bb8b5afa1a162a212c80a37a5cb9e&#34;&gt;开发特性&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;使pango即能支持mardown语法格式又能支持org-mode语法格式。&lt;/li&gt;
+&lt;li&gt;编写mardown与org-mode相互转换器。&lt;/li&gt;
+&lt;li&gt;发现并解决hugo上的bug。&lt;/li&gt;
+&lt;li&gt;目前能想到这些，其他以后补充，现在从略。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;开发计划:af1bb8b5afa1a162a212c80a37a5cb9e&#34;&gt;开发计划&lt;/h1&gt;
+
+&lt;p&gt;本项目只利用我个人业余时间进行开发，上班路途远，下班还得做家务与看孩子，能所利用时间不多，我尽量多做些开发，具体时间不便衡量，hugo上修改也会定期同步到本项目。&lt;/p&gt;
+
+&lt;p&gt;开发步骤：&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;先进行源码分析。&lt;/li&gt;
+&lt;li&gt;开发一些满足私人定制的g小功能。&lt;/li&gt;
+&lt;li&gt;支持org-mode语法格式。&lt;/li&gt;
+&lt;li&gt;编写md2org与org2md转换器。&lt;/li&gt;
+&lt;li&gt;其他待定。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h1 id=&#34;小结:af1bb8b5afa1a162a212c80a37a5cb9e&#34;&gt;小结&lt;/h1&gt;
+
+&lt;p&gt;希望通过本项目的学习与开发，使本人能学到一些开源技术知识，也希望能认识一些朋友和贡献出一点绵薄之力。&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>
