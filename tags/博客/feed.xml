@@ -6,7 +6,40 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Sat, 06 Feb 2016 23:24:08 CST</updated>
+        <updated>Sat, 20 Feb 2016 10:56:35 CST</updated>
+        
+        <item>
+            <title>我的博客演进之路(04)--调整文章版面显示大小</title>
+            <link>http://blog.mospan.cn/2016/02/20/my-blog-modify-container-size/</link>
+            <pubDate>Sat, 20 Feb 2016 10:56:35 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://blog.mospan.cn/2016/02/20/my-blog-modify-container-size/</guid>
+            <description>&lt;p&gt;由于原来的版面显示有点过小，在现在的宽屏面前有些浪费。于是为了更好的进行阅读显示，特做了如下修改：&lt;/p&gt;
+
+&lt;p&gt;打开文件./themes/rapid/static/wp-content/themes/hueman/style.css，把&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-css&#34;&gt;  .container { padding: 0 20px; }
+  .container-inner { max-width: 1380px; min-width: 1380px; width: 100%; margin: 0 auto; }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;改为&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-css&#34;&gt;  .container { padding: 0 0px; }
+  .container-inner { min-width: 1380px; width: 100%; margin: 0 auto; }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;显示效果如下, 修改前：
+  &lt;div align=&#34;center&#34;&gt;
+    &lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/my-blog-modify-container-size-before.png?imageView2/1/w/1024/h/768/q/75|watermark/2/text/YmxvZy5tb3NwYW4uY24=/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10&#34; alt=&#34;我的博客主页修改前&#34; title=&#34;我的博客主页修改前&#34; width=&#34;800&#34;/&gt;
+  &lt;/div&gt;&lt;/p&gt;
+
+&lt;p&gt;修改后：&lt;/p&gt;
+
+&lt;p&gt;&lt;div align=&#34;center&#34;&gt;
+    &lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/my-blog-modify-container-size-after.png?imageView2/1/w/1024/h/768/q/75|watermark/2/text/YmxvZy5tb3NwYW4uY24=/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10&#34; alt=&#34;我的博客主页修改后&#34; title=&#34;我的博客主页修改后&#34; width=&#34;800&#34;/&gt;
+  &lt;/div&gt;&lt;/p&gt;
+</description>
+        </item>
         
         <item>
             <title>我的博客演进之路(03)--添加微信公众号</title>
