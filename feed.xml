@@ -6,7 +6,80 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Sat, 20 Feb 2016 10:56:35 CST</updated>
+        <updated>Sun, 21 Feb 2016 09:52:16 CST</updated>
+        
+        <item>
+            <title>我的博客演进之路(05)--添加访问统计</title>
+            <link>http://blog.mospan.cn/2016/02/21/my-blog-add-visit-counter/</link>
+            <pubDate>Sun, 21 Feb 2016 09:52:16 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://blog.mospan.cn/2016/02/21/my-blog-add-visit-counter/</guid>
+            <description>
+
+&lt;h1 id=&#34;申请:3ffb9ec32619ebdb37cf02d3e039c5a7&#34;&gt;申请&lt;/h1&gt;
+
+&lt;h2 id=&#34;注册:3ffb9ec32619ebdb37cf02d3e039c5a7&#34;&gt;注册&lt;/h2&gt;
+
+&lt;p&gt;登陆到&lt;a href=&#34;http://www.amazingcounters.com/&#34;&gt;amazingcounters&lt;/a&gt;进行账号注册。&lt;/p&gt;
+
+&lt;h2 id=&#34;申请-1:3ffb9ec32619ebdb37cf02d3e039c5a7&#34;&gt;申请&lt;/h2&gt;
+
+&lt;p&gt;大致原理为通过注册把自己的域名与统计网站关联后，生成一段html代码拷贝到自己网站上相应显示位置即可。申请步骤如下：&lt;/p&gt;
+
+&lt;p&gt;1.点击“创建” 。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/my-blog-add-visit-counter_1.png&#34; alt=&#34;开始创建&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;2.选择统计显示样式。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/my-blog-add-visit-counter_2.png&#34; alt=&#34;选择显示样式&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;3.选择完进入下一步&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/my-blog-add-visit-counter_3.png&#34; alt=&#34;显示样式后下一步&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;4.填写网站关联信息&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/my-blog-add-visit-counter_4.png&#34; alt=&#34;填写网站关联信息&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;5.生成关联html并拷贝下来&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/my-blog-add-visit-counter_5.png&#34; alt=&#34;生成关联html&#34; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;使用:3ffb9ec32619ebdb37cf02d3e039c5a7&#34;&gt;使用&lt;/h1&gt;
+
+&lt;p&gt;首先，在本博客源码新建文件：themes/rapid/layouts/partials/visit.counter.html,内容如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;  &amp;lt;!-- 添加访问统计--&amp;gt;
+  &amp;lt;div align=&amp;quot;center&amp;quot; &amp;gt;
+   &amp;lt;p&amp;gt;访问人数:  
+    &amp;lt;a href=&amp;quot;http://www.amazingcounters.com&amp;quot;&amp;gt;
+     &amp;lt;img border=&amp;quot;0&amp;quot; src=&amp;quot;http://cc.amazingcounters.com/counter.php?i=xxxxxx&amp;amp;c=xxxxx&amp;quot; alt=&amp;quot;UV&amp;quot; title=&amp;quot;访问人数&amp;quot;&amp;gt;
+    &amp;lt;/a&amp;gt;
+   &amp;lt;/p&amp;gt;
+  &amp;lt;/div&amp;gt;
+  &amp;lt;div align=&amp;quot;center&amp;quot;&amp;gt;
+   &amp;lt;p&amp;gt;总访问量:
+    &amp;lt;a href=&amp;quot;http://www.amazingcounters.com&amp;quot;&amp;gt;
+     &amp;lt;img border=&amp;quot;0&amp;quot; src=&amp;quot;http://cc.amazingcounters.com/counter.php?i=xxxxx&amp;amp;c=xxxxx&amp;quot; alt=&amp;quot;PV&amp;quot; title=&amp;quot;总访问量&amp;quot;&amp;gt;
+    &amp;lt;/a&amp;gt;
+   &amp;lt;/p&amp;gt;
+  &amp;lt;/div&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;其次，在该显示的html文件(themes/rapid/layouts/partials/sidebarLeft.html与themes/rapid/layouts/partials/sidebarLeftCategories.html)调用如上文件即可。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;    {{ partial &amp;quot;visit.counter.html&amp;quot; . }}
+    {{ partial &amp;quot;wechat.html&amp;quot; . }}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;效果:3ffb9ec32619ebdb37cf02d3e039c5a7&#34;&gt;效果&lt;/h1&gt;
+
+&lt;p&gt;显示效果如下：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/my-blog-add-visit-counter-result.png&#34; alt=&#34;访问统计显示效果&#34; /&gt;&lt;/p&gt;
+</description>
+        </item>
         
         <item>
             <title>我的博客演进之路(04)--调整文章版面显示大小</title>

@@ -1534,3 +1534,23 @@ body.ie8,
 .ie8 .page-image-text .description i,
 .ie8 .flex-direction-nav a { background: url(img/ie/opacity-70.png); }
 .ie8 .entry .gallery .gallery-caption { background: url(img/ie/opacity-80-light.png); }
+
+/* 如下为mospan新添加 2016/02/21 17:41:07 */
+.asidetitle {
+    font-size: 1.1em;
+    color: #72baa7;
+    padding: 0 0 0.3125em 0;
+    border-bottom: 0.1875em solid #ccc;
+}
+
+sup {
+    top: -0.5em;
+    padding-left: 0.3em;
+}
+sub, sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+

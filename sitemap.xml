@@ -3,8 +3,13 @@
     
     <url>
         <loc>http://blog.mospan.cn/</loc>
-        <lastmod>2016-02-20T10:56:35+08:00</lastmod>
+        <lastmod>2016-02-21T09:52:16+08:00</lastmod>
         <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://blog.mospan.cn/2016/02/21/my-blog-add-visit-counter/</loc>
+        <lastmod>2016-02-21T09:52:16+08:00</lastmod>
     </url>
     
     <url>
