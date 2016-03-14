@@ -12,36 +12,36 @@
         }
     }
   </script>
-  <title>我的博客演进之路(02)--架构与部署概述 - 技术改变生活，学习成就未来</title>
+  <title>基于DPDK开发高性能DNS服务器实践总结 - 技术改变生活，学习成就未来</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-<meta name="keywords" content="独立博客,架构,部署,">
-<meta name="description" content="部署图总览 经过调研与分析，能满足我博客需求的大致部署图如下： 角色说明 github 主要存放了本博客的资料文件，利用了github的pages功能提供了网">
+<meta name="keywords" content="DPDK,XNS,">
+<meta name="description" content="关于基于DPDK开发高性能CloudXNS服务器总结">
 <meta name="author" content="mospan">
 <meta name="publisher" content="mospan">
 <meta name="generator" content="http://gohugo.io/"/>
 
-<meta itemprop="name" content="我的博客演进之路(02)--架构与部署概述 - 技术改变生活，学习成就未来">
-<meta itemprop="description" content="部署图总览 经过调研与分析，能满足我博客需求的大致部署图如下： 角色说明 github 主要存放了本博客的资料文件，利用了github的pages功能提供了网">
+<meta itemprop="name" content="基于DPDK开发高性能DNS服务器实践总结 - 技术改变生活，学习成就未来">
+<meta itemprop="description" content="关于基于DPDK开发高性能CloudXNS服务器总结">
 <meta itemprop="image" content="http://blog.mospan.cn/public/mospan.jpg">
 
-<meta property="og:title" content="我的博客演进之路(02)--架构与部署概述 - 技术改变生活，学习成就未来" />
+<meta property="og:title" content="基于DPDK开发高性能DNS服务器实践总结 - 技术改变生活，学习成就未来" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="http://blog.mospan.cn/2016/01/25/my-blog-architecture/" />
+<meta property="og:url" content="http://blog.mospan.cn/2016/03/14/xns-on-dpdk/" />
 <meta property="og:image" content="http://blog.mospan.cn/public/mospan.jpg" />
-<meta property="og:description" content="部署图总览 经过调研与分析，能满足我博客需求的大致部署图如下： 角色说明 github 主要存放了本博客的资料文件，利用了github的pages功能提供了网">
+<meta property="og:description" content="关于基于DPDK开发高性能CloudXNS服务器总结">
 
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="@mospan">
-<meta name="twitter:title" content="我的博客演进之路(02)--架构与部署概述 - 技术改变生活，学习成就未来">
-<meta name="twitter:description" content="部署图总览 经过调研与分析，能满足我博客需求的大致部署图如下： 角色说明 github 主要存放了本博客的资料文件，利用了github的pages功能提供了网">
+<meta name="twitter:title" content="基于DPDK开发高性能DNS服务器实践总结 - 技术改变生活，学习成就未来">
+<meta name="twitter:description" content="关于基于DPDK开发高性能CloudXNS服务器总结">
 <meta name="twitter:creator" content="@mospan">
 <meta name="twitter:image" content="http://blog.mospan.cn/public/mospan.jpg">
 
   <script>document.documentElement.className = document.documentElement.className.replace("no-js", "js");</script>
-  <link rel="canonical" href="http://blog.mospan.cn/2016/01/25/my-blog-architecture/">
-  <link rel='shortlink' href="http://blog.mospan.cn/2016/01/25/my-blog-architecture/"/>
+  <link rel="canonical" href="http://blog.mospan.cn/2016/03/14/xns-on-dpdk/">
+  <link rel='shortlink' href="http://blog.mospan.cn/2016/03/14/xns-on-dpdk/"/>
   <link rel="shortcut icon" href="http://blog.mospan.cn/public/favicon.ico"/>
   
 <link rel="stylesheet" id="human-style-css" href="http://blog.mospan.cn/wp-content/themes/hueman/style.css" type="text/css" media="all"/>
@@ -186,6 +186,10 @@
                   <a href="http://blog.mospan.cn/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/" rel="category tag">技术文章</a>
                 </li>
                 
+                <li class="category">
+                  <a href="http://blog.mospan.cn/categories//" rel="category tag"></a>
+                </li>
+                
               </ul>
             </div>
 
@@ -195,12 +199,12 @@
                   class="post type-post status-publish format-standard has-post-thumbnail hentry category-australien tag-bondi-beach tag-city2surf tag-sydney">
                 <div class="post-inner group">
 
-                  <h1 class="post-title">我的博客演进之路(02)--架构与部署概述</h1>
+                  <h1 class="post-title">基于DPDK开发高性能DNS服务器实践总结</h1>
 
                   <p class="post-byline">
-                    by  · 2016年01月25日 · 566 Words ·
-                    ~2min reading time |
-                    <a href="https://github.com/yanwushuang/mospan-hugo-blog/blob/master/content/post/2016/2016-01-25-my-blog-architecture.md"
+                    by  · 2016年03月14日 · 3960 Words ·
+                    ~8min reading time |
+                    <a href="https://github.com/yanwushuang/mospan-hugo-blog/blob/master/content/post/2016/2016-03-14-xns-on-dpdk.md"
                        target="_blank">Improve on <i class="fa fa-github"></i></a>
                   </p>
 
@@ -211,64 +215,309 @@
                       
                       
 
-<h1 id="部署图总览:812215bbbaf57eccfdc3cdda103f11ef">部署图总览</h1>
+<p><img src="http://7xqi7h.com1.z0.glb.clouddn.com/china-DPDK-summit-2015-main-page.png" alt="中国2015DPDK开发者大会主页" /></p>
 
-<p>经过调研与分析，能满足我博客需求的大致部署图如下：</p>
+<h1 id="简述:c4732dc0fcc80b62ed2be8d6d03ecebc">简述</h1>
 
-<p><img src="http://7xqi7h.com1.z0.glb.clouddn.com/my-blog-deploy.jpg?imageView2/1/w/1024/h/768/q/75|watermark/2/text/YmxvZy5tb3NwYW4uY24=/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10" alt="架构与部署图" /></p>
+<p>有幸全程参与了基于DPDK<sup class="footnote-ref" id="fnref:c4732dc0fcc80b62ed2be8d6d03ecebc:1"><a rel="footnote" href="#fn:c4732dc0fcc80b62ed2be8d6d03ecebc:1">1</a></sup>下一代高性能<a href="http://www.cloudxns.net/">CloudXNS</a><sup class="footnote-ref" id="fnref:c4732dc0fcc80b62ed2be8d6d03ecebc:2"><a rel="footnote" href="#fn:c4732dc0fcc80b62ed2be8d6d03ecebc:2">2</a></sup>服务器开发，从未知到慢慢熟悉，其中也走了些弯路也
+    踩过一些坑，一路走来有些感受与心得体会，在此进行梳理下，以对这一阶段做下些小的总结，也可以与同僚们进行交流学习。</p>
 
-<h1 id="角色说明:812215bbbaf57eccfdc3cdda103f11ef">角色说明</h1>
+<h1 id="背景:c4732dc0fcc80b62ed2be8d6d03ecebc">背景</h1>
 
-<h2 id="github:812215bbbaf57eccfdc3cdda103f11ef">github</h2>
+<p>上一代XNS服务器是基于Linux内核进行开发，单机性能达到数百万级别QPS<sup class="footnote-ref" id="fnref:c4732dc0fcc80b62ed2be8d6d03ecebc:3"><a rel="footnote" href="#fn:c4732dc0fcc80b62ed2be8d6d03ecebc:3">3</a></sup>，相对于BIND<sup class="footnote-ref" id="fnref:c4732dc0fcc80b62ed2be8d6d03ecebc:4"><a rel="footnote" href="#fn:c4732dc0fcc80b62ed2be8d6d03ecebc:4">4</a></sup>来说已经高了很多,平常处理正常毫无压力，但在
+    受大量DDOS攻击时服务质量大大降低,虽然我们采用了远端清洗与近地防御的安措施，与受攻击时调度其他应急服务器来抗，但增加了服务器与
+    人工干预成本。为了更好的抗DDOS攻击与服务更多的用户，需求单机处理千万级别的替代方案呼之欲出。</p>
 
-<p>主要存放了本博客的资料文件，利用了github的pages功能提供了网页浏览服务。</p>
+<h1 id="目标设定:c4732dc0fcc80b62ed2be8d6d03ecebc">目标设定</h1>
 
-<p><img src="http://7xqi7h.com1.z0.glb.clouddn.com/yanwushuang.github.io-setting.png?imageView2/1/w/1024/h/768/q/75|watermark/2/text/YmxvZy5tb3NwYW4uY24=/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10" alt="我博客github设置" /></p>
+<ol>
+<li>单机处理能力千万级别。</li>
+<li>性能，性能，性能。(重要的事重复三遍)</li>
+<li>稳定压倒一切。(此话不是我说的)</li>
+<li>社区活跃，已有商用案例。</li>
+</ol>
 
-<p>github: <a href="https://github.com/yanwushuang/yanwushuang.github.io">yanwushuang.github.io</a></p>
+<h1 id="需求调研:c4732dc0fcc80b62ed2be8d6d03ecebc">需求调研</h1>
 
-<h2 id="gitcafe:812215bbbaf57eccfdc3cdda103f11ef">gitcafe</h2>
+<p>　　按照上述的目标设定需求，要达到单机处理千万级别的只能采用轮询而非中断方式，在市面上的可实现技术方案有DPDK/pf_ring/netmap等.
+    其中DPDK为Intel公司主推，并有BAT之类的大型公司进行商用，而且也比较适合处理UDP类型协议。经过权衡之下，我们决定采用DPDK进行
+    下一代XNS的替代方案。</p>
 
-<p>由于github是国外的，有些时候访问不稳定(有可能被封)与不允许百度爬虫收录等原因，也为了更好在国内访问与容灾备份，使用了<a href="https://gitcafe.com/">gitcafe</a>进行提供网络服务。</p>
-
-<p>gitcafe: <a href="https://gitcafe.com/mospan/mospan">mospan.gitcafe.io</a></p>
-
-<h2 id="cloudxns:812215bbbaf57eccfdc3cdda103f11ef">CloudXNS</h2>
-
-<p>自己申请了独立域名，需要有地方托管解析，<a href="www.cloudxns.net">CloudXNS</a> 完全满足我的所需，只需在其官网上注册账号：</p>
-
-<p><img src="http://7xqi7h.com1.z0.glb.clouddn.com/cloudxns-main-page.png?imageView2/1/w/1024/h/768/q/75|watermark/2/text/YmxvZy5tb3NwYW4uY24=/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10" alt="CloudXNS主页" /></p>
-
-<p>并做如下配置0.5秒钟立马生效。</p>
-
-<p><img src="http://7xqi7h.com1.z0.glb.clouddn.com/blog-mospan-cn-cloudxns-config.png?imageView2/1/w/1024/h/768/q/75|watermark/2/text/YmxvZy5tb3NwYW4uY24=/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10" alt="blog.mospan.cn域名在CloudXNS上的配置图" /></p>
-
-<h2 id="七牛云存储:812215bbbaf57eccfdc3cdda103f11ef">七牛云存储</h2>
-
-<p>为了让图片在博客上有更好的展示/存放/外链，选择了<a href="https://portal.qiniu.com/">七牛云存储</a>, 而且它还提供了水印功能。</p>
-
-<h2 id="牛盾云加速:812215bbbaf57eccfdc3cdda103f11ef">牛盾云加速</h2>
-
-<p>为了使得本博客有更好的访问体验， 使用了<a href="https://newdefend.com">牛盾云加速</a>作为其CDN<sup class="footnote-ref" id="fnref:812215bbbaf57eccfdc3cdda103f11ef:1"><a rel="footnote" href="#fn:812215bbbaf57eccfdc3cdda103f11ef:1">1</a></sup>加速，见如下：</p>
-
-<p><img src="http://7xqi7h.com1.z0.glb.clouddn.com/newdefend-main-page.png?imageView2/1/w/1024/h/768/q/75|watermark/2/text/YmxvZy5tb3NwYW4uY24=/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10" alt="牛盾云加速主页" /></p>
-
-<h1 id="服务过程:812215bbbaf57eccfdc3cdda103f11ef">服务过程</h1>
+<h2 id="优点:c4732dc0fcc80b62ed2be8d6d03ecebc">优点</h2>
 
 <ul>
-<li>用户在浏览器上输入本博客域名：blog.mospan.cn</li>
-<li>浏览器先发起对该域名的DNS请求本地运营商LocalDNS, 由LocalDNS迭代查询最终到CloudXNS上，LocalDNS查询合并后最终得到博客的地址。</li>
-<li>浏览器向本博客地址发起HTTP请求，经过牛盾云加速，如果它没有缓存，将继续向github/gitcafe请求内容响应给用户，途经牛盾云加速时被缓存。</li>
-<li>浏览器得到页面后经过浏览器解析，哪些内容链接还需进行再一次获取，如图片将从七牛云存储上获取下来。</li>
-<li>浏览器最后把结果呈现给用户。</li>
+<li>性能高</li>
+<li>用户态开发</li>
+<li>死后易重启</li>
 </ul>
+
+<h2 id="缺点:c4732dc0fcc80b62ed2be8d6d03ecebc">缺点</h2>
+
+<ul>
+<li>无网络协议栈</li>
+<li>开发困难，周期长</li>
+<li>参考资料相对还匮乏</li>
+</ul>
+
+<h1 id="dpdk核心思想:c4732dc0fcc80b62ed2be8d6d03ecebc">DPDK核心思想</h1>
+
+<h2 id="组织结构:c4732dc0fcc80b62ed2be8d6d03ecebc">组织结构</h2>
+
+<p>　　DPDK 的组成架构如下图所示,相关技术原理概述如下:
+   <img src="http://7xqi7h.com1.z0.glb.clouddn.com/DPDK-archite.png" alt="DPDK组织架构图" /></p>
+
+<p>　　在最底部的内核态(Linux Kernel)DPDK 有两个模块:KNI 与 IGB_UIO。
+   其中,KNI 提供给用户一个使用 Linux 内核态的协议栈,以及传统的 Linux 网络工具(如ethtool, ifconfig)。IGB_UIO(igb_uio.ko 和
+   kni.ko. IGB_UIO)则借助了 UIO 技术,在初始化过程中将网卡硬件寄存器映射到用户态。</p>
+
+<p>　　DPDK 的上层用户态由很多库组成,主要包括核心部件库(Core Libraries)、平台相关模块(Platform)、网卡轮询模式驱动模块(PMD-Natives&amp;
+   Virtual)、QoS 库、报文转发分类算法(Classify)等几大类,用户应用程序可以使用这些库进行二次开发.</p>
+
+<h2 id="用户态模式下的pmd-driver:c4732dc0fcc80b62ed2be8d6d03ecebc">用户态模式下的PMD Driver</h2>
+
+<ul>
+<li>去除了中断影响，减少了操作系统内核的开销，消除了IO吞吐瓶颈；</li>
+<li>避免了内核态和用户态的报文拷贝；用户态下软件崩溃，不会影响系统的稳定性；</li>
+<li>Intel提供的PMD驱动，充分利用指令和网卡的性能；</li>
+</ul>
+
+<h2 id="hugepage和m-buf管理:c4732dc0fcc80b62ed2be8d6d03ecebc">HugePage和m_buf管理</h2>
+
+<ul>
+<li>提供2M和1G的巨页，减少了TLB Miss，TLB Miss严重影响报文转发性能；</li>
+<li>高效的m_buf管理，能够灵活的组织报文，包括多buffer接收，分片/重组，都能够轻松应对；</li>
+</ul>
+
+<h2 id="ring:c4732dc0fcc80b62ed2be8d6d03ecebc">Ring</h2>
+
+<ul>
+<li>无锁化的消息队列，实际验证，性能充足；</li>
+</ul>
+
+<h2 id="82599-sr-iov-nic:c4732dc0fcc80b62ed2be8d6d03ecebc">82599 SR-IOV NIC</h2>
+
+<ul>
+<li>实现虚拟化下高速吞吐；</li>
+</ul>
+
+<h2 id="vector-instance-向量指令:c4732dc0fcc80b62ed2be8d6d03ecebc">Vector Instance /向量指令</h2>
+
+<ul>
+<li>明显的降低内存等待开销，提升CPU的流水线效率。</li>
+</ul>
+
+<h1 id="项目规划:c4732dc0fcc80b62ed2be8d6d03ecebc">项目规划</h1>
+
+<p>　　为了使DPDK更好的在我司使用与发扬光大，我大致规划了初期、中期与长期三步走策略实现目标。</p>
+
+<h2 id="初期目标:c4732dc0fcc80b62ed2be8d6d03ecebc">初期目标</h2>
+
+<p><strong>实现一个最简单的DNS demo.</strong></p>
+
+<p>需求：</p>
+
+<ul>
+<li>网络可达。</li>
+<li>Dig示例域名可正确响应。</li>
+</ul>
+
+<h2 id="中期目标:c4732dc0fcc80b62ed2be8d6d03ecebc">中期目标</h2>
+
+<p><strong>实现一个高性能高并发的DNS服务</strong></p>
+
+<p>需求:</p>
+
+<ul>
+<li>单机性能提高5倍以上。</li>
+<li>形成完整DNS产品服务(XNS、public DNS)。</li>
+<li>平台与服务逻辑分离。</li>
+</ul>
+
+<h2 id="长期目标:c4732dc0fcc80b62ed2be8d6d03ecebc">长期目标</h2>
+
+<p><strong>实现高性能高并发的网络加速平台与应用体系</strong></p>
+
+<p>需求：</p>
+
+<ul>
+<li>平台具有可移植性。</li>
+<li>可透明承载多种业务(UDP/TCP)服务。</li>
+<li>平台与服务物理分离。</li>
+<li>可承载其他高级语言与虚拟化。</li>
+</ul>
+
+<h1 id="开发初试:c4732dc0fcc80b62ed2be8d6d03ecebc">开发初试</h1>
+
+<p>　　为了验证其的可行性，我们对它进行了最小原型开发，实现了一个最简单的DNS服务程序，使其网络可达，dig能正确响应。</p>
+
+<p>　　由于刚开始对DPDK一无所知，为了网络可达首先要面对的问题是服务器IP在哪儿配置的问题(这也许是一些初学者会面对的幼稚问题)，还好已有前辈
+   在QQ大致网上了解一些原理与其源码示例，采用其源码examples目录下l3fwd为基础进行最小原型开发demo。</p>
+
+<p>　　为了使网络可达，我们做了如下开发：</p>
+
+<ol>
+<li>先在simpleDNS服务端中临时配置一个服务IP进行过滤.</li>
+<li>在DNS客户端通过手工配置ARP表使得客户端ping/dig操作的请求包可达服务端，</li>
+<li>在simpleDNS服务端做解析请求包，如果是DNS请求构造响应包，其他类型如ARP/ICMP请求则通过KNI入接口ingress()重入Linux内核由
+其来处理后再通过KNI的egress()接口响应给客户端。</li>
+</ol>
+
+<p>经过上述编码调试后，最简单的原型验证通过了，为下面的全面开发提供了参考依据。</p>
+
+<h1 id="架构设计:c4732dc0fcc80b62ed2be8d6d03ecebc">架构设计</h1>
+
+<p>　　由于此项目是在基于DPDK进行二次开发，我一般对开源项目的使用原则是：</p>
+
+<p><strong>应使开源项目融入到项目工程中，而不是项目工程融入到开源项目中</strong></p>
+
+<p>因此我对它们进行分3层设计与实现：</p>
+
+<ul>
+<li>内核层
+主要为Linux内核本身与插入igb_uio.ko与rte_kni.ko.</li>
+<li>平台层
+
+<ul>
+<li>分为DPDK原生库与fastNP扩展库，分别在不同目录进行隔离。</li>
+<li>DPDK源码树本身，没有任务的修改，是为了更好的升级、开发与维护。</li>
+<li>对DPDK某些接口进行二次封装与业务所需的公共库，一般各种业务应用调用。</li>
+</ul></li>
+<li>业务层
+业务应用的各种实现，可直接调用fastNP平台层与DPDK原生层的API。</li>
+</ul>
+
+<h1 id="全面开发:c4732dc0fcc80b62ed2be8d6d03ecebc">全面开发</h1>
+
+<h2 id="源码组织管理:c4732dc0fcc80b62ed2be8d6d03ecebc">源码组织管理</h2>
+
+<p>为了所有源码可以一键编译、一键打包，编写一套符合所需的Makefile进行源码管理。</p>
+
+<h2 id="fastnp扩展库开发:c4732dc0fcc80b62ed2be8d6d03ecebc">fastNP扩展库开发</h2>
+
+<p>　　扩展库源码不在DPDK源码目录中，需要很好的理解DPDK下面mk/目录下的各种Makefile原理，
+   使其的各种编译选项与属性能够传递到扩展库中。</p>
+
+<p>扩展库主要实现如下部分功能：</p>
+
+<ol>
+<li>基础数据结构库。
+  如：高效双链表、用户态RCU接口等。</li>
+<li>轻量级用户态协议栈
+  目前主要实现轻量级简易型UDP协议栈，以实现二三层转发为主。</li>
+<li>HOOK挂载与处理机制
+  仿造了Linux netfilter框架实现5个点钩子挂载与处理。</li>
+<li>高性能日志库
+  参考了目录主流高性能日志与线程安全，实现了一个数百万行打印的高性能日志系统。
+等等&hellip;</li>
+</ol>
+
+<h2 id="业务层开发:c4732dc0fcc80b62ed2be8d6d03ecebc">业务层开发</h2>
+
+<p>第一个应用主要是把原有内核版本的KANS源码移植到用户态的SANSD中。</p>
+
+<h2 id="控制查看命令开发:c4732dc0fcc80b62ed2be8d6d03ecebc">控制查看命令开发</h2>
+
+<p>为了方便对平台与业务层的查看与控制，我们基于Libcmdline库开发了sansctl命令，可支持命令补全等。</p>
+
+<h2 id="发包工具开发:c4732dc0fcc80b62ed2be8d6d03ecebc">发包工具开发</h2>
+
+<p>为了能进行千万级别的高性能测试，基于pktgen-dpdk进行开发使其可以构造DNS请求与控制发送速率功能的spktgen，主界面如下图：
+   <img src="http://7xqi7h.com1.z0.glb.clouddn.com/spktgen_main_page.jpg" alt="spktgen发包主界面" /></p>
+
+<h2 id="抓包工具开发:c4732dc0fcc80b62ed2be8d6d03ecebc">抓包工具开发</h2>
+
+<p>由于现有tcpdump不能抓取DPDK接管的网卡数据，也在其基础上开发可在DPDK下抓包的spktdump，以便调试与定位。</p>
+
+<h2 id="其他开发:c4732dc0fcc80b62ed2be8d6d03ecebc">其他开发</h2>
+
+<p>从略。</p>
+
+<h1 id="踩过的坑:c4732dc0fcc80b62ed2be8d6d03ecebc">踩过的坑</h1>
+
+<h2 id="架构模式选择:c4732dc0fcc80b62ed2be8d6d03ecebc">架构模式选择</h2>
+
+<p>　　DPDK提供了两种模式可供选择：Run-to-completion与pipeline模式。在官网文档与DPDK开发者大会中都提到了这两种模式，
+   但都没说哪种模式更好，要看场景而定。我们在最初设计时，不仅考虑DNS服务器还考虑以后负载均衡设备的使用，选择了
+   可支持这两种模式。</p>
+
+<p>在测试性能时，发现某种情况下不同模式都有优缺点，经常在这两种模式中来回切换测试，造成了一些干扰与浪费了点时间。</p>
+
+<h2 id="编译选项一致:c4732dc0fcc80b62ed2be8d6d03ecebc">编译选项一致</h2>
+
+<p>在测试性能时一定使用-O3选项并且编译选项需与DPDK本身app编译选项一致。否则会影响很大的性能。</p>
+
+<p>DPDK本身app编译选项可以在编译目录下的.XXX.o.cmd文件查看到。</p>
+
+<h2 id="变量percore化:c4732dc0fcc80b62ed2be8d6d03ecebc">变量percore化</h2>
+
+<p>　　所用的全局变量尽量percore化，这样可以防止cache miss。例如统计部分要用percore化，计算或显示时再把他们加到一起，
+   这个也影响不小的性能。</p>
+
+<h2 id="代码逻辑简化:c4732dc0fcc80b62ed2be8d6d03ecebc">代码逻辑简化</h2>
+
+<p>　　由于业务层代码是从内核版本中移植过来的，老早功能就通过了，但性能一直上不来，后来经过代码review发现很多影响性能点，
+   又重新优化或精简了下代码逻辑，去掉了不少冗余代码。</p>
+
+<h2 id="rcu锁占用性能:c4732dc0fcc80b62ed2be8d6d03ecebc">RCU锁占用性能</h2>
+
+<p>扩大RCU临界区</p>
+
+<h2 id="域名压缩占用性能:c4732dc0fcc80b62ed2be8d6d03ecebc">域名压缩占用性能</h2>
+
+<p>应答区中的域名不压缩。</p>
+
+<h1 id="有待完善:c4732dc0fcc80b62ed2be8d6d03ecebc">有待完善</h1>
+
+<h2 id="dpdk:c4732dc0fcc80b62ed2be8d6d03ecebc">DPDK</h2>
+
+<h3 id="缺少配置文件:c4732dc0fcc80b62ed2be8d6d03ecebc">缺少配置文件</h3>
+
+<p>　　现在DPDK代码与核数越来越多,依然使用命令行参数的方式进行启动，可配置与阅读性比较差，应该有自己的配置文件进行解析即可。
+   尤其是网卡、队列、逻辑核配置序列太难配置了，尤其是使用核数比较多的情况。</p>
+
+<p>例如：(0,0,2),(0,1,4),(0,2,6),(0,3,8),(0,4,10),(0,5,12),(0,6,14),(0,7,16),(0,8,18),(0,9,20),(0,10,22),(0,11,24),(0,12,26),(0,13,28)</p>
+
+<p>不知道各位同学知不道有什么国际规范的缩写方式配置,请麻烦告知一下，OK？</p>
+
+<h3 id="pktgen-dpdk驱动bug:c4732dc0fcc80b62ed2be8d6d03ecebc">pktgen-dpdk驱动bug</h3>
+
+<p>　　当使用pktgen-dpdk进行测试时，频繁的启停可能会使万兆光纤网卡处于DOWN状态，重启命令或reboot系统都不管用，必须对服务器
+    进行冷重启才行，这对测试比较浪费时间或者远程调试操作堪忧。</p>
+
+<h3 id="examples下编码质量参差不齐:c4732dc0fcc80b62ed2be8d6d03ecebc">examples下编码质量参差不齐</h3>
+
+<p>　　DPDK库本身的编码质量还是比较规范统一的，而其examples下的示例代码编码质量参差不齐。</p>
+
+<h3 id="fastnp本身:c4732dc0fcc80b62ed2be8d6d03ecebc">fastNP本身</h3>
+
+<ul>
+<li>BOND与多网卡有待支持。</li>
+<li>邻居发现与路由功能有待支持。</li>
+<li>TCP协议栈有待支持。</li>
+<li>虚拟化功能有待支持。</li>
+<li>更高级语言功能有待支持。</li>
+<li>Libc与系统调用劫持功能有待支持。</li>
+</ul>
+
+<h1 id="总结:c4732dc0fcc80b62ed2be8d6d03ecebc">总结</h1>
+
+<p>经过这一段时间的开发，使得我对DPDK、内存、CPU、用户态网卡驱动有了更深的了解，使得性能达到了万兆网卡线速水平，单机抗攻击能力为1300万QPS，收发平衡能力为1000万QPS的预期目标，
+   总之DPDK框架代码写得还是挺不错的，值得仔细研究，现在我只是对它怎么使用与部分源码有了一定的认识，很多精华部分有待深入剖析。</p>
+
+<h1 id="footnotes:c4732dc0fcc80b62ed2be8d6d03ecebc">Footnotes</h1>
 <div class="footnotes">
 
 <hr />
 
 <ol>
-<li id="fn:812215bbbaf57eccfdc3cdda103f11ef:1">CDN: 内容加速网络
- <a class="footnote-return" href="#fnref:812215bbbaf57eccfdc3cdda103f11ef:1"><sup>[return]</sup></a></li>
+<li id="fn:c4732dc0fcc80b62ed2be8d6d03ecebc:1">DPDK: intel dpdk(Data Plane Development Kit,数据面开发套件)是 intel 公司发布的一款数据包转发处理套件；
+ <a class="footnote-return" href="#fnref:c4732dc0fcc80b62ed2be8d6d03ecebc:1"><sup>[return]</sup></a></li>
+<li id="fn:c4732dc0fcc80b62ed2be8d6d03ecebc:2">CloudXNS: 面向云计算的权威智能DNS。
+ <a class="footnote-return" href="#fnref:c4732dc0fcc80b62ed2be8d6d03ecebc:2"><sup>[return]</sup></a></li>
+<li id="fn:c4732dc0fcc80b62ed2be8d6d03ecebc:3">QPS: 每秒查询率(Query Per Second).
+ <a class="footnote-return" href="#fnref:c4732dc0fcc80b62ed2be8d6d03ecebc:3"><sup>[return]</sup></a></li>
+<li id="fn:c4732dc0fcc80b62ed2be8d6d03ecebc:4">BIND: Bind是一款开放源码的DNS服务器软件,Bind由美国加州大学Berkeley分校开发和维护的,全名为Berkeley Internet Name Domain, 它是目前世界上使用最为广泛的DNS服务器软件.
+ <a class="footnote-return" href="#fnref:c4732dc0fcc80b62ed2be8d6d03ecebc:4"><sup>[return]</sup></a></li>
 </ol>
 </div>
 
@@ -282,7 +531,7 @@
                         <div>
                             <p style="margin-top:0px;">作者：<a target="_blank" href="http://blog.mospan.cn/">mospan</a>
                             <br />微信关注：programLife (程序人生)
-                            <br />本文出处：<a target="_blank" href="http://blog.mospan.cn/2016/01/25/my-blog-architecture/">http://blog.mospan.cn/2016/01/25/my-blog-architecture/</a>
+                            <br />本文出处：<a target="_blank" href="http://blog.mospan.cn/2016/03/14/xns-on-dpdk/">http://blog.mospan.cn/2016/03/14/xns-on-dpdk/</a>
                             <br />
                             文章版权归本人所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。 </p>
                         </div>
@@ -301,9 +550,9 @@
               <p class="post-tags">
                 <span>Tags:</span>
                 
-                <a rel="tag" href="http://blog.mospan.cn/tags/%E5%8D%9A%E5%AE%A2">博客</a>
+                <a rel="tag" href="http://blog.mospan.cn/tags/DPDK">DPDK</a>
                 
-                <a rel="tag" href="http://blog.mospan.cn/tags/%E7%8B%AC%E7%AB%8B">独立</a>
+                <a rel="tag" href="http://blog.mospan.cn/tags/XNS">XNS</a>
                 
               </p>
 
@@ -321,41 +570,9 @@
         
         
         
-            <li class="related post-hover">
-                <article class="post type-post status-publish format-standard has-post-thumbnail hentry">
-
-                  <div class="related-inner">
-                    <h4 class="post-title">
-                      <a href="http://blog.mospan.cn/2016/02/21/my-blog-add-visit-counter/" rel="bookmark"
-                         title="我的博客演进之路(05)--添加访问统计">我的博客演进之路(05)--添加访问统计</a>
-                    </h4>
-                    <div class="post-meta group">
-                      <p class="post-date">2016年02月21日</p>
-                    </div>
-                  </div>
-                </article>
-
-            </li>
-        
     
         
         
-        
-            <li class="related post-hover">
-                <article class="post type-post status-publish format-standard has-post-thumbnail hentry">
-
-                  <div class="related-inner">
-                    <h4 class="post-title">
-                      <a href="http://blog.mospan.cn/2016/02/20/my-blog-modify-container-size/" rel="bookmark"
-                         title="我的博客演进之路(04)--调整文章版面显示大小">我的博客演进之路(04)--调整文章版面显示大小</a>
-                    </h4>
-                    <div class="post-meta group">
-                      <p class="post-date">2016年02月20日</p>
-                    </div>
-                  </div>
-                </article>
-
-            </li>
         
     
         
@@ -371,7 +588,7 @@
 
 
               <section id="comments" class="themeform">
-<div class="ds-thread" data-thread-key="/2016/01/25/my-blog-architecture/" data-title="我的博客演进之路(02)--架构与部署概述" data-url="http://blog.mospan.cn/2016/01/25/my-blog-architecture/"></div>
+<div class="ds-thread" data-thread-key="/2016/03/14/xns-on-dpdk/" data-title="基于DPDK开发高性能DNS服务器实践总结" data-url="http://blog.mospan.cn/2016/03/14/xns-on-dpdk/"></div>
 <script type="text/javascript">
 var duoshuoQuery = {short_name:"mospan"};
 	(function() {
@@ -443,20 +660,14 @@ var duoshuoQuery = {short_name:"mospan"};
     <ul class="post-nav group">
       <li class="next">
         
-        <a href="http://blog.mospan.cn/2016/01/24/my-blog-online/" rel="next">
+        <a href="http://blog.mospan.cn/2016/02/21/my-blog-add-visit-counter/" rel="next">
           <i class="fa fa-chevron-right"></i>
           <strong>Next post</strong>
-          <span>我的博客演进之路(01)--正式上线</span>
+          <span>我的博客演进之路(05)--添加访问统计</span>
         </a>
         
       </li>
       <li class="previous">
-        
-        <a href="http://blog.mospan.cn/2016/01/26/2015-fastweb-outstanding-engineer/" rel="prev">
-          <i class="fa fa-chevron-left"></i>
-          <strong>Previous Post</strong>
-          <span>记2015年度公司员工大会与获奖实录</span>
-        </a>
         
       </li>
     </ul>
