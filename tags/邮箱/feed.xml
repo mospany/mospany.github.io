@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>邮箱 on 技术改变生活，学习成就未来</title>
+        <link>http://blog.mospan.cn/tags/%E9%82%AE%E7%AE%B1/</link>
+        <language>zh-CN</language>
+        <author>Mospan</author>
+        <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
+        <updated>Thu, 31 Mar 2016 21:11:24 CST</updated>
+        
+        <item>
+            <title>怎样才有拥有个人独立域名邮箱？</title>
+            <link>http://blog.mospan.cn/2016/03/31/independent-mailbox/</link>
+            <pubDate>Thu, 31 Mar 2016 21:11:24 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://blog.mospan.cn/2016/03/31/independent-mailbox/</guid>
+            <description>
+
+&lt;h1 id=&#34;背景:ac29e9d085f6c3c945ee4f0bf5708717&#34;&gt;背景&lt;/h1&gt;
+
+&lt;p&gt;在创建开源项目或小团队创业初期，由于没有精力或财力自己搭建内部邮件服务器，为了使大家沟通更顺畅更一致，也为了与客户沟通显得更加专业一些，拥有一致的独立域名邮箱显得也挺重要的。
+那么可以借助于网上成熟的免费企业邮箱来配置自己的独立域名邮箱也可以达到效果，只不过私密邮件的安全问题自己掂量好就行。&lt;/p&gt;
+
+&lt;h1 id=&#34;前提条件:ac29e9d085f6c3c945ee4f0bf5708717&#34;&gt;前提条件&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;先拥有自己的域名，申请方式从略。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;其次把自己的域名托管到授权DNS服务器上，例如: &lt;a href=&#34;www.dnspod.cn&#34;&gt;DNSPod&lt;/a&gt;, &lt;a href=&#34;http://www.cloudxns.net/&#34;&gt;CloudXNS&lt;/a&gt;等等。&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;申请配置步骤:ac29e9d085f6c3c945ee4f0bf5708717&#34;&gt;申请配置步骤&lt;/h1&gt;
+
+&lt;ol&gt;
+&lt;li&gt;打开&lt;a href=&#34;http://ym.163.com/&#34;&gt;网易免费企业邮&lt;/a&gt;按照提示说明进行注册与登陆。&lt;/li&gt;
+&lt;li&gt;登陆到自己域名托管商网站进行域名配置：
+
+&lt;ul&gt;
+&lt;li&gt;配置MX记录指向mx.ym.163.com.&lt;/li&gt;
+&lt;li&gt;配置TXT记录为&amp;rdquo;v=spf1 include:spf.163.com ~all&amp;rdquo;, 这一条是为防止其他的邮件服务器把该地址列为垃圾邮件处理。
+配置界面大致如下：
+&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/mospan-mailbox-dns-setting.png&#34; alt=&#34;个人邮箱DNS配置界面&#34; /&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h1 id=&#34;使用说明:ac29e9d085f6c3c945ee4f0bf5708717&#34;&gt;使用说明&lt;/h1&gt;
+
+&lt;ol&gt;
+&lt;li&gt;这里管理页面，可以增加新的账号，同时可以注销企业邮箱。
+ &lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/mospan-mail-inbox.png&#34; alt=&#34;管理页面&#34; /&gt;&lt;/li&gt;
+&lt;li&gt;成员列表界面可以对该域名下的所有邮箱进行管理。
+ &lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/mospan-mailbox-members.png&#34; alt=&#34;成员列表界面&#34; /&gt;&lt;/li&gt;
+&lt;li&gt;邮件组界面可以对各个成员进行分组管理，以便好统一发送接收邮件。
+ &lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/mospan-mailbox-group.png&#34; alt=&#34;邮件组管理界面&#34; /&gt;&lt;/li&gt;
+&lt;li&gt;邮箱页面，很简洁，也很方便，网易做了那么多年的邮箱也是可以放心的，很棒。
+ &lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/mospan-mail-inbox.png&#34; alt=&#34;&#34; /&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h1 id=&#34;结语:ac29e9d085f6c3c945ee4f0bf5708717&#34;&gt;结语&lt;/h1&gt;
+
+&lt;p&gt;通过上述的步骤就可以像那么回事的使用个人独立域名邮箱了。&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>
