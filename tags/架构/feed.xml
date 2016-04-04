@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
-        <title>架构 on 技术改变生活，学习成就未来</title>
-        <link>http://blog.mospan.cn/tags/%E6%9E%B6%E6%9E%84/</link>
+        <title>架构 on 墨斯潘園</title>
+        <link>http://yanwushuang.github.io/tags/%E6%9E%B6%E6%9E%84/</link>
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
@@ -10,10 +10,10 @@
         
         <item>
             <title>读《老卫聊架构：做技术，应该先有深度再谈广度》随记</title>
-            <link>http://blog.mospan.cn/2016/02/09/mr-wei-talk-architecture/</link>
+            <link>http://yanwushuang.github.io/2016/02/09/mr-wei-talk-architecture/</link>
             <pubDate>Tue, 09 Feb 2016 17:12:34 CST</pubDate>
             <author>Mospan</author>
-            <guid>http://blog.mospan.cn/2016/02/09/mr-wei-talk-architecture/</guid>
+            <guid>http://yanwushuang.github.io/2016/02/09/mr-wei-talk-architecture/</guid>
             <description>
 
 &lt;h1 id=&#34;背景:28f83208588ee3ce37ca9db94acd9b0b&#34;&gt;背景&lt;/h1&gt;

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
-        <title>独立 on 技术改变生活，学习成就未来</title>
-        <link>http://blog.mospan.cn/tags/%E7%8B%AC%E7%AB%8B/</link>
+        <title>独立 on 墨斯潘園</title>
+        <link>http://yanwushuang.github.io/tags/%E7%8B%AC%E7%AB%8B/</link>
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
@@ -10,10 +10,10 @@
         
         <item>
             <title>怎样才能拥有个人独立域名邮箱？</title>
-            <link>http://blog.mospan.cn/2016/03/31/independent-mailbox/</link>
+            <link>http://yanwushuang.github.io/2016/03/31/independent-mailbox/</link>
             <pubDate>Thu, 31 Mar 2016 21:11:24 CST</pubDate>
             <author>Mospan</author>
-            <guid>http://blog.mospan.cn/2016/03/31/independent-mailbox/</guid>
+            <guid>http://yanwushuang.github.io/2016/03/31/independent-mailbox/</guid>
             <description>
 
 &lt;h1 id=&#34;背景:ac29e9d085f6c3c945ee4f0bf5708717&#34;&gt;背景&lt;/h1&gt;
@@ -64,10 +64,10 @@
         
         <item>
             <title>我的博客演进之路(02)--架构与部署概述</title>
-            <link>http://blog.mospan.cn/2016/01/25/my-blog-architecture/</link>
+            <link>http://yanwushuang.github.io/2016/01/25/my-blog-architecture/</link>
             <pubDate>Mon, 25 Jan 2016 23:24:08 CST</pubDate>
             <author>Mospan</author>
-            <guid>http://blog.mospan.cn/2016/01/25/my-blog-architecture/</guid>
+            <guid>http://yanwushuang.github.io/2016/01/25/my-blog-architecture/</guid>
             <description>
 
 &lt;h1 id=&#34;部署图总览:812215bbbaf57eccfdc3cdda103f11ef&#34;&gt;部署图总览&lt;/h1&gt;
@@ -135,10 +135,10 @@
         
         <item>
             <title>我的博客演进之路(01)--正式上线</title>
-            <link>http://blog.mospan.cn/2016/01/24/my-blog-online/</link>
+            <link>http://yanwushuang.github.io/2016/01/24/my-blog-online/</link>
             <pubDate>Sun, 24 Jan 2016 09:34:08 CST</pubDate>
             <author>Mospan</author>
-            <guid>http://blog.mospan.cn/2016/01/24/my-blog-online/</guid>
+            <guid>http://yanwushuang.github.io/2016/01/24/my-blog-online/</guid>
             <description>&lt;p&gt;原来的博客都是在&lt;a href=&#34;www.csdn.net&#34;&gt;CSDN&lt;/a&gt;与&lt;a href=&#34;http://www.cnblogs.com/mosp/&#34;&gt;博客园&lt;/a&gt;里写的，都是按照模板进行编写，能自己自定义的比较少，没有自己的独立域名，用emacs/vim编写上面的博客不是很方便，比较难坚持下来。 很早就萌生了自己做的独立博客的想法，由于各种原因没有弄，直到最近自己学习GO语言有了一些认识，想尝试一下GO语言编写自己的独立博客系统，在调研的过程中发现已经有前辈已经使用GO编写了&lt;a href=&#34;http://gohugo.io/&#34;&gt;hugo&lt;/a&gt;博客系统，于是乎决定在其之上搭建自己的博客系统，以便记录与分享自己的学习心得与轨迹。&lt;/p&gt;
 
 &lt;p&gt;本博客主要记录与分享自己的读书笔记、技术文章、自己参与或分析的开源项目、经验总结、自己的人生记录与思考感悟等，目标为每周一篇以上，希望自己能坚持下来,记录下自己的点点滴滴。也欢迎道友们一起讨论与交流。&lt;/p&gt;

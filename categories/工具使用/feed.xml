@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
-        <title>工具使用 on 技术改变生活，学习成就未来</title>
-        <link>http://blog.mospan.cn/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/</link>
+        <title>工具使用 on 墨斯潘園</title>
+        <link>http://yanwushuang.github.io/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/</link>
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
@@ -10,10 +10,10 @@
         
         <item>
             <title>怎样才能拥有个人独立域名邮箱？</title>
-            <link>http://blog.mospan.cn/2016/03/31/independent-mailbox/</link>
+            <link>http://yanwushuang.github.io/2016/03/31/independent-mailbox/</link>
             <pubDate>Thu, 31 Mar 2016 21:11:24 CST</pubDate>
             <author>Mospan</author>
-            <guid>http://blog.mospan.cn/2016/03/31/independent-mailbox/</guid>
+            <guid>http://yanwushuang.github.io/2016/03/31/independent-mailbox/</guid>
             <description>
 
 &lt;h1 id=&#34;背景:ac29e9d085f6c3c945ee4f0bf5708717&#34;&gt;背景&lt;/h1&gt;
@@ -64,10 +64,10 @@
         
         <item>
             <title>在Linux下我常用的软件工具</title>
-            <link>http://blog.mospan.cn/2016/02/09/my-linux-common-tools/</link>
+            <link>http://yanwushuang.github.io/2016/02/09/my-linux-common-tools/</link>
             <pubDate>Tue, 09 Feb 2016 19:09:11 CST</pubDate>
             <author>Mospan</author>
-            <guid>http://blog.mospan.cn/2016/02/09/my-linux-common-tools/</guid>
+            <guid>http://yanwushuang.github.io/2016/02/09/my-linux-common-tools/</guid>
             <description>
 
 &lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/linux-freedom.png?imageView2/1/w/1024/h/768/q/75|watermark/2/text/YmxvZy5tb3NwYW4uY24=/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10&#34; alt=&#34;linux-freedom.png&#34; /&gt;&lt;/p&gt;
