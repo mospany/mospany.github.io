@@ -6,12 +6,12 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Sun, 29 May 2016 09:33:53 CST</updated>
+        <updated>Sun, 29 May 2016 09:33:53 HKT</updated>
         
         <item>
             <title>org-mode使用手册</title>
             <link>http://yanwushuang.github.io/2016/05/29/org-manual/</link>
-            <pubDate>Sun, 29 May 2016 09:33:53 CST</pubDate>
+            <pubDate>Sun, 29 May 2016 09:33:53 HKT</pubDate>
             <author>Mospan</author>
             <guid>http://yanwushuang.github.io/2016/05/29/org-manual/</guid>
             <description>
@@ -3564,7 +3564,7 @@ tags        A tags match to select entries that should contribute.  See
         <item>
             <title>我的博客演进之路(06)--添加文章列表分页显示</title>
             <link>http://yanwushuang.github.io/2016/05/08/my-blog-add-pagination</link>
-            <pubDate>Sun, 08 May 2016 11:24:43 CST</pubDate>
+            <pubDate>Sun, 08 May 2016 11:24:43 HKT</pubDate>
             <author>Mospan</author>
             <guid>http://yanwushuang.github.io/2016/05/08/my-blog-add-pagination</guid>
             <description>
@@ -3634,7 +3634,7 @@ tags        A tags match to select entries that should contribute.  See
         <item>
             <title>怎样才能拥有个人独立域名邮箱？</title>
             <link>http://yanwushuang.github.io/2016/03/31/independent-mailbox/</link>
-            <pubDate>Thu, 31 Mar 2016 21:11:24 CST</pubDate>
+            <pubDate>Thu, 31 Mar 2016 21:11:24 HKT</pubDate>
             <author>Mospan</author>
             <guid>http://yanwushuang.github.io/2016/03/31/independent-mailbox/</guid>
             <description>
@@ -3688,7 +3688,7 @@ tags        A tags match to select entries that should contribute.  See
         <item>
             <title>基于DPDK开发高性能DNS服务器实践总结</title>
             <link>http://yanwushuang.github.io/2016/03/14/xns-on-dpdk/</link>
-            <pubDate>Mon, 14 Mar 2016 22:02:57 CST</pubDate>
+            <pubDate>Mon, 14 Mar 2016 22:02:57 HKT</pubDate>
             <author>Mospan</author>
             <guid>http://yanwushuang.github.io/2016/03/14/xns-on-dpdk/</guid>
             <description>
@@ -4004,7 +4004,7 @@ tags        A tags match to select entries that should contribute.  See
         <item>
             <title>我的博客演进之路(05)--添加访问统计</title>
             <link>http://yanwushuang.github.io/2016/02/21/my-blog-add-visit-counter/</link>
-            <pubDate>Sun, 21 Feb 2016 09:52:16 CST</pubDate>
+            <pubDate>Sun, 21 Feb 2016 09:52:16 HKT</pubDate>
             <author>Mospan</author>
             <guid>http://yanwushuang.github.io/2016/02/21/my-blog-add-visit-counter/</guid>
             <description>
@@ -4077,7 +4077,7 @@ tags        A tags match to select entries that should contribute.  See
         <item>
             <title>我的博客演进之路(04)--调整文章版面显示大小</title>
             <link>http://yanwushuang.github.io/2016/02/20/my-blog-modify-container-size/</link>
-            <pubDate>Sat, 20 Feb 2016 10:56:35 CST</pubDate>
+            <pubDate>Sat, 20 Feb 2016 10:56:35 HKT</pubDate>
             <author>Mospan</author>
             <guid>http://yanwushuang.github.io/2016/02/20/my-blog-modify-container-size/</guid>
             <description>&lt;p&gt;由于原来的版面显示有点过小，在现在的宽屏面前有些浪费。于是为了更好的进行阅读显示，特做了如下修改：&lt;/p&gt;
@@ -4110,7 +4110,7 @@ tags        A tags match to select entries that should contribute.  See
         <item>
             <title>pango设计与实现(02)--快速开始</title>
             <link>http://yanwushuang.github.io/2016/02/14/pango-development-quick-start/</link>
-            <pubDate>Sun, 14 Feb 2016 16:57:25 CST</pubDate>
+            <pubDate>Sun, 14 Feb 2016 16:57:25 HKT</pubDate>
             <author>Mospan</author>
             <guid>http://yanwushuang.github.io/2016/02/14/pango-development-quick-start/</guid>
             <description>
@@ -4156,7 +4156,7 @@ tags        A tags match to select entries that should contribute.  See
         <item>
             <title>pango设计与实现(01)--介绍</title>
             <link>http://yanwushuang.github.io/2016/02/14/pango-development-introduce/</link>
-            <pubDate>Sun, 14 Feb 2016 12:22:12 CST</pubDate>
+            <pubDate>Sun, 14 Feb 2016 12:22:12 HKT</pubDate>
             <author>Mospan</author>
             <guid>http://yanwushuang.github.io/2016/02/14/pango-development-introduce/</guid>
             <description>
@@ -4206,7 +4206,7 @@ tags        A tags match to select entries that should contribute.  See
         <item>
             <title>我的博客演进之路(03)--添加微信公众号</title>
             <link>http://yanwushuang.github.io/2016/01/25/my-blog-add-weixin-mp/</link>
-            <pubDate>Sat, 06 Feb 2016 23:24:08 CST</pubDate>
+            <pubDate>Sat, 06 Feb 2016 23:24:08 HKT</pubDate>
             <author>Mospan</author>
             <guid>http://yanwushuang.github.io/2016/01/25/my-blog-add-weixin-mp/</guid>
             <description>
@@ -4253,7 +4253,7 @@ tags        A tags match to select entries that should contribute.  See
         <item>
             <title>我的博客演进之路(02)--架构与部署概述</title>
             <link>http://yanwushuang.github.io/2016/01/25/my-blog-architecture/</link>
-            <pubDate>Mon, 25 Jan 2016 23:24:08 CST</pubDate>
+            <pubDate>Mon, 25 Jan 2016 23:24:08 HKT</pubDate>
             <author>Mospan</author>
             <guid>http://yanwushuang.github.io/2016/01/25/my-blog-architecture/</guid>
             <description>
@@ -4324,7 +4324,7 @@ tags        A tags match to select entries that should contribute.  See
         <item>
             <title>我的博客演进之路(01)--正式上线</title>
             <link>http://yanwushuang.github.io/2016/01/24/my-blog-online/</link>
-            <pubDate>Sun, 24 Jan 2016 09:34:08 CST</pubDate>
+            <pubDate>Sun, 24 Jan 2016 09:34:08 HKT</pubDate>
             <author>Mospan</author>
             <guid>http://yanwushuang.github.io/2016/01/24/my-blog-online/</guid>
             <description>&lt;p&gt;原来的博客都是在&lt;a href=&#34;www.csdn.net&#34;&gt;CSDN&lt;/a&gt;与&lt;a href=&#34;http://www.cnblogs.com/mosp/&#34;&gt;博客园&lt;/a&gt;里写的，都是按照模板进行编写，能自己自定义的比较少，没有自己的独立域名，用emacs/vim编写上面的博客不是很方便，比较难坚持下来。 很早就萌生了自己做的独立博客的想法，由于各种原因没有弄，直到最近自己学习GO语言有了一些认识，想尝试一下GO语言编写自己的独立博客系统，在调研的过程中发现已经有前辈已经使用GO编写了&lt;a href=&#34;http://gohugo.io/&#34;&gt;hugo&lt;/a&gt;博客系统，于是乎决定在其之上搭建自己的博客系统，以便记录与分享自己的学习心得与轨迹。&lt;/p&gt;
