@@ -1,0 +1,85 @@
++++
+categories = ["技术文章", ""]
+date = "2016-09-06T19:37:20+08:00"
+description = "DPDK开发笔记"
+keywords = ["dpdk", ""]
+tags = ["dpdk", ""]
+title = "DPDK开发随记"
+toc = true
+url = "/2016/09/06/DPDK-develop-notes/"
+
++++
+
+#+OPTIONS: ^:{} H:5 toc:5 \n:t
+
+* FAQ
+** 打开DPDK工程Makefile编译详细信息？
+答：
+   1. 打开dpdk/mk/rte.sdkroot.mk文件。
+   2. 把变量Q赋为空。
+   #+BEGIN_SRC shell
+   # define Q to '@' or not. $(Q) is used to prefix all shell commands to
+   # be executed silently.
+   Q= 
+   #+END_SRC 
+   
+** 出现这个错误： include/dpdk/rte_memcpy.h:870:2: 错误：‘_mm_storeu_si128’的第 2 个实参类型不兼容的解决办法
+答：
+1. 只要在自己的Makefile中增加如下两行即可。
+   #+BEGIN_SRC shell
+   include $(RTE_SDK)/mk/rte.vars.mk
+   include $(RTE_SDK)/mk/internal/rte.build-pre.mk
+   #+END_SRC 
+
+** 在虚拟机中跑DPDK，网卡接收不正常问题。
+*** 现象
+    虚拟出来的网卡只收到了少量的ARP包，并且QANS可以响应ARP请求成功，但收不到icmp与DNS包等。
+*** 调试过程
+    1. 虚拟网卡虚拟出来的是intel 82540EM网卡。
+    2. 查看DPDK官方支持网卡列表，支持intel 82540，但不知道与82540EM有哪些细微差别。
+    3. 尝试了virtual下可配的虚拟网卡(82545em，82543gc, 82545em，virtio-net)，无一完全成功。
+    4. 网卡流量统计，确实只收到了少量与arp包数等同的包(一直ping了10多分钟)。 
+    5. 查看了KNI创建的虚拟网卡发现每次启动MAC地址都随机的变化，查看了官方文档与网上结论说有些时候网卡MAC会随机变化，但没有说具体原因情况。
+    6. 使用DPDK本身提供的接口rte_eth_macaddr_get()进行读取，发现与物理网卡一致而与KNI创建出的虚拟网卡不一致。
+*** 原因
+    使用虚拟机创建出的KNI虚拟机网卡，每次重启后会随机变化并且与物理网卡不一致，到时ARP学习不正常。
+*** 解决办法
+    在KNI创建虚拟机网卡成功后，使用命令: ifconfig XX hw ether XX:XX:XX:XX:XX:XX 进行配置成物理网卡MAC即可。
+
+** 出现igb_uio: Unknown symbol uio_unregister_device的解决办法？
+答：
+   在在dpdk/lib/librte_eal/linuxapp/igb_uio/Makefile中添加如下行：
+   #+BEGIN_SRC shell
+    KBUILD_EXTRA_SYMBOLS=/usr/src/linux-headers-`uname -r`/Module.symvers
+   #+END_SRC 
+
+** 使用vmware EXSI虚拟出来的vmnet3类型网卡不能绑定gib网卡将会系统挂掉的解决办法。
+答：在vmware中换成E1000类型网卡即可正常。
+
+** 在最小Ubuntu 16.04系统下要运行dpdk进程需安装文件列表。
+答: 只要安装如下软件即可。
+  - apt-get update
+  - apt-get install openssh-server
+  - apt-get install tcpdump
+  - apt install gcc
+  - apt install libpcap-dev
+  - apt install lrzsz
+  - apt install kernel-source
+  - apt-get install kernel-source
+  - apt-get install linux-headers-`uname -r`
+  - apt install python
+  - apt-get install make
+  - apt install libpcap-dev
+  - apt install doxygen
+  - apt-get install libdbus-1-dev
+  - apt-get install libdbus-glib-1-dev
+  - ln -sf dbus-1.0/dbus dbus
+  - apt install libssl-dev
+  - apt-get install libexpat1-dev
+  - apt install flex
+  - apt install tree
+  - apt install linux-tools-generic
+
+
+
+
