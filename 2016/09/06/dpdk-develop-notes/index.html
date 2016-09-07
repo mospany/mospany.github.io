@@ -77,45 +77,26 @@
 
 	<div class="article-content">
     
-		<div class="toc-article">
-			<strong class="toc-title">文章目录</strong>
-      <nav id="TableOfContents">
-<ul>
-<li><a href="#faq-a-id-sec-1-name-sec-1-a:b2e9d0c1dcbde982306f1857e117155c">FAQ<a id="sec-1" name="sec-1"></a></a>
-<ul>
-<li><a href="#打开dpdk工程makefile编译详细信息-a-id-sec-1-1-name-sec-1-1-a:b2e9d0c1dcbde982306f1857e117155c">打开DPDK工程Makefile编译详细信息？<a id="sec-1-1" name="sec-1-1"></a></a></li>
-<li><a href="#出现这个错误-include-dpdk-rte-memcpy-h-870-2-错误-mm-storeu-si128-的第-2-个实参类型不兼容的解决办法-a-id-sec-1-2-name-sec-1-2-a:b2e9d0c1dcbde982306f1857e117155c">出现这个错误： include/dpdk/rte_memcpy.h:870:2: 错误：‘_mm_storeu_si128’的第 2 个实参类型不兼容的解决办法<a id="sec-1-2" name="sec-1-2"></a></a></li>
-<li><a href="#在虚拟机中跑dpdk-网卡接收不正常问题-a-id-sec-1-3-name-sec-1-3-a:b2e9d0c1dcbde982306f1857e117155c">在虚拟机中跑DPDK，网卡接收不正常问题。<a id="sec-1-3" name="sec-1-3"></a></a>
-<ul>
-<li><a href="#现象-a-id-sec-1-3-1-name-sec-1-3-1-a:b2e9d0c1dcbde982306f1857e117155c">现象<a id="sec-1-3-1" name="sec-1-3-1"></a></a></li>
-<li><a href="#调试过程-a-id-sec-1-3-2-name-sec-1-3-2-a:b2e9d0c1dcbde982306f1857e117155c">调试过程<a id="sec-1-3-2" name="sec-1-3-2"></a></a></li>
-<li><a href="#原因-a-id-sec-1-3-3-name-sec-1-3-3-a:b2e9d0c1dcbde982306f1857e117155c">原因<a id="sec-1-3-3" name="sec-1-3-3"></a></a></li>
-<li><a href="#解决办法-a-id-sec-1-3-4-name-sec-1-3-4-a:b2e9d0c1dcbde982306f1857e117155c">解决办法<a id="sec-1-3-4" name="sec-1-3-4"></a></a></li>
-</ul></li>
-<li><a href="#出现igb-uio-unknown-symbol-uio-unregister-device的解决办法-a-id-sec-1-4-name-sec-1-4-a:b2e9d0c1dcbde982306f1857e117155c">出现igb_uio: Unknown symbol uio_unregister_device的解决办法？<a id="sec-1-4" name="sec-1-4"></a></a></li>
-<li><a href="#使用vmware-exsi虚拟出来的vmnet3类型网卡不能绑定gib网卡将会系统挂掉的解决办法-a-id-sec-1-5-name-sec-1-5-a:b2e9d0c1dcbde982306f1857e117155c">使用vmware EXSI虚拟出来的vmnet3类型网卡不能绑定gib网卡将会系统挂掉的解决办法。<a id="sec-1-5" name="sec-1-5"></a></a></li>
-<li><a href="#在最小ubuntu-16-04系统下要运行dpdk进程需安装文件列表-a-id-sec-1-6-name-sec-1-6-a:b2e9d0c1dcbde982306f1857e117155c">在最小Ubuntu 16.04系统下要运行dpdk进程需安装文件列表。<a id="sec-1-6" name="sec-1-6"></a></a></li>
-</ul></li>
-</ul>
-</nav>
-		</div>
-    
     
 
-<h1 id="faq-a-id-sec-1-name-sec-1-a:b2e9d0c1dcbde982306f1857e117155c">FAQ<a id="sec-1" name="sec-1"></a></h1>
+<h1 id="faq-a-id-sec-1-name-sec-1-a:6368d38421c80e6b0a9653abc9c6559a">FAQ<a id="sec-1" name="sec-1"></a></h1>
 
-<h2 id="打开dpdk工程makefile编译详细信息-a-id-sec-1-1-name-sec-1-1-a:b2e9d0c1dcbde982306f1857e117155c">打开DPDK工程Makefile编译详细信息？<a id="sec-1-1" name="sec-1-1"></a></h2>
+<h2 id="打开dpdk工程makefile编译详细信息-a-id-sec-1-1-name-sec-1-1-a:6368d38421c80e6b0a9653abc9c6559a">打开DPDK工程Makefile编译详细信息？<a id="sec-1-1" name="sec-1-1"></a></h2>
 
 <p>答：<br />
-1.  打开dpdk/mk/rte.sdkroot.mk文件。
-2.  把变量Q赋为空。</p>
+1.  打开dpdk/mk/rte.sdkroot.mk文件。</p>
 
-<pre><code># define Q to '@' or not. $(Q) is used to prefix all shell commands to
-# be executed silently.
-Q=
-</code></pre>
+<ol>
+<li><p>把变量Q赋为空。</p>
 
-<h2 id="出现这个错误-include-dpdk-rte-memcpy-h-870-2-错误-mm-storeu-si128-的第-2-个实参类型不兼容的解决办法-a-id-sec-1-2-name-sec-1-2-a:b2e9d0c1dcbde982306f1857e117155c">出现这个错误： include/dpdk/rte_memcpy.h:870:2: 错误：‘_mm_storeu_si128’的第 2 个实参类型不兼容的解决办法<a id="sec-1-2" name="sec-1-2"></a></h2>
+<h1 id="define-q-to-or-not-q-is-used-to-prefix-all-shell-commands-to:6368d38421c80e6b0a9653abc9c6559a">define Q to &lsquo;@&rsquo; or not. $(Q) is used to prefix all shell commands to</h1>
+
+<h1 id="be-executed-silently:6368d38421c80e6b0a9653abc9c6559a">be executed silently.</h1>
+
+<p>Q=</p></li>
+</ol>
+
+<h2 id="出现这个错误-include-dpdk-rte-memcpy-h-870-2-错误-mm-storeu-si128-的第-2-个实参类型不兼容的解决办法-a-id-sec-1-2-name-sec-1-2-a:6368d38421c80e6b0a9653abc9c6559a">出现这个错误： include/dpdk/rte_memcpy.h:870:2: 错误：‘_mm_storeu_si128’的第 2 个实参类型不兼容的解决办法<a id="sec-1-2" name="sec-1-2"></a></h2>
 
 <p>答：<br />
 1.  只要在自己的Makefile中增加如下两行即可。</p>
@@ -124,13 +105,13 @@ Q=
     include $(RTE_SDK)/mk/internal/rte.build-pre.mk
 </code></pre>
 
-<h2 id="在虚拟机中跑dpdk-网卡接收不正常问题-a-id-sec-1-3-name-sec-1-3-a:b2e9d0c1dcbde982306f1857e117155c">在虚拟机中跑DPDK，网卡接收不正常问题。<a id="sec-1-3" name="sec-1-3"></a></h2>
+<h2 id="在虚拟机中跑dpdk-网卡接收不正常问题-a-id-sec-1-3-name-sec-1-3-a:6368d38421c80e6b0a9653abc9c6559a">在虚拟机中跑DPDK，网卡接收不正常问题。<a id="sec-1-3" name="sec-1-3"></a></h2>
 
-<h3 id="现象-a-id-sec-1-3-1-name-sec-1-3-1-a:b2e9d0c1dcbde982306f1857e117155c">现象<a id="sec-1-3-1" name="sec-1-3-1"></a></h3>
+<h3 id="现象-a-id-sec-1-3-1-name-sec-1-3-1-a:6368d38421c80e6b0a9653abc9c6559a">现象<a id="sec-1-3-1" name="sec-1-3-1"></a></h3>
 
 <p>虚拟出来的网卡只收到了少量的ARP包，并且QANS可以响应ARP请求成功，但收不到icmp与DNS包等。</p>
 
-<h3 id="调试过程-a-id-sec-1-3-2-name-sec-1-3-2-a:b2e9d0c1dcbde982306f1857e117155c">调试过程<a id="sec-1-3-2" name="sec-1-3-2"></a></h3>
+<h3 id="调试过程-a-id-sec-1-3-2-name-sec-1-3-2-a:6368d38421c80e6b0a9653abc9c6559a">调试过程<a id="sec-1-3-2" name="sec-1-3-2"></a></h3>
 
 <ol>
 <li>虚拟网卡虚拟出来的是intel 82540EM网卡。</li>
@@ -141,27 +122,27 @@ Q=
 <li>使用DPDK本身提供的接口rte_eth_macaddr_get()进行读取，发现与物理网卡一致而与KNI创建出的虚拟网卡不一致。</li>
 </ol>
 
-<h3 id="原因-a-id-sec-1-3-3-name-sec-1-3-3-a:b2e9d0c1dcbde982306f1857e117155c">原因<a id="sec-1-3-3" name="sec-1-3-3"></a></h3>
+<h3 id="原因-a-id-sec-1-3-3-name-sec-1-3-3-a:6368d38421c80e6b0a9653abc9c6559a">原因<a id="sec-1-3-3" name="sec-1-3-3"></a></h3>
 
 <p>使用虚拟机创建出的KNI虚拟机网卡，每次重启后会随机变化并且与物理网卡不一致，到时ARP学习不正常。</p>
 
-<h3 id="解决办法-a-id-sec-1-3-4-name-sec-1-3-4-a:b2e9d0c1dcbde982306f1857e117155c">解决办法<a id="sec-1-3-4" name="sec-1-3-4"></a></h3>
+<h3 id="解决办法-a-id-sec-1-3-4-name-sec-1-3-4-a:6368d38421c80e6b0a9653abc9c6559a">解决办法<a id="sec-1-3-4" name="sec-1-3-4"></a></h3>
 
 <p>在KNI创建虚拟机网卡成功后，使用命令: ifconfig XX hw ether XX:XX:XX:XX:XX:XX 进行配置成物理网卡MAC即可。</p>
 
-<h2 id="出现igb-uio-unknown-symbol-uio-unregister-device的解决办法-a-id-sec-1-4-name-sec-1-4-a:b2e9d0c1dcbde982306f1857e117155c">出现igb_uio: Unknown symbol uio_unregister_device的解决办法？<a id="sec-1-4" name="sec-1-4"></a></h2>
+<h2 id="出现igb-uio-unknown-symbol-uio-unregister-device的解决办法-a-id-sec-1-4-name-sec-1-4-a:6368d38421c80e6b0a9653abc9c6559a">出现igb_uio: Unknown symbol uio_unregister_device的解决办法？<a id="sec-1-4" name="sec-1-4"></a></h2>
 
 <p>答：<br />
-   在在dpdk/lib/librte_eal/linuxapp/igb_uio/Makefile中添加如下行：</p>
+   在dpdk/lib/librte_eal/linuxapp/igb_uio/Makefile中添加如下行：</p>
 
 <pre><code>KBUILD_EXTRA_SYMBOLS=/usr/src/linux-headers-`uname -r`/Module.symvers
 </code></pre>
 
-<h2 id="使用vmware-exsi虚拟出来的vmnet3类型网卡不能绑定gib网卡将会系统挂掉的解决办法-a-id-sec-1-5-name-sec-1-5-a:b2e9d0c1dcbde982306f1857e117155c">使用vmware EXSI虚拟出来的vmnet3类型网卡不能绑定gib网卡将会系统挂掉的解决办法。<a id="sec-1-5" name="sec-1-5"></a></h2>
+<h2 id="使用vmware-exsi虚拟出来的vmnet3类型网卡不能绑定gib网卡将会系统挂掉的解决办法-a-id-sec-1-5-name-sec-1-5-a:6368d38421c80e6b0a9653abc9c6559a">使用vmware EXSI虚拟出来的vmnet3类型网卡不能绑定gib网卡将会系统挂掉的解决办法。<a id="sec-1-5" name="sec-1-5"></a></h2>
 
 <p>答：在vmware中换成E1000类型网卡即可正常。</p>
 
-<h2 id="在最小ubuntu-16-04系统下要运行dpdk进程需安装文件列表-a-id-sec-1-6-name-sec-1-6-a:b2e9d0c1dcbde982306f1857e117155c">在最小Ubuntu 16.04系统下要运行dpdk进程需安装文件列表。<a id="sec-1-6" name="sec-1-6"></a></h2>
+<h2 id="在最小ubuntu-16-04系统下要运行dpdk进程需安装文件列表-a-id-sec-1-6-name-sec-1-6-a:6368d38421c80e6b0a9653abc9c6559a">在最小Ubuntu 16.04系统下要运行dpdk进程需安装文件列表。<a id="sec-1-6" name="sec-1-6"></a></h2>
 
 <p>答: 只要安装如下软件即可。<br />
 -   apt-get update

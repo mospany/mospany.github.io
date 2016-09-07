@@ -5,8 +5,7 @@ description = "DPDK开发笔记"
 keywords = ["dpdk", ""]
 tags = ["dpdk", ""]
 title = "DPDK开发随记"
-toc = true
-url = "/2016/09/06/DPDK-develop-notes/"
+url = "/2016/09/06/dpdk-develop-notes/"
 
 +++
 
@@ -16,6 +15,7 @@ url = "/2016/09/06/DPDK-develop-notes/"
 ** 打开DPDK工程Makefile编译详细信息？
 答：
    1. 打开dpdk/mk/rte.sdkroot.mk文件。
+
    2. 把变量Q赋为空。
    #+BEGIN_SRC shell
    # define Q to '@' or not. $(Q) is used to prefix all shell commands to
@@ -48,7 +48,7 @@ url = "/2016/09/06/DPDK-develop-notes/"
 
 ** 出现igb_uio: Unknown symbol uio_unregister_device的解决办法？
 答：
-   在在dpdk/lib/librte_eal/linuxapp/igb_uio/Makefile中添加如下行：
+   在dpdk/lib/librte_eal/linuxapp/igb_uio/Makefile中添加如下行：
    #+BEGIN_SRC shell
     KBUILD_EXTRA_SYMBOLS=/usr/src/linux-headers-`uname -r`/Module.symvers
    #+END_SRC 
