@@ -81,28 +81,31 @@
 
 &lt;h2 id=&#34;在最小ubuntu-16-04系统下要运行dpdk进程需安装文件列表-a-id-sec-1-6-name-sec-1-6-a:6368d38421c80e6b0a9653abc9c6559a&#34;&gt;在最小Ubuntu 16.04系统下要运行dpdk进程需安装文件列表。&lt;a id=&#34;sec-1-6&#34; name=&#34;sec-1-6&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
 
-&lt;p&gt;答: 只要安装如下软件即可。&lt;br /&gt;
-- apt-get update
-- apt-get install openssh-server
-- apt-get install tcpdump
-- apt install gcc
-- apt install libpcap-dev
-- apt install lrzsz
-- apt install kernel-source
-- apt-get install kernel-source
-- apt-get install linux-headers-`uname -r`
-- apt install python
-- apt-get install make
-- apt install libpcap-dev
-- apt install doxygen
-- apt-get install libdbus-1-dev
-- apt-get install libdbus-glib-1-dev
-- ln -sf dbus-1.0/dbus dbus
-- apt install libssl-dev
-- apt-get install libexpat1-dev
-- apt install flex
-- apt install tree
-- apt install linux-tools-generic&lt;/p&gt;
+&lt;p&gt;答: 只要安装如下软件即可。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;apt-get update&lt;/li&gt;
+&lt;li&gt;apt-get install openssh-server&lt;/li&gt;
+&lt;li&gt;apt-get install tcpdump&lt;/li&gt;
+&lt;li&gt;apt install gcc&lt;/li&gt;
+&lt;li&gt;apt install libpcap-dev&lt;/li&gt;
+&lt;li&gt;apt install lrzsz&lt;/li&gt;
+&lt;li&gt;apt install kernel-source&lt;/li&gt;
+&lt;li&gt;apt-get install kernel-source&lt;/li&gt;
+&lt;li&gt;apt-get install linux-headers-`uname -r`&lt;/li&gt;
+&lt;li&gt;apt install python&lt;/li&gt;
+&lt;li&gt;apt-get install make&lt;/li&gt;
+&lt;li&gt;apt install libpcap-dev&lt;/li&gt;
+&lt;li&gt;apt install doxygen&lt;/li&gt;
+&lt;li&gt;apt-get install libdbus-1-dev&lt;/li&gt;
+&lt;li&gt;apt-get install libdbus-glib-1-dev&lt;/li&gt;
+&lt;li&gt;ln -sf dbus-1.0/dbus dbus&lt;/li&gt;
+&lt;li&gt;apt install libssl-dev&lt;/li&gt;
+&lt;li&gt;apt-get install libexpat1-dev&lt;/li&gt;
+&lt;li&gt;apt install flex&lt;/li&gt;
+&lt;li&gt;apt install tree&lt;/li&gt;
+&lt;li&gt;apt install linux-tools-generic&lt;/li&gt;
+&lt;/ul&gt;
 </description>
         </item>
         
