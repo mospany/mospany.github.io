@@ -1,9 +1,9 @@
 +++
-categories = ["技术文章", ""]
+categories = ["技术文章"]
 date = "2016-09-06T19:37:20+08:00"
 description = "DPDK开发笔记"
-keywords = ["dpdk", ""]
-tags = ["dpdk", ""]
+keywords = ["dpdk"]
+tags = ["dpdk"]
 title = "DPDK开发随记"
 url = "/2016/09/06/dpdk-develop-notes/"
 
@@ -58,6 +58,7 @@ url = "/2016/09/06/dpdk-develop-notes/"
 
 ** 在最小Ubuntu 16.04系统下要运行dpdk进程需安装文件列表。
 答: 只要安装如下软件即可。
+
   - apt-get update
   - apt-get install openssh-server
   - apt-get install tcpdump
