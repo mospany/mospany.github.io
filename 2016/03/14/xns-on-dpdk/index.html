@@ -44,7 +44,7 @@
       
       <li><a href="/">首页</a></li>
       
-      <li><a href="/about">关于</a></li>
+      <li><a href="/about/">关于</a></li>
       
       <li>
         <form class="search" method="get" action="https://www.google.com/search">
@@ -71,7 +71,7 @@
     
   </p>
   <p class="article-time">
-    <time datetime="2016-03-14 22:02:57 &#43;0800 HKT" itemprop="datePublished">2016年03月14日</time>
+    <time datetime="2016-03-14 22:02:57 &#43;0800 CST" itemprop="datePublished">2016年03月14日</time>
   </p>
 </header>
 
@@ -329,6 +329,10 @@
 <h2 id="域名压缩占用性能:c4732dc0fcc80b62ed2be8d6d03ecebc">域名压缩占用性能</h2>
 
 <p>应答区中的域名不压缩。</p>
+
+<h2 id="master-lcore不要作为收发处理:c4732dc0fcc80b62ed2be8d6d03ecebc">master lcore不要作为收发处理</h2>
+
+<p>如果master lcore作为收发处理，如有数据下方或打印统计时将严重丢包，大大影响收发性能。</p>
 
 <h1 id="有待完善:c4732dc0fcc80b62ed2be8d6d03ecebc">有待完善</h1>
 

@@ -6,12 +6,12 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Tue, 06 Sep 2016 19:37:20 HKT</updated>
+        <updated>Tue, 06 Sep 2016 19:37:20 CST</updated>
         
         <item>
             <title>DPDK开发随记</title>
             <link>http://yanwushuang.github.io/2016/09/06/dpdk-develop-notes/</link>
-            <pubDate>Tue, 06 Sep 2016 19:37:20 HKT</pubDate>
+            <pubDate>Tue, 06 Sep 2016 19:37:20 CST</pubDate>
             <author>Mospan</author>
             <guid>http://yanwushuang.github.io/2016/09/06/dpdk-develop-notes/</guid>
             <description>
@@ -112,7 +112,7 @@
         <item>
             <title>基于DPDK开发高性能DNS服务器实践总结</title>
             <link>http://yanwushuang.github.io/2016/03/14/xns-on-dpdk/</link>
-            <pubDate>Mon, 14 Mar 2016 22:02:57 HKT</pubDate>
+            <pubDate>Mon, 14 Mar 2016 22:02:57 CST</pubDate>
             <author>Mospan</author>
             <guid>http://yanwushuang.github.io/2016/03/14/xns-on-dpdk/</guid>
             <description>
@@ -367,6 +367,10 @@
 &lt;h2 id=&#34;域名压缩占用性能:c4732dc0fcc80b62ed2be8d6d03ecebc&#34;&gt;域名压缩占用性能&lt;/h2&gt;
 
 &lt;p&gt;应答区中的域名不压缩。&lt;/p&gt;
+
+&lt;h2 id=&#34;master-lcore不要作为收发处理:c4732dc0fcc80b62ed2be8d6d03ecebc&#34;&gt;master lcore不要作为收发处理&lt;/h2&gt;
+
+&lt;p&gt;如果master lcore作为收发处理，如有数据下方或打印统计时将严重丢包，大大影响收发性能。&lt;/p&gt;
 
 &lt;h1 id=&#34;有待完善:c4732dc0fcc80b62ed2be8d6d03ecebc&#34;&gt;有待完善&lt;/h1&gt;
 
