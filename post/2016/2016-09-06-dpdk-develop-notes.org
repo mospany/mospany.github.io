@@ -11,6 +11,12 @@ url = "/2016/09/06/dpdk-develop-notes/"
 
 #+OPTIONS: ^:{} H:5 toc:5 \n:t
 
+* 性能调优
+** rte_rand()
+   - 现象：使用top perf -g查看时发现__drand48_iterate()所占比例达到40%以上。
+   - 分析：跟踪__drand48_iterate()跟随机数有关， 查看代码响应记录按权重比例负载时使用了rte_rand().
+   - 测试：屏蔽掉rte_rand()，性能上升了100多万。
+
 * FAQ
 ** 打开DPDK工程Makefile编译详细信息？
 答：

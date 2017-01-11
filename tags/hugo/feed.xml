@@ -6,12 +6,12 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Sun, 14 Feb 2016 16:57:25 CST</updated>
+        <updated>Sun, 14 Feb 2016 16:57:25 HKT</updated>
         
         <item>
             <title>pango设计与实现(02)--快速开始</title>
             <link>http://yanwushuang.github.io/2016/02/14/pango-development-quick-start/</link>
-            <pubDate>Sun, 14 Feb 2016 16:57:25 CST</pubDate>
+            <pubDate>Sun, 14 Feb 2016 16:57:25 HKT</pubDate>
             <author>Mospan</author>
             <guid>http://yanwushuang.github.io/2016/02/14/pango-development-quick-start/</guid>
             <description>
@@ -57,7 +57,7 @@
         <item>
             <title>pango设计与实现(01)--介绍</title>
             <link>http://yanwushuang.github.io/2016/02/14/pango-development-introduce/</link>
-            <pubDate>Sun, 14 Feb 2016 12:22:12 CST</pubDate>
+            <pubDate>Sun, 14 Feb 2016 12:22:12 HKT</pubDate>
             <author>Mospan</author>
             <guid>http://yanwushuang.github.io/2016/02/14/pango-development-introduce/</guid>
             <description>

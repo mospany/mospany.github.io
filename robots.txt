@@ -1,4 +1,1 @@
-User-Agent: *
-Allow: /
-
-Sitemap: http://blog.mospan.cn/sitemap.xml
+User-agent: *
