@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
   <meta name="keywords" content="博客,">
   <meta name="description" content="记录添加了文章列表时的分页显示">
-  <meta name="author" content="mospan">
+  
   <meta itemprop="name" content="我的博客演进之路(06)--添加文章列表分页显示 - 墨斯潘園">
   <meta itemprop="description" content="记录添加了文章列表时的分页显示">
   <meta itemprop="image" content="http://yanwushuang.github.io/img/author.jpg">
@@ -42,10 +42,6 @@
   <nav class="animated">
     <ul>
       
-      <li><a href="/">首页</a></li>
-      
-      <li><a href="/about">关于</a></li>
-      
       <li>
         <form class="search" method="get" action="https://www.google.com/search">
           <div>
@@ -67,7 +63,7 @@
   </h1>
   <p class="article-author">By
     
-      <a href="http://blog.mospan.cn" title="mospan">mospan</a>
+      <a href="http://blog.mospan.cn" title=""></a>
     
   </p>
   <p class="article-time">
@@ -81,27 +77,27 @@
 			<strong class="toc-title">文章目录</strong>
       <nav id="TableOfContents">
 <ul>
-<li><a href="#背景:4232440e5015ffc1e884aef230a71190">背景</a></li>
-<li><a href="#实现:4232440e5015ffc1e884aef230a71190">实现</a>
+<li><a href="#背景">背景</a></li>
+<li><a href="#实现">实现</a>
 <ul>
-<li><a href="#编写pagination模板代码:4232440e5015ffc1e884aef230a71190">编写pagination模板代码</a></li>
-<li><a href="#显示处调用:4232440e5015ffc1e884aef230a71190">显示处调用</a></li>
+<li><a href="#编写pagination模板代码">编写pagination模板代码</a></li>
+<li><a href="#显示处调用">显示处调用</a></li>
 </ul></li>
-<li><a href="#显示效果:4232440e5015ffc1e884aef230a71190">显示效果</a></li>
+<li><a href="#显示效果">显示效果</a></li>
 </ul>
 </nav>
 		</div>
     
     
 
-<h1 id="背景:4232440e5015ffc1e884aef230a71190">背景</h1>
+<h1 id="背景">背景</h1>
 
 <p>由于原来的主页显示是完全平铺，当文章数量较多时， 下拉进度条太长不方便阅读。因此，通过添加文章列表分页显示功能
 可以更好的显示与阅读， 每页设计显示10篇刚好也比较好统计。</p>
 
-<h1 id="实现:4232440e5015ffc1e884aef230a71190">实现</h1>
+<h1 id="实现">实现</h1>
 
-<h2 id="编写pagination模板代码:4232440e5015ffc1e884aef230a71190">编写pagination模板代码</h2>
+<h2 id="编写pagination模板代码">编写pagination模板代码</h2>
 
 <p>首先， 编写分页显示的golang模板实现代码，代码见如下：</p>
 
@@ -132,7 +128,7 @@
 {{ end }}
 </code></pre>
 
-<h2 id="显示处调用:4232440e5015ffc1e884aef230a71190">显示处调用</h2>
+<h2 id="显示处调用">显示处调用</h2>
 
 <p>在需要显示处调用pageination.html，并控制好输入参数， 例如： homepages上的修改为根据文章索引$index与10的除数来进行控制。</p>
 
@@ -149,7 +145,7 @@
 &lt;/div&gt;
 </code></pre>
 
-<h1 id="显示效果:4232440e5015ffc1e884aef230a71190">显示效果</h1>
+<h1 id="显示效果">显示效果</h1>
 
 <p>显示如下图红色框内显示：
 <img src="http://7xqi7h.com1.z0.glb.clouddn.com/my-blog-add-pagination.png" alt="文章列表分页显示" /></p>
@@ -199,22 +195,6 @@
 
 	</article>
   
-<section class="comment">
-  <div class="ds-thread" data-thread-key="http://yanwushuang.github.io/2016/05/08/my-blog-add-pagination"
-   data-title="我的博客演进之路(06)--添加文章列表分页显示" data-url="http://yanwushuang.github.io/2016/05/08/my-blog-add-pagination"></div>
-</section>
-<script type="text/javascript">
-var duoshuoQuery = {short_name:"mospan"};
-(function() {
-  var ds = document.createElement('script');
-  ds.type = 'text/javascript';ds.async = true;
-  ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-  ds.charset = 'UTF-8';
-  (document.getElementsByTagName('head')[0]
-  || document.getElementsByTagName('body')[0]).appendChild(ds);
-})();
-</script>
-
 
 
 
@@ -340,35 +320,6 @@ var duoshuoQuery = {short_name:"mospan"};
     <ul class="archive-list">
       
       
-      <li class="archive-list-item">
-        <a class="archive-list-link" href="http://yanwushuang.github.io/post/#2016-09">2016年09月</a><span class="archive-list-count">1</span>
-      </li>
-      
-      
-      <li class="archive-list-item">
-        <a class="archive-list-link" href="http://yanwushuang.github.io/post/#2016-05">2016年05月</a><span class="archive-list-count">2</span>
-      </li>
-      
-      
-      <li class="archive-list-item">
-        <a class="archive-list-link" href="http://yanwushuang.github.io/post/#2016-03">2016年03月</a><span class="archive-list-count">2</span>
-      </li>
-      
-      
-      <li class="archive-list-item">
-        <a class="archive-list-link" href="http://yanwushuang.github.io/post/#2016-02">2016年02月</a><span class="archive-list-count">7</span>
-      </li>
-      
-      
-      <li class="archive-list-item">
-        <a class="archive-list-link" href="http://yanwushuang.github.io/post/#2016-01">2016年01月</a><span class="archive-list-count">4</span>
-      </li>
-      
-    </ul>
-
-  </div>
-
-
   
 
 <div class="tagcloudlist">
@@ -439,7 +390,7 @@ var duoshuoQuery = {short_name:"mospan"};
   </div>
   <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/yanwushuang/mospan-hugo-blog/tree/master/themes/hugo-panman-theme" target="_blank" title="hugo-panman-theme">hugo-panman-theme</a> © 2017
     
-    <a href="http://yanwushuang.github.io/" target="_blank" title="mospan">mospan</a>
+    <a href="http://yanwushuang.github.io/" title="墨斯潘園">墨斯潘園</a>
     
   </p>
 </div>
@@ -581,16 +532,6 @@ $(document).ready(function(){
 });
 </script>
 
-
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-  ga('create', 'UA-10147768-2', 'auto');
-  ga('send', 'pageview');
-  $('#messagesbsb').remove();
-</script>
 
 
 
