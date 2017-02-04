@@ -2,11 +2,11 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
         <title>工具 on 墨斯潘園</title>
-        <link>http://yanwushuang.github.io/tags/%E5%B7%A5%E5%85%B7/feed/index.xml</link>
+        <link>http://yanwushuang.github.io/tags/%E5%B7%A5%E5%85%B7/</link>
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Mon, 01 Jan 0001 00:00:00 UTC</updated>
+        <updated>Tue, 09 Feb 2016 19:09:11 HKT</updated>
         
         <item>
             <title>在Linux下我常用的软件工具</title>
@@ -18,9 +18,9 @@
 
 &lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/linux-freedom.png?imageView2/1/w/1024/h/768/q/75|watermark/2/text/YmxvZy5tb3NwYW4uY24=/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10&#34; alt=&#34;linux-freedom.png&#34; /&gt;&lt;/p&gt;
 
-&lt;h1 id=&#34;编程编辑&#34;&gt;编程编辑&lt;/h1&gt;
+&lt;h1 id=&#34;编程编辑:71395c983b838d0c8bbfffd8d0bb08ca&#34;&gt;编程编辑&lt;/h1&gt;
 
-&lt;h2 id=&#34;emacs&#34;&gt;emacs&lt;/h2&gt;
+&lt;h2 id=&#34;emacs:71395c983b838d0c8bbfffd8d0bb08ca&#34;&gt;emacs&lt;/h2&gt;
 
 &lt;p&gt;emacs是我最为常用的工具，大部分工作都在它下面完成，差不多是“开机&amp;ndash;&amp;gt;emacs&amp;ndash;&amp;gt;关机”, 我的emacs也集成了evil插件，综合了emacs与vim两大编辑器的特长，是我更加觉得顺心应手, 更加热爱我的职业。&lt;/p&gt;
 
@@ -43,11 +43,11 @@
 &lt;li&gt;等等&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;vim&#34;&gt;vim&lt;/h2&gt;
+&lt;h2 id=&#34;vim:71395c983b838d0c8bbfffd8d0bb08ca&#34;&gt;vim&lt;/h2&gt;
 
 &lt;p&gt;Linux下标准配置的编辑器，我一般用来修改配置文件等。&lt;/p&gt;
 
-&lt;h2 id=&#34;使用感受&#34;&gt;使用感受&lt;/h2&gt;
+&lt;h2 id=&#34;使用感受:71395c983b838d0c8bbfffd8d0bb08ca&#34;&gt;使用感受&lt;/h2&gt;
 
 &lt;p&gt;如下是我个人的使用感受，不完全正常，也不想引起编辑器之争。&lt;/p&gt;
 
@@ -57,21 +57,21 @@
 &lt;li&gt;emacs觉得比较优雅更像一个魔术师。&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;浏览器&#34;&gt;浏览器&lt;/h1&gt;
+&lt;h1 id=&#34;浏览器:71395c983b838d0c8bbfffd8d0bb08ca&#34;&gt;浏览器&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;chromium web browser&lt;/li&gt;
 &lt;li&gt;firefox browser&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;虚拟机&#34;&gt;虚拟机&lt;/h1&gt;
+&lt;h1 id=&#34;虚拟机:71395c983b838d0c8bbfffd8d0bb08ca&#34;&gt;虚拟机&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;virtualbox&lt;/li&gt;
 &lt;li&gt;Virtual Machine Manager&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;聊天工具&#34;&gt;聊天工具&lt;/h1&gt;
+&lt;h1 id=&#34;聊天工具:71395c983b838d0c8bbfffd8d0bb08ca&#34;&gt;聊天工具&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;QQ网页版&lt;/li&gt;
@@ -79,62 +79,62 @@
 &lt;li&gt;脉脉网页版&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;词典工具&#34;&gt;词典工具&lt;/h1&gt;
+&lt;h1 id=&#34;词典工具:71395c983b838d0c8bbfffd8d0bb08ca&#34;&gt;词典工具&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;stardict&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;截图工具&#34;&gt;截图工具&lt;/h1&gt;
+&lt;h1 id=&#34;截图工具:71395c983b838d0c8bbfffd8d0bb08ca&#34;&gt;截图工具&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Shutter&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;ftp上传工具&#34;&gt;ftp上传工具&lt;/h1&gt;
+&lt;h1 id=&#34;ftp上传工具:71395c983b838d0c8bbfffd8d0bb08ca&#34;&gt;ftp上传工具&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;filezilla&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;文本比对工具&#34;&gt;文本比对工具&lt;/h1&gt;
+&lt;h1 id=&#34;文本比对工具:71395c983b838d0c8bbfffd8d0bb08ca&#34;&gt;文本比对工具&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Meld diff viewer&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;图片处理工具&#34;&gt;图片处理工具&lt;/h1&gt;
+&lt;h1 id=&#34;图片处理工具:71395c983b838d0c8bbfffd8d0bb08ca&#34;&gt;图片处理工具&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;GIMP&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;画图工具&#34;&gt;画图工具&lt;/h1&gt;
+&lt;h1 id=&#34;画图工具:71395c983b838d0c8bbfffd8d0bb08ca&#34;&gt;画图工具&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;yEd&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;网络分析工具&#34;&gt;网络分析工具&lt;/h1&gt;
+&lt;h1 id=&#34;网络分析工具:71395c983b838d0c8bbfffd8d0bb08ca&#34;&gt;网络分析工具&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;wireshark&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;邮件客户端&#34;&gt;邮件客户端&lt;/h1&gt;
+&lt;h1 id=&#34;邮件客户端:71395c983b838d0c8bbfffd8d0bb08ca&#34;&gt;邮件客户端&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Thunderbird Mail&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;办公软件&#34;&gt;办公软件&lt;/h1&gt;
+&lt;h1 id=&#34;办公软件:71395c983b838d0c8bbfffd8d0bb08ca&#34;&gt;办公软件&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;WPS&lt;/li&gt;
 &lt;li&gt;open LibreOffice&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;科学上网&#34;&gt;科学上网&lt;/h1&gt;
+&lt;h1 id=&#34;科学上网:71395c983b838d0c8bbfffd8d0bb08ca&#34;&gt;科学上网&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://github.com/getlantern/lantern&#34;&gt;lantern&lt;/a&gt;&lt;/li&gt;

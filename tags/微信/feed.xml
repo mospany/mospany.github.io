@@ -2,11 +2,11 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
         <title>微信 on 墨斯潘園</title>
-        <link>http://yanwushuang.github.io/tags/%E5%BE%AE%E4%BF%A1/feed/index.xml</link>
+        <link>http://yanwushuang.github.io/tags/%E5%BE%AE%E4%BF%A1/</link>
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Mon, 01 Jan 0001 00:00:00 UTC</updated>
+        <updated>Sat, 06 Feb 2016 23:24:08 HKT</updated>
         
         <item>
             <title>我的博客演进之路(03)--添加微信公众号</title>
@@ -16,12 +16,12 @@
             <guid>http://yanwushuang.github.io/2016/01/25/my-blog-add-weixin-mp/</guid>
             <description>
 
-&lt;h1 id=&#34;引言&#34;&gt;引言&lt;/h1&gt;
+&lt;h1 id=&#34;引言:80bf101a45698ed0e18357cc849951e7&#34;&gt;引言&lt;/h1&gt;
 
 &lt;p&gt;为了符合当今移动互联网的潮流，也让自己更加了解微信的基础知识与推广运作，我也把自己在博客上写的文章也推送到微信公众号，以便想了解的人提供另外一种阅读方式。
    如想了解请关注我的微信公众号：pragramLife (程序人生）。&lt;/p&gt;
 
-&lt;h1 id=&#34;申请&#34;&gt;申请&lt;/h1&gt;
+&lt;h1 id=&#34;申请:80bf101a45698ed0e18357cc849951e7&#34;&gt;申请&lt;/h1&gt;
 
 &lt;p&gt;首先， 为了使用微信公众号先登陆&lt;a href=&#34;https://mp.weixin.qq.com/&#34;&gt;微信公众平台&lt;/a&gt; 进行账号注册。&lt;/p&gt;
 
@@ -30,7 +30,7 @@
 &lt;p&gt;最后，将得到自己的微信公众号管理后台面板，界面显示如下：
   &lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/my-weixin-mp-console.png&#34; alt=&#34;我的微信公众号控制台&#34; /&gt;&lt;/p&gt;
 
-&lt;h1 id=&#34;使用&#34;&gt;使用&lt;/h1&gt;
+&lt;h1 id=&#34;使用:80bf101a45698ed0e18357cc849951e7&#34;&gt;使用&lt;/h1&gt;
 
 &lt;ol&gt;
 &lt;li&gt;在微信公众号控制台添加”头像“与公众号名称(如: programLife)等，下载生成的二维码。&lt;/li&gt;
@@ -41,7 +41,7 @@
  &lt;/div&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h1 id=&#34;发表文章&#34;&gt;发表文章&lt;/h1&gt;
+&lt;h1 id=&#34;发表文章:80bf101a45698ed0e18357cc849951e7&#34;&gt;发表文章&lt;/h1&gt;
 
 &lt;ol&gt;
 &lt;li&gt;在chrome或firefox浏览器安装&lt;a href=&#34;http://markdown-here.com/&#34;&gt;markdown here&lt;/a&gt; 插件。&lt;/li&gt;

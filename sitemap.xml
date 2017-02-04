@@ -2,6 +2,12 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     
     <url>
+        <loc>http://yanwushuang.github.io/</loc>
+        <lastmod>2016-09-06T19:37:20+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
         <loc>http://yanwushuang.github.io/2016/09/06/dpdk-develop-notes/</loc>
         <lastmod>2016-09-06T19:37:20+08:00</lastmod>
     </url>
@@ -79,132 +85,6 @@
     <url>
         <loc>http://yanwushuang.github.io/about/</loc>
         <lastmod>2016-01-01T08:55:31+08:00</lastmod>
-    </url>
-    
-    <url>
-        <loc>http://yanwushuang.github.io/categories/</loc>
-        <lastmod>0001-01-01T00:00:00+00:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://yanwushuang.github.io/tags/dpdk/</loc>
-        <lastmod>2016-09-06T19:37:20+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://yanwushuang.github.io/tags/emacs/</loc>
-        <lastmod>2016-05-29T09:33:53+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://yanwushuang.github.io/tags/hugo/</loc>
-        <lastmod>2016-02-14T16:57:25+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://yanwushuang.github.io/tags/org-mode/</loc>
-        <lastmod>2016-05-29T09:33:53+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://yanwushuang.github.io/tags/pango/</loc>
-        <lastmod>2016-02-14T16:57:25+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://yanwushuang.github.io/post/</loc>
-        <lastmod>2016-09-06T19:37:20+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://yanwushuang.github.io/tags/</loc>
-        <lastmod>0001-01-01T00:00:00+00:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://yanwushuang.github.io/tags/xns/</loc>
-        <lastmod>2016-03-14T22:02:57+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://yanwushuang.github.io/tags/%E4%BA%BA%E7%94%9F%E8%AE%B0%E5%BD%95/</loc>
-        <lastmod>2016-01-26T08:28:37+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://yanwushuang.github.io/categories/%E4%BA%BA%E7%94%9F%E8%AE%B0%E5%BD%95/</loc>
-        <lastmod>2016-01-26T08:28:37+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://yanwushuang.github.io/tags/%E5%8D%9A%E5%AE%A2/</loc>
-        <lastmod>2016-05-08T11:24:43+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://yanwushuang.github.io/</loc>
-        <lastmod>2016-09-06T19:37:20+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://yanwushuang.github.io/tags/%E5%B7%A5%E5%85%B7/</loc>
-        <lastmod>2016-02-09T19:09:11+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://yanwushuang.github.io/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/</loc>
-        <lastmod>2016-05-29T09:33:53+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://yanwushuang.github.io/tags/%E5%BE%AE%E4%BF%A1/</loc>
-        <lastmod>2016-02-06T23:24:08+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://yanwushuang.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/</loc>
-        <lastmod>2016-09-06T19:37:20+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://yanwushuang.github.io/tags/%E6%9E%B6%E6%9E%84/</loc>
-        <lastmod>2016-02-09T17:12:34+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://yanwushuang.github.io/tags/%E7%8B%AC%E7%AB%8B/</loc>
-        <lastmod>2016-03-31T21:11:24+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://yanwushuang.github.io/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</loc>
-        <lastmod>2016-02-09T17:12:34+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://yanwushuang.github.io/tags/%E9%82%AE%E7%AE%B1/</loc>
-        <lastmod>2016-03-31T21:11:24+08:00</lastmod>
-        <priority>0</priority>
     </url>
     
 </urlset>
