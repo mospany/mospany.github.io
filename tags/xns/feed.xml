@@ -267,6 +267,10 @@
 
 &lt;p&gt;应答区中的域名不压缩。&lt;/p&gt;
 
+&lt;h2 id=&#34;master-lcore不要作为收发处理:c4732dc0fcc80b62ed2be8d6d03ecebc&#34;&gt;master lcore不要作为收发处理&lt;/h2&gt;
+
+&lt;p&gt;如果master lcore作为收发处理，如有数据下方或打印统计时将严重丢包，大大影响收发性能。&lt;/p&gt;
+
 &lt;h1 id=&#34;有待完善:c4732dc0fcc80b62ed2be8d6d03ecebc&#34;&gt;有待完善&lt;/h1&gt;
 
 &lt;h2 id=&#34;dpdk:c4732dc0fcc80b62ed2be8d6d03ecebc&#34;&gt;DPDK&lt;/h2&gt;
