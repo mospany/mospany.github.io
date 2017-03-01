@@ -5,7 +5,6 @@ description = ""
 keywords = ["面试"]
 tags = ["面试"]
 title = "个人常用面试题及其参考答案"
-toc = true
 url = "/2017/03/01/personal-interview-questions/"
 
 +++
