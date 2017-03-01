@@ -19,7 +19,7 @@
 &lt;h1 id=&#34;引言:80bf101a45698ed0e18357cc849951e7&#34;&gt;引言&lt;/h1&gt;
 
 &lt;p&gt;为了符合当今移动互联网的潮流，也让自己更加了解微信的基础知识与推广运作，我也把自己在博客上写的文章也推送到微信公众号，以便想了解的人提供另外一种阅读方式。
-   如想了解请关注我的微信公众号：pragramLife (程序人生）。&lt;/p&gt;
+   如想了解请关注我的微信公众号：墨斯潘園。&lt;/p&gt;
 
 &lt;h1 id=&#34;申请:80bf101a45698ed0e18357cc849951e7&#34;&gt;申请&lt;/h1&gt;
 
@@ -33,9 +33,9 @@
 &lt;h1 id=&#34;使用:80bf101a45698ed0e18357cc849951e7&#34;&gt;使用&lt;/h1&gt;
 
 &lt;ol&gt;
-&lt;li&gt;在微信公众号控制台添加”头像“与公众号名称(如: programLife)等，下载生成的二维码。&lt;/li&gt;
+&lt;li&gt;在微信公众号控制台添加”头像“与公众号名称(如: 墨斯潘園)等，下载生成的二维码。&lt;/li&gt;
 &lt;li&gt;将公众号二维码图片替换博客源码中的文件./themes/rapid/static/public/qrcode.jpg。&lt;/li&gt;
-&lt;li&gt;使用手机登陆微信扫描或查找公众号名称（如：programLife)后点击关注即可显示如下界面：
+&lt;li&gt;使用手机登陆微信扫描或查找公众号名称（如：墨斯潘園)后点击关注即可显示如下界面：
  &lt;div align=&#34;center&#34;&gt;
  &lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/my-weixin-mp-in-mobile.jpg&#34; alt=&#34;关注我的微信公众号&#34; title=&#34;手机关注我的微信公众号显示&#34; width=&#34;300&#34;/&gt;
  &lt;/div&gt;&lt;/li&gt;
