@@ -6,7 +6,81 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Wed, 01 Mar 2017 19:27:08 HKT</updated>
+        <updated>Tue, 07 Mar 2017 19:13:23 HKT</updated>
+        
+        <item>
+            <title>精品文章，阅后收藏</title>
+            <link>http://yanwushuang.github.io/2017/03/07/collection-after-reading/</link>
+            <pubDate>Tue, 07 Mar 2017 19:13:23 HKT</pubDate>
+            <author>Mospan</author>
+            <guid>http://yanwushuang.github.io/2017/03/07/collection-after-reading/</guid>
+            <description>
+
+&lt;h1 id=&#34;职场人性类-a-id-sec-1-name-sec-1-a:d09fa91a03d65773fd0edb1a962d8512&#34;&gt;职场人性类&lt;a id=&#34;sec-1&#34; name=&#34;sec-1&#34;&gt;&lt;/a&gt;&lt;/h1&gt;
+
+&lt;h2 id=&#34;编码人生-a-id-sec-1-1-name-sec-1-1-a:d09fa91a03d65773fd0edb1a962d8512&#34;&gt;编码人生&lt;a id=&#34;sec-1-1&#34; name=&#34;sec-1-1&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
+
+
+&lt;colgroup&gt;
+&lt;col  class=&#34;left&#34; /&gt;
+
+&lt;col  class=&#34;left&#34; /&gt;
+
+&lt;col  class=&#34;left&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th scope=&#34;col&#34; class=&#34;left&#34;&gt;标题&lt;/th&gt;
+&lt;th scope=&#34;col&#34; class=&#34;left&#34;&gt;读后感&lt;/th&gt;
+&lt;th scope=&#34;col&#34; class=&#34;left&#34;&gt;推荐指数&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;程序员分七个等级，你属于哪一级？&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;&amp;#xa0;&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;☆☆☆☆&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;&amp;#xa0;&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;&amp;#xa0;&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;&amp;#xa0;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h1 id=&#34;技术类-a-id-sec-2-name-sec-2-a:d09fa91a03d65773fd0edb1a962d8512&#34;&gt;技术类&lt;a id=&#34;sec-2&#34; name=&#34;sec-2&#34;&gt;&lt;/a&gt;&lt;/h1&gt;
+
+&lt;h2 id=&#34;基础-a-id-sec-2-1-name-sec-2-1-a:d09fa91a03d65773fd0edb1a962d8512&#34;&gt;基础&lt;a id=&#34;sec-2-1&#34; name=&#34;sec-2-1&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;h2 id=&#34;语言-a-id-sec-2-2-name-sec-2-2-a:d09fa91a03d65773fd0edb1a962d8512&#34;&gt;语言&lt;a id=&#34;sec-2-2&#34; name=&#34;sec-2-2&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;h3 id=&#34;c-a-id-sec-2-2-1-name-sec-2-2-1-a:d09fa91a03d65773fd0edb1a962d8512&#34;&gt;C&lt;a id=&#34;sec-2-2-1&#34; name=&#34;sec-2-2-1&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+
+&lt;h3 id=&#34;go-a-id-sec-2-2-2-name-sec-2-2-2-a:d09fa91a03d65773fd0edb1a962d8512&#34;&gt;Go&lt;a id=&#34;sec-2-2-2&#34; name=&#34;sec-2-2-2&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+
+&lt;h3 id=&#34;lua-a-id-sec-2-2-3-name-sec-2-2-3-a:d09fa91a03d65773fd0edb1a962d8512&#34;&gt;Lua&lt;a id=&#34;sec-2-2-3&#34; name=&#34;sec-2-2-3&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+
+&lt;h3 id=&#34;shell-a-id-sec-2-2-4-name-sec-2-2-4-a:d09fa91a03d65773fd0edb1a962d8512&#34;&gt;Shell&lt;a id=&#34;sec-2-2-4&#34; name=&#34;sec-2-2-4&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+
+&lt;h3 id=&#34;python-a-id-sec-2-2-5-name-sec-2-2-5-a:d09fa91a03d65773fd0edb1a962d8512&#34;&gt;Python&lt;a id=&#34;sec-2-2-5&#34; name=&#34;sec-2-2-5&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+
+&lt;h2 id=&#34;网络-a-id-sec-2-3-name-sec-2-3-a:d09fa91a03d65773fd0edb1a962d8512&#34;&gt;网络&lt;a id=&#34;sec-2-3&#34; name=&#34;sec-2-3&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;h2 id=&#34;算法-a-id-sec-2-4-name-sec-2-4-a:d09fa91a03d65773fd0edb1a962d8512&#34;&gt;算法&lt;a id=&#34;sec-2-4&#34; name=&#34;sec-2-4&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;h2 id=&#34;数据库-a-id-sec-2-5-name-sec-2-5-a:d09fa91a03d65773fd0edb1a962d8512&#34;&gt;数据库&lt;a id=&#34;sec-2-5&#34; name=&#34;sec-2-5&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;h2 id=&#34;架构-a-id-sec-2-6-name-sec-2-6-a:d09fa91a03d65773fd0edb1a962d8512&#34;&gt;架构&lt;a id=&#34;sec-2-6&#34; name=&#34;sec-2-6&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;h1 id=&#34;管理类-a-id-sec-3-name-sec-3-a:d09fa91a03d65773fd0edb1a962d8512&#34;&gt;管理类&lt;a id=&#34;sec-3&#34; name=&#34;sec-3&#34;&gt;&lt;/a&gt;&lt;/h1&gt;
+</description>
+        </item>
         
         <item>
             <title>个人常用面试题及其参考答案</title>
@@ -5071,77 +5145,6 @@ tags        A tags match to select entries that should contribute.  See
 &lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/21vianet_2016_comference_3.jpg?imageView2/1/w/1024/h/768/q/75|watermark/2/text/YmxvZy5tb3NwYW4uY24=/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10&#34; alt=&#34;会议现场图片3&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;会议现场图片3&lt;/p&gt;
-</description>
-        </item>
-        
-        <item>
-            <title>我的博客演进之路(02)--架构与部署概述</title>
-            <link>http://yanwushuang.github.io/2016/01/25/my-blog-architecture/</link>
-            <pubDate>Mon, 25 Jan 2016 23:24:08 HKT</pubDate>
-            <author>Mospan</author>
-            <guid>http://yanwushuang.github.io/2016/01/25/my-blog-architecture/</guid>
-            <description>
-
-&lt;h1 id=&#34;部署图总览:812215bbbaf57eccfdc3cdda103f11ef&#34;&gt;部署图总览&lt;/h1&gt;
-
-&lt;p&gt;经过调研与分析，能满足我博客需求的大致部署图如下：&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/my-blog-deploy.jpg?imageView2/1/w/1024/h/768/q/75|watermark/2/text/YmxvZy5tb3NwYW4uY24=/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10&#34; alt=&#34;架构与部署图&#34; /&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;角色说明:812215bbbaf57eccfdc3cdda103f11ef&#34;&gt;角色说明&lt;/h1&gt;
-
-&lt;h2 id=&#34;github:812215bbbaf57eccfdc3cdda103f11ef&#34;&gt;github&lt;/h2&gt;
-
-&lt;p&gt;主要存放了本博客的资料文件，利用了github的pages功能提供了网页浏览服务。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/yanwushuang.github.io-setting.png?imageView2/1/w/1024/h/768/q/75|watermark/2/text/YmxvZy5tb3NwYW4uY24=/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10&#34; alt=&#34;我博客github设置&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;github: &lt;a href=&#34;https://github.com/yanwushuang/yanwushuang.github.io&#34;&gt;yanwushuang.github.io&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;gitcafe:812215bbbaf57eccfdc3cdda103f11ef&#34;&gt;gitcafe&lt;/h2&gt;
-
-&lt;p&gt;由于github是国外的，有些时候访问不稳定(有可能被封)与不允许百度爬虫收录等原因，也为了更好在国内访问与容灾备份，使用了&lt;a href=&#34;https://gitcafe.com/&#34;&gt;gitcafe&lt;/a&gt;进行提供网络服务。&lt;/p&gt;
-
-&lt;p&gt;gitcafe: &lt;a href=&#34;https://gitcafe.com/mospan/mospan&#34;&gt;mospan.gitcafe.io&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;cloudxns:812215bbbaf57eccfdc3cdda103f11ef&#34;&gt;CloudXNS&lt;/h2&gt;
-
-&lt;p&gt;自己申请了独立域名，需要有地方托管解析，&lt;a href=&#34;www.cloudxns.net&#34;&gt;CloudXNS&lt;/a&gt; 完全满足我的所需，只需在其官网上注册账号：&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/cloudxns-main-page.png?imageView2/1/w/1024/h/768/q/75|watermark/2/text/YmxvZy5tb3NwYW4uY24=/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10&#34; alt=&#34;CloudXNS主页&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;并做如下配置0.5秒钟立马生效。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/blog-mospan-cn-cloudxns-config.png?imageView2/1/w/1024/h/768/q/75|watermark/2/text/YmxvZy5tb3NwYW4uY24=/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10&#34; alt=&#34;blog.mospan.cn域名在CloudXNS上的配置图&#34; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;七牛云存储:812215bbbaf57eccfdc3cdda103f11ef&#34;&gt;七牛云存储&lt;/h2&gt;
-
-&lt;p&gt;为了让图片在博客上有更好的展示/存放/外链，选择了&lt;a href=&#34;https://portal.qiniu.com/&#34;&gt;七牛云存储&lt;/a&gt;, 而且它还提供了水印功能。&lt;/p&gt;
-
-&lt;h2 id=&#34;牛盾云加速:812215bbbaf57eccfdc3cdda103f11ef&#34;&gt;牛盾云加速&lt;/h2&gt;
-
-&lt;p&gt;为了使得本博客有更好的访问体验， 使用了&lt;a href=&#34;https://newdefend.com&#34;&gt;牛盾云加速&lt;/a&gt;作为其CDN&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:812215bbbaf57eccfdc3cdda103f11ef:1&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:812215bbbaf57eccfdc3cdda103f11ef:1&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;加速，见如下：&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/newdefend-main-page.png?imageView2/1/w/1024/h/768/q/75|watermark/2/text/YmxvZy5tb3NwYW4uY24=/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10&#34; alt=&#34;牛盾云加速主页&#34; /&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;服务过程:812215bbbaf57eccfdc3cdda103f11ef&#34;&gt;服务过程&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;用户在浏览器上输入本博客域名：blog.mospan.cn&lt;/li&gt;
-&lt;li&gt;浏览器先发起对该域名的DNS请求本地运营商LocalDNS, 由LocalDNS迭代查询最终到CloudXNS上，LocalDNS查询合并后最终得到博客的地址。&lt;/li&gt;
-&lt;li&gt;浏览器向本博客地址发起HTTP请求，经过牛盾云加速，如果它没有缓存，将继续向github/gitcafe请求内容响应给用户，途经牛盾云加速时被缓存。&lt;/li&gt;
-&lt;li&gt;浏览器得到页面后经过浏览器解析，哪些内容链接还需进行再一次获取，如图片将从七牛云存储上获取下来。&lt;/li&gt;
-&lt;li&gt;浏览器最后把结果呈现给用户。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;div class=&#34;footnotes&#34;&gt;
-
-&lt;hr /&gt;
-
-&lt;ol&gt;
-&lt;li id=&#34;fn:812215bbbaf57eccfdc3cdda103f11ef:1&#34;&gt;CDN: 内容加速网络
- &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:812215bbbaf57eccfdc3cdda103f11ef:1&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
 </description>
         </item>
         
