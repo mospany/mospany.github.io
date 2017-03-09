@@ -52,8 +52,9 @@ url = "/2017/03/02/openresty+redis-practices/"
   #+END_SRC
 ** 回复响应
    根据不同返回码表示操作结果。
-   #+BEGIN_QUOTE
+   #+BEGIN_QUOTE -t
    root@bj94:~/dr302client# curl -i -H 'content-type: application/json' -X POST -d @addA.json http://dev.mgrconfig.api.qiniudns.com/qiniu/dr302/records/add
+
    HTTP/1.1 200 OK
    Date: Thu, 09 Mar 2017 03:01:17 GMT
    Content-Type: text/plain
