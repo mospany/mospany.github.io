@@ -3,20 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <base href="http://yanwushuang.github.io/">
-  <title>读书笔记 - 墨斯潘園</title>
+  <title>openresty&#43;redis实践 - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
-  
-  <meta name="description" content="读书笔记">
+  <meta name="keywords" content="openresty,redis,">
+  <meta name="description" content="安装 openresty安装 详见 openresty安装 redis安装 执行如下命令： sudo apt-get update sudo apt-get install redis-server 详见 Ubuntu安装配置Redis 编写API 根">
   <meta name="author" content="mospan">
-  <meta itemprop="name" content="读书笔记 - 墨斯潘園">
-  <meta itemprop="description" content="读书笔记">
+  <meta itemprop="name" content="openresty&#43;redis实践 - 墨斯潘園">
+  <meta itemprop="description" content="安装 openresty安装 详见 openresty安装 redis安装 执行如下命令： sudo apt-get update sudo apt-get install redis-server 详见 Ubuntu安装配置Redis 编写API 根">
   <meta itemprop="image" content="http://yanwushuang.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
-  <meta name="twitter:title" content="读书笔记 - 墨斯潘園" />
+  <meta name="twitter:title" content="openresty&#43;redis实践 - 墨斯潘園" />
   
   <meta name="twitter:description" content="">
-  <link rel="alternate" href="http://yanwushuang.github.io/feed.xml" title="墨斯潘園" type="application/rss+xml"/>
+  
   <link rel="shortcut icon" href="img/favicon.ico"/>
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png" />
@@ -60,28 +60,212 @@
 
   </header>
   <div id="container">
-    <div id="main">
-      
-      
-      <h2 id="2017-03">2017-03</h2>
-      
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="http://yanwushuang.github.io/2017/03/07/collection-after-reading/" title="精品文章，阅后收藏" itemprop="url">
-    <h1 itemprop="name">精品文章，阅后收藏</h1>
-    <p itemprop="description">职场人性类 编码人生 [☆☆☆☆☆] 程序员分七个等级，你属于哪一级？ 技术类 基础 语言 C Go Lua Shell Python 网络 算法 数据库 架构 管理类</p>
-    <time datetime="2017-03-07 19:13:23 &#43;0800 HKT" itemprop="datePublished">2017年03月07日</time>
-  </a>
-</section>
+    <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody">
+    <header class="article-info clearfix">
+  <h1 itemprop="name">
+      <a href="http://yanwushuang.github.io/2017/03/02/openrestyredis-practices/" title="openresty&#43;redis实践" itemprop="url">openresty&#43;redis实践</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://blog.mospan.cn" title="mospan">mospan</a>
+    
+  </p>
+  <p class="article-time">
+    <time datetime="2017-03-02 11:14:08 &#43;0800 HKT" itemprop="datePublished">2017年03月02日</time>
+  </p>
+</header>
 
-        
-      <nav id="page-nav" class="clearfix">
-          
+	<div class="article-content">
+    
+    
 
+<h1 id="安装-a-id-sec-1-name-sec-1-a:38a21b9d2dd371e907c19440321d5c01">安装<a id="sec-1" name="sec-1"></a></h1>
 
+<h2 id="openresty安装-a-id-sec-1-1-name-sec-1-1-a:38a21b9d2dd371e907c19440321d5c01">openresty安装<a id="sec-1-1" name="sec-1-1"></a></h2>
 
-      </nav>
+<p>详见 <a href="https://openresty.org/cn/installation.html">openresty安装</a></p>
+
+<h2 id="redis安装-a-id-sec-1-2-name-sec-1-2-a:38a21b9d2dd371e907c19440321d5c01">redis安装<a id="sec-1-2" name="sec-1-2"></a></h2>
+
+<p>执行如下命令：</p>
+
+<pre><code>sudo apt-get update  
+sudo apt-get install redis-server
+</code></pre>
+
+<p>详见 <a href="http://www.jianshu.com/p/c8723b677304">Ubuntu安装配置Redis</a></p>
+
+<h1 id="编写api-a-id-sec-2-name-sec-2-a:38a21b9d2dd371e907c19440321d5c01">编写API<a id="sec-2" name="sec-2"></a></h1>
+
+<p>根据项目要求编写openresty+lua的增删改查API接口。</p>
+
+<h1 id="测试-a-id-sec-3-name-sec-3-a:38a21b9d2dd371e907c19440321d5c01">测试<a id="sec-3" name="sec-3"></a></h1>
+
+<h2 id="发送请求-a-id-sec-3-1-name-sec-3-1-a:38a21b9d2dd371e907c19440321d5c01">发送请求<a id="sec-3-1" name="sec-3-1"></a></h2>
+
+<p>使用curl命令发送http json请求:</p>
+
+<ol>
+<li>先写请求json</li>
+</ol>
+
+<blockquote>
+<p>root@bj94:~/dr302client# cat add.json
+{</p>
+
+<p>&ldquo;www.example.com&rdquo;: {</p>
+
+<pre><code>    &quot;sub\_domain&quot;: &quot;@&quot;,
+    &quot;record\_type&quot;: &quot;CNAME&quot;,
+    &quot;record\_line&quot;: &quot;all&quot;,
+    &quot;record\_line\_id&quot;: &quot;00000000&quot;,
+    &quot;value&quot;: &quot;all.china.qiniu.qnydns.com&quot;,
+    &quot;mx&quot;: 1,
+    &quot;ttl&quot;: 86400,
+    &quot;status&quot;: &quot;enable&quot;,
+    &quot;weight&quot;: 100
+}
+</code></pre>
+
+<p>}</p>
+</blockquote>
+
+<ol>
+<li><p>执行命令：</p>
+
+<p>curl -i -H &lsquo;content-type: application/json&rsquo; -X POST -d @add.json <a href="http://dev.mgrconfig.api.qiniudns.com/qiniu/dr302/records/add">http://dev.mgrconfig.api.qiniudns.com/qiniu/dr302/records/add</a></p></li>
+</ol>
+
+<h2 id="回复响应-a-id-sec-3-2-name-sec-3-2-a:38a21b9d2dd371e907c19440321d5c01">回复响应<a id="sec-3-2" name="sec-3-2"></a></h2>
+
+<p>根据不同返回码表示操作结果。</p>
+
+<blockquote>
+<p>root@bj94:~/dr302client# curl -i -H &lsquo;content-type: application/json&rsquo; -X POST -d @addA.json <a href="http://dev.mgrconfig.api.qiniudns.com/qiniu/dr302/records/add">http://dev.mgrconfig.api.qiniudns.com/qiniu/dr302/records/add</a>
+HTTP/1.1 200 OK
+Date: Thu, 09 Mar 2017 03:01:17 GMT
+Content-Type: text/plain
+Transfer-Encoding: chunked
+Connection: keep-alive
+Server: DR302-MGR</p>
+
+<p>{
+    &ldquo;status&rdquo;:{
+               &ldquo;created_at&rdquo;:&ldquo;2017-03-09 11:01:17&rdquo;,
+               &ldquo;code&rdquo;:0,
+               &ldquo;message&rdquo;:&ldquo;success&rdquo;
+             },
+    &ldquo;record&rdquo;:{
+               &ldquo;status&rdquo;:&ldquo;enable&rdquo;,
+               &ldquo;key&rdquo;:&ldquo;www.example.com#all&rdquo;,
+               &ldquo;name&rdquo;:&ldquo;@&rdquo;
+             }
+}</p>
+</blockquote>
+
+<h2 id="查看存储-a-id-sec-3-3-name-sec-3-3-a:38a21b9d2dd371e907c19440321d5c01">查看存储<a id="sec-3-3" name="sec-3-3"></a></h2>
+
+<p>执行命令:</p>
+
+<pre><code>(echo  &quot;select 10&quot;; echo &quot;hgetall www.example.com#all&quot;) | redis-cli -a cdnfusion -p 7648&quot;)
+</code></pre>
+
+<p>显示如下:</p>
+
+<blockquote>
+<p>root@bj94:~/dr302client# (echo  &ldquo;select 10&rdquo;; echo &ldquo;hgetall www.example.com#all&rdquo;) | redis-cli -a cdnfusion -p 7648
+OK
+1.  &ldquo;weight&rdquo;
+2.  &ldquo;20&rdquo;
+3.  &ldquo;record_type&rdquo;
+4.  &ldquo;A&rdquo;
+5.  &ldquo;record_line&rdquo;
+6.  &ldquo;all&rdquo;
+7.  &ldquo;status&rdquo;
+8.  &ldquo;enable&rdquo;
+9.  &ldquo;mx&rdquo;
+10. &ldquo;1&rdquo;
+11. &ldquo;value&rdquo;
+12. &ldquo;1.1.1.1#10|2.2.2.2#20&rdquo;
+13. &ldquo;ttl&rdquo;
+14. &ldquo;86400&rdquo;
+15. &ldquo;record_line_id&rdquo;
+16. &ldquo;00000000&rdquo;
+17. &ldquo;sub_domain&rdquo;
+18. &ldquo;@&rdquo;</p>
+</blockquote>
+
+    <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+    <div style="float:left;margin-top:0px;">
+    <img src="/img/qrcode.jpg" width="129px" height="129px"/>
+    <div style="text-align:center;">微信扫一扫</div>
     </div>
+    <div>
+    <p style="margin-top:0px;">作者：<a target="_blank" href="http://blog.mospan.cn/">mospan</a>
+    <br />微信关注：墨斯潘園
+	<br />本文出处：<a target="_blank" href="http://yanwushuang.github.io/2017/03/02/openrestyredis-practices/">http://yanwushuang.github.io/2017/03/02/openrestyredis-practices/</a>
+	<br />
+	文章版权归本人所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+	</div>
+	</div>
+
+
+	</div>
+  <footer class="article-footer clearfix">
+  
+
+<div class="article-tags">
+  <span></span>
+  
+  <a href="/tags/openresty">openresty</a>
+  
+  <a href="/tags/redis">redis</a>
+  
+</div>
+
+
+
+<div class="article-categories">
+  <span></span>
+  
+  <a class="article-category-link" href="/categories/openresty">openresty</a>
+  
+  <a class="article-category-link" href="/categories/redis">redis</a>
+  
+</div>
+
+
+
+  <div class="article-share" id="share">
+    <div data-url="http://yanwushuang.github.io/2017/03/02/openrestyredis-practices/" data-title="openresty&#43;redis实践" data-tsina="3833537679" class="share clearfix">
+    </div>
+  </div>
+</footer>
+
+	</article>
+  
+<section class="comment">
+  <div class="ds-thread" data-thread-key="http://yanwushuang.github.io/2017/03/02/openrestyredis-practices/"
+   data-title="openresty&#43;redis实践" data-url="http://yanwushuang.github.io/2017/03/02/openrestyredis-practices/"></div>
+</section>
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"mospan"};
+(function() {
+  var ds = document.createElement('script');
+  ds.type = 'text/javascript';ds.async = true;
+  ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+  ds.charset = 'UTF-8';
+  (document.getElementsByTagName('head')[0]
+  || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();
+</script>
+
+
+
+
+</div>
+
     <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
@@ -290,10 +474,6 @@
 
 
   
-<div class="rsspart">
-  <a rel="nofollow" href="http://yanwushuang.github.io/feed.xml" type="application/rss+xml" target="_blank">RSS 订阅</a>
-</div>
-
 
 </aside>
 </div>
@@ -388,6 +568,38 @@ $(document).ready(function(){
 
 <script type="text/javascript">
 $(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
   var $this = $('.share'),
       url = $this.attr('data-url'),
       encodedUrl = encodeURIComponent(url),
@@ -414,6 +626,27 @@ $(document).ready(function(){
 });
 </script>
 
+
+<link rel="stylesheet" href="http://yanwushuang.github.io/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="http://yanwushuang.github.io/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
 
 
 <script>

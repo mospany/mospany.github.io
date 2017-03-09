@@ -53,6 +53,132 @@
         </item>
         
         <item>
+            <title>openresty&#43;redis实践</title>
+            <link>http://yanwushuang.github.io/2017/03/02/openrestyredis-practices/</link>
+            <pubDate>Thu, 02 Mar 2017 11:14:08 HKT</pubDate>
+            <author>Mospan</author>
+            <guid>http://yanwushuang.github.io/2017/03/02/openrestyredis-practices/</guid>
+            <description>
+
+&lt;h1 id=&#34;安装-a-id-sec-1-name-sec-1-a:38a21b9d2dd371e907c19440321d5c01&#34;&gt;安装&lt;a id=&#34;sec-1&#34; name=&#34;sec-1&#34;&gt;&lt;/a&gt;&lt;/h1&gt;
+
+&lt;h2 id=&#34;openresty安装-a-id-sec-1-1-name-sec-1-1-a:38a21b9d2dd371e907c19440321d5c01&#34;&gt;openresty安装&lt;a id=&#34;sec-1-1&#34; name=&#34;sec-1-1&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;详见 &lt;a href=&#34;https://openresty.org/cn/installation.html&#34;&gt;openresty安装&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;redis安装-a-id-sec-1-2-name-sec-1-2-a:38a21b9d2dd371e907c19440321d5c01&#34;&gt;redis安装&lt;a id=&#34;sec-1-2&#34; name=&#34;sec-1-2&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;执行如下命令：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo apt-get update  
+sudo apt-get install redis-server
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;详见 &lt;a href=&#34;http://www.jianshu.com/p/c8723b677304&#34;&gt;Ubuntu安装配置Redis&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;编写api-a-id-sec-2-name-sec-2-a:38a21b9d2dd371e907c19440321d5c01&#34;&gt;编写API&lt;a id=&#34;sec-2&#34; name=&#34;sec-2&#34;&gt;&lt;/a&gt;&lt;/h1&gt;
+
+&lt;p&gt;根据项目要求编写openresty+lua的增删改查API接口。&lt;/p&gt;
+
+&lt;h1 id=&#34;测试-a-id-sec-3-name-sec-3-a:38a21b9d2dd371e907c19440321d5c01&#34;&gt;测试&lt;a id=&#34;sec-3&#34; name=&#34;sec-3&#34;&gt;&lt;/a&gt;&lt;/h1&gt;
+
+&lt;h2 id=&#34;发送请求-a-id-sec-3-1-name-sec-3-1-a:38a21b9d2dd371e907c19440321d5c01&#34;&gt;发送请求&lt;a id=&#34;sec-3-1&#34; name=&#34;sec-3-1&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;使用curl命令发送http json请求:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;先写请求json&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;root@bj94:~/dr302client# cat add.json
+{&lt;/p&gt;
+
+&lt;p&gt;&amp;ldquo;www.example.com&amp;rdquo;: {&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;    &amp;quot;sub\_domain&amp;quot;: &amp;quot;@&amp;quot;,
+    &amp;quot;record\_type&amp;quot;: &amp;quot;CNAME&amp;quot;,
+    &amp;quot;record\_line&amp;quot;: &amp;quot;all&amp;quot;,
+    &amp;quot;record\_line\_id&amp;quot;: &amp;quot;00000000&amp;quot;,
+    &amp;quot;value&amp;quot;: &amp;quot;all.china.qiniu.qnydns.com&amp;quot;,
+    &amp;quot;mx&amp;quot;: 1,
+    &amp;quot;ttl&amp;quot;: 86400,
+    &amp;quot;status&amp;quot;: &amp;quot;enable&amp;quot;,
+    &amp;quot;weight&amp;quot;: 100
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;执行命令：&lt;/p&gt;
+
+&lt;p&gt;curl -i -H &amp;lsquo;content-type: application/json&amp;rsquo; -X POST -d @add.json &lt;a href=&#34;http://dev.mgrconfig.api.qiniudns.com/qiniu/dr302/records/add&#34;&gt;http://dev.mgrconfig.api.qiniudns.com/qiniu/dr302/records/add&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;回复响应-a-id-sec-3-2-name-sec-3-2-a:38a21b9d2dd371e907c19440321d5c01&#34;&gt;回复响应&lt;a id=&#34;sec-3-2&#34; name=&#34;sec-3-2&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;根据不同返回码表示操作结果。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;root@bj94:~/dr302client# curl -i -H &amp;lsquo;content-type: application/json&amp;rsquo; -X POST -d @addA.json &lt;a href=&#34;http://dev.mgrconfig.api.qiniudns.com/qiniu/dr302/records/add&#34;&gt;http://dev.mgrconfig.api.qiniudns.com/qiniu/dr302/records/add&lt;/a&gt;
+HTTP/1.1 200 OK
+Date: Thu, 09 Mar 2017 03:01:17 GMT
+Content-Type: text/plain
+Transfer-Encoding: chunked
+Connection: keep-alive
+Server: DR302-MGR&lt;/p&gt;
+
+&lt;p&gt;{
+    &amp;ldquo;status&amp;rdquo;:{
+               &amp;ldquo;created_at&amp;rdquo;:&amp;ldquo;2017-03-09 11:01:17&amp;rdquo;,
+               &amp;ldquo;code&amp;rdquo;:0,
+               &amp;ldquo;message&amp;rdquo;:&amp;ldquo;success&amp;rdquo;
+             },
+    &amp;ldquo;record&amp;rdquo;:{
+               &amp;ldquo;status&amp;rdquo;:&amp;ldquo;enable&amp;rdquo;,
+               &amp;ldquo;key&amp;rdquo;:&amp;ldquo;www.example.com#all&amp;rdquo;,
+               &amp;ldquo;name&amp;rdquo;:&amp;ldquo;@&amp;rdquo;
+             }
+}&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&#34;查看存储-a-id-sec-3-3-name-sec-3-3-a:38a21b9d2dd371e907c19440321d5c01&#34;&gt;查看存储&lt;a id=&#34;sec-3-3&#34; name=&#34;sec-3-3&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;执行命令:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;(echo  &amp;quot;select 10&amp;quot;; echo &amp;quot;hgetall www.example.com#all&amp;quot;) | redis-cli -a cdnfusion -p 7648&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;显示如下:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;root@bj94:~/dr302client# (echo  &amp;ldquo;select 10&amp;rdquo;; echo &amp;ldquo;hgetall www.example.com#all&amp;rdquo;) | redis-cli -a cdnfusion -p 7648
+OK
+1.  &amp;ldquo;weight&amp;rdquo;
+2.  &amp;ldquo;20&amp;rdquo;
+3.  &amp;ldquo;record_type&amp;rdquo;
+4.  &amp;ldquo;A&amp;rdquo;
+5.  &amp;ldquo;record_line&amp;rdquo;
+6.  &amp;ldquo;all&amp;rdquo;
+7.  &amp;ldquo;status&amp;rdquo;
+8.  &amp;ldquo;enable&amp;rdquo;
+9.  &amp;ldquo;mx&amp;rdquo;
+10. &amp;ldquo;1&amp;rdquo;
+11. &amp;ldquo;value&amp;rdquo;
+12. &amp;ldquo;1.1.1.1#10|2.2.2.2#20&amp;rdquo;
+13. &amp;ldquo;ttl&amp;rdquo;
+14. &amp;ldquo;86400&amp;rdquo;
+15. &amp;ldquo;record_line_id&amp;rdquo;
+16. &amp;ldquo;00000000&amp;rdquo;
+17. &amp;ldquo;sub_domain&amp;rdquo;
+18. &amp;ldquo;@&amp;rdquo;&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+        </item>
+        
+        <item>
             <title>个人常用面试题及其参考答案</title>
             <link>http://yanwushuang.github.io/2017/03/01/personal-interview-questions</link>
             <pubDate>Wed, 01 Mar 2017 19:27:08 HKT</pubDate>
@@ -5063,58 +5189,6 @@ tags        A tags match to select entries that should contribute.  See
  &lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/my-weixin-mp-deploy-article.jpg&#34; alt=&#34;微信公众号发表文章示例&#34; title=&#34;微信公众号发表文章示例&#34; width=&#34;300&#34;/&gt;
  &lt;/div&gt;&lt;/li&gt;
 &lt;/ol&gt;
-</description>
-        </item>
-        
-        <item>
-            <title>记2015年度公司员工大会与获奖实录</title>
-            <link>http://yanwushuang.github.io/2016/01/26/2015-fastweb-outstanding-engineer/</link>
-            <pubDate>Tue, 26 Jan 2016 08:28:37 HKT</pubDate>
-            <author>Mospan</author>
-            <guid>http://yanwushuang.github.io/2016/01/26/2015-fastweb-outstanding-engineer/</guid>
-            <description>
-
-&lt;h1 id=&#34;引言:c0bb7a9ea0687dc020d58be88a53ff2e&#34;&gt;引言&lt;/h1&gt;
-
-&lt;p&gt;今年自己荣幸拿了个公司的一个奖，在此感谢下公司领导的栽培与同事的帮助，谢谢大家。&lt;/p&gt;
-
-&lt;p&gt;&lt;div align=&#34;center&#34;&gt;
-  &lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/fastweb_2015_outstanding_engineer.jpg?imageView2/1/w/1024/h/768/q/75|watermark/2/text/YmxvZy5tb3NwYW4uY24=/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10&#34; alt=&#34;奖杯图片&#34; title=&#34;奖杯图片&#34; height=&#34;800&#34; width=&#34;400&#34;/&gt;
-  &lt;/div&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;获奖感言:c0bb7a9ea0687dc020d58be88a53ff2e&#34;&gt;获奖感言&lt;/h1&gt;
-
-&lt;p&gt;大家好， 我叫mospan，家乡贵州&lt;a href=&#34;http://baike.baidu.com/link?url=sKiEHK4fN8Ym0VV1jEcRTW2FDcU-zrB2cwUNwZXpxDvzvpKx6Fdr1Oq6VWogky4jcsELiqgBcfJ31PYlFXWb_2YQafwSnF6GXmEZUh-STgcTTwCWeuvHH4_slZM5MwJAo-EhmYZE9Wu3efuXtuw-cK&#34;&gt;荔波&lt;/a&gt;， &lt;a href=&#34;http://baike.baidu.com/view/4041.htm&#34;&gt;布依族&lt;/a&gt;， 我于2014年初份来到公司，在这差不多两年的时间里，感受的公司良好的工作与技术氛围， 今天拿了这个奖觉得受宠若惊，甚至受之有愧。我目前离最牛还差很远，时时刻刻依然觉得自己还是个初学者，借此机会在这分享下我的个人数据与所思所悟，关于学习、工作与梦想。&lt;/p&gt;
-
-&lt;p&gt;在学习上，偶尔有朋友也会问我最近干嘛呢学了什么新东西了没？ 我也会像部分人一样不好意思谦逊的说随便看了一点，在这让大家了解自己与不足，我也分享下我这5年来的学习数据： 20本以上纸质书，50本以上的电子书， 2500篇的evernote笔记收藏，我觉得学习应该是一种习惯，学习如逆水行舟，不进则退，相信有量变到质变的那一天。&lt;/p&gt;
-
-&lt;p&gt;在工作上， 偶尔也有朋友抱怨，工作内容枯燥没技术含量。其实我觉得只要留心处处皆学问，即使把重复的事情每次都比上次更快更好也是一种进步。把自己的工作做好的同时关注下其他同事其他部门在做什么，也会发现里面的大有文章，帮助别人也是帮助自己，追求完美做成精品需要不断精雕细琢。&lt;/p&gt;
-
-&lt;p&gt;在梦想上，我觉得梦想是人生的灯塔， 它照亮你前行的道路。考古学家在金字塔尖只发现了两种动物的痕迹，一是雄鹰，二是蜗牛， 即使我们没有雄鹰般的先天条件优势，也可以像蜗牛一样一步一步努力的往上爬，哪怕背着重重的壳，小小的我也可以有自己的梦想。对我来说没有梦想就像行尸走肉一样，在北京不努力，不如回家种地。&lt;/p&gt;
-
-&lt;p&gt;在此&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;首先感谢公司与领导的栽培，能提供这么良好的平台、空间与机会。&lt;/strong&gt;&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;其次感谢我们团队每个成员与帮助我们的同事，谢谢你们的帮助、支持与配合。&lt;/strong&gt;&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;最后祝公司越来越好，大家工作顺利、生活顺心， 物资与精神双丰收。&lt;/strong&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;可能我说了些不适宜的话，请大家包容， 谢谢大家。&lt;/p&gt;
-
-&lt;h1 id=&#34;现场图片:c0bb7a9ea0687dc020d58be88a53ff2e&#34;&gt;现场图片&lt;/h1&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/21vianet_2016_comference_1.jpg?imageView2/1/w/1024/h/768/q/75|watermark/2/text/YmxvZy5tb3NwYW4uY24=/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10&#34; alt=&#34;会议现场图片1&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;会议现场图片1&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/21vianet_2016_comference_2.jpg?imageView2/1/w/1024/h/768/q/75|watermark/2/text/YmxvZy5tb3NwYW4uY24=/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10&#34; alt=&#34;会议现场图片2&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;会议现场图片2&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/21vianet_2016_comference_3.jpg?imageView2/1/w/1024/h/768/q/75|watermark/2/text/YmxvZy5tb3NwYW4uY24=/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10&#34; alt=&#34;会议现场图片3&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;会议现场图片3&lt;/p&gt;
 </description>
         </item>
         

@@ -5,7 +5,6 @@ description = ""
 keywords = ["openresty", "redis"]
 tags = ["openresty", "redis"]
 title = "openresty+redis practices"
-url = ""
 url = "/2017/03/02/openresty+redis-practices/"
 
 +++
@@ -22,8 +21,7 @@ url = "/2017/03/02/openresty+redis-practices/"
    详见 [[http://www.jianshu.com/p/c8723b677304][Ubuntu安装配置Redis]]
 
 * 编写API
-   根据项目要求编写openresty+lua的API接口。
-
+   根据项目要求编写openresty+lua的增删改查API接口。
 
 * 测试
 ** 发送请求
@@ -31,7 +29,7 @@ url = "/2017/03/02/openresty+redis-practices/"
   
   1. 先写请求json
   #+BEGIN_QUOTE
-  root@bj94:~/dr302client# cat set.json
+  root@bj94:~/dr302client# cat add.json
   {
 
       "www.example.com": {
@@ -50,8 +48,57 @@ url = "/2017/03/02/openresty+redis-practices/"
   #+END_QUOTE
   2. 执行命令：
   #+BEGIN_SRC sh 
-  curl -i -H 'content-type: application/json' -X POST -d @set.json http://dev.mgrconfig.api.qiniudns.com/qiniu/dr302/records/set
+  curl -i -H 'content-type: application/json' -X POST -d @add.json http://dev.mgrconfig.api.qiniudns.com/qiniu/dr302/records/add
   #+END_SRC
 ** 回复响应
    根据不同返回码表示操作结果。
-   
+   #+BEGIN_QUOTE
+   root@bj94:~/dr302client# curl -i -H 'content-type: application/json' -X POST -d @addA.json http://dev.mgrconfig.api.qiniudns.com/qiniu/dr302/records/add
+   HTTP/1.1 200 OK
+   Date: Thu, 09 Mar 2017 03:01:17 GMT
+   Content-Type: text/plain
+   Transfer-Encoding: chunked
+   Connection: keep-alive
+   Server: DR302-MGR
+
+   {
+       "status":{
+                  "created_at":"2017-03-09 11:01:17",
+                  "code":0,
+                  "message":"success"
+                },
+       "record":{
+                  "status":"enable",
+                  "key":"www.example.com#all",
+                  "name":"@"
+                }
+   }
+   #+END_QUOTE
+** 查看存储
+   执行命令:
+   #+BEGIN_SRC sh 
+   (echo  "select 10"; echo "hgetall www.example.com#all") | redis-cli -a cdnfusion -p 7648")
+   #+END_SRC
+   显示如下:
+   #+BEGIN_QUOTE
+   root@bj94:~/dr302client# (echo  "select 10"; echo "hgetall www.example.com#all") | redis-cli -a cdnfusion -p 7648
+   OK
+    1) "weight"
+    2) "20"
+    3) "record_type"
+    4) "A"
+    5) "record_line"
+    6) "all"
+    7) "status"
+    8) "enable"
+    9) "mx"
+   10) "1"
+   11) "value"
+   12) "1.1.1.1#10|2.2.2.2#20"
+   13) "ttl"
+   14) "86400"
+   15) "record_line_id"
+   16) "00000000"
+   17) "sub_domain"
+   18) "@"
+   #+END_QUOTE
