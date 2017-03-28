@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <base href="http://yanwushuang.github.io/">
-  <title>openresty&#43;redis实践 - 墨斯潘園</title>
+  <title>openresty与redis实践 - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
   <meta name="keywords" content="openresty,redis,">
   <meta name="description" content="安装 openresty安装 详见 openresty安装 redis安装 执行如下命令： sudo apt-get update sudo apt-get install redis-server 详见 Ubuntu安装配置Redis 编写API 根">
   <meta name="author" content="mospan">
-  <meta itemprop="name" content="openresty&#43;redis实践 - 墨斯潘園">
+  <meta itemprop="name" content="openresty与redis实践 - 墨斯潘園">
   <meta itemprop="description" content="安装 openresty安装 详见 openresty安装 redis安装 执行如下命令： sudo apt-get update sudo apt-get install redis-server 详见 Ubuntu安装配置Redis 编写API 根">
   <meta itemprop="image" content="http://yanwushuang.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
-  <meta name="twitter:title" content="openresty&#43;redis实践 - 墨斯潘園" />
+  <meta name="twitter:title" content="openresty与redis实践 - 墨斯潘園" />
   
   <meta name="twitter:description" content="">
   
@@ -64,7 +64,7 @@
 	<article itemprop="articleBody">
     <header class="article-info clearfix">
   <h1 itemprop="name">
-      <a href="http://yanwushuang.github.io/2017/03/02/openrestyredis-practices/" title="openresty&#43;redis实践" itemprop="url">openresty&#43;redis实践</a>
+      <a href="http://yanwushuang.github.io/2017/03/02/openresty-redis-practices/" title="openresty与redis实践" itemprop="url">openresty与redis实践</a>
   </h1>
   <p class="article-author">By
     
@@ -142,8 +142,9 @@ sudo apt-get install redis-server
 <p>根据不同返回码表示操作结果。</p>
 
 <blockquote>
-<p>root@bj94:~/dr302client# curl -i -H &lsquo;content-type: application/json&rsquo; -X POST -d @addA.json <a href="http://dev.mgrconfig.api.qiniudns.com/qiniu/dr302/records/add">http://dev.mgrconfig.api.qiniudns.com/qiniu/dr302/records/add</a>
-HTTP/1.1 200 OK
+<p>root@bj94:~/dr302client# curl -i -H &lsquo;content-type: application/json&rsquo; -X POST -d @addA.json <a href="http://dev.mgrconfig.api.qiniudns.com/qiniu/dr302/records/add">http://dev.mgrconfig.api.qiniudns.com/qiniu/dr302/records/add</a></p>
+
+<p>HTTP/1.1 200 OK
 Date: Thu, 09 Mar 2017 03:01:17 GMT
 Content-Type: text/plain
 Transfer-Encoding: chunked
@@ -168,7 +169,12 @@ Server: DR302-MGR</p>
 
 <p>执行命令:</p>
 
-<pre><code>(echo  &quot;select 10&quot;; echo &quot;hgetall www.example.com#all&quot;) | redis-cli -a cdnfusion -p 7648&quot;)
+<pre><code>(echo  &quot;select 10&quot;; echo &quot;hgetall www.example.com#all&quot;) | redis-cli -a cdnfusion -p 7648&quot;
+</code></pre>
+
+<p>避免中文乱码，加&#x2013;raw选项：</p>
+
+<pre><code>(echo  &quot;select 10&quot;; echo &quot;hgetall www.example.com#all&quot;) | redis-cli -a cdnfusion -p 7648 --raw
 </code></pre>
 
 <p>显示如下:</p>
@@ -196,6 +202,59 @@ OK
 18. &ldquo;@&rdquo;</p>
 </blockquote>
 
+<h2 id="踩过的坑-a-id-sec-3-4-name-sec-3-4-a:38a21b9d2dd371e907c19440321d5c01">踩过的坑<a id="sec-3-4" name="sec-3-4"></a></h2>
+
+<h3 id="table的深度与浅度拷贝-a-id-sec-3-4-1-name-sec-3-4-1-a:38a21b9d2dd371e907c19440321d5c01">table的深度与浅度拷贝<a id="sec-3-4-1" name="sec-3-4-1"></a></h3>
+
+<ol>
+<li><p>现象</p>
+
+<p>当通过API批量获取配置列表时，发现不同的key获取的值是一样的， 但通过redis-cli获取是不一样且正确的。</p></li>
+
+<li><p>分析</p>
+
+<p>redis存储是正确的，很有可能是中间临时存储存在覆盖的问题， 如果table每次赋值都相当于内存拷贝那样Lua的性能就会大大降低，会不会table之间赋值就像C语言一样只赋值地址或指针。经网上查找发现table存在深度与浅度拷贝的区别。详见:<a href="https://my.oschina.net/hqc17/blog/748709">Lua实现深度拷贝</a></p></li>
+
+<li><p>解决措施</p>
+
+<p>把中间的临时table变量放入当前语句块中并加local标识，猜测在当前语句块临时table可能会随时被释放掉，因此它赋值给其他作用域更大的变量时使用深拷贝。</p></li>
+</ol>
+
+<h3 id="hgetall结果与lua-table转换-a-id-sec-3-4-2-name-sec-3-4-2-a:38a21b9d2dd371e907c19440321d5c01">hgetall结果与Lua table转换<a id="sec-3-4-2" name="sec-3-4-2"></a></h3>
+
+<p>使用hgetall获取redis的内容需经转换后才能被Lua table使用。
+转换关键代码如下:</p>
+
+<pre><code> 1  local v = red:hgetall(innerk) 
+ 2  if v == nil then
+ 3      log(ERR, &quot;get redis empty key: &quot;, innerk)
+ 4      return nil
+ 5  end
+ 6  for key,val in pairs(v) do
+ 7     if key%2 ~= 0 then
+ 8        result[v[key]] = v[key+1];
+ 9     end
+10  end
+</code></pre>
+
+<h3 id="nginx-worker权限问题-a-id-sec-3-4-3-name-sec-3-4-3-a:38a21b9d2dd371e907c19440321d5c01">nginx worker权限问题<a id="sec-3-4-3" name="sec-3-4-3"></a></h3>
+
+<ol>
+<li><p>现象</p>
+
+<p>当使用init_worker_by_lua_file进行定时器任务时，发现不能打开或写入/usr/local/openresty/子目录下的文件， 而init_by_lua_file调用则正常。</p></li>
+
+<li><p>分析</p>
+
+<p>当把路径改为/tmp/目录下则运行都正常，经定位发现nginx master以root身份运行， 而nginx worker以nobody身份运行。
+查看需要读写的文件路径， 发现只有root权限才能写。</p></li>
+
+<li><p>解决措施</p>
+
+<p>1） 发现代码以&rdquo;r+&ldquo;(更新模式,保存之前的数据)模式进行读文件，需改成&rdquo;r&rdquo;只读模式。
+2） 把要写的文件路径改成其他可写，例如: chmod 777 data</p></li>
+</ol>
+
     <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
     <div style="float:left;margin-top:0px;">
     <img src="/img/qrcode.jpg" width="129px" height="129px"/>
@@ -204,7 +263,7 @@ OK
     <div>
     <p style="margin-top:0px;">作者：<a target="_blank" href="http://blog.mospan.cn/">mospan</a>
     <br />微信关注：墨斯潘園
-	<br />本文出处：<a target="_blank" href="http://yanwushuang.github.io/2017/03/02/openrestyredis-practices/">http://yanwushuang.github.io/2017/03/02/openrestyredis-practices/</a>
+	<br />本文出处：<a target="_blank" href="http://yanwushuang.github.io/2017/03/02/openresty-redis-practices/">http://yanwushuang.github.io/2017/03/02/openresty-redis-practices/</a>
 	<br />
 	文章版权归本人所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
 	</div>
@@ -238,7 +297,7 @@ OK
 
 
   <div class="article-share" id="share">
-    <div data-url="http://yanwushuang.github.io/2017/03/02/openrestyredis-practices/" data-title="openresty&#43;redis实践" data-tsina="3833537679" class="share clearfix">
+    <div data-url="http://yanwushuang.github.io/2017/03/02/openresty-redis-practices/" data-title="openresty与redis实践" data-tsina="3833537679" class="share clearfix">
     </div>
   </div>
 </footer>
@@ -246,8 +305,8 @@ OK
 	</article>
   
 <section class="comment">
-  <div class="ds-thread" data-thread-key="http://yanwushuang.github.io/2017/03/02/openrestyredis-practices/"
-   data-title="openresty&#43;redis实践" data-url="http://yanwushuang.github.io/2017/03/02/openrestyredis-practices/"></div>
+  <div class="ds-thread" data-thread-key="http://yanwushuang.github.io/2017/03/02/openresty-redis-practices/"
+   data-title="openresty与redis实践" data-url="http://yanwushuang.github.io/2017/03/02/openresty-redis-practices/"></div>
 </section>
 <script type="text/javascript">
 var duoshuoQuery = {short_name:"mospan"};
