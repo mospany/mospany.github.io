@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
   <meta name="keywords" content="openresty,redis,">
   <meta name="description" content="安装 openresty安装 详见 openresty安装 redis安装 执行如下命令： sudo apt-get update sudo apt-get install redis-server 详见 Ubuntu安装配置Redis 编写API 根">
-  <meta name="author" content="mospan">
+  
   <meta itemprop="name" content="openresty与redis实践 - 墨斯潘園">
   <meta itemprop="description" content="安装 openresty安装 详见 openresty安装 redis安装 执行如下命令： sudo apt-get update sudo apt-get install redis-server 详见 Ubuntu安装配置Redis 编写API 根">
   <meta itemprop="image" content="http://yanwushuang.github.io/img/author.jpg">
@@ -43,10 +43,6 @@
   <nav class="animated">
     <ul>
       
-      <li><a href="/">首页</a></li>
-      
-      <li><a href="/about">关于</a></li>
-      
       <li>
         <form class="search" method="get" action="https://www.google.com/search">
           <div>
@@ -68,7 +64,7 @@
   </h1>
   <p class="article-author">By
     
-      <a href="http://blog.mospan.cn" title="mospan">mospan</a>
+      <a href="http://blog.mospan.cn" title=""></a>
     
   </p>
   <p class="article-time">
@@ -80,13 +76,13 @@
     
     
 
-<h1 id="安装-a-id-sec-1-name-sec-1-a:38a21b9d2dd371e907c19440321d5c01">安装<a id="sec-1" name="sec-1"></a></h1>
+<h1 id="安装-a-id-sec-1-name-sec-1-a">安装<a id="sec-1" name="sec-1"></a></h1>
 
-<h2 id="openresty安装-a-id-sec-1-1-name-sec-1-1-a:38a21b9d2dd371e907c19440321d5c01">openresty安装<a id="sec-1-1" name="sec-1-1"></a></h2>
+<h2 id="openresty安装-a-id-sec-1-1-name-sec-1-1-a">openresty安装<a id="sec-1-1" name="sec-1-1"></a></h2>
 
 <p>详见 <a href="https://openresty.org/cn/installation.html">openresty安装</a></p>
 
-<h2 id="redis安装-a-id-sec-1-2-name-sec-1-2-a:38a21b9d2dd371e907c19440321d5c01">redis安装<a id="sec-1-2" name="sec-1-2"></a></h2>
+<h2 id="redis安装-a-id-sec-1-2-name-sec-1-2-a">redis安装<a id="sec-1-2" name="sec-1-2"></a></h2>
 
 <p>执行如下命令：</p>
 
@@ -96,13 +92,13 @@ sudo apt-get install redis-server
 
 <p>详见 <a href="http://www.jianshu.com/p/c8723b677304">Ubuntu安装配置Redis</a></p>
 
-<h1 id="编写api-a-id-sec-2-name-sec-2-a:38a21b9d2dd371e907c19440321d5c01">编写API<a id="sec-2" name="sec-2"></a></h1>
+<h1 id="编写api-a-id-sec-2-name-sec-2-a">编写API<a id="sec-2" name="sec-2"></a></h1>
 
 <p>根据项目要求编写openresty+lua的增删改查API接口。</p>
 
-<h1 id="测试-a-id-sec-3-name-sec-3-a:38a21b9d2dd371e907c19440321d5c01">测试<a id="sec-3" name="sec-3"></a></h1>
+<h1 id="测试-a-id-sec-3-name-sec-3-a">测试<a id="sec-3" name="sec-3"></a></h1>
 
-<h2 id="发送请求-a-id-sec-3-1-name-sec-3-1-a:38a21b9d2dd371e907c19440321d5c01">发送请求<a id="sec-3-1" name="sec-3-1"></a></h2>
+<h2 id="发送请求-a-id-sec-3-1-name-sec-3-1-a">发送请求<a id="sec-3-1" name="sec-3-1"></a></h2>
 
 <p>使用curl命令发送http json请求:</p>
 
@@ -137,7 +133,7 @@ sudo apt-get install redis-server
 <p>curl -i -H &lsquo;content-type: application/json&rsquo; -X POST -d @add.json <a href="http://dev.mgrconfig.api.qiniudns.com/qiniu/dr302/records/add">http://dev.mgrconfig.api.qiniudns.com/qiniu/dr302/records/add</a></p></li>
 </ol>
 
-<h2 id="回复响应-a-id-sec-3-2-name-sec-3-2-a:38a21b9d2dd371e907c19440321d5c01">回复响应<a id="sec-3-2" name="sec-3-2"></a></h2>
+<h2 id="回复响应-a-id-sec-3-2-name-sec-3-2-a">回复响应<a id="sec-3-2" name="sec-3-2"></a></h2>
 
 <p>根据不同返回码表示操作结果。</p>
 
@@ -165,7 +161,7 @@ Server: DR302-MGR</p>
 }</p>
 </blockquote>
 
-<h2 id="查看存储-a-id-sec-3-3-name-sec-3-3-a:38a21b9d2dd371e907c19440321d5c01">查看存储<a id="sec-3-3" name="sec-3-3"></a></h2>
+<h2 id="查看存储-a-id-sec-3-3-name-sec-3-3-a">查看存储<a id="sec-3-3" name="sec-3-3"></a></h2>
 
 <p>执行命令:</p>
 
@@ -202,9 +198,9 @@ OK
 18. &ldquo;@&rdquo;</p>
 </blockquote>
 
-<h2 id="踩过的坑-a-id-sec-3-4-name-sec-3-4-a:38a21b9d2dd371e907c19440321d5c01">踩过的坑<a id="sec-3-4" name="sec-3-4"></a></h2>
+<h2 id="踩过的坑-a-id-sec-3-4-name-sec-3-4-a">踩过的坑<a id="sec-3-4" name="sec-3-4"></a></h2>
 
-<h3 id="table的深度与浅度拷贝-a-id-sec-3-4-1-name-sec-3-4-1-a:38a21b9d2dd371e907c19440321d5c01">table的深度与浅度拷贝<a id="sec-3-4-1" name="sec-3-4-1"></a></h3>
+<h3 id="table的深度与浅度拷贝-a-id-sec-3-4-1-name-sec-3-4-1-a">table的深度与浅度拷贝<a id="sec-3-4-1" name="sec-3-4-1"></a></h3>
 
 <ol>
 <li><p>现象</p>
@@ -220,7 +216,7 @@ OK
 <p>把中间的临时table变量放入当前语句块中并加local标识，猜测在当前语句块临时table可能会随时被释放掉，因此它赋值给其他作用域更大的变量时使用深拷贝。</p></li>
 </ol>
 
-<h3 id="hgetall结果与lua-table转换-a-id-sec-3-4-2-name-sec-3-4-2-a:38a21b9d2dd371e907c19440321d5c01">hgetall结果与Lua table转换<a id="sec-3-4-2" name="sec-3-4-2"></a></h3>
+<h3 id="hgetall结果与lua-table转换-a-id-sec-3-4-2-name-sec-3-4-2-a">hgetall结果与Lua table转换<a id="sec-3-4-2" name="sec-3-4-2"></a></h3>
 
 <p>使用hgetall获取redis的内容需经转换后才能被Lua table使用。
 转换关键代码如下:</p>
@@ -237,7 +233,7 @@ OK
 10  end
 </code></pre>
 
-<h3 id="nginx-worker权限问题-a-id-sec-3-4-3-name-sec-3-4-3-a:38a21b9d2dd371e907c19440321d5c01">nginx worker权限问题<a id="sec-3-4-3" name="sec-3-4-3"></a></h3>
+<h3 id="nginx-worker权限问题-a-id-sec-3-4-3-name-sec-3-4-3-a">nginx worker权限问题<a id="sec-3-4-3" name="sec-3-4-3"></a></h3>
 
 <ol>
 <li><p>现象</p>
@@ -304,22 +300,6 @@ OK
 
 	</article>
   
-<section class="comment">
-  <div class="ds-thread" data-thread-key="http://yanwushuang.github.io/2017/03/02/openresty-redis-practices/"
-   data-title="openresty与redis实践" data-url="http://yanwushuang.github.io/2017/03/02/openresty-redis-practices/"></div>
-</section>
-<script type="text/javascript">
-var duoshuoQuery = {short_name:"mospan"};
-(function() {
-  var ds = document.createElement('script');
-  ds.type = 'text/javascript';ds.async = true;
-  ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-  ds.charset = 'UTF-8';
-  (document.getElementsByTagName('head')[0]
-  || document.getElementsByTagName('body')[0]).appendChild(ds);
-})();
-</script>
-
 
 
 
@@ -335,13 +315,15 @@ var duoshuoQuery = {short_name:"mospan"};
   <p class="asidetitle">分类</p>
   <ul>
     
+    <li><a href="http://yanwushuang.github.io/categories/" title=""><sup>2</sup></a></li>
+    
     <li><a href="http://yanwushuang.github.io/categories/%e4%ba%ba%e7%94%9f%e8%ae%b0%e5%bd%95" title="人生记录">人生记录<sup>1</sup></a></li>
     
-    <li><a href="http://yanwushuang.github.io/categories/%e5%b7%a5%e5%85%b7%e4%bd%bf%e7%94%a8" title="工具使用">工具使用<sup>3</sup></a></li>
+    <li><a href="http://yanwushuang.github.io/categories/%e5%b7%a5%e5%85%b7%e4%bd%bf%e7%94%a8" title="工具使用">工具使用<sup>4</sup></a></li>
     
-    <li><a href="http://yanwushuang.github.io/categories/%e6%8a%80%e6%9c%af%e6%96%87%e7%ab%a0" title="技术文章">技术文章<sup>14</sup></a></li>
+    <li><a href="http://yanwushuang.github.io/categories/%e6%8a%80%e6%9c%af%e6%96%87%e7%ab%a0" title="技术文章">技术文章<sup>20</sup></a></li>
     
-    <li><a href="http://yanwushuang.github.io/categories/%e8%af%bb%e4%b9%a6%e7%ac%94%e8%ae%b0" title="读书笔记">读书笔记<sup>2</sup></a></li>
+    <li><a href="http://yanwushuang.github.io/categories/%e8%af%bb%e4%b9%a6%e7%ac%94%e8%ae%b0" title="读书笔记">读书笔记<sup>3</sup></a></li>
     
   </ul>
 </div>
@@ -354,19 +336,21 @@ var duoshuoQuery = {short_name:"mospan"};
 	<p class="asidetitle">标签</p>
 		<ul class="clearfix">
       
-			<li><a href="http://yanwushuang.github.io/tags/dpdk" title="dpdk">dpdk<sup>2</sup></a></li>
+			<li><a href="http://yanwushuang.github.io/tags/" title=""><sup>4</sup></a></li>
       
-			<li><a href="http://yanwushuang.github.io/tags/emacs" title="emacs">emacs<sup>1</sup></a></li>
+			<li><a href="http://yanwushuang.github.io/tags/dpdk" title="dpdk">dpdk<sup>3</sup></a></li>
+      
+			<li><a href="http://yanwushuang.github.io/tags/emacs" title="emacs">emacs<sup>2</sup></a></li>
       
 			<li><a href="http://yanwushuang.github.io/tags/hugo" title="hugo">hugo<sup>2</sup></a></li>
       
-			<li><a href="http://yanwushuang.github.io/tags/openresty" title="openresty">openresty<sup>1</sup></a></li>
+			<li><a href="http://yanwushuang.github.io/tags/openresty" title="openresty">openresty<sup>2</sup></a></li>
       
-			<li><a href="http://yanwushuang.github.io/tags/org-mode" title="org-mode">org-mode<sup>1</sup></a></li>
+			<li><a href="http://yanwushuang.github.io/tags/org-mode" title="org-mode">org-mode<sup>2</sup></a></li>
       
 			<li><a href="http://yanwushuang.github.io/tags/pango" title="pango">pango<sup>2</sup></a></li>
       
-			<li><a href="http://yanwushuang.github.io/tags/redis" title="redis">redis<sup>1</sup></a></li>
+			<li><a href="http://yanwushuang.github.io/tags/redis" title="redis">redis<sup>2</sup></a></li>
       
 			<li><a href="http://yanwushuang.github.io/tags/xns" title="xns">xns<sup>1</sup></a></li>
       
@@ -382,11 +366,11 @@ var duoshuoQuery = {short_name:"mospan"};
       
 			<li><a href="http://yanwushuang.github.io/tags/%e7%8b%ac%e7%ab%8b" title="独立">独立<sup>3</sup></a></li>
       
-			<li><a href="http://yanwushuang.github.io/tags/%e8%af%bb%e4%b9%a6%e7%ac%94%e8%ae%b0" title="读书笔记">读书笔记<sup>1</sup></a></li>
+			<li><a href="http://yanwushuang.github.io/tags/%e8%af%bb%e4%b9%a6%e7%ac%94%e8%ae%b0" title="读书笔记">读书笔记<sup>2</sup></a></li>
       
 			<li><a href="http://yanwushuang.github.io/tags/%e9%82%ae%e7%ae%b1" title="邮箱">邮箱<sup>1</sup></a></li>
       
-			<li><a href="http://yanwushuang.github.io/tags/%e9%9d%a2%e8%af%95" title="面试">面试<sup>1</sup></a></li>
+			<li><a href="http://yanwushuang.github.io/tags/%e9%9d%a2%e8%af%95" title="面试">面试<sup>2</sup></a></li>
       
 		</ul>
 </div>
@@ -453,45 +437,13 @@ var duoshuoQuery = {short_name:"mospan"};
     <ul class="archive-list">
       
       
-      <li class="archive-list-item">
-        <a class="archive-list-link" href="http://yanwushuang.github.io/post/#2017-03">2017年03月</a><span class="archive-list-count">3</span>
-      </li>
-      
-      
-      <li class="archive-list-item">
-        <a class="archive-list-link" href="http://yanwushuang.github.io/post/#2016-09">2016年09月</a><span class="archive-list-count">1</span>
-      </li>
-      
-      
-      <li class="archive-list-item">
-        <a class="archive-list-link" href="http://yanwushuang.github.io/post/#2016-05">2016年05月</a><span class="archive-list-count">2</span>
-      </li>
-      
-      
-      <li class="archive-list-item">
-        <a class="archive-list-link" href="http://yanwushuang.github.io/post/#2016-03">2016年03月</a><span class="archive-list-count">2</span>
-      </li>
-      
-      
-      <li class="archive-list-item">
-        <a class="archive-list-link" href="http://yanwushuang.github.io/post/#2016-02">2016年02月</a><span class="archive-list-count">7</span>
-      </li>
-      
-      
-      <li class="archive-list-item">
-        <a class="archive-list-link" href="http://yanwushuang.github.io/post/#2016-01">2016年01月</a><span class="archive-list-count">4</span>
-      </li>
-      
-    </ul>
-
-  </div>
-
-
   
 
 <div class="tagcloudlist">
   <p class="asidetitle">标签云</p>
   <div class="tagcloudlist clearfix">
+    
+    <a href="http://yanwushuang.github.io/tags/" style="font-size: 12px;"></a>
     
     <a href="http://yanwushuang.github.io/tags/dpdk" style="font-size: 12px;">dpdk</a>
     
@@ -565,7 +517,7 @@ var duoshuoQuery = {short_name:"mospan"};
   </div>
   <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/yanwushuang/mospan-hugo-blog/tree/master/themes/hugo-panman-theme" target="_blank" title="hugo-panman-theme">hugo-panman-theme</a> © 2017
     
-    <a href="http://yanwushuang.github.io/" target="_blank" title="mospan">mospan</a>
+    <a href="http://yanwushuang.github.io/" title="墨斯潘園">墨斯潘園</a>
     
   </p>
 </div>
@@ -707,16 +659,6 @@ $(document).ready(function(){
 });
 </script>
 
-
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-  ga('create', 'UA-10147768-2', 'auto');
-  ga('send', 'pageview');
-  $('#messagesbsb').remove();
-</script>
 
 
 
