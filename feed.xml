@@ -298,7 +298,7 @@
 
 &lt;p&gt;响应如下：&lt;/p&gt;
 
-&lt;p&gt;#+BEGIN_SRC html&lt;/p&gt;
+&lt;p&gt;#+BEGIN_HTML&lt;/p&gt;
 
 &lt;p&gt;root@bj94:~/dr302client# curl http://192.168.92.94:8302/ -H &#34;host: www.example.com&#34; -v&lt;/p&gt;
 
@@ -346,7 +346,7 @@
 
 &lt;p&gt;&lt;/html&gt;&lt;/p&gt;
 
-&lt;p&gt;#+END_SRC&lt;/p&gt;
+&lt;p&gt;#+END_HTML&lt;/p&gt;
 
 &lt;h2 id=&#34;踩过的坑&#34;&gt;踩过的坑&lt;/h2&gt;
 
