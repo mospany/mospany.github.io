@@ -73,11 +73,9 @@
 
 	<div class="article-content">
     
-    
+    <h1 id="性能调优">性能调优</h1>
 
-<h1 id="性能调优-a-id-sec-1-name-sec-1-a">性能调优<a id="sec-1" name="sec-1"></a></h1>
-
-<h2 id="rte-rand-a-id-sec-1-1-name-sec-1-1-a">rte_rand()<a id="sec-1-1" name="sec-1-1"></a></h2>
+<h2 id="rte-rand">rte_rand()</h2>
 
 <ul>
 <li>现象：使用top perf -g查看时发现__drand48_iterate()所占比例达到40%以上。</li>
@@ -85,70 +83,88 @@
 <li>测试：屏蔽掉rte_rand()，性能上升了100多万。</li>
 </ul>
 
-<h1 id="faq-a-id-sec-2-name-sec-2-a">FAQ<a id="sec-2" name="sec-2"></a></h1>
+<h1 id="faq">FAQ</h1>
 
-<h2 id="打开dpdk工程makefile编译详细信息-a-id-sec-2-1-name-sec-2-1-a">打开DPDK工程Makefile编译详细信息？<a id="sec-2-1" name="sec-2-1"></a></h2>
+<h2 id="打开dpdk工程makefile编译详细信息">打开DPDK工程Makefile编译详细信息？</h2>
 
-<p>答：<br />
-1.  打开dpdk/mk/rte.sdkroot.mk文件。</p>
+<p>答：</p>
 
 <ol>
-<li><p>把变量Q赋为空。</p>
-
-<h1 id="define-q-to-or-not-q-is-used-to-prefix-all-shell-commands-to">define Q to &lsquo;@&rsquo; or not. $(Q) is used to prefix all shell commands to</h1>
-
-<h1 id="be-executed-silently">be executed silently.</h1>
-
-<p>Q=</p></li>
+<li>打开dpdk/mk/rte.sdkroot.mk文件。</li>
 </ol>
 
-<h2 id="出现这个错误-include-dpdk-rte-memcpy-h-870-2-错误-mm-storeu-si128-的第-2-个实参类型不兼容的解决办法-a-id-sec-2-2-name-sec-2-2-a">出现这个错误： include/dpdk/rte_memcpy.h:870:2: 错误：‘_mm_storeu_si128’的第 2 个实参类型不兼容的解决办法<a id="sec-2-2" name="sec-2-2"></a></h2>
+<p>#+BEGIN_SRC shell</p>
 
-<p>答：<br />
-1.  只要在自己的Makefile中增加如下两行即可。</p>
+<p># define Q to '@' or not. $(Q) is used to prefix all shell commands to</p>
 
-<pre><code>    include $(RTE_SDK)/mk/rte.vars.mk
-    include $(RTE_SDK)/mk/internal/rte.build-pre.mk
-</code></pre>
+<p># be executed silently.</p>
 
-<h2 id="在虚拟机中跑dpdk-网卡接收不正常问题-a-id-sec-2-3-name-sec-2-3-a">在虚拟机中跑DPDK，网卡接收不正常问题。<a id="sec-2-3" name="sec-2-3"></a></h2>
+<p>Q=</p>
 
-<h3 id="现象-a-id-sec-2-3-1-name-sec-2-3-1-a">现象<a id="sec-2-3-1" name="sec-2-3-1"></a></h3>
+<p>#+END_SRC</p>
+
+<ol>
+<li>把变量Q赋为空。</li>
+</ol>
+
+<h2 id="出现这个错误-include-dpdk-rte-memcpy-h-870-2-错误-mm-storeu-si128-的第-2-个实参类型不兼容的解决办法">出现这个错误： include/dpdk/rte_memcpy.h:870:2: 错误：‘_mm_storeu_si128’的第 2 个实参类型不兼容的解决办法</h2>
+
+<p>答：</p>
+
+<p>#+BEGIN_SRC shell</p>
+
+<p>include $(RTE_SDK)/mk/rte.vars.mk</p>
+
+<p>include $(RTE_SDK)/mk/internal/rte.build-pre.mk</p>
+
+<p>#+END_SRC</p>
+
+<ol>
+<li>只要在自己的Makefile中增加如下两行即可。</li>
+</ol>
+
+<h2 id="在虚拟机中跑dpdk-网卡接收不正常问题">在虚拟机中跑DPDK，网卡接收不正常问题。</h2>
+
+<h3 id="现象">现象</h3>
 
 <p>虚拟出来的网卡只收到了少量的ARP包，并且QANS可以响应ARP请求成功，但收不到icmp与DNS包等。</p>
 
-<h3 id="调试过程-a-id-sec-2-3-2-name-sec-2-3-2-a">调试过程<a id="sec-2-3-2" name="sec-2-3-2"></a></h3>
+<h3 id="调试过程">调试过程</h3>
+
+<h3 id="原因">原因</h3>
+
+<p>使用虚拟机创建出的KNI虚拟机网卡，每次重启后会随机变化并且与物理网卡不一致，到时ARP学习不正常。</p>
+
+<h3 id="解决办法">解决办法</h3>
+
+<p>在KNI创建虚拟机网卡成功后，使用命令: ifconfig XX hw ether XX:XX:XX:XX:XX:XX 进行配置成物理网卡MAC即可。</p>
 
 <ol>
 <li>虚拟网卡虚拟出来的是intel 82540EM网卡。</li>
 <li>查看DPDK官方支持网卡列表，支持intel 82540，但不知道与82540EM有哪些细微差别。</li>
 <li>尝试了virtual下可配的虚拟网卡(82545em，82543gc, 82545em，virtio-net)，无一完全成功。</li>
-<li>网卡流量统计，确实只收到了少量与arp包数等同的包(一直ping了10多分钟)。</li>
+<li>网卡流量统计，确实只收到了少量与arp包数等同的包(一直ping了10多分钟)。 </li>
 <li>查看了KNI创建的虚拟网卡发现每次启动MAC地址都随机的变化，查看了官方文档与网上结论说有些时候网卡MAC会随机变化，但没有说具体原因情况。</li>
 <li>使用DPDK本身提供的接口rte_eth_macaddr_get()进行读取，发现与物理网卡一致而与KNI创建出的虚拟网卡不一致。</li>
 </ol>
 
-<h3 id="原因-a-id-sec-2-3-3-name-sec-2-3-3-a">原因<a id="sec-2-3-3" name="sec-2-3-3"></a></h3>
+<h2 id="出现igb-uio-unknown-symbol-uio-unregister-device的解决办法">出现igb_uio: Unknown symbol uio_unregister_device的解决办法？</h2>
 
-<p>使用虚拟机创建出的KNI虚拟机网卡，每次重启后会随机变化并且与物理网卡不一致，到时ARP学习不正常。</p>
+<p>答：</p>
 
-<h3 id="解决办法-a-id-sec-2-3-4-name-sec-2-3-4-a">解决办法<a id="sec-2-3-4" name="sec-2-3-4"></a></h3>
+<p>在dpdk/lib/librte_eal/linuxapp/igb_uio/Makefile中添加如下行：</p>
 
-<p>在KNI创建虚拟机网卡成功后，使用命令: ifconfig XX hw ether XX:XX:XX:XX:XX:XX 进行配置成物理网卡MAC即可。</p>
+<p>#+BEGIN_SRC shell</p>
 
-<h2 id="出现igb-uio-unknown-symbol-uio-unregister-device的解决办法-a-id-sec-2-4-name-sec-2-4-a">出现igb_uio: Unknown symbol uio_unregister_device的解决办法？<a id="sec-2-4" name="sec-2-4"></a></h2>
+<p>KBUILD_EXTRA_SYMBOLS=/usr/src/linux-headers-`uname -r`/Module.symvers</p>
 
-<p>答：<br />
-   在dpdk/lib/librte_eal/linuxapp/igb_uio/Makefile中添加如下行：</p>
+<p>#+END_SRC</p>
 
-<pre><code>KBUILD_EXTRA_SYMBOLS=/usr/src/linux-headers-`uname -r`/Module.symvers
-</code></pre>
-
-<h2 id="使用vmware-exsi虚拟出来的vmnet3类型网卡不能绑定gib网卡将会系统挂掉的解决办法-a-id-sec-2-5-name-sec-2-5-a">使用vmware EXSI虚拟出来的vmnet3类型网卡不能绑定gib网卡将会系统挂掉的解决办法。<a id="sec-2-5" name="sec-2-5"></a></h2>
+<h2 id="使用vmware-exsi虚拟出来的vmnet3类型网卡不能绑定gib网卡将会系统挂掉的解决办法">使用vmware EXSI虚拟出来的vmnet3类型网卡不能绑定gib网卡将会系统挂掉的解决办法。</h2>
 
 <p>答：在vmware中换成E1000类型网卡即可正常。</p>
 
-<h2 id="在最小ubuntu-16-04系统下要运行dpdk进程需安装文件列表-a-id-sec-2-6-name-sec-2-6-a">在最小Ubuntu 16.04系统下要运行dpdk进程需安装文件列表。<a id="sec-2-6" name="sec-2-6"></a></h2>
+<h2 id="在最小ubuntu-16-04系统下要运行dpdk进程需安装文件列表">在最小Ubuntu 16.04系统下要运行dpdk进程需安装文件列表。</h2>
 
 <p>答: 只要安装如下软件即可。</p>
 
@@ -240,11 +256,11 @@
     
     <li><a href="http://yanwushuang.github.io/categories/%e4%ba%ba%e7%94%9f%e8%ae%b0%e5%bd%95" title="人生记录">人生记录<sup>1</sup></a></li>
     
-    <li><a href="http://yanwushuang.github.io/categories/%e5%b7%a5%e5%85%b7%e4%bd%bf%e7%94%a8" title="工具使用">工具使用<sup>4</sup></a></li>
+    <li><a href="http://yanwushuang.github.io/categories/%e5%b7%a5%e5%85%b7%e4%bd%bf%e7%94%a8" title="工具使用">工具使用<sup>3</sup></a></li>
     
-    <li><a href="http://yanwushuang.github.io/categories/%e6%8a%80%e6%9c%af%e6%96%87%e7%ab%a0" title="技术文章">技术文章<sup>20</sup></a></li>
+    <li><a href="http://yanwushuang.github.io/categories/%e6%8a%80%e6%9c%af%e6%96%87%e7%ab%a0" title="技术文章">技术文章<sup>16</sup></a></li>
     
-    <li><a href="http://yanwushuang.github.io/categories/%e8%af%bb%e4%b9%a6%e7%ac%94%e8%ae%b0" title="读书笔记">读书笔记<sup>3</sup></a></li>
+    <li><a href="http://yanwushuang.github.io/categories/%e8%af%bb%e4%b9%a6%e7%ac%94%e8%ae%b0" title="读书笔记">读书笔记<sup>2</sup></a></li>
     
   </ul>
 </div>
@@ -259,19 +275,19 @@
       
 			<li><a href="http://yanwushuang.github.io/tags/" title=""><sup>4</sup></a></li>
       
-			<li><a href="http://yanwushuang.github.io/tags/dpdk" title="dpdk">dpdk<sup>3</sup></a></li>
+			<li><a href="http://yanwushuang.github.io/tags/dpdk" title="dpdk">dpdk<sup>2</sup></a></li>
       
-			<li><a href="http://yanwushuang.github.io/tags/emacs" title="emacs">emacs<sup>2</sup></a></li>
+			<li><a href="http://yanwushuang.github.io/tags/emacs" title="emacs">emacs<sup>1</sup></a></li>
       
 			<li><a href="http://yanwushuang.github.io/tags/hugo" title="hugo">hugo<sup>2</sup></a></li>
       
-			<li><a href="http://yanwushuang.github.io/tags/openresty" title="openresty">openresty<sup>2</sup></a></li>
+			<li><a href="http://yanwushuang.github.io/tags/openresty" title="openresty">openresty<sup>1</sup></a></li>
       
-			<li><a href="http://yanwushuang.github.io/tags/org-mode" title="org-mode">org-mode<sup>2</sup></a></li>
+			<li><a href="http://yanwushuang.github.io/tags/org-mode" title="org-mode">org-mode<sup>1</sup></a></li>
       
 			<li><a href="http://yanwushuang.github.io/tags/pango" title="pango">pango<sup>2</sup></a></li>
       
-			<li><a href="http://yanwushuang.github.io/tags/redis" title="redis">redis<sup>2</sup></a></li>
+			<li><a href="http://yanwushuang.github.io/tags/redis" title="redis">redis<sup>1</sup></a></li>
       
 			<li><a href="http://yanwushuang.github.io/tags/xns" title="xns">xns<sup>1</sup></a></li>
       
@@ -287,11 +303,11 @@
       
 			<li><a href="http://yanwushuang.github.io/tags/%e7%8b%ac%e7%ab%8b" title="独立">独立<sup>3</sup></a></li>
       
-			<li><a href="http://yanwushuang.github.io/tags/%e8%af%bb%e4%b9%a6%e7%ac%94%e8%ae%b0" title="读书笔记">读书笔记<sup>2</sup></a></li>
+			<li><a href="http://yanwushuang.github.io/tags/%e8%af%bb%e4%b9%a6%e7%ac%94%e8%ae%b0" title="读书笔记">读书笔记<sup>1</sup></a></li>
       
 			<li><a href="http://yanwushuang.github.io/tags/%e9%82%ae%e7%ae%b1" title="邮箱">邮箱<sup>1</sup></a></li>
       
-			<li><a href="http://yanwushuang.github.io/tags/%e9%9d%a2%e8%af%95" title="面试">面试<sup>2</sup></a></li>
+			<li><a href="http://yanwushuang.github.io/tags/%e9%9d%a2%e8%af%95" title="面试">面试<sup>1</sup></a></li>
       
 		</ul>
 </div>
