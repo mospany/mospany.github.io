@@ -34,6 +34,48 @@
 
 &lt;p&gt;详见 &lt;a href=&#34;http://www.jianshu.com/p/c8723b677304&#34; title=&#34;Ubuntu安装配置Redis&#34;&gt;Ubuntu安装配置Redis&lt;/a&gt;&lt;/p&gt;
 
+&lt;h2 id=&#34;redis启动&#34;&gt;redis启动&lt;/h2&gt;
+
+&lt;p&gt;执行如下命令：&lt;/p&gt;
+
+&lt;p&gt;#+BEGIN_SRC sh&lt;/p&gt;
+
+&lt;p&gt;redis-server /etc/redis/redis-master.conf&lt;/p&gt;
+
+&lt;p&gt;#+END_SRC&lt;/p&gt;
+
+&lt;p&gt;如需启动redis slave，只需把原有配置修改如下几行即可。&lt;/p&gt;
+
+&lt;p&gt;#+BEGIN_SRC sh&lt;/p&gt;
+
+&lt;p&gt;slaveof 192.168.1.1 7648&lt;/p&gt;
+
+&lt;p&gt;slave-priority 100&lt;/p&gt;
+
+&lt;p&gt;slave-read-only yes&lt;/p&gt;
+
+&lt;p&gt;slave-serve-stale-data yes&lt;/p&gt;
+
+&lt;p&gt;#+END_SRC&lt;/p&gt;
+
+&lt;h2 id=&#34;openresty启动&#34;&gt;openresty启动&lt;/h2&gt;
+
+&lt;p&gt;执行如下命令：&lt;/p&gt;
+
+&lt;p&gt;#+BEGIN_SRC sh&lt;/p&gt;
+
+&lt;p&gt;root@bj94:/usr/local/openresty/nginx# pwd&lt;/p&gt;
+
+&lt;p&gt;/usr/local/openresty/nginx&lt;/p&gt;
+
+&lt;p&gt;root@bj94:/usr/local/openresty/nginx# ./sbin/nginx -p `pwd` -c conf/nginx.conf&lt;/p&gt;
+
+&lt;p&gt;nginx: [alert] lua_code_cache is off; this will hurt performance in /usr/local/openresty/nginx/conf/nginx.conf:29&lt;/p&gt;
+
+&lt;p&gt;root@bj94:/usr/local/openresty/nginx#&lt;/p&gt;
+
+&lt;p&gt;#+END_SRC&lt;/p&gt;
+
 &lt;h1 id=&#34;编写api&#34;&gt;编写API&lt;/h1&gt;
 
 &lt;p&gt;根据项目要求编写openresty+lua的增删改查API接口。&lt;/p&gt;
@@ -199,6 +241,70 @@
 &lt;p&gt;18) &#34;@&#34;&lt;/p&gt;
 
 &lt;p&gt;#+END_QUOTE&lt;/p&gt;
+
+&lt;h2 id=&#34;302测试&#34;&gt;302测试&lt;/h2&gt;
+
+&lt;h3 id=&#34;请求&#34;&gt;请求&lt;/h3&gt;
+
+&lt;p&gt;#+BEGIN_SRC sh&lt;/p&gt;
+
+&lt;p&gt;curl http://192.168.92.94:8302/ -H &#34;host: www.example.com&#34;&lt;/p&gt;
+
+&lt;p&gt;#+END_SRC&lt;/p&gt;
+
+&lt;h2 id=&#34;响应&#34;&gt;响应&lt;/h2&gt;
+
+&lt;p&gt;响应如下：&lt;/p&gt;
+
+&lt;p&gt;#+BEGIN_SRC html&lt;/p&gt;
+
+&lt;p&gt;root@bj94:~/dr302client# curl http://192.168.92.94:8302/ -H &#34;host: www.example.com&#34; -v&lt;/p&gt;
+
+&lt;p&gt;*   Trying 192.168.92.94...&lt;/p&gt;
+
+&lt;p&gt;* Connected to 192.168.92.94 (192.168.92.94) port 8302 (#0)&lt;/p&gt;
+
+&lt;p&gt;&gt; GET / HTTP/1.1&lt;/p&gt;
+
+&lt;p&gt;&gt; host: www.example.com&lt;/p&gt;
+
+&lt;p&gt;&gt; User-Agent: curl/7.47.0&lt;/p&gt;
+
+&lt;p&gt;&gt; Accept: &lt;strong&gt;/&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt; HTTP/1.1 302 Moved Temporarily&lt;/p&gt;
+
+&lt;p&gt;&lt; Date: Fri, 07 Apr 2017 02:30:50 GMT&lt;/p&gt;
+
+&lt;p&gt;&lt; Content-Type: text/html&lt;/p&gt;
+
+&lt;p&gt;&lt; Content-Length: 167&lt;/p&gt;
+
+&lt;p&gt;&lt; Connection: keep-alive&lt;/p&gt;
+
+&lt;p&gt;&lt; Server: DR302-NODE&lt;/p&gt;
+
+&lt;p&gt;&lt; Location: http://2.2.2.2/www.example.com/&lt;/p&gt;
+
+&lt;p&gt;&lt;&lt;/p&gt;
+
+&lt;p&gt;&lt;html&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;head&gt;&lt;title&gt;302 Found&lt;/title&gt;&lt;/head&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;body bgcolor=&#34;white&#34;&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;center&gt;&lt;h1&gt;302 Found&lt;/h1&gt;&lt;/center&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;hr&gt;&lt;center&gt;openresty/1.11.2.1&lt;/center&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;/body&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;/html&gt;&lt;/p&gt;
+
+&lt;p&gt;#+END_SRC&lt;/p&gt;
 
 &lt;h2 id=&#34;踩过的坑&#34;&gt;踩过的坑&lt;/h2&gt;
 
