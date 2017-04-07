@@ -348,6 +348,50 @@
 
 &lt;p&gt;#+END_HTML&lt;/p&gt;
 
+&lt;h2 id=&#34;性能测试&#34;&gt;性能测试&lt;/h2&gt;
+
+&lt;p&gt;使用ab测试DR302服务器的性能。&lt;/p&gt;
+
+&lt;h3 id=&#34;测试步骤&#34;&gt;测试步骤&lt;/h3&gt;
+
+&lt;p&gt;1） 由于ab不支持参数修改HOST字段，需把要测试的域名IP对设置到/etc/hosts中。如: 192.168.92.94 www.example.com&lt;/p&gt;
+
+&lt;p&gt;2)  ab测试输出信息，查看项“ Requests per second”。&lt;/p&gt;
+
+&lt;p&gt;a) 带有keepalive的性能为80000QPS。&lt;/p&gt;
+
+&lt;p&gt;ab -kc 1024 -n 1000000 http://www.example.com:8302/&lt;/p&gt;
+
+&lt;p&gt;b) 不带keepalive的性能为16000QPS。&lt;/p&gt;
+
+&lt;p&gt;ab -c 1024 -n 1000000 http://www.example.com:8302/&lt;/p&gt;
+
+&lt;h3 id=&#34;优化点&#34;&gt;优化点&lt;/h3&gt;
+
+&lt;p&gt;1) 关闭日志记录&lt;/p&gt;
+
+&lt;p&gt;#+BEGIN_QUOTE&lt;/p&gt;
+
+&lt;p&gt;# access_log /usr/local/openresty/nginx/logs/dr302_node_access.log main;&lt;/p&gt;
+
+&lt;p&gt;access_log off;&lt;/p&gt;
+
+&lt;p&gt;error_log  /usr/local/openresty/nginx/logs/dr302_node_error.log error;&lt;/p&gt;
+
+&lt;p&gt;#+END_QUOTE&lt;/p&gt;
+
+&lt;p&gt;2) 打开缓存&lt;/p&gt;
+
+&lt;p&gt;把nginx.conf里的这行打开或加上。&lt;/p&gt;
+
+&lt;p&gt;lua_code_cache on;&lt;/p&gt;
+
+&lt;p&gt;3）使用ulimit -n 65535设置open files数。&lt;/p&gt;
+
+&lt;p&gt;4) 设置nginx的进程数与本服务器CPU匹配的值，如: 8&lt;/p&gt;
+
+&lt;p&gt;5) 关闭掉一些耗性能的进程。&lt;/p&gt;
+
 &lt;h2 id=&#34;踩过的坑&#34;&gt;踩过的坑&lt;/h2&gt;
 
 &lt;h3 id=&#34;table的深度与浅度拷贝&#34;&gt;table的深度与浅度拷贝&lt;/h3&gt;
