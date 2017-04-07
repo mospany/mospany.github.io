@@ -22,11 +22,6 @@
     </url>
     
     <url>
-        <loc>http://yanwushuang.github.io/post/2016/2016-08-29-golang-learning-notes/</loc>
-        <lastmod>2016-08-29T17:37:54+08:00</lastmod>
-    </url>
-    
-    <url>
         <loc>http://yanwushuang.github.io/2016/05/29/org-manual/</loc>
         <lastmod>2016-05-29T09:33:53+08:00</lastmod>
     </url>
@@ -99,18 +94,6 @@
     <url>
         <loc>http://yanwushuang.github.io/about/</loc>
         <lastmod>2016-01-01T08:55:31+08:00</lastmod>
-    </url>
-    
-    <url>
-        <loc>http://yanwushuang.github.io/tags/</loc>
-        <lastmod>2016-08-29T17:37:54+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://yanwushuang.github.io/categories/</loc>
-        <lastmod>2016-08-29T17:37:54+08:00</lastmod>
-        <priority>0</priority>
     </url>
     
     <url>
