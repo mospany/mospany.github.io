@@ -6,51 +6,7 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Tue, 07 Mar 2017 19:13:23 HKT</updated>
-        
-        <item>
-            <title>精品文章，阅后收藏</title>
-            <link>http://yanwushuang.github.io/2017/03/07/collection-after-reading/</link>
-            <pubDate>Tue, 07 Mar 2017 19:13:23 HKT</pubDate>
-            <author>Mospan</author>
-            <guid>http://yanwushuang.github.io/2017/03/07/collection-after-reading/</guid>
-            <description>
-
-&lt;h1 id=&#34;职场人性类-a-id-sec-1-name-sec-1-a&#34;&gt;职场人性类&lt;a id=&#34;sec-1&#34; name=&#34;sec-1&#34;&gt;&lt;/a&gt;&lt;/h1&gt;
-
-&lt;h2 id=&#34;编码人生-a-id-sec-1-1-name-sec-1-1-a&#34;&gt;编码人生&lt;a id=&#34;sec-1-1&#34; name=&#34;sec-1-1&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;[☆☆☆☆☆] &lt;a href=&#34;http://url.cn/4AaxYwK&#34;&gt;程序员分七个个等级，你属于哪一级？&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;技术类-a-id-sec-2-name-sec-2-a&#34;&gt;技术类&lt;a id=&#34;sec-2&#34; name=&#34;sec-2&#34;&gt;&lt;/a&gt;&lt;/h1&gt;
-
-&lt;h2 id=&#34;基础-a-id-sec-2-1-name-sec-2-1-a&#34;&gt;基础&lt;a id=&#34;sec-2-1&#34; name=&#34;sec-2-1&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
-
-&lt;h2 id=&#34;语言-a-id-sec-2-2-name-sec-2-2-a&#34;&gt;语言&lt;a id=&#34;sec-2-2&#34; name=&#34;sec-2-2&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
-
-&lt;h3 id=&#34;c-a-id-sec-2-2-1-name-sec-2-2-1-a&#34;&gt;C&lt;a id=&#34;sec-2-2-1&#34; name=&#34;sec-2-2-1&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
-
-&lt;h3 id=&#34;go-a-id-sec-2-2-2-name-sec-2-2-2-a&#34;&gt;Go&lt;a id=&#34;sec-2-2-2&#34; name=&#34;sec-2-2-2&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
-
-&lt;h3 id=&#34;lua-a-id-sec-2-2-3-name-sec-2-2-3-a&#34;&gt;Lua&lt;a id=&#34;sec-2-2-3&#34; name=&#34;sec-2-2-3&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
-
-&lt;h3 id=&#34;shell-a-id-sec-2-2-4-name-sec-2-2-4-a&#34;&gt;Shell&lt;a id=&#34;sec-2-2-4&#34; name=&#34;sec-2-2-4&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
-
-&lt;h3 id=&#34;python-a-id-sec-2-2-5-name-sec-2-2-5-a&#34;&gt;Python&lt;a id=&#34;sec-2-2-5&#34; name=&#34;sec-2-2-5&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
-
-&lt;h2 id=&#34;网络-a-id-sec-2-3-name-sec-2-3-a&#34;&gt;网络&lt;a id=&#34;sec-2-3&#34; name=&#34;sec-2-3&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
-
-&lt;h2 id=&#34;算法-a-id-sec-2-4-name-sec-2-4-a&#34;&gt;算法&lt;a id=&#34;sec-2-4&#34; name=&#34;sec-2-4&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
-
-&lt;h2 id=&#34;数据库-a-id-sec-2-5-name-sec-2-5-a&#34;&gt;数据库&lt;a id=&#34;sec-2-5&#34; name=&#34;sec-2-5&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
-
-&lt;h2 id=&#34;架构-a-id-sec-2-6-name-sec-2-6-a&#34;&gt;架构&lt;a id=&#34;sec-2-6&#34; name=&#34;sec-2-6&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
-
-&lt;h1 id=&#34;管理类-a-id-sec-3-name-sec-3-a&#34;&gt;管理类&lt;a id=&#34;sec-3&#34; name=&#34;sec-3&#34;&gt;&lt;/a&gt;&lt;/h1&gt;
-</description>
-        </item>
+        <updated>Thu, 02 Mar 2017 11:14:08 HKT</updated>
         
         <item>
             <title>openresty与redis实践</title>
@@ -8517,6 +8473,53 @@ tags        A tags match to select entries that should contribute.  See
 &lt;p&gt;信息获取之后是信息处理和沉淀，&lt;strong&gt;写作&lt;/strong&gt;是整理思维、沉淀信息、持续积累最有效的手段.&lt;/p&gt;
 
 &lt;p&gt;原文链接： &lt;a href=&#34;https://mp.weixin.qq.com/s?__biz=MzA5Nzc4OTA1Mw==&amp;amp;mid=408703236&amp;amp;idx=1&amp;amp;sn=3f78abcca906d5edee06ff85b2d22416&amp;amp;scene=0&amp;amp;pass_ticket=A0dLGv2XaHq5JIsCyn47o4bR8cTHUT%2Fz%2Bw%2FnkDHjlymUDcjhRu8i8ZMFbprl4KKg&#34;&gt;老卫聊架构：做技术，应该先有深度再谈广度&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        
+        <item>
+            <title>我的博客演进之路(03)--添加微信公众号</title>
+            <link>http://yanwushuang.github.io/2016/01/25/my-blog-add-weixin-mp/</link>
+            <pubDate>Sat, 06 Feb 2016 23:24:08 HKT</pubDate>
+            <author>Mospan</author>
+            <guid>http://yanwushuang.github.io/2016/01/25/my-blog-add-weixin-mp/</guid>
+            <description>
+
+&lt;h1 id=&#34;引言&#34;&gt;引言&lt;/h1&gt;
+
+&lt;p&gt;为了符合当今移动互联网的潮流，也让自己更加了解微信的基础知识与推广运作，我也把自己在博客上写的文章也推送到微信公众号，以便想了解的人提供另外一种阅读方式。
+   如想了解请关注我的微信公众号：墨斯潘園。&lt;/p&gt;
+
+&lt;h1 id=&#34;申请&#34;&gt;申请&lt;/h1&gt;
+
+&lt;p&gt;首先， 为了使用微信公众号先登陆&lt;a href=&#34;https://mp.weixin.qq.com/&#34;&gt;微信公众平台&lt;/a&gt; 进行账号注册。&lt;/p&gt;
+
+&lt;p&gt;其次， 使用账号登陆后按照流程进行微信公众号的申请、登记与认证即可。&lt;/p&gt;
+
+&lt;p&gt;最后，将得到自己的微信公众号管理后台面板，界面显示如下：
+  &lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/my-weixin-mp-console.png&#34; alt=&#34;我的微信公众号控制台&#34; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;使用&#34;&gt;使用&lt;/h1&gt;
+
+&lt;ol&gt;
+&lt;li&gt;在微信公众号控制台添加”头像“与公众号名称(如: 墨斯潘園)等，下载生成的二维码。&lt;/li&gt;
+&lt;li&gt;将公众号二维码图片替换博客源码中的文件./themes/rapid/static/public/qrcode.jpg。&lt;/li&gt;
+&lt;li&gt;使用手机登陆微信扫描或查找公众号名称（如：墨斯潘園)后点击关注即可显示如下界面：
+ &lt;div align=&#34;center&#34;&gt;
+ &lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/my-weixin-mp-in-mobile.jpg&#34; alt=&#34;关注我的微信公众号&#34; title=&#34;手机关注我的微信公众号显示&#34; width=&#34;300&#34;/&gt;
+ &lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h1 id=&#34;发表文章&#34;&gt;发表文章&lt;/h1&gt;
+
+&lt;ol&gt;
+&lt;li&gt;在chrome或firefox浏览器安装&lt;a href=&#34;http://markdown-here.com/&#34;&gt;markdown here&lt;/a&gt; 插件。&lt;/li&gt;
+&lt;li&gt;登陆微信公众平台控制后台的”群发消息“-&amp;gt;”新建群发消息“-&amp;gt;”新建图文消息“进行markdown格式编辑或直接拷贝好的markdown文章过来。&lt;/li&gt;
+&lt;li&gt;按住快捷键Ctrl+Alt+M，对Markdown文章进行渲染。&lt;/li&gt;
+&lt;li&gt;编辑好后，点击”保存并群发“即可, 效果见如下：
+ &lt;div align=&#34;center&#34;&gt;
+ &lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/my-weixin-mp-deploy-article.jpg&#34; alt=&#34;微信公众号发表文章示例&#34; title=&#34;微信公众号发表文章示例&#34; width=&#34;300&#34;/&gt;
+ &lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
 </description>
         </item>
         
