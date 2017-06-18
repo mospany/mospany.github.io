@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Redis on 墨斯潘園</title>
+        <link>http://yanwushuang.github.io/tags/redis/</link>
+        <language>zh-CN</language>
+        <author>Mospan</author>
+        <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
+        <updated>Thu, 02 Mar 2017 11:14:08 HKT</updated>
+        
+        <item>
+            <title>openresty&#43;redis实践记录</title>
+            <link>http://yanwushuang.github.io/2017/03/02/openresty&#43;redis-practices/</link>
+            <pubDate>Thu, 02 Mar 2017 11:14:08 HKT</pubDate>
+            <author>Mospan</author>
+            <guid>http://yanwushuang.github.io/2017/03/02/openresty&#43;redis-practices/</guid>
+            <description>&lt;h1 id=&#34;安装&#34;&gt;安装&lt;/h1&gt;
+
+&lt;h2 id=&#34;openresty安装&#34;&gt;openresty安装&lt;/h2&gt;
+
+&lt;h2 id=&#34;redis安装&#34;&gt;redis安装&lt;/h2&gt;
+
+&lt;h2 id=&#34;redis启动&#34;&gt;redis启动&lt;/h2&gt;
+
+&lt;h2 id=&#34;openresty启动&#34;&gt;openresty启动&lt;/h2&gt;
+
+&lt;p&gt;详见 &lt;a href=&#34;https://openresty.org/cn/installation.html&#34; title=&#34;openresty安装&#34;&gt;openresty安装&lt;/a&gt;
+   执行如下命令：
+   #+BEGIN_SRC sh 
+   sudo apt-get update  
+   sudo apt-get install redis-server
+   #+END_SRC
+   详见 &lt;a href=&#34;http://www.jianshu.com/p/c8723b677304&#34; title=&#34;Ubuntu安装配置Redis&#34;&gt;Ubuntu安装配置Redis&lt;/a&gt;
+   执行如下命令：
+   #+BEGIN_SRC sh
+   redis-server /etc/redis/redis-master.conf
+   #+END_SRC 
+   如需启动redis slave，只需把原有配置修改如下几行即可。
+   #+BEGIN_SRC sh
+   slaveof 192.168.1.1 7648
+   slave-priority 100
+   slave-read-only yes
+   slave-serve-stale-data yes
+   #+END_SRC
+   执行如下命令：
+   #+BEGIN_SRC sh
+   root@bj94:/usr/local/openresty/nginx# pwd
+          /usr/local/openresty/nginx
+   root@bj94:/usr/local/openresty/nginx# ./sbin/nginx -p `pwd` -c conf/nginx.conf
+            nginx: [alert] lua_code_cache is off; this will hurt performance in /usr/local/openresty/nginx/conf/nginx.conf:29
+   root@bj94:/usr/local/openresty/nginx# 
+   #+END_SRC&lt;/p&gt;
+
+&lt;h1 id=&#34;编写api&#34;&gt;编写API&lt;/h1&gt;
+
+&lt;p&gt;根据项目要求编写openresty+lua的增删改查API接口。&lt;/p&gt;
+
+&lt;h1 id=&#34;测试&#34;&gt;测试&lt;/h1&gt;
+
+&lt;h2 id=&#34;发送请求&#34;&gt;发送请求&lt;/h2&gt;
+
+&lt;p&gt;使用curl命令发送http json请求:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;先写请求json&lt;/li&gt;
+  #+BEGIN_QUOTE
+  root@bj94:~/dr302client# cat add.json
+  {
+&lt;/ol&gt;
+
+&lt;p&gt;&#34;www.example.com&#34;: {&lt;/p&gt;
+
+&lt;h2 id=&#34;回复响应&#34;&gt;回复响应&lt;/h2&gt;
+
+&lt;ol&gt;
+          &#34;sub_domain&#34;: &#34;@&#34;,
+          &#34;record_type&#34;: &#34;CNAME&#34;,
+          &#34;record_line&#34;: &#34;all&#34;,
+          &#34;record_line_id&#34;: &#34;00000000&#34;,
+          &#34;value&#34;: &#34;all.china.qiniu.qnydns.com&#34;,
+          &#34;mx&#34;: 1,
+          &#34;ttl&#34;: 86400,
+          &#34;status&#34;: &#34;enable&#34;,
+          &#34;weight&#34;: 100
+      }
+  }
+  #+END_QUOTE
+&lt;li&gt;执行命令：&lt;/li&gt;
+  #+BEGIN_SRC sh 
+  curl -i -H &#39;content-type: application/json&#39; -X POST -d @add.json http://dev.mgrconfig.api.qiniudns.com/qiniu/dr302/records/add
+  #+END_SRC
+   根据不同返回码表示操作结果。
+   #+BEGIN_QUOTE -t
+   root@bj94:~/dr302client# curl -i -H &#39;content-type: application/json&#39; -X POST -d @addA.json http://dev.mgrconfig.api.qiniudns.com/qiniu/dr302/records/add
+&lt;/ol&gt;
+
+&lt;p&gt;HTTP/1.1 200 OK
+   Date: Thu, 09 Mar 2017 03:01:17 GMT
+   Content-Type: text/plain
+   Transfer-Encoding: chunked
+   Connection: keep-alive
+   Server: DR302-MGR&lt;/p&gt;
+
+&lt;h2 id=&#34;查看存储&#34;&gt;查看存储&lt;/h2&gt;
+
+&lt;p&gt;{
+       &#34;status&#34;:{
+                  &#34;created_at&#34;:&#34;2017-03-09 11:01:17&#34;,
+                  &#34;code&#34;:0,
+                  &#34;message&#34;:&#34;success&#34;
+                },
+       &#34;record&#34;:{
+                  &#34;status&#34;:&#34;enable&#34;,
+                  &#34;key&#34;:&#34;www.example.com#all&#34;,
+                  &#34;name&#34;:&#34;@&#34;
+                }
+   }
+   #+END_QUOTE
+   执行命令:
+   #+BEGIN_SRC sh 
+   (echo  &#34;select 10&#34;; echo &#34;hgetall www.example.com#all&#34;) | redis-cli -a cdnfusion -p 7648&#34;
+   #+END_SRC
+   避免中文乱码，加--raw选项：
+   #+BEGIN_SRC sh 
+   (echo  &#34;select 10&#34;; echo &#34;hgetall www.example.com#all&#34;) | redis-cli -a cdnfusion -p 7648 --raw
+   #+END_SRC
+   显示如下:
+   #+BEGIN_QUOTE
+   root@bj94:~/dr302client# (echo  &#34;select 10&#34;; echo &#34;hgetall www.example.com#all&#34;) | redis-cli -a cdnfusion -p 7648
+   OK
+    1) &#34;weight&#34;
+    2) &#34;20&#34;
+    3) &#34;record_type&#34;
+    4) &#34;A&#34;
+    5) &#34;record_line&#34;
+    6) &#34;all&#34;
+    7) &#34;status&#34;
+    8) &#34;enable&#34;
+    9) &#34;mx&#34;
+   10) &#34;1&#34;
+   11) &#34;value&#34;
+   12) &#34;1.1.1.1#10|2.2.2.2#20&#34;
+   13) &#34;ttl&#34;
+   14) &#34;86400&#34;
+   15) &#34;record_line_id&#34;
+   16) &#34;00000000&#34;
+   17) &#34;sub_domain&#34;
+   18) &#34;@&#34;
+   #+END_QUOTE&lt;/p&gt;
+
+&lt;h2 id=&#34;302测试&#34;&gt;302测试&lt;/h2&gt;
+
+&lt;h3 id=&#34;请求&#34;&gt;请求&lt;/h3&gt;
+
+&lt;h2 id=&#34;响应&#34;&gt;响应&lt;/h2&gt;
+
+&lt;p&gt;#+BEGIN_SRC sh
+    curl http://192.168.92.94:8302/ -H &#34;host: www.example.com&#34; 
+    #+END_SRC
+   响应如下：
+   #+BEGIN_HTML
+    root@bj94:~/dr302client# curl http://192.168.92.94:8302/ -H &#34;host: www.example.com&#34; -v
+    *   Trying 192.168.92.94...
+    * Connected to 192.168.92.94 (192.168.92.94) port 8302 (#0)
+    &gt; GET / HTTP/1.1
+    &gt; host: www.example.com
+    &gt; User-Agent: curl/7.47.0
+    &gt; Accept: */*
+    &gt;
+    &lt; HTTP/1.1 302 Moved Temporarily
+    &lt; Date: Fri, 07 Apr 2017 02:30:50 GMT
+    &lt; Content-Type: text/html
+    &lt; Content-Length: 167
+    &lt; Connection: keep-alive
+    &lt; Server: DR302-NODE
+    &lt; Location: http://2.2.2.2/www.example.com/
+    &lt;
+    &lt;html&gt;
+    &lt;head&gt;&lt;title&gt;302 Found&lt;/title&gt;&lt;/head&gt;
+    &lt;body bgcolor=&#34;white&#34;&gt;
+    &lt;center&gt;&lt;h1&gt;302 Found&lt;/h1&gt;&lt;/center&gt;
+    &lt;hr&gt;&lt;center&gt;openresty/1.11.2.1&lt;/center&gt;
+    &lt;/body&gt;
+    &lt;/html&gt;&lt;/p&gt;
+
+&lt;p&gt;#+END_HTML&lt;/p&gt;
+
+&lt;h2 id=&#34;性能测试&#34;&gt;性能测试&lt;/h2&gt;
+
+&lt;h3 id=&#34;测试步骤&#34;&gt;测试步骤&lt;/h3&gt;
+
+&lt;h3 id=&#34;优化点&#34;&gt;优化点&lt;/h3&gt;
+
+&lt;p&gt;使用ab测试DR302服务器的性能。
+    1） 由于ab不支持参数修改HOST字段，需把要测试的域名IP对设置到/etc/hosts中。如: 192.168.92.94 www.example.com
+    2)  ab测试输出信息，查看项“ Requests per second”。
+        a) 带有keepalive的性能为80000QPS。
+           ab -kc 1024 -n 1000000 http://www.example.com:8302/
+        b) 不带keepalive的性能为16000QPS。
+           ab -c 1024 -n 1000000 http://www.example.com:8302/
+    1) 关闭日志记录
+       #+BEGIN_QUOTE
+           # access_log /usr/local/openresty/nginx/logs/dr302_node_access.log main;
+           access_log off;
+           error_log  /usr/local/openresty/nginx/logs/dr302_node_error.log error;
+       #+END_QUOTE
+    2) 打开缓存
+       把nginx.conf里的这行打开或加上。
+       lua_code_cache on;
+    3）使用ulimit -n 65535设置open files数。
+    4) 设置nginx的进程数与本服务器CPU匹配的值，如: 8
+    5) 关闭掉一些耗性能的进程。&lt;/p&gt;
+
+&lt;h2 id=&#34;踩过的坑&#34;&gt;踩过的坑&lt;/h2&gt;
+
+&lt;h3 id=&#34;table的深度与浅度拷贝&#34;&gt;table的深度与浅度拷贝&lt;/h3&gt;
+
+&lt;h4 id=&#34;现象&#34;&gt;现象&lt;/h4&gt;
+
+&lt;h4 id=&#34;分析&#34;&gt;分析&lt;/h4&gt;
+
+&lt;h4 id=&#34;解决措施&#34;&gt;解决措施&lt;/h4&gt;
+
+&lt;p&gt;当通过API批量获取配置列表时，发现不同的key获取的值是一样的， 但通过redis-cli获取是不一样且正确的。
+     redis存储是正确的，很有可能是中间临时存储存在覆盖的问题， 如果table每次赋值都相当于内存拷贝那样Lua的性能就会大大降低，
+     会不会table之间赋值就像C语言一样只赋值地址或指针。经网上查找发现table存在深度与浅度拷贝的区别。
+     详见:&lt;a href=&#34;https://my.oschina.net/hqc17/blog/748709&#34; title=&#34;Lua实现深度拷贝&#34;&gt;Lua实现深度拷贝&lt;/a&gt; 
+     把中间的临时table变量放入当前语句块中并加local标识，猜测在当前语句块临时table可能会随时被释放掉，
+     因此它赋值给其他作用域更大的变量时使用深拷贝。&lt;/p&gt;
+
+&lt;h3 id=&#34;hgetall结果与lua-table转换&#34;&gt;hgetall结果与Lua table转换&lt;/h3&gt;
+
+&lt;h3 id=&#34;nginx-worker权限问题&#34;&gt;nginx worker权限问题&lt;/h3&gt;
+
+&lt;h4 id=&#34;现象-1&#34;&gt;现象&lt;/h4&gt;
+
+&lt;h4 id=&#34;分析-1&#34;&gt;分析&lt;/h4&gt;
+
+&lt;h4 id=&#34;解决措施-1&#34;&gt;解决措施&lt;/h4&gt;
+
+&lt;p&gt;使用hgetall获取redis的内容需经转换后才能被Lua table使用。
+    转换关键代码如下:
+    #+BEGIN_SRC lua -n
+    local v = red:hgetall(innerk) 
+    if v == nil then
+        log(ERR, &#34;get redis empty key: &#34;, innerk)
+        return nil
+    end
+    for key,val in pairs(v) do
+       if key%2 ~= 0 then
+          result[v[key]] = v[key+1];
+       end
+    end
+    #+END_SRC
+     当使用init_worker_by_lua_file进行定时器任务时，发现不能打开或写入/usr/local/openresty/子目录下的文件， 而init_by_lua_file调用则正常。
+     当把路径改为/tmp/目录下则运行都正常，经定位发现nginx master以root身份运行， 而nginx worker以nobody身份运行。
+     查看需要读写的文件路径， 发现只有root权限才能写。
+     1） 发现代码以&#34;r+&#34;(更新模式,保存之前的数据)模式进行读文件，需改成&#34;r&#34;只读模式。
+     2） 把要写的文件路径改成其他可写，例如: chmod 777 data&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>
