@@ -6,7 +6,16 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Tue, 07 Mar 2017 19:13:23 HKT</updated>
+        <updated>Fri, 07 Jul 2017 11:01:18 HKT</updated>
+        
+        <item>
+            <title>Go开发随记</title>
+            <link>http://yanwushuang.github.io/2017/07/07/golang-develop-notes/</link>
+            <pubDate>Fri, 07 Jul 2017 11:01:18 HKT</pubDate>
+            <author>Mospan</author>
+            <guid>http://yanwushuang.github.io/2017/07/07/golang-develop-notes/</guid>
+            <description></description>
+        </item>
         
         <item>
             <title>精品文章，阅后收藏</title>
@@ -8537,130 +8546,6 @@ tags        A tags match to select entries that should contribute.  See
 &lt;p&gt;附上我的ubuntu桌面：&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/my-ubuntu-desktop.png?imageView2/1/w/1024/h/768/q/75|watermark/2/text/YmxvZy5tb3NwYW4uY24=/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10&#34; alt=&#34;我的ubuntu桌面&#34; /&gt;&lt;/p&gt;
-</description>
-        </item>
-        
-        <item>
-            <title>读《老卫聊架构：做技术，应该先有深度再谈广度》随记</title>
-            <link>http://yanwushuang.github.io/2016/02/09/mr-wei-talk-architecture/</link>
-            <pubDate>Tue, 09 Feb 2016 17:12:34 HKT</pubDate>
-            <author>Mospan</author>
-            <guid>http://yanwushuang.github.io/2016/02/09/mr-wei-talk-architecture/</guid>
-            <description>
-
-&lt;h1 id=&#34;背景&#34;&gt;背景&lt;/h1&gt;
-
-&lt;p&gt;主要交流内容包括以下几点：&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;为什么要成为一名架构师？&lt;/li&gt;
-&lt;li&gt;好的架构师需要T型的复合型人才&lt;/li&gt;
-&lt;li&gt;架构师最重要的能力是战略分解能力&lt;/li&gt;
-&lt;li&gt;架构师的跨界思维能力&lt;/li&gt;
-&lt;li&gt;架构师的软技能树 = 产品经理的软技能树 =&amp;gt; 让正确的事情相继发生 =&amp;gt; 持续地解决问题&lt;/li&gt;
-&lt;li&gt;T型架构师的特征&lt;/li&gt;
-&lt;li&gt;信息获取效率&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h1 id=&#34;为什么要成为一名架构师&#34;&gt;为什么要成为一名架构师？&lt;/h1&gt;
-
-&lt;p&gt;架构师是互联网领域的技术专家和设计者，承担着改变世界的责任和使命。&lt;/p&gt;
-
-&lt;p&gt;架构师能在关键领域取得突破性进展。同时互联网的快速迭代开发和扁平化管理，使单纯管理人才的作用越来越小，除了分配任务和项目管理，在其他方向发挥不出很大的作用。&lt;/p&gt;
-
-&lt;h1 id=&#34;好的架构师需要t型的复合型人才&#34;&gt;好的架构师需要T型的复合型人才&lt;/h1&gt;
-
-&lt;p&gt;成为“一”型专业人才容易，成为多个领域的“一”型人才非常难，最好的选择是成为“T”型人才。
-  &lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/architect-T-style-cross-border-thinking.png&#34; alt=&#34;横向上跨界思维能力&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;假设你花费5年时间成为一个业务架构师，如果你想同时成为一个大数据专家，你需要再花费5年的时间，如果你还想精通App开发，那你估计还需要花费至少3年时间。所以，同时成为多个技术领域的“一”型专业人才需要付出相当长的时间和精力，而且对个人成长来说，并不是最好的发展路径。&lt;/p&gt;
-
-&lt;p&gt;相反，成为“T”型人才，无论是从行业的需求还是长远发展来看，都是一个必然趋势。因为：&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;互联网行业的飞速发展，万众创新的环境，越来越多的产品开发需要综合素质高的技术负责人，这些人既要懂系统架构，还需要了解App开发、网页开发、后台开发;甚至是项目管理、人员管理、沟通理解能力但系统架构仍然是其关键能力。&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;线上线下融合，行业的深度整合，需要懂系统架构同时理解或者了解业务的人才 。&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;从职业发展来看，“T”型人才首先在专业上建立权威，然后拓展横向能力，横向能力的增强，会潜移默化地提升其专业能力水平，最终形成一个良性循环，横向能力与纵向能力交替提升。&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;架构师最重要的能力是战略分解能力&#34;&gt;架构师最重要的能力是战略分解能力&lt;/h1&gt;
-
-&lt;p&gt;什么是架构？知乎上有人讲，说架构可以看做在一个架子上放上业务和算法，和我们生活中的晾衣架很相似 。&lt;/p&gt;
-
-&lt;p&gt;再抽象一点，架构其实是对重复性业务的抽象和未来业务拓展的前瞻，强调的是架构师过去的行业经验和对未来行业的预见能力。&lt;/p&gt;
-
-&lt;p&gt;我觉得架构师一个最重要的能力就是要有战略分解能力，这又可以分为三个能力：
-  &lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/archite-nature.png&#34; alt=&#34;架构的本质&#34; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;抽象能力&#34;&gt;抽象能力&lt;/h2&gt;
-
-&lt;p&gt;抽象思维（abstractthinking）是人们在认识活动中运用概念、判断、推理等思维形式，对客观现实进行间接的、概括的反映的过程。在架构设计中，最直接的就是对重复性业务的归纳总结，当我们写代码时，把重复性代码重构为函数，背后的动机是把相同的逻辑抽象，方便将来复用，从而提升开发效率。在面向过程编程中，我们&lt;strong&gt;抽象出函数&lt;/strong&gt; ，在面向对象过程中，我们&lt;strong&gt;抽象出具体的类&lt;/strong&gt;并定义类的属性和方法，在RPC设计过程中，我们&lt;strong&gt;抽象出服务&lt;/strong&gt;，同一个服务可以被多个Consumer调用，编程语言、框架在不停的演变，但是&lt;strong&gt;架构师的抽象思维能力随着时间推移越来越强越来越有价值&lt;/strong&gt;；&lt;/p&gt;
-
-&lt;h2 id=&#34;分类能力&#34;&gt;分类能力&lt;/h2&gt;
-
-&lt;p&gt;做软件需要做对象的解耦，要定义对象的属性和方法，做分布式系统的时候要做服务的拆分和模块化，要定义服务的接口和规范。 一个千万级别以上的业务系统，在向平台化、服务化演变过程中，最有挑战的就是服务的拆分解耦、服务依赖的梳理、服务粒度的定义。工作中经常出现一个新增的功能既可以归类到服务A，也可以归类到服务B，这种时候，分类能力显得尤为重要，合理的分类可以保持系统的健壮性。&lt;/p&gt;
-
-&lt;h2 id=&#34;算法-性能-能力&#34;&gt;算法（性能）能力&lt;/h2&gt;
-
-&lt;p&gt;算法是一个架构师最基础的能力要求，需要扎实的数学功底和逻辑推理能力。在互联网服务中，这一能力要用来改善和提升系统性能，而性能最终的制约因素在CPU、内存、IO、网络上。 下面我们看一张经典的系统性能图，在做系统容量评估、成本计算时是最好的参考指标。
-  &lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/numbers-everyone-shoule-know.png&#34; alt=&#34;各级访问性能参数&#34; /&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;架构师的跨界思维能力&#34;&gt;架构师的跨界思维能力&lt;/h1&gt;
-
-&lt;p&gt;什么是跨界思维呢？目前，业界还没有统一的定义，我们先看看人们通常是怎么理解的:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;勇于把不相关的事物联系到一起，看看会发生什么。&lt;/li&gt;
-&lt;li&gt;所谓跨界思维，就是大世界大眼光，用多角度，多视野的看待问题和提出解决方案的一种思维方式。&lt;/li&gt;
-&lt;li&gt;跨界思维的核心是颠覆性创新，且往往来源于行业之外的边缘性创新，因此要跳出行业看行业，建立系统的、交叉的思维方式：包括产品、技术、组织、模式等等的跨界创新，一切皆有可能。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;架构师的软技能树&#34;&gt;架构师的软技能树&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;产品经理最重要的能力:让正确的事情相继发生&lt;/li&gt;
-&lt;li&gt;做为事件的驱动者，个人解决问题的态度和意愿往往决定最终的结果&lt;/li&gt;
-&lt;li&gt;什么是人才?人才就是给他一件事情，他完成了。再给他一件事情，他又完成了&lt;/li&gt;
-&lt;li&gt;对于架构师来说，让正确的事情相继发生，需要不停地解决问题&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;t型架构师的特征&#34;&gt;T型架构师的特征&lt;/h1&gt;
-
-&lt;p&gt;首先，有几类人是不可能成为T型架构师的:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;从来不主动学习和总结，工作三年相当于一年的工作经验，没有提升和进步的意识。&lt;/li&gt;
-&lt;li&gt;不主动承担责任和接受挑战的人，好的架构师一定经历过产品从0到1、从1到10、从10到100的架构演进，踩过无数的坑、解决过无数恶心问题。&lt;/li&gt;
-&lt;li&gt;朝九晚五，你工作的时间没有比你聪明的人长，不详细解释。&lt;/li&gt;
-&lt;li&gt;目空一切，不客观的人，不能清醒地认识自己、学习他人。
-&lt;br /&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;T型架构师的特征，我觉得就是持续的学习、学习、再学习，逐步掌握战略分解能力、跨界思维能力，并树立持续解决问题的态度。&lt;/strong&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;信息获取效率&#34;&gt;信息获取效率&lt;/h1&gt;
-
-&lt;p&gt;现在各种技术大会、各种微信技术交流群、各种文章层出不穷的，信息获取、信息处理、信息沉淀的效率，决定一个人的学习效率。我有几个问题，供大家思考：&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;你关注的公众号超过10个了吗？&lt;/li&gt;
-&lt;li&gt;你加入的微信群超过10个了吗？&lt;/li&gt;
-&lt;li&gt;你每天打开朋友圈的次数超过10次了吗？&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;在选择关注的信息时，在这里分享三条我的原则：&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;对自己现在有用，而不是将来有用&lt;/li&gt;
-&lt;li&gt;选择高信息熵、传递价值的。&lt;/li&gt;
-&lt;li&gt;选择自己学习的一个榜样，并持续关注。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;信息获取之后是信息处理和沉淀，&lt;strong&gt;写作&lt;/strong&gt;是整理思维、沉淀信息、持续积累最有效的手段.&lt;/p&gt;
-
-&lt;p&gt;原文链接： &lt;a href=&#34;https://mp.weixin.qq.com/s?__biz=MzA5Nzc4OTA1Mw==&amp;amp;mid=408703236&amp;amp;idx=1&amp;amp;sn=3f78abcca906d5edee06ff85b2d22416&amp;amp;scene=0&amp;amp;pass_ticket=A0dLGv2XaHq5JIsCyn47o4bR8cTHUT%2Fz%2Bw%2FnkDHjlymUDcjhRu8i8ZMFbprl4KKg&#34;&gt;老卫聊架构：做技术，应该先有深度再谈广度&lt;/a&gt;&lt;/p&gt;
 </description>
         </item>
         
