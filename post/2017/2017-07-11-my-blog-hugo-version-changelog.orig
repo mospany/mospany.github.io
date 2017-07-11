@@ -1,0 +1,15 @@
++++
+categories = ["技术文章"]
+date = "2017-07-11T18:34:34+08:00"
+description: "记录博客与hugo版本的修改"
+keywords: ["博客"]
+tags: ["博客"]
+title: "我的博客演进之路(07)--博客与hugo版本变化"
+url: "2017/07/11/my-blog-hugo-changelog"
+
++++
+
+* Hugo v0.20 later changelog
+** config
+   - 取消[Author] section。合入[Params] section.
+     .Site.Author.Name => .Site.Params.AuthorName
