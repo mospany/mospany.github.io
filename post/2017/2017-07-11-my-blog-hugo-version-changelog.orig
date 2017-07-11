@@ -13,3 +13,4 @@ url: "2017/07/11/my-blog-hugo-changelog"
 ** config
    - 取消[Author] section。合入[Params] section.
      .Site.Author.Name => .Site.Params.AuthorName
+   
