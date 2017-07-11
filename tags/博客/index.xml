@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>博客 on 墨斯潘園</title>
+        <link>http://yanwushuang.github.io/tags/%E5%8D%9A%E5%AE%A2/</link>
+        <language>zh-CN</language>
+        <author>Mospan</author>
+        <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
+        <updated>Sun, 08 May 2016 11:24:43 HKT</updated>
+        
+        <item>
+            <title>我的博客演进之路(06)--添加文章列表分页显示</title>
+            <link>http://yanwushuang.github.io/2016/05/08/my-blog-add-pagination/</link>
+            <pubDate>Sun, 08 May 2016 11:24:43 HKT</pubDate>
+            <author>Mospan</author>
+            <guid>http://yanwushuang.github.io/2016/05/08/my-blog-add-pagination/</guid>
+            <description>
+
+&lt;h1 id=&#34;背景&#34;&gt;背景&lt;/h1&gt;
+
+&lt;p&gt;由于原来的主页显示是完全平铺，当文章数量较多时， 下拉进度条太长不方便阅读。因此，通过添加文章列表分页显示功能
+可以更好的显示与阅读， 每页设计显示10篇刚好也比较好统计。&lt;/p&gt;
+
+&lt;h1 id=&#34;实现&#34;&gt;实现&lt;/h1&gt;
+
+&lt;h2 id=&#34;编写pagination模板代码&#34;&gt;编写pagination模板代码&lt;/h2&gt;
+
+&lt;p&gt;首先， 编写分页显示的golang模板实现代码，代码见如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;{{ $baseurl := .Site.BaseURL }}
+{{ $pag := .Paginator }}
+{{ if gt $pag.TotalPages 1 }}
+&amp;lt;a aria-label=&amp;quot;First&amp;quot; href=&amp;quot;{{ $baseurl }}{{ $pag.First.URL }}&amp;quot;&amp;gt;
+  &amp;lt;span aria-hidden=&amp;quot;true&amp;quot;&amp;gt;««&amp;lt;/span&amp;gt;
+&amp;lt;/a&amp;gt;
+
+&amp;lt;a{{ if not $pag.HasPrev }} class=&amp;quot;disabled&amp;quot;{{ end }} aria-label=&amp;quot;Previous&amp;quot; href=&amp;quot;{{ if $pag.HasPrev }}{{ $baseurl }}{{ $pag.Prev.URL }}{{ else }}#{{ end }}&amp;quot;&amp;gt;
+  &amp;lt;span aria-hidden=&amp;quot;true&amp;quot;&amp;gt;«&amp;lt;/span&amp;gt;
+&amp;lt;/a&amp;gt;
+
+{{ range $pag.Pagers }}
+&amp;lt;a{{ if eq . $pag }} class=&amp;quot;active&amp;quot;{{ end }} href=&amp;quot;{{ $baseurl }}{{ .URL }}&amp;quot;&amp;gt;
+  {{ .PageNumber }}
+&amp;lt;/a&amp;gt;
+{{ end }}
+
+&amp;lt;a{{ if not $pag.HasNext }} class=&amp;quot;disabled&amp;quot;{{ end }} aria-label=&amp;quot;Next&amp;quot; href=&amp;quot;{{ if $pag.HasNext }}{{ $baseurl }}{{ $pag.Next.URL }}{{ else }}#{{ end }}&amp;quot;&amp;gt;
+  &amp;lt;span aria-hidden=&amp;quot;true&amp;quot;&amp;gt;»&amp;lt;/span&amp;gt;
+&amp;lt;/a&amp;gt;
+
+&amp;lt;a aria-label=&amp;quot;Last&amp;quot; href=&amp;quot;{{ $baseurl }}{{ $pag.Last.URL }}&amp;quot;&amp;gt;
+  &amp;lt;span aria-hidden=&amp;quot;true&amp;quot;&amp;gt;»»&amp;lt;/span&amp;gt;
+&amp;lt;/a&amp;gt;
+{{ end }}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;显示处调用&#34;&gt;显示处调用&lt;/h2&gt;
+
+&lt;p&gt;在需要显示处调用pageination.html，并控制好输入参数， 例如： homepages上的修改为根据文章索引$index与10的除数来进行控制。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt; &amp;lt;div id=&amp;quot;main&amp;quot;&amp;gt;
+   {{ $pag := .Paginator }}
+   {{ range $index,$data := .Data.Pages }}
+   {{ if ge $data.Date.Year .Now.Year }}
+   {{ if eq (add (div $index 10) 1) $pag.PageNumber }}
+   {{ partial &amp;quot;article.html&amp;quot; $data }}
+   {{ end }}{{ end }}{{ end }}
+   &amp;lt;nav id=&amp;quot;page-nav&amp;quot; class=&amp;quot;clearfix&amp;quot;&amp;gt;
+       {{ partial &amp;quot;pagination.html&amp;quot; . }}
+   &amp;lt;/nav&amp;gt;
+&amp;lt;/div&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;显示效果&#34;&gt;显示效果&lt;/h1&gt;
+
+&lt;p&gt;显示如下图红色框内显示：
+&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/my-blog-add-pagination.png&#34; alt=&#34;文章列表分页显示&#34; /&gt;&lt;/p&gt;
+</description>
+        </item>
+        
+        <item>
+            <title>我的博客演进之路(05)--添加访问统计</title>
+            <link>http://yanwushuang.github.io/2016/02/21/my-blog-add-visit-counter/</link>
+            <pubDate>Sun, 21 Feb 2016 09:52:16 HKT</pubDate>
+            <author>Mospan</author>
+            <guid>http://yanwushuang.github.io/2016/02/21/my-blog-add-visit-counter/</guid>
+            <description>
+
+&lt;h1 id=&#34;申请&#34;&gt;申请&lt;/h1&gt;
+
+&lt;h2 id=&#34;注册&#34;&gt;注册&lt;/h2&gt;
+
+&lt;p&gt;登陆到&lt;a href=&#34;http://www.amazingcounters.com/&#34;&gt;amazingcounters&lt;/a&gt;进行账号注册。&lt;/p&gt;
+
+&lt;h2 id=&#34;申请-1&#34;&gt;申请&lt;/h2&gt;
+
+&lt;p&gt;大致原理为通过注册把自己的域名与统计网站关联后，生成一段html代码拷贝到自己网站上相应显示位置即可。申请步骤如下：&lt;/p&gt;
+
+&lt;p&gt;1.点击“创建” 。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/my-blog-add-visit-counter_1.png&#34; alt=&#34;开始创建&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;2.选择统计显示样式。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/my-blog-add-visit-counter_2.png&#34; alt=&#34;选择显示样式&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;3.选择完进入下一步&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/my-blog-add-visit-counter_3.png&#34; alt=&#34;显示样式后下一步&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;4.填写网站关联信息&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/my-blog-add-visit-counter_4.png&#34; alt=&#34;填写网站关联信息&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;5.生成关联html并拷贝下来&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/my-blog-add-visit-counter_5.png&#34; alt=&#34;生成关联html&#34; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;使用&#34;&gt;使用&lt;/h1&gt;
+
+&lt;p&gt;首先，在本博客源码新建文件：themes/rapid/layouts/partials/visit.counter.html,内容如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;  &amp;lt;!-- 添加访问统计--&amp;gt;
+  &amp;lt;div align=&amp;quot;center&amp;quot; &amp;gt;
+   &amp;lt;p&amp;gt;访问人数:  
+    &amp;lt;a href=&amp;quot;http://www.amazingcounters.com&amp;quot;&amp;gt;
+     &amp;lt;img border=&amp;quot;0&amp;quot; src=&amp;quot;http://cc.amazingcounters.com/counter.php?i=xxxxxx&amp;amp;c=xxxxx&amp;quot; alt=&amp;quot;UV&amp;quot; title=&amp;quot;访问人数&amp;quot;&amp;gt;
+    &amp;lt;/a&amp;gt;
+   &amp;lt;/p&amp;gt;
+  &amp;lt;/div&amp;gt;
+  &amp;lt;div align=&amp;quot;center&amp;quot;&amp;gt;
+   &amp;lt;p&amp;gt;总访问量:
+    &amp;lt;a href=&amp;quot;http://www.amazingcounters.com&amp;quot;&amp;gt;
+     &amp;lt;img border=&amp;quot;0&amp;quot; src=&amp;quot;http://cc.amazingcounters.com/counter.php?i=xxxxx&amp;amp;c=xxxxx&amp;quot; alt=&amp;quot;PV&amp;quot; title=&amp;quot;总访问量&amp;quot;&amp;gt;
+    &amp;lt;/a&amp;gt;
+   &amp;lt;/p&amp;gt;
+  &amp;lt;/div&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;其次，在该显示的html文件(themes/rapid/layouts/partials/sidebarLeft.html与themes/rapid/layouts/partials/sidebarLeftCategories.html)调用如上文件即可。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;    {{ partial &amp;quot;visit.counter.html&amp;quot; . }}
+    {{ partial &amp;quot;wechat.html&amp;quot; . }}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;效果&#34;&gt;效果&lt;/h1&gt;
+
+&lt;p&gt;显示效果如下：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/my-blog-add-visit-counter-result.png&#34; alt=&#34;访问统计显示效果&#34; /&gt;&lt;/p&gt;
+</description>
+        </item>
+        
+        <item>
+            <title>我的博客演进之路(04)--调整文章版面显示大小</title>
+            <link>http://yanwushuang.github.io/2016/02/20/my-blog-modify-container-size/</link>
+            <pubDate>Sat, 20 Feb 2016 10:56:35 HKT</pubDate>
+            <author>Mospan</author>
+            <guid>http://yanwushuang.github.io/2016/02/20/my-blog-modify-container-size/</guid>
+            <description>&lt;p&gt;由于原来的版面显示有点过小，在现在的宽屏面前有些浪费。于是为了更好的进行阅读显示，特做了如下修改：&lt;/p&gt;
+
+&lt;p&gt;打开文件./themes/rapid/static/wp-content/themes/hueman/style.css，把&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-css&#34;&gt;  .container { padding: 0 20px; }
+  .container-inner { max-width: 1380px; min-width: 1380px; width: 100%; margin: 0 auto; }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;改为&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-css&#34;&gt;  .container { padding: 0 0px; }
+  .container-inner { min-width: 1380px; width: 100%; margin: 0 auto; }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;显示效果如下, 修改前：
+  &lt;div align=&#34;center&#34;&gt;
+    &lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/my-blog-modify-container-size-before.png?imageView2/1/w/1024/h/768/q/75|watermark/2/text/YmxvZy5tb3NwYW4uY24=/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10&#34; alt=&#34;我的博客主页修改前&#34; title=&#34;我的博客主页修改前&#34; width=&#34;800&#34;/&gt;
+  &lt;/div&gt;&lt;/p&gt;
+
+&lt;p&gt;修改后：&lt;/p&gt;
+
+&lt;p&gt;&lt;div align=&#34;center&#34;&gt;
+    &lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/my-blog-modify-container-size-after.png?imageView2/1/w/1024/h/768/q/75|watermark/2/text/YmxvZy5tb3NwYW4uY24=/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10&#34; alt=&#34;我的博客主页修改后&#34; title=&#34;我的博客主页修改后&#34; width=&#34;800&#34;/&gt;
+  &lt;/div&gt;&lt;/p&gt;
+</description>
+        </item>
+        
+        <item>
+            <title>我的博客演进之路(03)--添加微信公众号</title>
+            <link>http://yanwushuang.github.io/2016/01/25/my-blog-add-weixin-mp/</link>
+            <pubDate>Sat, 06 Feb 2016 23:24:08 HKT</pubDate>
+            <author>Mospan</author>
+            <guid>http://yanwushuang.github.io/2016/01/25/my-blog-add-weixin-mp/</guid>
+            <description>
+
+&lt;h1 id=&#34;引言&#34;&gt;引言&lt;/h1&gt;
+
+&lt;p&gt;为了符合当今移动互联网的潮流，也让自己更加了解微信的基础知识与推广运作，我也把自己在博客上写的文章也推送到微信公众号，以便想了解的人提供另外一种阅读方式。
+   如想了解请关注我的微信公众号：墨斯潘園。&lt;/p&gt;
+
+&lt;h1 id=&#34;申请&#34;&gt;申请&lt;/h1&gt;
+
+&lt;p&gt;首先， 为了使用微信公众号先登陆&lt;a href=&#34;https://mp.weixin.qq.com/&#34;&gt;微信公众平台&lt;/a&gt; 进行账号注册。&lt;/p&gt;
+
+&lt;p&gt;其次， 使用账号登陆后按照流程进行微信公众号的申请、登记与认证即可。&lt;/p&gt;
+
+&lt;p&gt;最后，将得到自己的微信公众号管理后台面板，界面显示如下：
+  &lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/my-weixin-mp-console.png&#34; alt=&#34;我的微信公众号控制台&#34; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;使用&#34;&gt;使用&lt;/h1&gt;
+
+&lt;ol&gt;
+&lt;li&gt;在微信公众号控制台添加”头像“与公众号名称(如: 墨斯潘園)等，下载生成的二维码。&lt;/li&gt;
+&lt;li&gt;将公众号二维码图片替换博客源码中的文件./themes/rapid/static/public/qrcode.jpg。&lt;/li&gt;
+&lt;li&gt;使用手机登陆微信扫描或查找公众号名称（如：墨斯潘園)后点击关注即可显示如下界面：
+ &lt;div align=&#34;center&#34;&gt;
+ &lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/my-weixin-mp-in-mobile.jpg&#34; alt=&#34;关注我的微信公众号&#34; title=&#34;手机关注我的微信公众号显示&#34; width=&#34;300&#34;/&gt;
+ &lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h1 id=&#34;发表文章&#34;&gt;发表文章&lt;/h1&gt;
+
+&lt;ol&gt;
+&lt;li&gt;在chrome或firefox浏览器安装&lt;a href=&#34;http://markdown-here.com/&#34;&gt;markdown here&lt;/a&gt; 插件。&lt;/li&gt;
+&lt;li&gt;登陆微信公众平台控制后台的”群发消息“-&amp;gt;”新建群发消息“-&amp;gt;”新建图文消息“进行markdown格式编辑或直接拷贝好的markdown文章过来。&lt;/li&gt;
+&lt;li&gt;按住快捷键Ctrl+Alt+M，对Markdown文章进行渲染。&lt;/li&gt;
+&lt;li&gt;编辑好后，点击”保存并群发“即可, 效果见如下：
+ &lt;div align=&#34;center&#34;&gt;
+ &lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/my-weixin-mp-deploy-article.jpg&#34; alt=&#34;微信公众号发表文章示例&#34; title=&#34;微信公众号发表文章示例&#34; width=&#34;300&#34;/&gt;
+ &lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+        </item>
+        
+        <item>
+            <title>我的博客演进之路(02)--架构与部署概述</title>
+            <link>http://yanwushuang.github.io/2016/01/25/my-blog-architecture/</link>
+            <pubDate>Mon, 25 Jan 2016 23:24:08 HKT</pubDate>
+            <author>Mospan</author>
+            <guid>http://yanwushuang.github.io/2016/01/25/my-blog-architecture/</guid>
+            <description>
+
+&lt;h1 id=&#34;部署图总览&#34;&gt;部署图总览&lt;/h1&gt;
+
+&lt;p&gt;经过调研与分析，能满足我博客需求的大致部署图如下：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/my-blog-deploy.jpg?imageView2/1/w/1024/h/768/q/75|watermark/2/text/YmxvZy5tb3NwYW4uY24=/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10&#34; alt=&#34;架构与部署图&#34; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;角色说明&#34;&gt;角色说明&lt;/h1&gt;
+
+&lt;h2 id=&#34;github&#34;&gt;github&lt;/h2&gt;
+
+&lt;p&gt;主要存放了本博客的资料文件，利用了github的pages功能提供了网页浏览服务。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/yanwushuang.github.io-setting.png?imageView2/1/w/1024/h/768/q/75|watermark/2/text/YmxvZy5tb3NwYW4uY24=/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10&#34; alt=&#34;我博客github设置&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;github: &lt;a href=&#34;https://github.com/yanwushuang/yanwushuang.github.io&#34;&gt;yanwushuang.github.io&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;gitcafe&#34;&gt;gitcafe&lt;/h2&gt;
+
+&lt;p&gt;由于github是国外的，有些时候访问不稳定(有可能被封)与不允许百度爬虫收录等原因，也为了更好在国内访问与容灾备份，使用了&lt;a href=&#34;https://gitcafe.com/&#34;&gt;gitcafe&lt;/a&gt;进行提供网络服务。&lt;/p&gt;
+
+&lt;p&gt;gitcafe: &lt;a href=&#34;https://gitcafe.com/mospan/mospan&#34;&gt;mospan.gitcafe.io&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;cloudxns&#34;&gt;CloudXNS&lt;/h2&gt;
+
+&lt;p&gt;自己申请了独立域名，需要有地方托管解析，&lt;a href=&#34;www.cloudxns.net&#34;&gt;CloudXNS&lt;/a&gt; 完全满足我的所需，只需在其官网上注册账号：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/cloudxns-main-page.png?imageView2/1/w/1024/h/768/q/75|watermark/2/text/YmxvZy5tb3NwYW4uY24=/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10&#34; alt=&#34;CloudXNS主页&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;并做如下配置0.5秒钟立马生效。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/blog-mospan-cn-cloudxns-config.png?imageView2/1/w/1024/h/768/q/75|watermark/2/text/YmxvZy5tb3NwYW4uY24=/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10&#34; alt=&#34;blog.mospan.cn域名在CloudXNS上的配置图&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;七牛云存储&#34;&gt;七牛云存储&lt;/h2&gt;
+
+&lt;p&gt;为了让图片在博客上有更好的展示/存放/外链，选择了&lt;a href=&#34;https://portal.qiniu.com/&#34;&gt;七牛云存储&lt;/a&gt;, 而且它还提供了水印功能。&lt;/p&gt;
+
+&lt;h2 id=&#34;牛盾云加速&#34;&gt;牛盾云加速&lt;/h2&gt;
+
+&lt;p&gt;为了使得本博客有更好的访问体验， 使用了&lt;a href=&#34;https://newdefend.com&#34;&gt;牛盾云加速&lt;/a&gt;作为其CDN&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:1&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:1&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;加速，见如下：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/newdefend-main-page.png?imageView2/1/w/1024/h/768/q/75|watermark/2/text/YmxvZy5tb3NwYW4uY24=/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10&#34; alt=&#34;牛盾云加速主页&#34; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;服务过程&#34;&gt;服务过程&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;用户在浏览器上输入本博客域名：blog.mospan.cn&lt;/li&gt;
+&lt;li&gt;浏览器先发起对该域名的DNS请求本地运营商LocalDNS, 由LocalDNS迭代查询最终到CloudXNS上，LocalDNS查询合并后最终得到博客的地址。&lt;/li&gt;
+&lt;li&gt;浏览器向本博客地址发起HTTP请求，经过牛盾云加速，如果它没有缓存，将继续向github/gitcafe请求内容响应给用户，途经牛盾云加速时被缓存。&lt;/li&gt;
+&lt;li&gt;浏览器得到页面后经过浏览器解析，哪些内容链接还需进行再一次获取，如图片将从七牛云存储上获取下来。&lt;/li&gt;
+&lt;li&gt;浏览器最后把结果呈现给用户。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+
+&lt;hr /&gt;
+
+&lt;ol&gt;
+&lt;li id=&#34;fn:1&#34;&gt;CDN: 内容加速网络
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:1&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+        </item>
+        
+        <item>
+            <title>我的博客演进之路(01)--正式上线</title>
+            <link>http://yanwushuang.github.io/2016/01/24/my-blog-online/</link>
+            <pubDate>Sun, 24 Jan 2016 09:34:08 HKT</pubDate>
+            <author>Mospan</author>
+            <guid>http://yanwushuang.github.io/2016/01/24/my-blog-online/</guid>
+            <description>&lt;p&gt;原来的博客都是在&lt;a href=&#34;www.csdn.net&#34;&gt;CSDN&lt;/a&gt;与&lt;a href=&#34;http://www.cnblogs.com/mosp/&#34;&gt;博客园&lt;/a&gt;里写的，都是按照模板进行编写，能自己自定义的比较少，没有自己的独立域名，用emacs/vim编写上面的博客不是很方便，比较难坚持下来。 很早就萌生了自己做的独立博客的想法，由于各种原因没有弄，直到最近自己学习GO语言有了一些认识，想尝试一下GO语言编写自己的独立博客系统，在调研的过程中发现已经有前辈已经使用GO编写了&lt;a href=&#34;http://gohugo.io/&#34;&gt;hugo&lt;/a&gt;博客系统，于是乎决定在其之上搭建自己的博客系统，以便记录与分享自己的学习心得与轨迹。&lt;/p&gt;
+
+&lt;p&gt;本博客主要记录与分享自己的读书笔记、技术文章、自己参与或分析的开源项目、经验总结、自己的人生记录与思考感悟等，目标为每周一篇以上，希望自己能坚持下来,记录下自己的点点滴滴。也欢迎道友们一起讨论与交流。&lt;/p&gt;
+
+&lt;p&gt;该博客系统架构是基于&lt;a href=&#34;http://blog.coderzh.com/&#34;&gt;coderzh&lt;/a&gt;之上修改而来的，在此对其作者表示感谢与分享。目前hugo只支持了markdown语法格式编写了，尚未支持org-mode语言格式，如有精力的话我将尝试对其进行修改以便支持org-mode语法格式的编写，能满足更加丰富的编写要求, 与完善hugo源码，让其能更拥有更多有用的功能与特性。&lt;/p&gt;
+
+&lt;p&gt;我的独立博客系统&lt;a href=&#34;blog.mospan.cn&#34;&gt;mospan&lt;/a&gt;今天(2015-01-24)正式上线, 欢迎大家光临指导与交流。&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>
