@@ -14,7 +14,12 @@
             <pubDate>Fri, 07 Jul 2017 11:01:18 HKT</pubDate>
             <author>Mospan</author>
             <guid>http://yanwushuang.github.io/2017/07/07/golang-develop-notes/</guid>
-            <description></description>
+            <description>&lt;h1 id=&#34;基础&#34;&gt;基础&lt;/h1&gt;
+
+&lt;h2 id=&#34;slice追加slice&#34;&gt;slice追加slice&lt;/h2&gt;
+
+&lt;p&gt;sliceA = append(sliceA, sliceB...)&lt;/p&gt;
+</description>
         </item>
         
     </channel>
