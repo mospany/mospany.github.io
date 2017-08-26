@@ -6,7 +6,75 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Thu, 20 Jul 2017 07:39:07 HKT</updated>
+        <updated>Thu, 24 Aug 2017 17:08:26 HKT</updated>
+        
+        <item>
+            <title>spacemacs使用初探</title>
+            <link>http://yanwushuang.github.io/2017/08/25/spacemacs-use-exploration/</link>
+            <pubDate>Thu, 24 Aug 2017 17:08:26 HKT</pubDate>
+            <author>Mospan</author>
+            <guid>http://yanwushuang.github.io/2017/08/25/spacemacs-use-exploration/</guid>
+            <description>&lt;h1 id=&#34;概述&#34;&gt;概述&lt;/h1&gt;
+
+&lt;p&gt;我自从2011年开始使用自己折腾的emacs到现在， 用着它写golang时发现函数列表与补全功能不太好使，一直知道spacemacs的名声，今天想尝试下其效果如果如何，有啥奇妙之处。
+  我一般用它来写Golang、C、Lua、Shell、GTD和Blog，看看spacemacs是否满足我所需和习惯。&lt;/p&gt;
+
+&lt;h1 id=&#34;安装&#34;&gt;安装&lt;/h1&gt;
+
+&lt;h2 id=&#34;安装spacemacs&#34;&gt;安装spacemacs&lt;/h2&gt;
+
+&lt;h2 id=&#34;启动spacemacs&#34;&gt;启动spacemacs&lt;/h2&gt;
+
+&lt;p&gt;Spacemacs的Github地址为：https://github.com/syl20bnr/spacemacs, 如果你的系统已装有Emacs，请先备份Emacs配置文件。因为Spacemacs的配置会覆盖掉原Emacs的配置文件。
+  #+BEGIN_SRC shell
+  cd ~ 
+  mv .emacs.d .emacs.d.bak 
+  mv .emacs .emacs.bak
+  #+END_SRC
+  如果你的系统没有安装Emacs，需要先安装Emacs，请注意Emacs版本至少为24.4。
+   #+BEGIN_SRC shell
+   git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
+   #+END_SRC
+   #+BEGIN_SRC shell
+   emacs -mm 
+   #+END_SRC
+   初次启动Spacemacs会进行初始化配置（启动时会询问使用简、全哪套配置方案），安装依赖有可能需要一段时间。
+   在通过命令行启动Spacemacs后，可能会发现状态栏乱码了。这是因为字体不支持的原因，需要安装Source Code Pro字体。 同时，还可能需要安装Powerline字体补丁。&lt;/p&gt;
+
+&lt;h1 id=&#34;配置&#34;&gt;配置&lt;/h1&gt;
+
+&lt;h2 id=&#34;增加启动layers&#34;&gt;增加启动layers&lt;/h2&gt;
+
+&lt;p&gt;由于我主要写Golang、C、Lua、Shell、GTD和Blog，增加相应的启动layers即可。
+   #+BEGIN_SRC emacs-lisp
+   dotspacemacs-configuration-layers
+   &#39;(
+     c-c++
+     go
+     lua
+     html
+     ;; ----------------------------------------------------------------
+     ;; Example of useful layers you may want to use right away.
+     ;; Uncomment some layer names and press &lt;SPC f e R&gt; (Vim style) or
+     ;; &lt;M-m f e R&gt; (Emacs style) to install them.
+     ;; ----------------------------------------------------------------
+     helm
+     auto-completion
+     ;; better-defaults
+     emacs-lisp
+     git
+     markdown
+     org
+     ;; (shell :variables
+     ;;        shell-default-height 30
+     ;;        shell-default-position &#39;bottom)
+     ;; spell-checking
+     ;; syntax-checking
+     ;; version-control
+     )
+   #+END_SRC&lt;/p&gt;
+</description>
+        </item>
         
         <item>
             <title>DNS体系之_基础</title>
@@ -23,20 +91,6 @@
 &lt;h1 id=&#34;ppt内容&#34;&gt;PPT内容&lt;/h1&gt;
 
 &lt;p&gt;&lt;center&gt;&lt;embed src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/dns-architecture-base.pdf&#34; width=100% height=&#34;800&#34;&gt;&lt;/center&gt;&lt;/p&gt;
-</description>
-        </item>
-        
-        <item>
-            <title>Go开发随记</title>
-            <link>http://yanwushuang.github.io/2017/07/07/golang-develop-notes/</link>
-            <pubDate>Fri, 07 Jul 2017 11:01:18 HKT</pubDate>
-            <author>Mospan</author>
-            <guid>http://yanwushuang.github.io/2017/07/07/golang-develop-notes/</guid>
-            <description>&lt;h1 id=&#34;基础&#34;&gt;基础&lt;/h1&gt;
-
-&lt;h2 id=&#34;slice追加slice&#34;&gt;slice追加slice&lt;/h2&gt;
-
-&lt;p&gt;sliceA = append(sliceA, sliceB...)&lt;/p&gt;
 </description>
         </item>
         

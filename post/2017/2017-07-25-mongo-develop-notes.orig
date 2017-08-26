@@ -1,0 +1,23 @@
++++
+categories = ["技术文章"]
+date = "2017-07-25T11:01:18+08:00"
+description = ""
+keywords = ["mongo","db"]
+tags = ["mongo", "db"]
+title = "mongo开发使用随记"
+url = "/2017/07/25/mongo-develop-notes/"
++++
+
+* 安装与配置
+  详见: [[http://www.cnblogs.com/zj1111184556/p/3599828.html][Ubuntu mongodb 安装和配置]] 
+
+* 基础
+  详见: [[http://www.51ebk.com/html/854.html][十天掌握MongoDB之一：初识MongoDB]]
+
+* 常用
+** 正则查询
+   #+BEGIN_SRC go -n -t
+    query := bson.M{}
+    query["cname"] = bson.M{"$regex": fmt.Sprintf("%s$", args.CmdArgs[0])}
+    lines, err = s.DB.Query(query)
+   #+END_SRC

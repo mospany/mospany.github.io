@@ -1,0 +1,13 @@
++++
+categories = ["技术文章"]
+date = "2017-07-07T11:01:18+08:00"
+description = ""
+keywords = ["Go", "Golang"]
+tags = ["Go", "Golang"]
+title = "Go开发随记"
+url = "/2017/07/07/Golang-develop-notes/"
++++
+
+* 基础
+** slice追加slice
+   sliceA = append(sliceA, sliceB...) 
