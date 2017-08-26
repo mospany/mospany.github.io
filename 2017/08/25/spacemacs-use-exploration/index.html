@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <base href="http://yanwushuang.github.io/">
-  <title>Hugo - 墨斯潘園</title>
+  <title>spacemacs使用初探 - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
-  
-  <meta name="description" content="Hugo">
+  <meta name="keywords" content="emacs,spacemacs,">
+  <meta name="description" content="概述 我自从2011年开始使用自己折腾的emacs到现在， 用着它写golang时发现函数列表与补全功能不太好使，一直知道spacemacs的名">
   <meta name="author" content="mospan">
-  <meta itemprop="name" content="Hugo - 墨斯潘園">
-  <meta itemprop="description" content="Hugo">
+  <meta itemprop="name" content="spacemacs使用初探 - 墨斯潘園">
+  <meta itemprop="description" content="概述 我自从2011年开始使用自己折腾的emacs到现在， 用着它写golang时发现函数列表与补全功能不太好使，一直知道spacemacs的名">
   <meta itemprop="image" content="http://yanwushuang.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
-  <meta name="twitter:title" content="Hugo - 墨斯潘園" />
+  <meta name="twitter:title" content="spacemacs使用初探 - 墨斯潘園" />
   
   <meta name="twitter:description" content="">
   <link rel="shortcut icon" href="img/favicon.ico"/>
@@ -59,38 +59,172 @@
 
   </header>
   <div id="container">
-    <div id="main">
-      
-      
-      <h2 id="2016-02">2016-02</h2>
-      
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="http://yanwushuang.github.io/2016/02/14/pango-development-quick-start/" title="pango设计与实现(02)--快速开始" itemprop="url">
-    <h1 itemprop="name">pango设计与实现(02)--快速开始</h1>
-    <p itemprop="description">安装 安装前准备 确保你的本地环境已经安装好如下软件： git. Go 1.4+ 源码安装 下载源码到本地 git clone https://github.com/yanwushuang/pango.git 设置好环境变量 cd pango export GOPATH=`pwd` 编译 make 如果编译成功，将在当前目录下</p>
-    <time datetime="2016-02-14 16:57:25 &#43;0800 HKT" itemprop="datePublished">2016年02月14日</time>
-  </a>
-</section>
+    <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody">
+    <header class="article-info clearfix">
+  <h1 itemprop="name">
+      <a href="http://yanwushuang.github.io/2017/08/25/spacemacs-use-exploration/" title="spacemacs使用初探" itemprop="url">spacemacs使用初探</a>
+  </h1>
+  <p class="article-author">By 
+    
+      <a href="http://blog.mospan.cn" title="mospan">mospan</a>
+    
+  </p>
+  <p class="article-time">
+    <time datetime="2017-08-24 17:08:26 &#43;0800 HKT" itemprop="datePublished">2017年08月24日</time>
+  </p>
+</header>
 
-       
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="http://yanwushuang.github.io/2016/02/14/pango-development-introduce/" title="pango设计与实现(01)--介绍" itemprop="url">
-    <h1 itemprop="name">pango设计与实现(01)--介绍</h1>
-    <p itemprop="description">概述 pango我个人发起的基于hugo的变种开源项目，是一个快速与灵活的静态网页生成器，使用GO语言开发。 主要基于如下目的： 巩固学习web前</p>
-    <time datetime="2016-02-14 12:22:12 &#43;0800 HKT" itemprop="datePublished">2016年02月14日</time>
-  </a>
-</section>
+	<div class="article-content">
+    
+		<div class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+      <nav id="TableOfContents">
+<ul>
+<li><a href="#概述">概述</a></li>
+<li><a href="#安装">安装</a>
+<ul>
+<li><a href="#安装spacemacs">安装spacemacs</a></li>
+<li><a href="#启动spacemacs">启动spacemacs</a></li>
+</ul></li>
+<li><a href="#配置">配置</a>
+<ul>
+<li><a href="#增加启动layers">增加启动layers</a></li>
+</ul></li>
+</ul>
+</nav>
+		</div>
+    
+    
 
-        
-      <nav id="page-nav" class="clearfix">
-          
+<p><a id="orga2d596e"></a></p>
 
+<h1 id="概述">概述</h1>
 
+<p>我自从2011年开始使用自己折腾的emacs到现在， 用着它写golang时发现函数列表与补全功能不太好使，一直知道spacemacs的名声，今天想尝试下其效果如果如何，有啥奇妙之处。
+我一般用它来写Golang、C、Lua、Shell、GTD和Blog，看看spacemacs是否满足我所需和习惯。</p>
 
-      </nav>
+<p><a id="org9352426"></a></p>
+
+<h1 id="安装">安装</h1>
+
+<p>Spacemacs的Github地址为：<a href="https://github.com/syl20bnr/spacemacs">https://github.com/syl20bnr/spacemacs</a>, 如果你的系统已装有Emacs，请先备份Emacs配置文件。因为Spacemacs的配置会覆盖掉原Emacs的配置文件。</p>
+
+<pre><code>cd ~ 
+mv .emacs.d .emacs.d.bak 
+mv .emacs .emacs.bak
+</code></pre>
+
+<p>如果你的系统没有安装Emacs，需要先安装Emacs，请注意Emacs版本至少为24.4。</p>
+
+<p><a id="org065e167"></a></p>
+
+<h2 id="安装spacemacs">安装spacemacs</h2>
+
+<pre><code>git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
+</code></pre>
+
+<p><a id="org3afd874"></a></p>
+
+<h2 id="启动spacemacs">启动spacemacs</h2>
+
+<pre><code>emacs -mm 
+</code></pre>
+
+<p>初次启动Spacemacs会进行初始化配置（启动时会询问使用简、全哪套配置方案），安装依赖有可能需要一段时间。
+在通过命令行启动Spacemacs后，可能会发现状态栏乱码了。这是因为字体不支持的原因，需要安装Source Code Pro字体。 同时，还可能需要安装Powerline字体补丁。</p>
+
+<p><a id="org2de1574"></a></p>
+
+<h1 id="配置">配置</h1>
+
+<p><a id="orgcc94243"></a></p>
+
+<h2 id="增加启动layers">增加启动layers</h2>
+
+<p>由于我主要写Golang、C、Lua、Shell、GTD和Blog，增加相应的启动layers即可。</p>
+
+<pre><code>dotspacemacs-configuration-layers
+'(
+  c-c++
+  go
+  lua
+  html
+  ;; ----------------------------------------------------------------
+  ;; Example of useful layers you may want to use right away.
+  ;; Uncomment some layer names and press &lt;SPC f e R&gt; (Vim style) or
+  ;; &lt;M-m f e R&gt; (Emacs style) to install them.
+  ;; ----------------------------------------------------------------
+  helm
+  auto-completion
+  ;; better-defaults
+  emacs-lisp
+  git
+  markdown
+  org
+  ;; (shell :variables
+  ;;        shell-default-height 30
+  ;;        shell-default-position 'bottom)
+  ;; spell-checking
+  ;; syntax-checking
+  ;; version-control
+  )
+</code></pre>
+
+    <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+    <div style="float:left;margin-top:0px;">
+    <img src="/img/qrcode.jpg" width="129px" height="129px"/>
+    <div style="text-align:center;">微信扫一扫</div>
     </div>
+    <div>
+    <p style="margin-top:0px;">作者：<a target="_blank" href="http://blog.mospan.cn/">mospan</a>
+    <br />微信关注：墨斯潘園
+	<br />本文出处：<a target="_blank" href="http://yanwushuang.github.io/2017/08/25/spacemacs-use-exploration/">http://yanwushuang.github.io/2017/08/25/spacemacs-use-exploration/</a>
+	<br />
+	文章版权归本人所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+	</div>
+	</div>
+
+
+	</div>
+  <footer class="article-footer clearfix">
+  
+
+<div class="article-tags">
+  <span></span>
+  
+  <a href="/tags/emacs">emacs</a>
+  
+  <a href="/tags/spacemacs">spacemacs</a>
+  
+</div>
+
+
+
+<div class="article-categories">
+  <span></span>
+  
+  <a class="article-category-link" href="/categories/emacs">emacs</a>
+  
+  <a class="article-category-link" href="/categories/spacemacs">spacemacs</a>
+  
+</div>
+
+
+
+  <div class="article-share" id="share">
+    <div data-url="http://yanwushuang.github.io/2017/08/25/spacemacs-use-exploration/" data-title="spacemacs使用初探" data-tsina="3833537679" class="share clearfix">
+    </div>
+  </div>
+</footer>
+
+	</article>
+  
+
+
+
+</div>
+
     <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
@@ -421,6 +555,38 @@ $(document).ready(function(){
 
 <script type="text/javascript">
 $(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
   var $this = $('.share'),
       url = $this.attr('data-url'),
       encodedUrl = encodeURIComponent(url),
@@ -447,6 +613,27 @@ $(document).ready(function(){
 });
 </script>
 
+
+<link rel="stylesheet" href="http://yanwushuang.github.io/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="http://yanwushuang.github.io/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
 
 
 
