@@ -66,7 +66,7 @@ url = "/2017/08/25/spacemacs-use-exploration/"
 * 使用
 ** Working with Go
 *** Go commands (start with =m=):
-
+#+ATTR_HTML: :border 2 :rules all :frame border
 | Key Binding | Description                                                                           |
 |-------------+---------------------------------------------------------------------------------------|
 | ~SPC m h h~ | godoc at point                                                                        |
@@ -87,7 +87,7 @@ url = "/2017/08/25/spacemacs-use-exploration/"
 | ~SPC m t s~ | run "go test" for the suite you're currently in (requires gocheck)                    |
 
 *** Go Guru
-
+#+ATTR_HTML: :border 2 :rules all :frame border
 | Key Binding | Description                                          |
 |-------------+------------------------------------------------------|
 | ~SPC m f d~ | go-guru describe symbol at point                     |
