@@ -6,7 +6,745 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Thu, 24 Aug 2017 17:08:26 HKT</updated>
+        <updated>Sun, 27 Aug 2017 17:08:26 HKT</updated>
+        
+        <item>
+            <title>emacs.mospan使用指南</title>
+            <link>http://yanwushuang.github.io/2017/08/25/emacs-mospan-tutorial/</link>
+            <pubDate>Sun, 27 Aug 2017 17:08:26 HKT</pubDate>
+            <author>Mospan</author>
+            <guid>http://yanwushuang.github.io/2017/08/25/emacs-mospan-tutorial/</guid>
+            <description>
+
+&lt;h1 id=&#34;概述-a-id-sec-1-name-sec-1-a&#34;&gt;概述&lt;a id=&#34;sec-1&#34; name=&#34;sec-1&#34;&gt;&lt;/a&gt;&lt;/h1&gt;
+
+&lt;p&gt;我自从2011年开始使用自己折腾的emacs到现在，参考或实现了不少功能使其满足我工作与学习所需，虽然它依然有一些瑕疵，但尝试了其他配置或IDE之后依然觉得它是最符合我习惯的，
+我一般用它来写Golang、C、Lua、Shell、GTD和Blog，基本已满足我所需和习惯。&lt;/p&gt;
+
+&lt;h1 id=&#34;安装-a-id-sec-2-name-sec-2-a&#34;&gt;安装&lt;a id=&#34;sec-2&#34; name=&#34;sec-2&#34;&gt;&lt;/a&gt;&lt;/h1&gt;
+
+&lt;p&gt;emacs.mospan的Github地址为：&lt;a href=&#34;https://github.com/yanwushuang/emacs.d&#34;&gt;https://github.com/yanwushuang/emacs.d&lt;/a&gt;, 如果你的系统已装有Emacs，请先备份Emacs配置文件。因为Spacemacs的配置会覆盖掉原Emacs的配置文件。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd ~ 
+mv .emacs.d .emacs.d.bak 
+mv .emacs .emacs.bak
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;如果你的系统没有安装Emacs，需要先安装Emacs，请注意Emacs版本至少为24.4。&lt;/p&gt;
+
+&lt;h2 id=&#34;安装emacs-mospan-a-id-sec-2-1-name-sec-2-1-a&#34;&gt;安装emacs.mospan&lt;a id=&#34;sec-2-1&#34; name=&#34;sec-2-1&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;安装依赖工具-a-id-sec-2-1-1-name-sec-2-1-1-a&#34;&gt;安装依赖工具&lt;a id=&#34;sec-2-1-1&#34; name=&#34;sec-2-1-1&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Linux&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo apt-get install pyflakes
+sudo apt-get install cscope
+sudo apt-get install w3m
+sudo apt-get install &amp;quot;graphviz*&amp;quot; 
+sudo apt-get install mew
+sudo apt-get install ipython
+sudo apt-get install stardict
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Mac&lt;/p&gt;
+
+&lt;p&gt;把上面的apt-get换成brew即可。&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;启动emacs-mospan-a-id-sec-2-2-name-sec-2-2-a&#34;&gt;启动emacs.mospan&lt;a id=&#34;sec-2-2&#34; name=&#34;sec-2-2&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;emacs -mm
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;初次启动emacs.mospan会进行初始化配置（启动时会询问使用简、全哪套配置方案），安装依赖有可能需要一段时间。&lt;/p&gt;
+
+&lt;h1 id=&#34;使用-a-id-sec-3-name-sec-3-a&#34;&gt;使用&lt;a id=&#34;sec-3&#34; name=&#34;sec-3&#34;&gt;&lt;/a&gt;&lt;/h1&gt;
+
+&lt;h2 id=&#34;显示-a-id-sec-3-1-name-sec-3-1-a&#34;&gt;显示&lt;a id=&#34;sec-3-1&#34; name=&#34;sec-3-1&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
+
+
+&lt;colgroup&gt;
+&lt;col  class=&#34;left&#34; /&gt;
+
+&lt;col  class=&#34;left&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th scope=&#34;col&#34; class=&#34;left&#34;&gt;快捷键&lt;/th&gt;
+&lt;th scope=&#34;col&#34; class=&#34;left&#34;&gt;描述&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-x C-=&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;放大字体&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-x C-–&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;缩小字体&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-x C-0&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;重置字体&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-c M-h&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;highlight-symbol-at-point&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-c M-r&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;highlight-symbol-remove-all&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-c M-n&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;highlight-symbol-next&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-c M-p&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;highlight-symbol-prev&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-x C-q&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;解除“buffer is read-only”&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&#34;功能键-a-id-sec-3-2-name-sec-3-2-a&#34;&gt;功能键&lt;a id=&#34;sec-3-2&#34; name=&#34;sec-3-2&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
+
+
+&lt;colgroup&gt;
+&lt;col  class=&#34;left&#34; /&gt;
+
+&lt;col  class=&#34;left&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th scope=&#34;col&#34; class=&#34;left&#34;&gt;快捷键&lt;/th&gt;
+&lt;th scope=&#34;col&#34; class=&#34;left&#34;&gt;描述&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;f3&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;open-eshell-other-buffer&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;f4&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;eshell&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;f12&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;svn-status&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-f9&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;ecb-activate&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;S-f9&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;ecb-deactivate&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-f10&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;imenu-list-smart-toggle&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-f10&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;sr-speedbar-toggle&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-f11&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;ediff&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;S-f11&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;ediff-directories&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-f12&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;man&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;f5&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;compile&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;f6&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;scope-find-functions-calling-this-function&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;f7&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;scope-pop-mark&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;f8&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;scope-find-global-definition-no-prompting&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-f6&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;gud-go&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-f7&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;gud-step&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-f8&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;gud-next&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&#34;编辑-a-id-sec-3-3-name-sec-3-3-a&#34;&gt;编辑&lt;a id=&#34;sec-3-3&#34; name=&#34;sec-3-3&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
+
+
+&lt;colgroup&gt;
+&lt;col  class=&#34;left&#34; /&gt;
+
+&lt;col  class=&#34;left&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th scope=&#34;col&#34; class=&#34;left&#34;&gt;快捷键&lt;/th&gt;
+&lt;th scope=&#34;col&#34; class=&#34;left&#34;&gt;描述&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-t&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;交换两个字符位置&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;M-t&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;交换两个单词位置&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-o&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;新建下一行&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-x C-t&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;交换两个文本行的位置&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;M-c&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;把单词的首字母改为大写&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;M-u&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;把单词的全部字母改为大写&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;M-l&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;把单词的全部字母改为小写&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-/&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;undo&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-.&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;redo&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-x j&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;跳到某一行&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-M-\\&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;格式化对齐(需先选中)&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-S n&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;向下移动5行&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-S p&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;向上移动5行&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-S f&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;向前移动5列&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-S b&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;向后移动5列&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-c d ?&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;查找当前鼠标点下的符号的文档&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-c d r&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;重新扫描tags文件&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-c d f&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;为函数插入Doxygen注释&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-c d i&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;为文件插入Doxygen注释&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-c d ;&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;为当前成员插入Doxygen注释&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-c d m&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;插入多行注释&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-c d s&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;插入单行注释&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-c d @&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;插入环绕当前区域的注释&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&#34;编程-a-id-sec-3-4-name-sec-3-4-a&#34;&gt;编程&lt;a id=&#34;sec-3-4&#34; name=&#34;sec-3-4&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;h3 id=&#34;c-a-id-sec-3-4-1-name-sec-3-4-1-a&#34;&gt;C&lt;a id=&#34;sec-3-4-1&#34; name=&#34;sec-3-4-1&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+
+&lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
+
+
+&lt;colgroup&gt;
+&lt;col  class=&#34;left&#34; /&gt;
+
+&lt;col  class=&#34;left&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th scope=&#34;col&#34; class=&#34;left&#34;&gt;快捷键&lt;/th&gt;
+&lt;th scope=&#34;col&#34; class=&#34;left&#34;&gt;描述&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-M-a&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;c-beginning-of-defun&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-M-e&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;c-end-of-defun&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-M-h&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;c-mark-function&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;M-a&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;c-beginning-of-statement&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;M-e&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;c-end-of-statement&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;M-l&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;eassist-list-methods&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;M-m&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;semantic-ia-complete-symbol-menu&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;M-o&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;eassist-switch-h-cpp&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-c 0&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;semantic-tag-folding-fold-all&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-c 1&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;semantic-tag-folding-show-all&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-c 2&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;semantic-tag-folding-fold-block&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-c 3&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;semantic-tag-folding-show-block&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-c 4&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;hs-hide-block&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-c 5&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;hs-show-block&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-c 6&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;hide-ifdef-block&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-c 7&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;show-ifdef-block&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&#34;golang-a-id-sec-3-4-2-name-sec-3-4-2-a&#34;&gt;Golang&lt;a id=&#34;sec-3-4-2&#34; name=&#34;sec-3-4-2&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+
+&lt;h2 id=&#34;gtd-a-id-sec-3-5-name-sec-3-5-a&#34;&gt;GTD&lt;a id=&#34;sec-3-5&#34; name=&#34;sec-3-5&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;h3 id=&#34;全局-a-id-sec-3-5-1-name-sec-3-5-1-a&#34;&gt;全局&lt;a id=&#34;sec-3-5-1&#34; name=&#34;sec-3-5-1&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+
+&lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
+
+
+&lt;colgroup&gt;
+&lt;col  class=&#34;left&#34; /&gt;
+
+&lt;col  class=&#34;left&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th scope=&#34;col&#34; class=&#34;left&#34;&gt;快捷键&lt;/th&gt;
+&lt;th scope=&#34;col&#34; class=&#34;left&#34;&gt;描述&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-c v&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;打开org-mode agenda视图&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-c v a&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;进入agenda视图，agenda view提供四种视图，分别是日(d)，周（w），月(v m)，年(v y)，括号里是切换这四种视图的快捷键。&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-c C-q&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;打标签&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-c C-r&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;打开org-remember进行备忘记录&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&#34;在todo行上-a-id-sec-3-5-2-name-sec-3-5-2-a&#34;&gt;在TODO行上&lt;a id=&#34;sec-3-5-2&#34; name=&#34;sec-3-5-2&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+
+&lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
+
+
+&lt;colgroup&gt;
+&lt;col  class=&#34;left&#34; /&gt;
+
+&lt;col  class=&#34;left&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th scope=&#34;col&#34; class=&#34;left&#34;&gt;快捷键&lt;/th&gt;
+&lt;th scope=&#34;col&#34; class=&#34;left&#34;&gt;描述&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-c C-t&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;切换TODO状态，循环选择&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-u C-c C-t&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;切换TODO状态，手工选择&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-c C-c&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;添加Tag&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-c C-s&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;添加Schedule&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-c C-d&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;添加Deadline&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-c .&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;添加时间戳&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-u C-c .&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;添加准确时间的时间戳&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-c C-w&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;移动到不同父节点&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&#34;日历-a-id-sec-3-5-3-name-sec-3-5-3-a&#34;&gt;日历&lt;a id=&#34;sec-3-5-3&#34; name=&#34;sec-3-5-3&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+
+&lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
+
+
+&lt;colgroup&gt;
+&lt;col  class=&#34;left&#34; /&gt;
+
+&lt;col  class=&#34;left&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th scope=&#34;col&#34; class=&#34;left&#34;&gt;快捷键&lt;/th&gt;
+&lt;th scope=&#34;col&#34; class=&#34;left&#34;&gt;描述&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-f 或者 左方向键&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;后一日&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-b 或者 右方向键&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;前一日&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-n 或者 下方向键&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;后一周&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;c-p 或者 上方向键&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;前一周&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;M-}&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;后一月&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;M-{&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;前一月&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-x ]&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;后一年&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-x [&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;前一年&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-a&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;移动到一周的开始&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;C-e&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;移动到一周的末尾&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;M-a&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;移动到一月的开始&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;M-e&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;移动到一月的末尾&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;M-&lt;&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;移动到一年的开始&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;M-&gt;&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;移动到一年的末尾&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+</description>
+        </item>
         
         <item>
             <title>spacemacs使用初探</title>

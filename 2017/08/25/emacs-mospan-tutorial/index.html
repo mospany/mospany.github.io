@@ -3,18 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <base href="http://yanwushuang.github.io/">
-  <title>怎样才能拥有个人独立域名邮箱？ - 墨斯潘園</title>
+  <title>emacs.mospan使用指南 - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
-  <meta name="keywords" content="独立,邮箱,">
-  <meta name="description" content="怎样拥有个人独立域名邮箱的申请与配置过程。">
+  <meta name="keywords" content="emacs,">
+  <meta name="description" content="概述 我自从2011年开始使用自己折腾的emacs到现在，参考或实现了不少功能使其满足我工作与学习所需，虽然它依然有一些瑕疵，但尝试了其他配置">
   <meta name="author" content="mospan">
-  <meta itemprop="name" content="怎样才能拥有个人独立域名邮箱？ - 墨斯潘園">
-  <meta itemprop="description" content="怎样拥有个人独立域名邮箱的申请与配置过程。">
+  <meta itemprop="name" content="emacs.mospan使用指南 - 墨斯潘園">
+  <meta itemprop="description" content="概述 我自从2011年开始使用自己折腾的emacs到现在，参考或实现了不少功能使其满足我工作与学习所需，虽然它依然有一些瑕疵，但尝试了其他配置">
   <meta itemprop="image" content="http://yanwushuang.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
-  <meta name="twitter:title" content="怎样才能拥有个人独立域名邮箱？ - 墨斯潘園" />
-  <meta name="twitter:description" content="怎样拥有个人独立域名邮箱的申请与配置过程。" />
+  <meta name="twitter:title" content="emacs.mospan使用指南 - 墨斯潘園" />
+  
+  <meta name="twitter:description" content="">
   <link rel="shortcut icon" href="img/favicon.ico"/>
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png" />
@@ -62,7 +63,7 @@
 	<article itemprop="articleBody">
     <header class="article-info clearfix">
   <h1 itemprop="name">
-      <a href="http://yanwushuang.github.io/2016/03/31/independent-mailbox/" title="怎样才能拥有个人独立域名邮箱？" itemprop="url">怎样才能拥有个人独立域名邮箱？</a>
+      <a href="http://yanwushuang.github.io/2017/08/25/emacs-mospan-tutorial/" title="emacs.mospan使用指南" itemprop="url">emacs.mospan使用指南</a>
   </h1>
   <p class="article-author">By 
     
@@ -70,57 +71,775 @@
     
   </p>
   <p class="article-time">
-    <time datetime="2016-03-31 21:11:24 &#43;0800 HKT" itemprop="datePublished">2016年03月31日</time>
+    <time datetime="2017-08-27 17:08:26 &#43;0800 HKT" itemprop="datePublished">2017年08月27日</time>
   </p>
 </header>
 
 	<div class="article-content">
     
+		<div class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+      <nav id="TableOfContents">
+<ul>
+<li><a href="#概述-a-id-sec-1-name-sec-1-a">概述<a id="sec-1" name="sec-1"></a></a></li>
+<li><a href="#安装-a-id-sec-2-name-sec-2-a">安装<a id="sec-2" name="sec-2"></a></a>
+<ul>
+<li><a href="#安装emacs-mospan-a-id-sec-2-1-name-sec-2-1-a">安装emacs.mospan<a id="sec-2-1" name="sec-2-1"></a></a>
+<ul>
+<li><a href="#安装依赖工具-a-id-sec-2-1-1-name-sec-2-1-1-a">安装依赖工具<a id="sec-2-1-1" name="sec-2-1-1"></a></a></li>
+</ul></li>
+<li><a href="#启动emacs-mospan-a-id-sec-2-2-name-sec-2-2-a">启动emacs.mospan<a id="sec-2-2" name="sec-2-2"></a></a></li>
+</ul></li>
+<li><a href="#使用-a-id-sec-3-name-sec-3-a">使用<a id="sec-3" name="sec-3"></a></a>
+<ul>
+<li><a href="#显示-a-id-sec-3-1-name-sec-3-1-a">显示<a id="sec-3-1" name="sec-3-1"></a></a></li>
+<li><a href="#功能键-a-id-sec-3-2-name-sec-3-2-a">功能键<a id="sec-3-2" name="sec-3-2"></a></a></li>
+<li><a href="#编辑-a-id-sec-3-3-name-sec-3-3-a">编辑<a id="sec-3-3" name="sec-3-3"></a></a></li>
+<li><a href="#编程-a-id-sec-3-4-name-sec-3-4-a">编程<a id="sec-3-4" name="sec-3-4"></a></a>
+<ul>
+<li><a href="#c-a-id-sec-3-4-1-name-sec-3-4-1-a">C<a id="sec-3-4-1" name="sec-3-4-1"></a></a></li>
+<li><a href="#golang-a-id-sec-3-4-2-name-sec-3-4-2-a">Golang<a id="sec-3-4-2" name="sec-3-4-2"></a></a></li>
+</ul></li>
+<li><a href="#gtd-a-id-sec-3-5-name-sec-3-5-a">GTD<a id="sec-3-5" name="sec-3-5"></a></a>
+<ul>
+<li><a href="#全局-a-id-sec-3-5-1-name-sec-3-5-1-a">全局<a id="sec-3-5-1" name="sec-3-5-1"></a></a></li>
+<li><a href="#在todo行上-a-id-sec-3-5-2-name-sec-3-5-2-a">在TODO行上<a id="sec-3-5-2" name="sec-3-5-2"></a></a></li>
+<li><a href="#日历-a-id-sec-3-5-3-name-sec-3-5-3-a">日历<a id="sec-3-5-3" name="sec-3-5-3"></a></a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+		</div>
+    
     
 
-<h1 id="背景">背景</h1>
+<h1 id="概述-a-id-sec-1-name-sec-1-a">概述<a id="sec-1" name="sec-1"></a></h1>
 
-<p>在创建开源项目或小团队创业初期，由于没有精力或财力自己搭建内部邮件服务器，为了使大家沟通更顺畅更一致，也为了与客户沟通显得更加专业一些，拥有一致的独立域名邮箱显得也挺重要的。
-那么可以借助于网上成熟的免费企业邮箱来配置自己的独立域名邮箱也可以达到效果，只不过私密邮件的安全问题自己掂量好就行。</p>
+<p>我自从2011年开始使用自己折腾的emacs到现在，参考或实现了不少功能使其满足我工作与学习所需，虽然它依然有一些瑕疵，但尝试了其他配置或IDE之后依然觉得它是最符合我习惯的，
+我一般用它来写Golang、C、Lua、Shell、GTD和Blog，基本已满足我所需和习惯。</p>
 
-<h1 id="前提条件">前提条件</h1>
+<h1 id="安装-a-id-sec-2-name-sec-2-a">安装<a id="sec-2" name="sec-2"></a></h1>
 
-<ul>
-<li><p>先拥有自己的域名，申请方式从略。</p></li>
+<p>emacs.mospan的Github地址为：<a href="https://github.com/yanwushuang/emacs.d">https://github.com/yanwushuang/emacs.d</a>, 如果你的系统已装有Emacs，请先备份Emacs配置文件。因为Spacemacs的配置会覆盖掉原Emacs的配置文件。</p>
 
-<li><p>其次把自己的域名托管到授权DNS服务器上，例如: <a href="www.dnspod.cn">DNSPod</a>, <a href="http://www.cloudxns.net/">CloudXNS</a>等等。</p></li>
-</ul>
+<pre><code>cd ~ 
+mv .emacs.d .emacs.d.bak 
+mv .emacs .emacs.bak
+</code></pre>
 
-<h1 id="申请配置步骤">申请配置步骤</h1>
+<p>如果你的系统没有安装Emacs，需要先安装Emacs，请注意Emacs版本至少为24.4。</p>
 
-<ol>
-<li>打开<a href="http://ym.163.com/">网易免费企业邮</a>按照提示说明进行注册与登陆。</li>
-<li>登陆到自己域名托管商网站进行域名配置：
+<h2 id="安装emacs-mospan-a-id-sec-2-1-name-sec-2-1-a">安装emacs.mospan<a id="sec-2-1" name="sec-2-1"></a></h2>
 
-<ul>
-<li>配置MX记录指向mx.ym.163.com.</li>
-<li>配置TXT记录为&rdquo;v=spf1 include:spf.163.com ~all&rdquo;, 这一条是为防止其他的邮件服务器把该地址列为垃圾邮件处理。
-配置界面大致如下：
-<img src="http://7xqi7h.com1.z0.glb.clouddn.com/mospan-mailbox-dns-setting.png" alt="个人邮箱DNS配置界面" /></li>
-</ul></li>
-</ol>
+<pre><code>git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
+</code></pre>
 
-<h1 id="使用说明">使用说明</h1>
+<h3 id="安装依赖工具-a-id-sec-2-1-1-name-sec-2-1-1-a">安装依赖工具<a id="sec-2-1-1" name="sec-2-1-1"></a></h3>
 
 <ol>
-<li>这里管理页面，可以增加新的账号，同时可以注销企业邮箱。
- <img src="http://7xqi7h.com1.z0.glb.clouddn.com/mospan-mail-inbox.png" alt="管理页面" /></li>
-<li>成员列表界面可以对该域名下的所有邮箱进行管理。
- <img src="http://7xqi7h.com1.z0.glb.clouddn.com/mospan-mailbox-members.png" alt="成员列表界面" /></li>
-<li>邮件组界面可以对各个成员进行分组管理，以便好统一发送接收邮件。
- <img src="http://7xqi7h.com1.z0.glb.clouddn.com/mospan-mailbox-group.png" alt="邮件组管理界面" /></li>
-<li>邮箱页面，很简洁，也很方便，网易做了那么多年的邮箱也是可以放心的，很棒。
- <img src="http://7xqi7h.com1.z0.glb.clouddn.com/mospan-mail-inbox.png" alt="" /></li>
+<li><p>Linux</p>
+
+<pre><code>sudo apt-get install pyflakes
+sudo apt-get install cscope
+sudo apt-get install w3m
+sudo apt-get install &quot;graphviz*&quot; 
+sudo apt-get install mew
+sudo apt-get install ipython
+sudo apt-get install stardict
+</code></pre></li>
+
+<li><p>Mac</p>
+
+<p>把上面的apt-get换成brew即可。</p></li>
 </ol>
 
-<h1 id="结语">结语</h1>
+<h2 id="启动emacs-mospan-a-id-sec-2-2-name-sec-2-2-a">启动emacs.mospan<a id="sec-2-2" name="sec-2-2"></a></h2>
 
-<p>通过上述的步骤就可以像那么回事的使用个人独立域名邮箱了。</p>
+<pre><code>emacs -mm
+</code></pre>
+
+<p>初次启动emacs.mospan会进行初始化配置（启动时会询问使用简、全哪套配置方案），安装依赖有可能需要一段时间。</p>
+
+<h1 id="使用-a-id-sec-3-name-sec-3-a">使用<a id="sec-3" name="sec-3"></a></h1>
+
+<h2 id="显示-a-id-sec-3-1-name-sec-3-1-a">显示<a id="sec-3-1" name="sec-3-1"></a></h2>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">快捷键</th>
+<th scope="col" class="left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="left">C-x C-=</td>
+<td class="left">放大字体</td>
+</tr>
+
+
+<tr>
+<td class="left">C-x C-–</td>
+<td class="left">缩小字体</td>
+</tr>
+
+
+<tr>
+<td class="left">C-x C-0</td>
+<td class="left">重置字体</td>
+</tr>
+
+
+<tr>
+<td class="left">C-c M-h</td>
+<td class="left">highlight-symbol-at-point</td>
+</tr>
+
+
+<tr>
+<td class="left">C-c M-r</td>
+<td class="left">highlight-symbol-remove-all</td>
+</tr>
+
+
+<tr>
+<td class="left">C-c M-n</td>
+<td class="left">highlight-symbol-next</td>
+</tr>
+
+
+<tr>
+<td class="left">C-c M-p</td>
+<td class="left">highlight-symbol-prev</td>
+</tr>
+
+
+<tr>
+<td class="left">C-x C-q</td>
+<td class="left">解除“buffer is read-only”</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="功能键-a-id-sec-3-2-name-sec-3-2-a">功能键<a id="sec-3-2" name="sec-3-2"></a></h2>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">快捷键</th>
+<th scope="col" class="left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="left">f3</td>
+<td class="left">open-eshell-other-buffer</td>
+</tr>
+
+
+<tr>
+<td class="left">f4</td>
+<td class="left">eshell</td>
+</tr>
+
+
+<tr>
+<td class="left">f12</td>
+<td class="left">svn-status</td>
+</tr>
+
+
+<tr>
+<td class="left">C-f9</td>
+<td class="left">ecb-activate</td>
+</tr>
+
+
+<tr>
+<td class="left">S-f9</td>
+<td class="left">ecb-deactivate</td>
+</tr>
+
+
+<tr>
+<td class="left">C-f10</td>
+<td class="left">imenu-list-smart-toggle</td>
+</tr>
+
+
+<tr>
+<td class="left">C-f10</td>
+<td class="left">sr-speedbar-toggle</td>
+</tr>
+
+
+<tr>
+<td class="left">C-f11</td>
+<td class="left">ediff</td>
+</tr>
+
+
+<tr>
+<td class="left">S-f11</td>
+<td class="left">ediff-directories</td>
+</tr>
+
+
+<tr>
+<td class="left">C-f12</td>
+<td class="left">man</td>
+</tr>
+
+
+<tr>
+<td class="left">f5</td>
+<td class="left">compile</td>
+</tr>
+
+
+<tr>
+<td class="left">f6</td>
+<td class="left">scope-find-functions-calling-this-function</td>
+</tr>
+
+
+<tr>
+<td class="left">f7</td>
+<td class="left">scope-pop-mark</td>
+</tr>
+
+
+<tr>
+<td class="left">f8</td>
+<td class="left">scope-find-global-definition-no-prompting</td>
+</tr>
+
+
+<tr>
+<td class="left">C-f6</td>
+<td class="left">gud-go</td>
+</tr>
+
+
+<tr>
+<td class="left">C-f7</td>
+<td class="left">gud-step</td>
+</tr>
+
+
+<tr>
+<td class="left">C-f8</td>
+<td class="left">gud-next</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="编辑-a-id-sec-3-3-name-sec-3-3-a">编辑<a id="sec-3-3" name="sec-3-3"></a></h2>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">快捷键</th>
+<th scope="col" class="left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="left">C-t</td>
+<td class="left">交换两个字符位置</td>
+</tr>
+
+
+<tr>
+<td class="left">M-t</td>
+<td class="left">交换两个单词位置</td>
+</tr>
+
+
+<tr>
+<td class="left">C-o</td>
+<td class="left">新建下一行</td>
+</tr>
+
+
+<tr>
+<td class="left">C-x C-t</td>
+<td class="left">交换两个文本行的位置</td>
+</tr>
+
+
+<tr>
+<td class="left">M-c</td>
+<td class="left">把单词的首字母改为大写</td>
+</tr>
+
+
+<tr>
+<td class="left">M-u</td>
+<td class="left">把单词的全部字母改为大写</td>
+</tr>
+
+
+<tr>
+<td class="left">M-l</td>
+<td class="left">把单词的全部字母改为小写</td>
+</tr>
+
+
+<tr>
+<td class="left">C-/</td>
+<td class="left">undo</td>
+</tr>
+
+
+<tr>
+<td class="left">C-.</td>
+<td class="left">redo</td>
+</tr>
+
+
+<tr>
+<td class="left">C-x j</td>
+<td class="left">跳到某一行</td>
+</tr>
+
+
+<tr>
+<td class="left">C-M-\\</td>
+<td class="left">格式化对齐(需先选中)</td>
+</tr>
+
+
+<tr>
+<td class="left">C-S n</td>
+<td class="left">向下移动5行</td>
+</tr>
+
+
+<tr>
+<td class="left">C-S p</td>
+<td class="left">向上移动5行</td>
+</tr>
+
+
+<tr>
+<td class="left">C-S f</td>
+<td class="left">向前移动5列</td>
+</tr>
+
+
+<tr>
+<td class="left">C-S b</td>
+<td class="left">向后移动5列</td>
+</tr>
+
+
+<tr>
+<td class="left">C-c d ?</td>
+<td class="left">查找当前鼠标点下的符号的文档</td>
+</tr>
+
+
+<tr>
+<td class="left">C-c d r</td>
+<td class="left">重新扫描tags文件</td>
+</tr>
+
+
+<tr>
+<td class="left">C-c d f</td>
+<td class="left">为函数插入Doxygen注释</td>
+</tr>
+
+
+<tr>
+<td class="left">C-c d i</td>
+<td class="left">为文件插入Doxygen注释</td>
+</tr>
+
+
+<tr>
+<td class="left">C-c d ;</td>
+<td class="left">为当前成员插入Doxygen注释</td>
+</tr>
+
+
+<tr>
+<td class="left">C-c d m</td>
+<td class="left">插入多行注释</td>
+</tr>
+
+
+<tr>
+<td class="left">C-c d s</td>
+<td class="left">插入单行注释</td>
+</tr>
+
+
+<tr>
+<td class="left">C-c d @</td>
+<td class="left">插入环绕当前区域的注释</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="编程-a-id-sec-3-4-name-sec-3-4-a">编程<a id="sec-3-4" name="sec-3-4"></a></h2>
+
+<h3 id="c-a-id-sec-3-4-1-name-sec-3-4-1-a">C<a id="sec-3-4-1" name="sec-3-4-1"></a></h3>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">快捷键</th>
+<th scope="col" class="left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="left">C-M-a</td>
+<td class="left">c-beginning-of-defun</td>
+</tr>
+
+
+<tr>
+<td class="left">C-M-e</td>
+<td class="left">c-end-of-defun</td>
+</tr>
+
+
+<tr>
+<td class="left">C-M-h</td>
+<td class="left">c-mark-function</td>
+</tr>
+
+
+<tr>
+<td class="left">M-a</td>
+<td class="left">c-beginning-of-statement</td>
+</tr>
+
+
+<tr>
+<td class="left">M-e</td>
+<td class="left">c-end-of-statement</td>
+</tr>
+
+
+<tr>
+<td class="left">M-l</td>
+<td class="left">eassist-list-methods</td>
+</tr>
+
+
+<tr>
+<td class="left">M-m</td>
+<td class="left">semantic-ia-complete-symbol-menu</td>
+</tr>
+
+
+<tr>
+<td class="left">M-o</td>
+<td class="left">eassist-switch-h-cpp</td>
+</tr>
+
+
+<tr>
+<td class="left">C-c 0</td>
+<td class="left">semantic-tag-folding-fold-all</td>
+</tr>
+
+
+<tr>
+<td class="left">C-c 1</td>
+<td class="left">semantic-tag-folding-show-all</td>
+</tr>
+
+
+<tr>
+<td class="left">C-c 2</td>
+<td class="left">semantic-tag-folding-fold-block</td>
+</tr>
+
+
+<tr>
+<td class="left">C-c 3</td>
+<td class="left">semantic-tag-folding-show-block</td>
+</tr>
+
+
+<tr>
+<td class="left">C-c 4</td>
+<td class="left">hs-hide-block</td>
+</tr>
+
+
+<tr>
+<td class="left">C-c 5</td>
+<td class="left">hs-show-block</td>
+</tr>
+
+
+<tr>
+<td class="left">C-c 6</td>
+<td class="left">hide-ifdef-block</td>
+</tr>
+
+
+<tr>
+<td class="left">C-c 7</td>
+<td class="left">show-ifdef-block</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="golang-a-id-sec-3-4-2-name-sec-3-4-2-a">Golang<a id="sec-3-4-2" name="sec-3-4-2"></a></h3>
+
+<h2 id="gtd-a-id-sec-3-5-name-sec-3-5-a">GTD<a id="sec-3-5" name="sec-3-5"></a></h2>
+
+<h3 id="全局-a-id-sec-3-5-1-name-sec-3-5-1-a">全局<a id="sec-3-5-1" name="sec-3-5-1"></a></h3>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">快捷键</th>
+<th scope="col" class="left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="left">C-c v</td>
+<td class="left">打开org-mode agenda视图</td>
+</tr>
+
+
+<tr>
+<td class="left">C-c v a</td>
+<td class="left">进入agenda视图，agenda view提供四种视图，分别是日(d)，周（w），月(v m)，年(v y)，括号里是切换这四种视图的快捷键。</td>
+</tr>
+
+
+<tr>
+<td class="left">C-c C-q</td>
+<td class="left">打标签</td>
+</tr>
+
+
+<tr>
+<td class="left">C-c C-r</td>
+<td class="left">打开org-remember进行备忘记录</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="在todo行上-a-id-sec-3-5-2-name-sec-3-5-2-a">在TODO行上<a id="sec-3-5-2" name="sec-3-5-2"></a></h3>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">快捷键</th>
+<th scope="col" class="left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="left">C-c C-t</td>
+<td class="left">切换TODO状态，循环选择</td>
+</tr>
+
+
+<tr>
+<td class="left">C-u C-c C-t</td>
+<td class="left">切换TODO状态，手工选择</td>
+</tr>
+
+
+<tr>
+<td class="left">C-c C-c</td>
+<td class="left">添加Tag</td>
+</tr>
+
+
+<tr>
+<td class="left">C-c C-s</td>
+<td class="left">添加Schedule</td>
+</tr>
+
+
+<tr>
+<td class="left">C-c C-d</td>
+<td class="left">添加Deadline</td>
+</tr>
+
+
+<tr>
+<td class="left">C-c .</td>
+<td class="left">添加时间戳</td>
+</tr>
+
+
+<tr>
+<td class="left">C-u C-c .</td>
+<td class="left">添加准确时间的时间戳</td>
+</tr>
+
+
+<tr>
+<td class="left">C-c C-w</td>
+<td class="left">移动到不同父节点</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="日历-a-id-sec-3-5-3-name-sec-3-5-3-a">日历<a id="sec-3-5-3" name="sec-3-5-3"></a></h3>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">快捷键</th>
+<th scope="col" class="left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="left">C-f 或者 左方向键</td>
+<td class="left">后一日</td>
+</tr>
+
+
+<tr>
+<td class="left">C-b 或者 右方向键</td>
+<td class="left">前一日</td>
+</tr>
+
+
+<tr>
+<td class="left">C-n 或者 下方向键</td>
+<td class="left">后一周</td>
+</tr>
+
+
+<tr>
+<td class="left">c-p 或者 上方向键</td>
+<td class="left">前一周</td>
+</tr>
+
+
+<tr>
+<td class="left">M-}</td>
+<td class="left">后一月</td>
+</tr>
+
+
+<tr>
+<td class="left">M-{</td>
+<td class="left">前一月</td>
+</tr>
+
+
+<tr>
+<td class="left">C-x ]</td>
+<td class="left">后一年</td>
+</tr>
+
+
+<tr>
+<td class="left">C-x [</td>
+<td class="left">前一年</td>
+</tr>
+
+
+<tr>
+<td class="left">C-a</td>
+<td class="left">移动到一周的开始</td>
+</tr>
+
+
+<tr>
+<td class="left">C-e</td>
+<td class="left">移动到一周的末尾</td>
+</tr>
+
+
+<tr>
+<td class="left">M-a</td>
+<td class="left">移动到一月的开始</td>
+</tr>
+
+
+<tr>
+<td class="left">M-e</td>
+<td class="left">移动到一月的末尾</td>
+</tr>
+
+
+<tr>
+<td class="left">M-<</td>
+<td class="left">移动到一年的开始</td>
+</tr>
+
+
+<tr>
+<td class="left">M-></td>
+<td class="left">移动到一年的末尾</td>
+</tr>
+</tbody>
+</table>
 
     <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
     <div style="float:left;margin-top:0px;">
@@ -130,7 +849,7 @@
     <div>
     <p style="margin-top:0px;">作者：<a target="_blank" href="http://blog.mospan.cn/">mospan</a>
     <br />微信关注：墨斯潘園
-	<br />本文出处：<a target="_blank" href="http://yanwushuang.github.io/2016/03/31/independent-mailbox/">http://yanwushuang.github.io/2016/03/31/independent-mailbox/</a>
+	<br />本文出处：<a target="_blank" href="http://yanwushuang.github.io/2017/08/25/emacs-mospan-tutorial/">http://yanwushuang.github.io/2017/08/25/emacs-mospan-tutorial/</a>
 	<br />
 	文章版权归本人所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
 	</div>
@@ -144,9 +863,7 @@
 <div class="article-tags">
   <span></span>
   
-  <a href="/tags/%E7%8B%AC%E7%AB%8B">独立</a>
-  
-  <a href="/tags/%E9%82%AE%E7%AE%B1">邮箱</a>
+  <a href="/tags/emacs">emacs</a>
   
 </div>
 
@@ -155,16 +872,14 @@
 <div class="article-categories">
   <span></span>
   
-  <a class="article-category-link" href="/categories/%E7%8B%AC%E7%AB%8B">独立</a>
-  
-  <a class="article-category-link" href="/categories/%E9%82%AE%E7%AE%B1">邮箱</a>
+  <a class="article-category-link" href="/categories/emacs">emacs</a>
   
 </div>
 
 
 
   <div class="article-share" id="share">
-    <div data-url="http://yanwushuang.github.io/2016/03/31/independent-mailbox/" data-title="怎样才能拥有个人独立域名邮箱？" data-tsina="3833537679" class="share clearfix">
+    <div data-url="http://yanwushuang.github.io/2017/08/25/emacs-mospan-tutorial/" data-title="emacs.mospan使用指南" data-tsina="3833537679" class="share clearfix">
     </div>
   </div>
 </footer>
