@@ -81,15 +81,23 @@
 			<strong class="toc-title">文章目录</strong>
       <nav id="TableOfContents">
 <ul>
-<li><a href="#概述">概述</a></li>
-<li><a href="#安装">安装</a>
+<li><a href="#概述-a-id-sec-1-name-sec-1-a">概述<a id="sec-1" name="sec-1"></a></a></li>
+<li><a href="#安装-a-id-sec-2-name-sec-2-a">安装<a id="sec-2" name="sec-2"></a></a>
 <ul>
-<li><a href="#安装spacemacs">安装spacemacs</a></li>
-<li><a href="#启动spacemacs">启动spacemacs</a></li>
+<li><a href="#安装spacemacs-a-id-sec-2-1-name-sec-2-1-a">安装spacemacs<a id="sec-2-1" name="sec-2-1"></a></a></li>
+<li><a href="#启动spacemacs-a-id-sec-2-2-name-sec-2-2-a">启动spacemacs<a id="sec-2-2" name="sec-2-2"></a></a></li>
 </ul></li>
-<li><a href="#配置">配置</a>
+<li><a href="#配置-a-id-sec-3-name-sec-3-a">配置<a id="sec-3" name="sec-3"></a></a>
 <ul>
-<li><a href="#增加启动layers">增加启动layers</a></li>
+<li><a href="#增加启动layers-a-id-sec-3-1-name-sec-3-1-a">增加启动layers<a id="sec-3-1" name="sec-3-1"></a></a></li>
+</ul></li>
+<li><a href="#使用-a-id-sec-4-name-sec-4-a">使用<a id="sec-4" name="sec-4"></a></a>
+<ul>
+<li><a href="#working-with-go-a-id-sec-4-1-name-sec-4-1-a">Working with Go<a id="sec-4-1" name="sec-4-1"></a></a>
+<ul>
+<li><a href="#go-commands-start-with-m-a-id-sec-4-1-1-name-sec-4-1-1-a">Go commands (start with <code>m</code>):<a id="sec-4-1-1" name="sec-4-1-1"></a></a></li>
+<li><a href="#go-guru-a-id-sec-4-1-2-name-sec-4-1-2-a">Go Guru<a id="sec-4-1-2" name="sec-4-1-2"></a></a></li>
+</ul></li>
 </ul></li>
 </ul>
 </nav>
@@ -97,16 +105,12 @@
     
     
 
-<p><a id="orga2d596e"></a></p>
-
-<h1 id="概述">概述</h1>
+<h1 id="概述-a-id-sec-1-name-sec-1-a">概述<a id="sec-1" name="sec-1"></a></h1>
 
 <p>我自从2011年开始使用自己折腾的emacs到现在， 用着它写golang时发现函数列表与补全功能不太好使，一直知道spacemacs的名声，今天想尝试下其效果如果如何，有啥奇妙之处。
 我一般用它来写Golang、C、Lua、Shell、GTD和Blog，看看spacemacs是否满足我所需和习惯。</p>
 
-<p><a id="org9352426"></a></p>
-
-<h1 id="安装">安装</h1>
+<h1 id="安装-a-id-sec-2-name-sec-2-a">安装<a id="sec-2" name="sec-2"></a></h1>
 
 <p>Spacemacs的Github地址为：<a href="https://github.com/syl20bnr/spacemacs">https://github.com/syl20bnr/spacemacs</a>, 如果你的系统已装有Emacs，请先备份Emacs配置文件。因为Spacemacs的配置会覆盖掉原Emacs的配置文件。</p>
 
@@ -117,30 +121,22 @@ mv .emacs .emacs.bak
 
 <p>如果你的系统没有安装Emacs，需要先安装Emacs，请注意Emacs版本至少为24.4。</p>
 
-<p><a id="org065e167"></a></p>
-
-<h2 id="安装spacemacs">安装spacemacs</h2>
+<h2 id="安装spacemacs-a-id-sec-2-1-name-sec-2-1-a">安装spacemacs<a id="sec-2-1" name="sec-2-1"></a></h2>
 
 <pre><code>git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
 </code></pre>
 
-<p><a id="org3afd874"></a></p>
+<h2 id="启动spacemacs-a-id-sec-2-2-name-sec-2-2-a">启动spacemacs<a id="sec-2-2" name="sec-2-2"></a></h2>
 
-<h2 id="启动spacemacs">启动spacemacs</h2>
-
-<pre><code>emacs -mm 
+<pre><code>emacs -mm
 </code></pre>
 
 <p>初次启动Spacemacs会进行初始化配置（启动时会询问使用简、全哪套配置方案），安装依赖有可能需要一段时间。
 在通过命令行启动Spacemacs后，可能会发现状态栏乱码了。这是因为字体不支持的原因，需要安装Source Code Pro字体。 同时，还可能需要安装Powerline字体补丁。</p>
 
-<p><a id="org2de1574"></a></p>
+<h1 id="配置-a-id-sec-3-name-sec-3-a">配置<a id="sec-3" name="sec-3"></a></h1>
 
-<h1 id="配置">配置</h1>
-
-<p><a id="orgcc94243"></a></p>
-
-<h2 id="增加启动layers">增加启动layers</h2>
+<h2 id="增加启动layers-a-id-sec-3-1-name-sec-3-1-a">增加启动layers<a id="sec-3-1" name="sec-3-1"></a></h2>
 
 <p>由于我主要写Golang、C、Lua、Shell、GTD和Blog，增加相应的启动layers即可。</p>
 
@@ -170,6 +166,216 @@ mv .emacs .emacs.bak
   ;; version-control
   )
 </code></pre>
+
+<h1 id="使用-a-id-sec-4-name-sec-4-a">使用<a id="sec-4" name="sec-4"></a></h1>
+
+<h2 id="working-with-go-a-id-sec-4-1-name-sec-4-1-a">Working with Go<a id="sec-4-1" name="sec-4-1"></a></h2>
+
+<h3 id="go-commands-start-with-m-a-id-sec-4-1-1-name-sec-4-1-1-a">Go commands (start with <code>m</code>):<a id="sec-4-1-1" name="sec-4-1-1"></a></h3>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">Key Binding</th>
+<th scope="col" class="left">Description</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="left">`SPC m h h`</td>
+<td class="left">godoc at point</td>
+</tr>
+
+
+<tr>
+<td class="left">`SPC m i g`</td>
+<td class="left">goto imports</td>
+</tr>
+
+
+<tr>
+<td class="left">`SPC m i a`</td>
+<td class="left">add import</td>
+</tr>
+
+
+<tr>
+<td class="left">`SPC m i r`</td>
+<td class="left">remove unused import</td>
+</tr>
+
+
+<tr>
+<td class="left">`SPC m e b`</td>
+<td class="left">go-play buffer</td>
+</tr>
+
+
+<tr>
+<td class="left">`SPC m e r`</td>
+<td class="left">go-play region</td>
+</tr>
+
+
+<tr>
+<td class="left">`SPC m e d`</td>
+<td class="left">download go-play snippet</td>
+</tr>
+
+
+<tr>
+<td class="left">`SPC m x x`</td>
+<td class="left">run "go run" for the current 'main' package</td>
+</tr>
+
+
+<tr>
+<td class="left">`SPC m g a`</td>
+<td class="left">jump to matching test file or back from test to code file</td>
+</tr>
+
+
+<tr>
+<td class="left">`SPC m g c`</td>
+<td class="left">open a clone of the current buffer with a coverage info (`go tool cover -h` for help)</td>
+</tr>
+
+
+<tr>
+<td class="left">`SPC m g g`</td>
+<td class="left">go jump to definition</td>
+</tr>
+
+
+<tr>
+<td class="left">`SPC m r n`</td>
+<td class="left">go rename</td>
+</tr>
+
+
+<tr>
+<td class="left">`SPC m t p`</td>
+<td class="left">run "go test" for the current package</td>
+</tr>
+
+
+<tr>
+<td class="left">`SPC m t P`</td>
+<td class="left">run "go test" for the current package and all packages under it</td>
+</tr>
+
+
+<tr>
+<td class="left">`SPC m t t`</td>
+<td class="left">run "go test" for the function you're currently in (while you're in a \_.test.go file)</td>
+</tr>
+
+
+<tr>
+<td class="left">`SPC m t s`</td>
+<td class="left">run "go test" for the suite you're currently in (requires gocheck)</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="go-guru-a-id-sec-4-1-2-name-sec-4-1-2-a">Go Guru<a id="sec-4-1-2" name="sec-4-1-2"></a></h3>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">Key Binding</th>
+<th scope="col" class="left">Description</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="left">`SPC m f d`</td>
+<td class="left">go-guru describe symbol at point</td>
+</tr>
+
+
+<tr>
+<td class="left">`SPC m f f`</td>
+<td class="left">go-guru show free variables</td>
+</tr>
+
+
+<tr>
+<td class="left">`SPC m f i`</td>
+<td class="left">go-guru show implements relation</td>
+</tr>
+
+
+<tr>
+<td class="left">`SPC m f c`</td>
+<td class="left">go-guru show channel sends/receives</td>
+</tr>
+
+
+<tr>
+<td class="left">`SPC m f r`</td>
+<td class="left">go-guru show referrers</td>
+</tr>
+
+
+<tr>
+<td class="left">`SPC m f j`</td>
+<td class="left">go-guru jump to symbol definition</td>
+</tr>
+
+
+<tr>
+<td class="left">`SPC m f p`</td>
+<td class="left">go-guru show what the select expression points to</td>
+</tr>
+
+
+<tr>
+<td class="left">`SPC m f s`</td>
+<td class="left">go-guru show callstack</td>
+</tr>
+
+
+<tr>
+<td class="left">`SPC m f e`</td>
+<td class="left">go-guru show possible contants/types for error value</td>
+</tr>
+
+
+<tr>
+<td class="left">`SPC m f <`</td>
+<td class="left">go-guru show possible callers</td>
+</tr>
+
+
+<tr>
+<td class="left">`SPC m f >`</td>
+<td class="left">go-guru show call targets</td>
+</tr>
+
+
+<tr>
+<td class="left">`SPC m f o`</td>
+<td class="left">go-guru set analysis scope</td>
+</tr>
+</tbody>
+</table>
 
     <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
     <div style="float:left;margin-top:0px;">
