@@ -1,0 +1,34 @@
+++
+categories = ["技术文章"]
+date = "2017-09-12T11:01:18+08:00"
+description = ""
+keywords = ["jira", "项目管理"]
+tags = ["jira", "项目管理"]
+title = "Jira使用笔记"
+url = "/2017/09/12/jira-use-notes/"
++++
+
+
+* 常用过滤器
+** 由我提交的问题
+   #+BEGIN_QUOTE
+   reporter = currentUser() order by created DESC
+   #+END_QUOTE
+** 分配给我的未解决问题
+   #+BEGIN_QUOTE
+   assignee = currentUser() AND resolution = Unresolved order by updated DESC
+   #+END_QUOTE
+** 我处理过的问题
+   #+BEGIN_QUOTE
+   status changed by currentuser()
+   #+END_QUOTE
+** 项目组未完的问题
+   #+BEGIN_QUOTE
+   project = FUSIONA AND status in (待处理, 执行中, 处理中, 新建) AND Sprint = 878
+   project = FUSIONA AND status in (待处理, 执行中, 处理中, 新建) AND Sprint = 878 ORDER BY assignee
+   #+END_QUOTE
+
+** FUSIONA - 当前Sprint已完成的需求/缺陷/任务/事务
+   #+BEGIN_QUOTE
+   project = FUSIONA AND issuetype in (standardIssueTypes(), 事务, 事故, 任务, 缺陷, 需求) AND status in (已处理, 无需处理, 完成, 关闭) AND Sprint in openSprints(FUSIONA) ORDER BY duedate ASC, priority DESC, issuetype ASC
+   #+END_QUOTE
