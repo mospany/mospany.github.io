@@ -6,7 +6,54 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Mon, 28 Aug 2017 07:39:07 HKT</updated>
+        <updated>Sat, 24 Feb 2018 16:32:21 HKT</updated>
+        
+        <item>
+            <title>VUE开发环境搭建</title>
+            <link>http://yanwushuang.github.io/2018/02/24/vue-dev-env-build/</link>
+            <pubDate>Sat, 24 Feb 2018 16:32:21 HKT</pubDate>
+            <author>Mospan</author>
+            <guid>http://yanwushuang.github.io/2018/02/24/vue-dev-env-build/</guid>
+            <description>&lt;h1 id=&#34;安装&#34;&gt;安装&lt;/h1&gt;
+
+&lt;h2 id=&#34;安装nodejs&#34;&gt;安装nodejs&lt;/h2&gt;
+
+&lt;p&gt;1) 到https://nodejs.org/en/download/ 下载对应系统的二进制版本。
+  2) 按照&lt;a href=&#34;http://blog.csdn.net/mrzhouxiaofei/article/details/66974644&#34; title=&#34;ubuntu16.04下配置nodejs环境&#34;&gt;ubuntu16.04下配置nodejs环境&lt;/a&gt;进行安装。&lt;/p&gt;
+
+&lt;h2 id=&#34;安装npm&#34;&gt;安装npm&lt;/h2&gt;
+
+&lt;p&gt;1) 创建npm依赖包文件package.json。
+  2) 安装npm依赖
+  #+BEGIN_SRC bash
+    # install dependencies
+    npm install
+    npm install fec-builder -g
+  #+END_SRC
+  3) 如果出现这个报错&#34;Module build failed: Error: ENOENT: no such file or directory, scandir &#39;/opt/node/lib/node_modules/fec-builder/node_modules/node-sass/vendor&#39;&#34;,
+     直接到/opt/node/lib/node_modules/fec-builder/node_modules/node-sass/目录下执行命令&#34;npm rebuild node-sass&#34;即可。&lt;/p&gt;
+
+&lt;h1 id=&#34;启动&#34;&gt;启动&lt;/h1&gt;
+
+&lt;p&gt;创建fec-builder软连接：ln -s /opt/node/bin/fec-builder /usr/local/bin/fec-builder，
+   直接使用fec-builder命令启动。
+   #+BEGIN_SRC bash
+    # serve with hot reload at localhost:8080
+    fec-builder -p 8080&lt;/p&gt;
+
+&lt;p&gt;# build for production with minification
+    fec-builder build -e production
+   #+END_SRC&lt;/p&gt;
+
+&lt;h1 id=&#34;访问&#34;&gt;访问&lt;/h1&gt;
+
+&lt;p&gt;在浏览器地址栏中输入: http://XX.XX.XX.XX:8080 进行访问。&lt;/p&gt;
+
+&lt;h1 id=&#34;调试&#34;&gt;调试&lt;/h1&gt;
+
+&lt;p&gt;使用chrome开发者工具进行调试，详见：&lt;a href=&#34;https://www.jianshu.com/p/cf36d48652f4&#34; title=&#34;Chrome 开发者工具中文指南&#34;&gt;Chrome 开发者工具中文指南&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
         
         <item>
             <title>emacs整体介绍</title>
@@ -5922,57 +5969,6 @@ tags        A tags match to select entries that should contribute.  See
 
 &lt;pre&gt;&lt;code&gt;   make install
 &lt;/code&gt;&lt;/pre&gt;
-</description>
-        </item>
-        
-        <item>
-            <title>pango设计与实现(01)--介绍</title>
-            <link>http://yanwushuang.github.io/2016/02/14/pango-development-introduce/</link>
-            <pubDate>Sun, 14 Feb 2016 12:22:12 HKT</pubDate>
-            <author>Mospan</author>
-            <guid>http://yanwushuang.github.io/2016/02/14/pango-development-introduce/</guid>
-            <description>
-
-&lt;h1 id=&#34;概述&#34;&gt;概述&lt;/h1&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://github.com/yanwushuang/pango&#34;&gt;pango&lt;/a&gt;我个人发起的基于&lt;a href=&#34;http://gohugo.io/&#34;&gt;hugo&lt;/a&gt;的变种开源项目，是一个快速与灵活的静态网页生成器，使用GO语言开发。&lt;/p&gt;
-
-&lt;p&gt;主要基于如下目的：&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;巩固学习web前后端相关知识。&lt;/li&gt;
-&lt;li&gt;巩固学习GO语言并解决实际问题。&lt;/li&gt;
-&lt;li&gt;满足我个人博客所需的私人定制要求。&lt;/li&gt;
-&lt;li&gt;加入hugo开源项目, 发现并解决bug，希望能贡献一点微薄之力。
-&lt;br /&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;开发特性&#34;&gt;开发特性&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;使pango即能支持mardown语法格式又能支持org-mode语法格式。&lt;/li&gt;
-&lt;li&gt;编写mardown与org-mode相互转换器。&lt;/li&gt;
-&lt;li&gt;发现并解决hugo上的bug。&lt;/li&gt;
-&lt;li&gt;目前能想到这些，其他以后补充，现在从略。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;开发计划&#34;&gt;开发计划&lt;/h1&gt;
-
-&lt;p&gt;本项目只利用我个人业余时间进行开发，上班路途远，下班还得做家务与看孩子，能所利用时间不多，我尽量多做些开发，具体时间不便衡量，hugo上修改也会定期同步到本项目。&lt;/p&gt;
-
-&lt;p&gt;开发步骤：&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;先学习使用与进行源码分析。&lt;/li&gt;
-&lt;li&gt;开发一些满足私人定制的小功能。&lt;/li&gt;
-&lt;li&gt;支持org-mode语法格式。&lt;/li&gt;
-&lt;li&gt;编写md2org与org2md转换器。&lt;/li&gt;
-&lt;li&gt;其他待定。&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h1 id=&#34;小结&#34;&gt;小结&lt;/h1&gt;
-
-&lt;p&gt;希望通过本项目的学习与开发，使本人能学到一些开源技术知识，也希望能认识一些朋友和贡献出一点绵薄之力。&lt;/p&gt;
 </description>
         </item>
         

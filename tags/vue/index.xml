@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Vue on 墨斯潘園</title>
+        <link>http://yanwushuang.github.io/tags/vue/</link>
+        <language>zh-CN</language>
+        <author>Mospan</author>
+        <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
+        <updated>Sat, 24 Feb 2018 16:32:21 HKT</updated>
+        
+        <item>
+            <title>VUE开发环境搭建</title>
+            <link>http://yanwushuang.github.io/2018/02/24/vue-dev-env-build/</link>
+            <pubDate>Sat, 24 Feb 2018 16:32:21 HKT</pubDate>
+            <author>Mospan</author>
+            <guid>http://yanwushuang.github.io/2018/02/24/vue-dev-env-build/</guid>
+            <description>&lt;h1 id=&#34;安装&#34;&gt;安装&lt;/h1&gt;
+
+&lt;h2 id=&#34;安装nodejs&#34;&gt;安装nodejs&lt;/h2&gt;
+
+&lt;p&gt;1) 到https://nodejs.org/en/download/ 下载对应系统的二进制版本。
+  2) 按照&lt;a href=&#34;http://blog.csdn.net/mrzhouxiaofei/article/details/66974644&#34; title=&#34;ubuntu16.04下配置nodejs环境&#34;&gt;ubuntu16.04下配置nodejs环境&lt;/a&gt;进行安装。&lt;/p&gt;
+
+&lt;h2 id=&#34;安装npm&#34;&gt;安装npm&lt;/h2&gt;
+
+&lt;p&gt;1) 创建npm依赖包文件package.json。
+  2) 安装npm依赖
+  #+BEGIN_SRC bash
+    # install dependencies
+    npm install
+    npm install fec-builder -g
+  #+END_SRC
+  3) 如果出现这个报错&#34;Module build failed: Error: ENOENT: no such file or directory, scandir &#39;/opt/node/lib/node_modules/fec-builder/node_modules/node-sass/vendor&#39;&#34;,
+     直接到/opt/node/lib/node_modules/fec-builder/node_modules/node-sass/目录下执行命令&#34;npm rebuild node-sass&#34;即可。&lt;/p&gt;
+
+&lt;h1 id=&#34;启动&#34;&gt;启动&lt;/h1&gt;
+
+&lt;p&gt;创建fec-builder软连接：ln -s /opt/node/bin/fec-builder /usr/local/bin/fec-builder，
+   直接使用fec-builder命令启动。
+   #+BEGIN_SRC bash
+    # serve with hot reload at localhost:8080
+    fec-builder -p 8080&lt;/p&gt;
+
+&lt;p&gt;# build for production with minification
+    fec-builder build -e production
+   #+END_SRC&lt;/p&gt;
+
+&lt;h1 id=&#34;访问&#34;&gt;访问&lt;/h1&gt;
+
+&lt;p&gt;在浏览器地址栏中输入: http://XX.XX.XX.XX:8080 进行访问。&lt;/p&gt;
+
+&lt;h1 id=&#34;调试&#34;&gt;调试&lt;/h1&gt;
+
+&lt;p&gt;使用chrome开发者工具进行调试，详见：&lt;a href=&#34;https://www.jianshu.com/p/cf36d48652f4&#34; title=&#34;Chrome 开发者工具中文指南&#34;&gt;Chrome 开发者工具中文指南&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>
