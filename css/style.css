@@ -356,10 +356,10 @@ textarea::-moz-placeholder{color:#817c7c !important}
 .article-gallery-img .loaded{position:absolute;display:block}
 
 /* alter by mospan start....... */
-h1{/*增加对h3标题的修改*/
+h1,article .article-content{/*增加对h3标题的修改*/
   border-bottom:2px  solid   #00ACC1;
 }
-h1 span{/*增加对h3标题字体的修改*/
+h1,article .article-content span{/*增加对h3标题字体的修改*/
   display:inline-block;
   font-weight:normal;
   background: #00ACC1;
