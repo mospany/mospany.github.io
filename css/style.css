@@ -358,8 +358,6 @@ textarea::-moz-placeholder{color:#817c7c !important}
 /* alter by mospan start....... */
 h3{/*增加对h3标题的修改*/
   border-bottom:2px  solid   #00ACC1;
-}
-h3 {/*增加对h3标题字体的修改*/
   display:inline-block;
   font-weight:normal;
   background: #00ACC1;
