@@ -1,0 +1,48 @@
++++
+categories = ["技术文章"]
+date = "2018-02-24T16:32:21+08:00"
+description = ""
+keywords = ["前端","VUE"]
+tags = ["前端","VUE"]
+title = "VUE开发环境搭建"
+url = "/2018/02/24/vue-dev-env-build/"
+
++++
+
+* 安装
+** 安装nodejs
+  1. 到https://nodejs.org/en/download/ 下载对应系统的二进制版本。
+  2. 按照[[http://blog.csdn.net/mrzhouxiaofei/article/details/66974644][ubuntu16.04下配置nodejs环境]]进行安装。
+
+** 安装npm
+  1. 创建npm依赖包文件package.json。
+  2. 安装npm依赖
+  #+BEGIN_SRC bash
+    # install dependencies
+    npm install
+    npm install fec-builder -g
+  #+END_SRC
+  3. 如果出现这个报错"Module build failed: Error: ENOENT: no such file or directory, scandir '/opt/node/lib/node_modules/fec-builder/node_modules/node-sass/vendor'",
+     直接到/opt/node/lib/node_modules/fec-builder/node_modules/node-sass/目录下执行命令"npm rebuild node-sass"即可。
+
+* 启动
+   创建fec-builder软连接：ln -s /opt/node/bin/fec-builder /usr/local/bin/fec-builder，
+   直接使用fec-builder命令启动。
+   #+BEGIN_SRC bash
+    # serve with hot reload at localhost:8080
+    fec-builder -p 8080
+
+    # build for production with minification
+    fec-builder build -e production
+   #+END_SRC
+ 
+* 访问
+  在浏览器地址栏中输入: http://XX.XX.XX.XX:8080 进行访问。
+
+* 调试
+  使用chrome开发者工具进行调试，详见：[[https://www.jianshu.com/p/cf36d48652f4][Chrome 开发者工具中文指南]]
+
+
+     
+
+
