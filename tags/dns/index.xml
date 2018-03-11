@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Dns on 墨斯潘園</title>
+        <link>http://yanwushuang.github.io/tags/dns/</link>
+        <language>zh-CN</language>
+        <author>Mospan</author>
+        <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
+        <updated>Thu, 20 Jul 2017 07:39:07 HKT</updated>
+        
+        <item>
+            <title>DNS体系之_基础</title>
+            <link>http://yanwushuang.github.io/2017/07/17/dns-architecture-base/</link>
+            <pubDate>Thu, 20 Jul 2017 07:39:07 HKT</pubDate>
+            <author>Mospan</author>
+            <guid>http://yanwushuang.github.io/2017/07/17/dns-architecture-base/</guid>
+            <description>
+
+&lt;h1 id=&#34;描述&#34;&gt;描述&lt;/h1&gt;
+
+&lt;p&gt;此《DNS体系基础》为在公司进行的一次内部分享， 现也把它放到博客中来，以便更多的读者分享交流。PPT内容由我个人的理解编写与部分来自互联网上的整理。&lt;/p&gt;
+
+&lt;h1 id=&#34;ppt内容&#34;&gt;PPT内容&lt;/h1&gt;
+
+&lt;p&gt;&lt;center&gt;&lt;embed src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/dns-architecture-base.pdf&#34; width=100% height=&#34;800&#34;&gt;&lt;/center&gt;&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>
