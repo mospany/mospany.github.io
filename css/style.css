@@ -19,7 +19,20 @@ a:hover:before{-webkit-transition:color 0.25s, background 0.5s;-moz-transition:c
 input:focus{outline:none}
 input,button{margin:0;padding:0;}
 input::-moz-focus-inner,button::-moz-focus-inner{border:0;padding:0}
-h1{font-size:1.5em}
+/* h1{font-size:1.5em} */
+{/*增加对H1标题属性的修改*/
+  margin-bottom:2em;
+  margin-right: 5px;
+  padding: 8px 15px;
+  letter-spacing: 2px;
+  background-image: linear-gradient(to right bottom, rgb(0, 188, 212), rgb(63, 81, 181));
+  background-color: rgb(63, 81, 181);
+  color: rgb(255, 255, 255);
+  border-left: 10px solid rgb(51, 51, 51);
+  border-radius:5px;
+  text-shadow: rgb(102, 102, 102) 1px 1px 1px;
+  box-shadow: rgb(102, 102, 102) 1px 1px 2px;
+}
 .fa{display:inline-block;font-family:FontAwesome;font-style:normal;font-weight:normal;line-height:1;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 .clearfix{zoom:1}
 .clearfix:before,.clearfix:after{content:"";display:table}
