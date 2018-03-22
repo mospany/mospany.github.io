@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
         <title>Dns on 墨斯潘園</title>
-        <link>http://yanwushuang.github.io/tags/dns/</link>
+        <link>http://mospany.github.io/tags/dns/</link>
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
@@ -10,10 +10,10 @@
         
         <item>
             <title>DNS体系之_基础</title>
-            <link>http://yanwushuang.github.io/2017/07/17/dns-architecture-base/</link>
+            <link>http://mospany.github.io/2017/07/17/dns-architecture-base/</link>
             <pubDate>Thu, 20 Jul 2017 07:39:07 HKT</pubDate>
             <author>Mospan</author>
-            <guid>http://yanwushuang.github.io/2017/07/17/dns-architecture-base/</guid>
+            <guid>http://mospany.github.io/2017/07/17/dns-architecture-base/</guid>
             <description>
 
 &lt;h1 id=&#34;描述&#34;&gt;描述&lt;/h1&gt;

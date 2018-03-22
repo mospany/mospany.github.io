@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
         <title>Xns on 墨斯潘園</title>
-        <link>http://yanwushuang.github.io/tags/xns/</link>
+        <link>http://mospany.github.io/tags/xns/</link>
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
@@ -10,10 +10,10 @@
         
         <item>
             <title>基于DPDK开发高性能DNS服务器实践总结</title>
-            <link>http://yanwushuang.github.io/2016/03/14/xns-on-dpdk/</link>
+            <link>http://mospany.github.io/2016/03/14/xns-on-dpdk/</link>
             <pubDate>Mon, 14 Mar 2016 22:02:57 HKT</pubDate>
             <author>Mospan</author>
-            <guid>http://yanwushuang.github.io/2016/03/14/xns-on-dpdk/</guid>
+            <guid>http://mospany.github.io/2016/03/14/xns-on-dpdk/</guid>
             <description>
 
 &lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/china-DPDK-summit-2015-main-page.png&#34; alt=&#34;中国2015DPDK开发者大会主页&#34; /&gt;&lt;/p&gt;

@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
         <title>博客 on 墨斯潘園</title>
-        <link>http://yanwushuang.github.io/tags/%E5%8D%9A%E5%AE%A2/</link>
+        <link>http://mospany.github.io/tags/%E5%8D%9A%E5%AE%A2/</link>
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
@@ -10,10 +10,10 @@
         
         <item>
             <title>我的博客演进之路(06)--添加文章列表分页显示</title>
-            <link>http://yanwushuang.github.io/2016/05/08/my-blog-add-pagination/</link>
+            <link>http://mospany.github.io/2016/05/08/my-blog-add-pagination/</link>
             <pubDate>Sun, 08 May 2016 11:24:43 HKT</pubDate>
             <author>Mospan</author>
-            <guid>http://yanwushuang.github.io/2016/05/08/my-blog-add-pagination/</guid>
+            <guid>http://mospany.github.io/2016/05/08/my-blog-add-pagination/</guid>
             <description>
 
 &lt;h1 id=&#34;背景&#34;&gt;背景&lt;/h1&gt;
@@ -80,10 +80,10 @@
         
         <item>
             <title>我的博客演进之路(05)--添加访问统计</title>
-            <link>http://yanwushuang.github.io/2016/02/21/my-blog-add-visit-counter/</link>
+            <link>http://mospany.github.io/2016/02/21/my-blog-add-visit-counter/</link>
             <pubDate>Sun, 21 Feb 2016 09:52:16 HKT</pubDate>
             <author>Mospan</author>
-            <guid>http://yanwushuang.github.io/2016/02/21/my-blog-add-visit-counter/</guid>
+            <guid>http://mospany.github.io/2016/02/21/my-blog-add-visit-counter/</guid>
             <description>
 
 &lt;h1 id=&#34;申请&#34;&gt;申请&lt;/h1&gt;
@@ -153,10 +153,10 @@
         
         <item>
             <title>我的博客演进之路(04)--调整文章版面显示大小</title>
-            <link>http://yanwushuang.github.io/2016/02/20/my-blog-modify-container-size/</link>
+            <link>http://mospany.github.io/2016/02/20/my-blog-modify-container-size/</link>
             <pubDate>Sat, 20 Feb 2016 10:56:35 HKT</pubDate>
             <author>Mospan</author>
-            <guid>http://yanwushuang.github.io/2016/02/20/my-blog-modify-container-size/</guid>
+            <guid>http://mospany.github.io/2016/02/20/my-blog-modify-container-size/</guid>
             <description>&lt;p&gt;由于原来的版面显示有点过小，在现在的宽屏面前有些浪费。于是为了更好的进行阅读显示，特做了如下修改：&lt;/p&gt;
 
 &lt;p&gt;打开文件./themes/rapid/static/wp-content/themes/hueman/style.css，把&lt;/p&gt;
@@ -186,10 +186,10 @@
         
         <item>
             <title>我的博客演进之路(03)--添加微信公众号</title>
-            <link>http://yanwushuang.github.io/2016/01/25/my-blog-add-weixin-mp/</link>
+            <link>http://mospany.github.io/2016/01/25/my-blog-add-weixin-mp/</link>
             <pubDate>Sat, 06 Feb 2016 23:24:08 HKT</pubDate>
             <author>Mospan</author>
-            <guid>http://yanwushuang.github.io/2016/01/25/my-blog-add-weixin-mp/</guid>
+            <guid>http://mospany.github.io/2016/01/25/my-blog-add-weixin-mp/</guid>
             <description>
 
 &lt;h1 id=&#34;引言&#34;&gt;引言&lt;/h1&gt;
@@ -233,10 +233,10 @@
         
         <item>
             <title>我的博客演进之路(02)--架构与部署概述</title>
-            <link>http://yanwushuang.github.io/2016/01/25/my-blog-architecture/</link>
+            <link>http://mospany.github.io/2016/01/25/my-blog-architecture/</link>
             <pubDate>Mon, 25 Jan 2016 23:24:08 HKT</pubDate>
             <author>Mospan</author>
-            <guid>http://yanwushuang.github.io/2016/01/25/my-blog-architecture/</guid>
+            <guid>http://mospany.github.io/2016/01/25/my-blog-architecture/</guid>
             <description>
 
 &lt;h1 id=&#34;部署图总览&#34;&gt;部署图总览&lt;/h1&gt;
@@ -251,9 +251,9 @@
 
 &lt;p&gt;主要存放了本博客的资料文件，利用了github的pages功能提供了网页浏览服务。&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/yanwushuang.github.io-setting.png?imageView2/1/w/1024/h/768/q/75|watermark/2/text/YmxvZy5tb3NwYW4uY24=/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10&#34; alt=&#34;我博客github设置&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://7xqi7h.com1.z0.glb.clouddn.com/mospany.github.io-setting.png?imageView2/1/w/1024/h/768/q/75|watermark/2/text/YmxvZy5tb3NwYW4uY24=/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10&#34; alt=&#34;我博客github设置&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;github: &lt;a href=&#34;https://github.com/yanwushuang/yanwushuang.github.io&#34;&gt;yanwushuang.github.io&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;github: &lt;a href=&#34;https://github.com/mospany/mospany.github.io&#34;&gt;mospany.github.io&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;gitcafe&#34;&gt;gitcafe&lt;/h2&gt;
 
@@ -304,10 +304,10 @@
         
         <item>
             <title>我的博客演进之路(01)--正式上线</title>
-            <link>http://yanwushuang.github.io/2016/01/24/my-blog-online/</link>
+            <link>http://mospany.github.io/2016/01/24/my-blog-online/</link>
             <pubDate>Sun, 24 Jan 2016 09:34:08 HKT</pubDate>
             <author>Mospan</author>
-            <guid>http://yanwushuang.github.io/2016/01/24/my-blog-online/</guid>
+            <guid>http://mospany.github.io/2016/01/24/my-blog-online/</guid>
             <description>&lt;p&gt;原来的博客都是在&lt;a href=&#34;www.csdn.net&#34;&gt;CSDN&lt;/a&gt;与&lt;a href=&#34;http://www.cnblogs.com/mosp/&#34;&gt;博客园&lt;/a&gt;里写的，都是按照模板进行编写，能自己自定义的比较少，没有自己的独立域名，用emacs/vim编写上面的博客不是很方便，比较难坚持下来。 很早就萌生了自己做的独立博客的想法，由于各种原因没有弄，直到最近自己学习GO语言有了一些认识，想尝试一下GO语言编写自己的独立博客系统，在调研的过程中发现已经有前辈已经使用GO编写了&lt;a href=&#34;http://gohugo.io/&#34;&gt;hugo&lt;/a&gt;博客系统，于是乎决定在其之上搭建自己的博客系统，以便记录与分享自己的学习心得与轨迹。&lt;/p&gt;
 
 &lt;p&gt;本博客主要记录与分享自己的读书笔记、技术文章、自己参与或分析的开源项目、经验总结、自己的生活记录与思考感悟等，目标为每周一篇以上，希望自己能坚持下来,记录下自己的点点滴滴。也欢迎道友们一起讨论与交流。&lt;/p&gt;

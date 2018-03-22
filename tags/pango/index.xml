@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
         <title>Pango on 墨斯潘園</title>
-        <link>http://yanwushuang.github.io/tags/pango/</link>
+        <link>http://mospany.github.io/tags/pango/</link>
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
@@ -10,10 +10,10 @@
         
         <item>
             <title>pango设计与实现(02)--快速开始</title>
-            <link>http://yanwushuang.github.io/2016/02/14/pango-development-quick-start/</link>
+            <link>http://mospany.github.io/2016/02/14/pango-development-quick-start/</link>
             <pubDate>Sun, 14 Feb 2016 16:57:25 HKT</pubDate>
             <author>Mospan</author>
-            <guid>http://yanwushuang.github.io/2016/02/14/pango-development-quick-start/</guid>
+            <guid>http://mospany.github.io/2016/02/14/pango-development-quick-start/</guid>
             <description>
 
 &lt;h1 id=&#34;安装&#34;&gt;安装&lt;/h1&gt;
@@ -31,7 +31,7 @@
 
 &lt;h3 id=&#34;下载源码到本地&#34;&gt;下载源码到本地&lt;/h3&gt;
 
-&lt;pre&gt;&lt;code&gt;   git clone https://github.com/yanwushuang/pango.git
+&lt;pre&gt;&lt;code&gt;   git clone https://github.com/mospany/pango.git
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h3 id=&#34;设置好环境变量&#34;&gt;设置好环境变量&lt;/h3&gt;
@@ -56,15 +56,15 @@
         
         <item>
             <title>pango设计与实现(01)--介绍</title>
-            <link>http://yanwushuang.github.io/2016/02/14/pango-development-introduce/</link>
+            <link>http://mospany.github.io/2016/02/14/pango-development-introduce/</link>
             <pubDate>Sun, 14 Feb 2016 12:22:12 HKT</pubDate>
             <author>Mospan</author>
-            <guid>http://yanwushuang.github.io/2016/02/14/pango-development-introduce/</guid>
+            <guid>http://mospany.github.io/2016/02/14/pango-development-introduce/</guid>
             <description>
 
 &lt;h1 id=&#34;概述&#34;&gt;概述&lt;/h1&gt;
 
-&lt;p&gt;&lt;a href=&#34;https://github.com/yanwushuang/pango&#34;&gt;pango&lt;/a&gt;我个人发起的基于&lt;a href=&#34;http://gohugo.io/&#34;&gt;hugo&lt;/a&gt;的变种开源项目，是一个快速与灵活的静态网页生成器，使用GO语言开发。&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/mospany/pango&#34;&gt;pango&lt;/a&gt;我个人发起的基于&lt;a href=&#34;http://gohugo.io/&#34;&gt;hugo&lt;/a&gt;的变种开源项目，是一个快速与灵活的静态网页生成器，使用GO语言开发。&lt;/p&gt;
 
 &lt;p&gt;主要基于如下目的：&lt;/p&gt;
 
