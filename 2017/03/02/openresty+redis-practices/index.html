@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <base href="http://mospany.github.io/">
-  <title>openresty与redis实践 - 墨斯潘園</title>
+  <title>openresty&#43;redis实践记录 - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
   <meta name="keywords" content="openresty,redis,">
-  <meta name="description" content="安装 openresty安装 详见 openresty安装 redis安装 执行如下命令： sudo apt-get update sudo apt-get install redis-server 详见 Ubuntu安装配置Redis 编写API 根">
+  <meta name="description" content="安装 openresty安装 详见 openresty安装 redis安装 执行如下命令： sudo apt-get update sudo apt-get install redis-server 详见 Ubuntu安装配置Redis redis启">
   <meta name="author" content="mospan">
-  <meta itemprop="name" content="openresty与redis实践 - 墨斯潘園">
-  <meta itemprop="description" content="安装 openresty安装 详见 openresty安装 redis安装 执行如下命令： sudo apt-get update sudo apt-get install redis-server 详见 Ubuntu安装配置Redis 编写API 根">
+  <meta itemprop="name" content="openresty&#43;redis实践记录 - 墨斯潘園">
+  <meta itemprop="description" content="安装 openresty安装 详见 openresty安装 redis安装 执行如下命令： sudo apt-get update sudo apt-get install redis-server 详见 Ubuntu安装配置Redis redis启">
   <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
-  <meta name="twitter:title" content="openresty与redis实践 - 墨斯潘園" />
+  <meta name="twitter:title" content="openresty&#43;redis实践记录 - 墨斯潘園" />
   
   <meta name="twitter:description" content="">
   <link rel="shortcut icon" href="img/favicon.ico"/>
@@ -63,7 +63,7 @@
 	<article itemprop="articleBody">
     <header class="article-info clearfix">
   <h1 itemprop="name">
-      <a href="http://mospany.github.io/2017/03/02/openresty-redis-practices/" title="openresty与redis实践" itemprop="url">openresty与redis实践</a>
+      <a href="http://mospany.github.io/2017/03/02/openresty&#43;redis-practices/" title="openresty&#43;redis实践记录" itemprop="url">openresty&#43;redis实践记录</a>
   </h1>
   <p class="article-author">By 
     
@@ -95,13 +95,66 @@ sudo apt-get install redis-server
 
 <p>详见 <a href="http://www.jianshu.com/p/c8723b677304">Ubuntu安装配置Redis</a></p>
 
-<h1 id="编写api-a-id-sec-2-name-sec-2-a">编写API<a id="sec-2" name="sec-2"></a></h1>
+<h2 id="redis启动-a-id-sec-1-3-name-sec-1-3-a">redis启动<a id="sec-1-3" name="sec-1-3"></a></h2>
+
+<p>执行如下命令：</p>
+
+<pre><code>redis-server /etc/redis/redis-master.conf
+</code></pre>
+
+<p>如需启动redis slave，只需把原有配置修改如下几行即可。</p>
+
+<pre><code>slaveof 192.168.1.1 7648
+slave-priority 100
+slave-read-only yes
+slave-serve-stale-data yes
+</code></pre>
+
+<h2 id="openresty启动-a-id-sec-1-4-name-sec-1-4-a">openresty启动<a id="sec-1-4" name="sec-1-4"></a></h2>
+
+<p>执行如下命令：</p>
+
+<pre><code>root@bj94:/usr/local/openresty/nginx# pwd
+       /usr/local/openresty/nginx
+root@bj94:/usr/local/openresty/nginx# ./sbin/nginx -p `pwd` -c conf/nginx.conf
+         nginx: [alert] lua_code_cache is off; this will hurt performance in /usr/local/openresty/nginx/conf/nginx.conf:29
+root@bj94:/usr/local/openresty/nginx#
+</code></pre>
+
+<h1 id="常用命令-a-id-sec-2-name-sec-2-a">常用命令<a id="sec-2" name="sec-2"></a></h1>
+
+<h2 id="redis-a-id-sec-2-1-name-sec-2-1-a">redis<a id="sec-2-1" name="sec-2-1"></a></h2>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">命令</th>
+<th scope="col" class="left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="left">DBSIZE</td>
+<td class="left">返回当前数据里面keys的数量</td>
+</tr>
+</tbody>
+</table>
+
+<h1 id="编写api-a-id-sec-3-name-sec-3-a">编写API<a id="sec-3" name="sec-3"></a></h1>
 
 <p>根据项目要求编写openresty+lua的增删改查API接口。</p>
 
-<h1 id="测试-a-id-sec-3-name-sec-3-a">测试<a id="sec-3" name="sec-3"></a></h1>
+<h1 id="测试-a-id-sec-4-name-sec-4-a">测试<a id="sec-4" name="sec-4"></a></h1>
 
-<h2 id="发送请求-a-id-sec-3-1-name-sec-3-1-a">发送请求<a id="sec-3-1" name="sec-3-1"></a></h2>
+<h2 id="发送请求-a-id-sec-4-1-name-sec-4-1-a">发送请求<a id="sec-4-1" name="sec-4-1"></a></h2>
 
 <p>使用curl命令发送http json请求:</p>
 
@@ -136,7 +189,7 @@ sudo apt-get install redis-server
 <p>curl -i -H &lsquo;content-type: application/json&rsquo; -X POST -d @add.json <a href="http://dev.mgrconfig.api.qiniudns.com/qiniu/dr302/records/add">http://dev.mgrconfig.api.qiniudns.com/qiniu/dr302/records/add</a></p></li>
 </ol>
 
-<h2 id="回复响应-a-id-sec-3-2-name-sec-3-2-a">回复响应<a id="sec-3-2" name="sec-3-2"></a></h2>
+<h2 id="回复响应-a-id-sec-4-2-name-sec-4-2-a">回复响应<a id="sec-4-2" name="sec-4-2"></a></h2>
 
 <p>根据不同返回码表示操作结果。</p>
 
@@ -164,7 +217,7 @@ Server: DR302-MGR</p>
 }</p>
 </blockquote>
 
-<h2 id="查看存储-a-id-sec-3-3-name-sec-3-3-a">查看存储<a id="sec-3-3" name="sec-3-3"></a></h2>
+<h2 id="查看存储-a-id-sec-4-3-name-sec-4-3-a">查看存储<a id="sec-4-3" name="sec-4-3"></a></h2>
 
 <p>执行命令:</p>
 
@@ -201,9 +254,76 @@ OK
 18. &ldquo;@&rdquo;</p>
 </blockquote>
 
-<h2 id="踩过的坑-a-id-sec-3-4-name-sec-3-4-a">踩过的坑<a id="sec-3-4" name="sec-3-4"></a></h2>
+<h2 id="302测试-a-id-sec-4-4-name-sec-4-4-a">302测试<a id="sec-4-4" name="sec-4-4"></a></h2>
 
-<h3 id="table的深度与浅度拷贝-a-id-sec-3-4-1-name-sec-3-4-1-a">table的深度与浅度拷贝<a id="sec-3-4-1" name="sec-3-4-1"></a></h3>
+<h3 id="请求-a-id-sec-4-4-1-name-sec-4-4-1-a">请求<a id="sec-4-4-1" name="sec-4-4-1"></a></h3>
+
+<pre><code>curl http://192.168.92.94:8302/ -H &quot;host: www.example.com&quot;
+</code></pre>
+
+<h2 id="响应-a-id-sec-4-5-name-sec-4-5-a">响应<a id="sec-4-5" name="sec-4-5"></a></h2>
+
+<p>响应如下：</p>
+
+<p>root@bj94:~/dr302client# curl <a href="http://192.168.92.94:8302/">http://192.168.92.94:8302/</a> -H &ldquo;host: www.example.com&rdquo; -v
+*   Trying 192.168.92.94&hellip;
+* Connected to 192.168.92.94 (192.168.92.94) port 8302 (#0)
+&gt; GET / HTTP/1.1
+&gt; host: www.example.com
+&gt; User-Agent: curl/7.47.0
+&gt; Accept: <em>/</em>
+&gt;
+&lt; HTTP/1.1 302 Moved Temporarily
+&lt; Date: Fri, 07 Apr 2017 02:30:50 GMT
+&lt; Content-Type: text/html
+&lt; Content-Length: 167
+&lt; Connection: keep-alive
+&lt; Server: DR302-NODE
+&lt; Location: <a href="http://2.2.2.2/www.example.com/">http://2.2.2.2/www.example.com/</a>
+&lt;
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>openresty/1.11.2.1</center>
+</body>
+</html></p>
+
+<h2 id="性能测试-a-id-sec-4-6-name-sec-4-6-a">性能测试<a id="sec-4-6" name="sec-4-6"></a></h2>
+
+<p>使用ab测试DR302服务器的性能。</p>
+
+<h3 id="测试步骤-a-id-sec-4-6-1-name-sec-4-6-1-a">测试步骤<a id="sec-4-6-1" name="sec-4-6-1"></a></h3>
+
+<p>1） 由于ab不支持参数修改HOST字段，需把要测试的域名IP对设置到/etc/hosts中。如: 192.168.92.94 www.example.com
+1.  ab测试输出信息，查看项“ Requests per second”。
+    a) 带有keepalive的性能为80000QPS。
+       ab -kc 1024 -n 1000000 <a href="http://www.example.com:8302/">http://www.example.com:8302/</a>
+    b) 不带keepalive的性能为16000QPS。
+       ab -c 1024 -n 1000000 <a href="http://www.example.com:8302/">http://www.example.com:8302/</a></p>
+
+<h3 id="优化点-a-id-sec-4-6-2-name-sec-4-6-2-a">优化点<a id="sec-4-6-2" name="sec-4-6-2"></a></h3>
+
+<ol>
+<li><p>关闭日志记录</p>
+
+<blockquote>
+<p>access_log off;
+error_log  /usr/local/openresty/nginx/logs/dr302_node_error.log error;</p>
+</blockquote></li>
+
+<li><p>打开缓存
+把nginx.conf里的这行打开或加上。
+lua_code_cache on;</p></li>
+</ol>
+
+<p>3）使用ulimit -n 65535设置open files数。
+1.  设置nginx的进程数与本服务器CPU匹配的值，如: 8
+2.  关闭掉一些耗性能的进程。</p>
+
+<h2 id="踩过的坑-a-id-sec-4-7-name-sec-4-7-a">踩过的坑<a id="sec-4-7" name="sec-4-7"></a></h2>
+
+<h3 id="table的深度与浅度拷贝-a-id-sec-4-7-1-name-sec-4-7-1-a">table的深度与浅度拷贝<a id="sec-4-7-1" name="sec-4-7-1"></a></h3>
 
 <ol>
 <li><p>现象</p>
@@ -212,14 +332,17 @@ OK
 
 <li><p>分析</p>
 
-<p>redis存储是正确的，很有可能是中间临时存储存在覆盖的问题， 如果table每次赋值都相当于内存拷贝那样Lua的性能就会大大降低，会不会table之间赋值就像C语言一样只赋值地址或指针。经网上查找发现table存在深度与浅度拷贝的区别。详见:<a href="https://my.oschina.net/hqc17/blog/748709">Lua实现深度拷贝</a></p></li>
+<p>redis存储是正确的，很有可能是中间临时存储存在覆盖的问题， 如果table每次赋值都相当于内存拷贝那样Lua的性能就会大大降低，
+会不会table之间赋值就像C语言一样只赋值地址或指针。经网上查找发现table存在深度与浅度拷贝的区别。
+详见:<a href="https://my.oschina.net/hqc17/blog/748709">Lua实现深度拷贝</a></p></li>
 
 <li><p>解决措施</p>
 
-<p>把中间的临时table变量放入当前语句块中并加local标识，猜测在当前语句块临时table可能会随时被释放掉，因此它赋值给其他作用域更大的变量时使用深拷贝。</p></li>
+<p>把中间的临时table变量放入当前语句块中并加local标识，猜测在当前语句块临时table可能会随时被释放掉，
+因此它赋值给其他作用域更大的变量时使用深拷贝。</p></li>
 </ol>
 
-<h3 id="hgetall结果与lua-table转换-a-id-sec-3-4-2-name-sec-3-4-2-a">hgetall结果与Lua table转换<a id="sec-3-4-2" name="sec-3-4-2"></a></h3>
+<h3 id="hgetall结果与lua-table转换-a-id-sec-4-7-2-name-sec-4-7-2-a">hgetall结果与Lua table转换<a id="sec-4-7-2" name="sec-4-7-2"></a></h3>
 
 <p>使用hgetall获取redis的内容需经转换后才能被Lua table使用。
 转换关键代码如下:</p>
@@ -236,7 +359,7 @@ OK
 10  end
 </code></pre>
 
-<h3 id="nginx-worker权限问题-a-id-sec-3-4-3-name-sec-3-4-3-a">nginx worker权限问题<a id="sec-3-4-3" name="sec-3-4-3"></a></h3>
+<h3 id="nginx-worker权限问题-a-id-sec-4-7-3-name-sec-4-7-3-a">nginx worker权限问题<a id="sec-4-7-3" name="sec-4-7-3"></a></h3>
 
 <ol>
 <li><p>现象</p>
@@ -254,6 +377,19 @@ OK
 2） 把要写的文件路径改成其他可写，例如: chmod 777 data</p></li>
 </ol>
 
+<h3 id="http请求正常-而https出现-received-http-code-400-from-proxy-after-connect-错误-a-id-sec-4-7-4-name-sec-4-7-4-a">http请求正常，而https出现“Received HTTP code 400 from proxy after CONNECT”错误.<a id="sec-4-7-4" name="sec-4-7-4"></a></h3>
+
+<ol>
+<li><p>解决措施</p>
+
+<ol>
+<li>检查openresty安装参数，是否把对应的https参数都装上。
+<br /></li>
+</ol>
+
+<p>2）使用curl命令请求https时不能加&rdquo;-x&rdquo;参数，可以把域名:IP对加入到hosts文件中即可。</p></li>
+</ol>
+
     <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
   <div style="float:right;margin-top:0px;">
     <img src="/img/qrcode.jpg" width="129px" height="129px"/>
@@ -266,7 +402,7 @@ OK
   <div>
     <p style="margin-top:0px;">作者：<a target="_blank" href="http://blog.mospan.cn/">mospan</a>
       <br />微信关注：墨斯潘園
-      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2017/03/02/openresty-redis-practices/">http://mospany.github.io/2017/03/02/openresty-redis-practices/</a>
+      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2017/03/02/openresty&#43;redis-practices/">http://mospany.github.io/2017/03/02/openresty&#43;redis-practices/</a>
       <br />
       文章版权归本人所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
   </div>
@@ -300,7 +436,7 @@ OK
 
 
   <div class="article-share" id="share">
-    <div data-url="http://mospany.github.io/2017/03/02/openresty-redis-practices/" data-title="openresty与redis实践" data-tsina="3833537679" class="share clearfix">
+    <div data-url="http://mospany.github.io/2017/03/02/openresty&#43;redis-practices/" data-title="openresty&#43;redis实践记录" data-tsina="3833537679" class="share clearfix">
     </div>
   </div>
 </footer>

@@ -1326,11 +1326,11 @@ mv .emacs .emacs.bak
         </item>
         
         <item>
-            <title>openresty与redis实践</title>
-            <link>http://mospany.github.io/2017/03/02/openresty-redis-practices/</link>
+            <title>openresty&#43;redis实践记录</title>
+            <link>http://mospany.github.io/2017/03/02/openresty&#43;redis-practices/</link>
             <pubDate>Thu, 02 Mar 2017 11:14:08 HKT</pubDate>
             <author>Mospan</author>
-            <guid>http://mospany.github.io/2017/03/02/openresty-redis-practices/</guid>
+            <guid>http://mospany.github.io/2017/03/02/openresty&#43;redis-practices/</guid>
             <description>
 
 &lt;h1 id=&#34;安装-a-id-sec-1-name-sec-1-a&#34;&gt;安装&lt;a id=&#34;sec-1&#34; name=&#34;sec-1&#34;&gt;&lt;/a&gt;&lt;/h1&gt;
@@ -1349,13 +1349,66 @@ sudo apt-get install redis-server
 
 &lt;p&gt;详见 &lt;a href=&#34;http://www.jianshu.com/p/c8723b677304&#34;&gt;Ubuntu安装配置Redis&lt;/a&gt;&lt;/p&gt;
 
-&lt;h1 id=&#34;编写api-a-id-sec-2-name-sec-2-a&#34;&gt;编写API&lt;a id=&#34;sec-2&#34; name=&#34;sec-2&#34;&gt;&lt;/a&gt;&lt;/h1&gt;
+&lt;h2 id=&#34;redis启动-a-id-sec-1-3-name-sec-1-3-a&#34;&gt;redis启动&lt;a id=&#34;sec-1-3&#34; name=&#34;sec-1-3&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;执行如下命令：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;redis-server /etc/redis/redis-master.conf
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;如需启动redis slave，只需把原有配置修改如下几行即可。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;slaveof 192.168.1.1 7648
+slave-priority 100
+slave-read-only yes
+slave-serve-stale-data yes
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;openresty启动-a-id-sec-1-4-name-sec-1-4-a&#34;&gt;openresty启动&lt;a id=&#34;sec-1-4&#34; name=&#34;sec-1-4&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;执行如下命令：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;root@bj94:/usr/local/openresty/nginx# pwd
+       /usr/local/openresty/nginx
+root@bj94:/usr/local/openresty/nginx# ./sbin/nginx -p `pwd` -c conf/nginx.conf
+         nginx: [alert] lua_code_cache is off; this will hurt performance in /usr/local/openresty/nginx/conf/nginx.conf:29
+root@bj94:/usr/local/openresty/nginx#
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;常用命令-a-id-sec-2-name-sec-2-a&#34;&gt;常用命令&lt;a id=&#34;sec-2&#34; name=&#34;sec-2&#34;&gt;&lt;/a&gt;&lt;/h1&gt;
+
+&lt;h2 id=&#34;redis-a-id-sec-2-1-name-sec-2-1-a&#34;&gt;redis&lt;a id=&#34;sec-2-1&#34; name=&#34;sec-2-1&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
+
+
+&lt;colgroup&gt;
+&lt;col  class=&#34;left&#34; /&gt;
+
+&lt;col  class=&#34;left&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th scope=&#34;col&#34; class=&#34;left&#34;&gt;命令&lt;/th&gt;
+&lt;th scope=&#34;col&#34; class=&#34;left&#34;&gt;描述&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td class=&#34;left&#34;&gt;DBSIZE&lt;/td&gt;
+&lt;td class=&#34;left&#34;&gt;返回当前数据里面keys的数量&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h1 id=&#34;编写api-a-id-sec-3-name-sec-3-a&#34;&gt;编写API&lt;a id=&#34;sec-3&#34; name=&#34;sec-3&#34;&gt;&lt;/a&gt;&lt;/h1&gt;
 
 &lt;p&gt;根据项目要求编写openresty+lua的增删改查API接口。&lt;/p&gt;
 
-&lt;h1 id=&#34;测试-a-id-sec-3-name-sec-3-a&#34;&gt;测试&lt;a id=&#34;sec-3&#34; name=&#34;sec-3&#34;&gt;&lt;/a&gt;&lt;/h1&gt;
+&lt;h1 id=&#34;测试-a-id-sec-4-name-sec-4-a&#34;&gt;测试&lt;a id=&#34;sec-4&#34; name=&#34;sec-4&#34;&gt;&lt;/a&gt;&lt;/h1&gt;
 
-&lt;h2 id=&#34;发送请求-a-id-sec-3-1-name-sec-3-1-a&#34;&gt;发送请求&lt;a id=&#34;sec-3-1&#34; name=&#34;sec-3-1&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;h2 id=&#34;发送请求-a-id-sec-4-1-name-sec-4-1-a&#34;&gt;发送请求&lt;a id=&#34;sec-4-1&#34; name=&#34;sec-4-1&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;使用curl命令发送http json请求:&lt;/p&gt;
 
@@ -1390,7 +1443,7 @@ sudo apt-get install redis-server
 &lt;p&gt;curl -i -H &amp;lsquo;content-type: application/json&amp;rsquo; -X POST -d @add.json &lt;a href=&#34;http://dev.mgrconfig.api.qiniudns.com/qiniu/dr302/records/add&#34;&gt;http://dev.mgrconfig.api.qiniudns.com/qiniu/dr302/records/add&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h2 id=&#34;回复响应-a-id-sec-3-2-name-sec-3-2-a&#34;&gt;回复响应&lt;a id=&#34;sec-3-2&#34; name=&#34;sec-3-2&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;h2 id=&#34;回复响应-a-id-sec-4-2-name-sec-4-2-a&#34;&gt;回复响应&lt;a id=&#34;sec-4-2&#34; name=&#34;sec-4-2&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;根据不同返回码表示操作结果。&lt;/p&gt;
 
@@ -1418,7 +1471,7 @@ Server: DR302-MGR&lt;/p&gt;
 }&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;h2 id=&#34;查看存储-a-id-sec-3-3-name-sec-3-3-a&#34;&gt;查看存储&lt;a id=&#34;sec-3-3&#34; name=&#34;sec-3-3&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;h2 id=&#34;查看存储-a-id-sec-4-3-name-sec-4-3-a&#34;&gt;查看存储&lt;a id=&#34;sec-4-3&#34; name=&#34;sec-4-3&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;执行命令:&lt;/p&gt;
 
@@ -1455,9 +1508,76 @@ OK
 18. &amp;ldquo;@&amp;rdquo;&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;h2 id=&#34;踩过的坑-a-id-sec-3-4-name-sec-3-4-a&#34;&gt;踩过的坑&lt;a id=&#34;sec-3-4&#34; name=&#34;sec-3-4&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;h2 id=&#34;302测试-a-id-sec-4-4-name-sec-4-4-a&#34;&gt;302测试&lt;a id=&#34;sec-4-4&#34; name=&#34;sec-4-4&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
 
-&lt;h3 id=&#34;table的深度与浅度拷贝-a-id-sec-3-4-1-name-sec-3-4-1-a&#34;&gt;table的深度与浅度拷贝&lt;a id=&#34;sec-3-4-1&#34; name=&#34;sec-3-4-1&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;h3 id=&#34;请求-a-id-sec-4-4-1-name-sec-4-4-1-a&#34;&gt;请求&lt;a id=&#34;sec-4-4-1&#34; name=&#34;sec-4-4-1&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;curl http://192.168.92.94:8302/ -H &amp;quot;host: www.example.com&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;响应-a-id-sec-4-5-name-sec-4-5-a&#34;&gt;响应&lt;a id=&#34;sec-4-5&#34; name=&#34;sec-4-5&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;响应如下：&lt;/p&gt;
+
+&lt;p&gt;root@bj94:~/dr302client# curl &lt;a href=&#34;http://192.168.92.94:8302/&#34;&gt;http://192.168.92.94:8302/&lt;/a&gt; -H &amp;ldquo;host: www.example.com&amp;rdquo; -v
+*   Trying 192.168.92.94&amp;hellip;
+* Connected to 192.168.92.94 (192.168.92.94) port 8302 (#0)
+&amp;gt; GET / HTTP/1.1
+&amp;gt; host: www.example.com
+&amp;gt; User-Agent: curl/7.47.0
+&amp;gt; Accept: &lt;em&gt;/&lt;/em&gt;
+&amp;gt;
+&amp;lt; HTTP/1.1 302 Moved Temporarily
+&amp;lt; Date: Fri, 07 Apr 2017 02:30:50 GMT
+&amp;lt; Content-Type: text/html
+&amp;lt; Content-Length: 167
+&amp;lt; Connection: keep-alive
+&amp;lt; Server: DR302-NODE
+&amp;lt; Location: &lt;a href=&#34;http://2.2.2.2/www.example.com/&#34;&gt;http://2.2.2.2/www.example.com/&lt;/a&gt;
+&amp;lt;
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;302 Found&lt;/title&gt;&lt;/head&gt;
+&lt;body bgcolor=&#34;white&#34;&gt;
+&lt;center&gt;&lt;h1&gt;302 Found&lt;/h1&gt;&lt;/center&gt;
+&lt;hr&gt;&lt;center&gt;openresty/1.11.2.1&lt;/center&gt;
+&lt;/body&gt;
+&lt;/html&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;性能测试-a-id-sec-4-6-name-sec-4-6-a&#34;&gt;性能测试&lt;a id=&#34;sec-4-6&#34; name=&#34;sec-4-6&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;使用ab测试DR302服务器的性能。&lt;/p&gt;
+
+&lt;h3 id=&#34;测试步骤-a-id-sec-4-6-1-name-sec-4-6-1-a&#34;&gt;测试步骤&lt;a id=&#34;sec-4-6-1&#34; name=&#34;sec-4-6-1&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;1） 由于ab不支持参数修改HOST字段，需把要测试的域名IP对设置到/etc/hosts中。如: 192.168.92.94 www.example.com
+1.  ab测试输出信息，查看项“ Requests per second”。
+    a) 带有keepalive的性能为80000QPS。
+       ab -kc 1024 -n 1000000 &lt;a href=&#34;http://www.example.com:8302/&#34;&gt;http://www.example.com:8302/&lt;/a&gt;
+    b) 不带keepalive的性能为16000QPS。
+       ab -c 1024 -n 1000000 &lt;a href=&#34;http://www.example.com:8302/&#34;&gt;http://www.example.com:8302/&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;优化点-a-id-sec-4-6-2-name-sec-4-6-2-a&#34;&gt;优化点&lt;a id=&#34;sec-4-6-2&#34; name=&#34;sec-4-6-2&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;关闭日志记录&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;access_log off;
+error_log  /usr/local/openresty/nginx/logs/dr302_node_error.log error;&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;打开缓存
+把nginx.conf里的这行打开或加上。
+lua_code_cache on;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;3）使用ulimit -n 65535设置open files数。
+1.  设置nginx的进程数与本服务器CPU匹配的值，如: 8
+2.  关闭掉一些耗性能的进程。&lt;/p&gt;
+
+&lt;h2 id=&#34;踩过的坑-a-id-sec-4-7-name-sec-4-7-a&#34;&gt;踩过的坑&lt;a id=&#34;sec-4-7&#34; name=&#34;sec-4-7&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;h3 id=&#34;table的深度与浅度拷贝-a-id-sec-4-7-1-name-sec-4-7-1-a&#34;&gt;table的深度与浅度拷贝&lt;a id=&#34;sec-4-7-1&#34; name=&#34;sec-4-7-1&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;p&gt;现象&lt;/p&gt;
@@ -1466,14 +1586,17 @@ OK
 
 &lt;li&gt;&lt;p&gt;分析&lt;/p&gt;
 
-&lt;p&gt;redis存储是正确的，很有可能是中间临时存储存在覆盖的问题， 如果table每次赋值都相当于内存拷贝那样Lua的性能就会大大降低，会不会table之间赋值就像C语言一样只赋值地址或指针。经网上查找发现table存在深度与浅度拷贝的区别。详见:&lt;a href=&#34;https://my.oschina.net/hqc17/blog/748709&#34;&gt;Lua实现深度拷贝&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;p&gt;redis存储是正确的，很有可能是中间临时存储存在覆盖的问题， 如果table每次赋值都相当于内存拷贝那样Lua的性能就会大大降低，
+会不会table之间赋值就像C语言一样只赋值地址或指针。经网上查找发现table存在深度与浅度拷贝的区别。
+详见:&lt;a href=&#34;https://my.oschina.net/hqc17/blog/748709&#34;&gt;Lua实现深度拷贝&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 
 &lt;li&gt;&lt;p&gt;解决措施&lt;/p&gt;
 
-&lt;p&gt;把中间的临时table变量放入当前语句块中并加local标识，猜测在当前语句块临时table可能会随时被释放掉，因此它赋值给其他作用域更大的变量时使用深拷贝。&lt;/p&gt;&lt;/li&gt;
+&lt;p&gt;把中间的临时table变量放入当前语句块中并加local标识，猜测在当前语句块临时table可能会随时被释放掉，
+因此它赋值给其他作用域更大的变量时使用深拷贝。&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h3 id=&#34;hgetall结果与lua-table转换-a-id-sec-3-4-2-name-sec-3-4-2-a&#34;&gt;hgetall结果与Lua table转换&lt;a id=&#34;sec-3-4-2&#34; name=&#34;sec-3-4-2&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;h3 id=&#34;hgetall结果与lua-table转换-a-id-sec-4-7-2-name-sec-4-7-2-a&#34;&gt;hgetall结果与Lua table转换&lt;a id=&#34;sec-4-7-2&#34; name=&#34;sec-4-7-2&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
 
 &lt;p&gt;使用hgetall获取redis的内容需经转换后才能被Lua table使用。
 转换关键代码如下:&lt;/p&gt;
@@ -1490,7 +1613,7 @@ OK
 10  end
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;nginx-worker权限问题-a-id-sec-3-4-3-name-sec-3-4-3-a&#34;&gt;nginx worker权限问题&lt;a id=&#34;sec-3-4-3&#34; name=&#34;sec-3-4-3&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;h3 id=&#34;nginx-worker权限问题-a-id-sec-4-7-3-name-sec-4-7-3-a&#34;&gt;nginx worker权限问题&lt;a id=&#34;sec-4-7-3&#34; name=&#34;sec-4-7-3&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;p&gt;现象&lt;/p&gt;
@@ -1506,6 +1629,19 @@ OK
 
 &lt;p&gt;1） 发现代码以&amp;rdquo;r+&amp;ldquo;(更新模式,保存之前的数据)模式进行读文件，需改成&amp;rdquo;r&amp;rdquo;只读模式。
 2） 把要写的文件路径改成其他可写，例如: chmod 777 data&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;http请求正常-而https出现-received-http-code-400-from-proxy-after-connect-错误-a-id-sec-4-7-4-name-sec-4-7-4-a&#34;&gt;http请求正常，而https出现“Received HTTP code 400 from proxy after CONNECT”错误.&lt;a id=&#34;sec-4-7-4&#34; name=&#34;sec-4-7-4&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;解决措施&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;检查openresty安装参数，是否把对应的https参数都装上。
+&lt;br /&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;2）使用curl命令请求https时不能加&amp;rdquo;-x&amp;rdquo;参数，可以把域名:IP对加入到hosts文件中即可。&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 </description>
         </item>

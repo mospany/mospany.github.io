@@ -230,3 +230,9 @@ url = "/2017/03/02/openresty+redis-practices/"
 **** 解决措施
      1） 发现代码以"r+"(更新模式,保存之前的数据)模式进行读文件，需改成"r"只读模式。
      2） 把要写的文件路径改成其他可写，例如: chmod 777 data
+
+*** http请求正常，而https出现“Received HTTP code 400 from proxy after CONNECT”错误.
+**** 解决措施
+    1) 检查openresty安装参数，是否把对应的https参数都装上。
+
+    2）使用curl命令请求https时不能加"-x"参数，可以把域名:IP对加入到hosts文件中即可。
