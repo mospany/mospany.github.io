@@ -28,6 +28,17 @@ url = "/2016/09/06/dpdk-develop-notes/"
    # be executed silently.
    Q= 
    #+END_SRC 
+
+** 查看某个库或可执行程序的编译参数？
+   1) cd dpdk/x86_64-native-linuxapp-gcc/build/
+   2) 选择进入app  drivers  lib之一的目录
+   3）例如进入lib/librte_meter下
+   4）使用ls -a查看所有隐藏文件
+   5）使用cat命令将会看到如下文件内容：
+      - .rte_meter.o.cmd: 编译生成该.o文件的所有gcc参数。
+      - .rte_meter.o.d: 编译中依赖的文件 
+      - .librte_meter.a.cmd: 链接生成目标文件的命令参数
+     
    
 ** 出现这个错误： include/dpdk/rte_memcpy.h:870:2: 错误：‘_mm_storeu_si128’的第 2 个实参类型不兼容的解决办法
 答：
@@ -88,5 +99,43 @@ url = "/2016/09/06/dpdk-develop-notes/"
   - apt install linux-tools-generic
 
 
+** 在最小Ubuntu 14.04系统下要运行dpdk进程需安装文件列表。
+*** 基本按照
+    先参照如上Ubuntu 16.04所需的文件列表安装，如出现如下错误再逐一安装修改解决。
+    
+*** 内核build文件找不到？
+    到http://kernel.ubuntu.com/~kernel-ppa/mainline/ 下载对应的Headers包， 使用dpkg命令进行安装。
+    例如: dpkg -i linux-headers-4.10.17-041017_4.10.17-041017.201705201051_all.deb, 由于使用tcp_bbr而更新了内核版本。
+    
+*** gcc: 错误： unrecognized command line option ‘-fstack-protector-strong’
+   Ubuntu 14.04自带的gcc版本为gcc (Ubuntu 4.8.4-2ubuntu1~14.04.3) 4.8.4, (‘-fstack-protector-strong’ 选项是gcc4.9以后的版本才加入的，也就是说需要安装gcc4.9以后的版本才可以编译通过).
+   - 安装gcc 5.4版本
+     # add-apt-repository ppa:ubuntu-toolchain-r/test
+     # apt-get update
+     # apt-get install gcc-5 g++-5
+     # update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 53 --slave /usr/bin/g++ g++ /usr/bin/g++-5 --slave /usr/bin/gcc-ar gcc-ar /usr/bin/gcc-ar-5 --slave /usr/bin/gcc-nm gcc-nm /usr/bin/gcc-nm-5 --slave /usr/bin/gcc-ranlib gcc-ranlib /usr/bin/gcc-ranlib-5
+     # gcc --version
+     详见：[[https://www.cnblogs.com/BlackStorm/p/5183490.html][Ubuntu 14.04 LTS 下升级 gcc 到 gcc-4.9、gcc-5 版本]]
+
+*** DPDK在内核4.10.17下编译不过？
+    需要打如下3个patch:
+    1) patch dpdk-dev-1-3-kni-fix-compile-error-for-Linux-4.7.patch, see to http://dpdk.org/dev/patchwork/patch/13100/
+    2) patch dpdk-dev-kni-fix-build-with-kernel-4.9.patch, see to http://dpdk.org/dev/patchwork/patch/16651/
+    3) patch dpdk-dev-v2-kni-fix-build-with-kernel-4.8.patch, see to http://dpdk.org/dev/patchwork/patch/15717/]
+   
+*** fatal error: dbus/dbus-arch-deps.h: No such file or directory
+  - apt-get install libdbus-1-dev
+  - apt-get install libdbus-glib-1-dev
+  - ln -sf /usr/include/dbus-1.0/dbus /usr/include/dbus
+  - cp /usr/lib/x86_64-linux-gnu/dbus-1.0/include/dbus/dbus-arch-deps.h /usr/include/dbus-1.0/dbus/
+  - apt-get install bison
+    
+*** librte_eal.a(eal_common_options.o): undefined reference to symbol 'dlopen@@GLIBC_2.2.5'的解决办法？
+    在编译的Makefile中的CFLAGS变量添加上: -Wl,--copy-dt-needed-entries
+    详见1: [[http://fanrey.iteye.com/blog/2119610][linker问题]]
+    详见2: [[https://segmentfault.com/a/1190000002462705]]
 
 
+*** rte_meter.c:57: undefined reference to `ceil'?
+    编译tcpdump时链接报错，已包含<math.h>与-lm了， 还是编译不过，待定。
+    

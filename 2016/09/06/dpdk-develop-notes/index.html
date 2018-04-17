@@ -105,7 +105,21 @@
 <p>Q=</p></li>
 </ol>
 
-<h2 id="出现这个错误-include-dpdk-rte-memcpy-h-870-2-错误-mm-storeu-si128-的第-2-个实参类型不兼容的解决办法-a-id-sec-2-2-name-sec-2-2-a">出现这个错误： include/dpdk/rte_memcpy.h:870:2: 错误：‘_mm_storeu_si128’的第 2 个实参类型不兼容的解决办法<a id="sec-2-2" name="sec-2-2"></a></h2>
+<h2 id="查看某个库或可执行程序的编译参数-a-id-sec-2-2-name-sec-2-2-a">查看某个库或可执行程序的编译参数？<a id="sec-2-2" name="sec-2-2"></a></h2>
+
+<ol>
+<li>cd dpdk/x86_64-native-linuxapp-gcc/build/</li>
+<li>选择进入app  drivers  lib之一的目录</li>
+</ol>
+
+<p>3）例如进入lib/librte_meter下<br />
+4）使用ls -a查看所有隐藏文件<br />
+5）使用cat命令将会看到如下文件内容：<br />
+-   .rte_meter.o.cmd: 编译生成该.o文件的所有gcc参数。
+-   .rte_meter.o.d: 编译中依赖的文件
+-   .librte_meter.a.cmd: 链接生成目标文件的命令参数</p>
+
+<h2 id="出现这个错误-include-dpdk-rte-memcpy-h-870-2-错误-mm-storeu-si128-的第-2-个实参类型不兼容的解决办法-a-id-sec-2-3-name-sec-2-3-a">出现这个错误： include/dpdk/rte_memcpy.h:870:2: 错误：‘_mm_storeu_si128’的第 2 个实参类型不兼容的解决办法<a id="sec-2-3" name="sec-2-3"></a></h2>
 
 <p>答：<br />
 1.  只要在自己的Makefile中增加如下两行即可。</p>
@@ -114,13 +128,13 @@
     include $(RTE_SDK)/mk/internal/rte.build-pre.mk
 </code></pre>
 
-<h2 id="在虚拟机中跑dpdk-网卡接收不正常问题-a-id-sec-2-3-name-sec-2-3-a">在虚拟机中跑DPDK，网卡接收不正常问题。<a id="sec-2-3" name="sec-2-3"></a></h2>
+<h2 id="在虚拟机中跑dpdk-网卡接收不正常问题-a-id-sec-2-4-name-sec-2-4-a">在虚拟机中跑DPDK，网卡接收不正常问题。<a id="sec-2-4" name="sec-2-4"></a></h2>
 
-<h3 id="现象-a-id-sec-2-3-1-name-sec-2-3-1-a">现象<a id="sec-2-3-1" name="sec-2-3-1"></a></h3>
+<h3 id="现象-a-id-sec-2-4-1-name-sec-2-4-1-a">现象<a id="sec-2-4-1" name="sec-2-4-1"></a></h3>
 
 <p>虚拟出来的网卡只收到了少量的ARP包，并且QANS可以响应ARP请求成功，但收不到icmp与DNS包等。</p>
 
-<h3 id="调试过程-a-id-sec-2-3-2-name-sec-2-3-2-a">调试过程<a id="sec-2-3-2" name="sec-2-3-2"></a></h3>
+<h3 id="调试过程-a-id-sec-2-4-2-name-sec-2-4-2-a">调试过程<a id="sec-2-4-2" name="sec-2-4-2"></a></h3>
 
 <ol>
 <li>虚拟网卡虚拟出来的是intel 82540EM网卡。</li>
@@ -131,15 +145,15 @@
 <li>使用DPDK本身提供的接口rte_eth_macaddr_get()进行读取，发现与物理网卡一致而与KNI创建出的虚拟网卡不一致。</li>
 </ol>
 
-<h3 id="原因-a-id-sec-2-3-3-name-sec-2-3-3-a">原因<a id="sec-2-3-3" name="sec-2-3-3"></a></h3>
+<h3 id="原因-a-id-sec-2-4-3-name-sec-2-4-3-a">原因<a id="sec-2-4-3" name="sec-2-4-3"></a></h3>
 
 <p>使用虚拟机创建出的KNI虚拟机网卡，每次重启后会随机变化并且与物理网卡不一致，到时ARP学习不正常。</p>
 
-<h3 id="解决办法-a-id-sec-2-3-4-name-sec-2-3-4-a">解决办法<a id="sec-2-3-4" name="sec-2-3-4"></a></h3>
+<h3 id="解决办法-a-id-sec-2-4-4-name-sec-2-4-4-a">解决办法<a id="sec-2-4-4" name="sec-2-4-4"></a></h3>
 
 <p>在KNI创建虚拟机网卡成功后，使用命令: ifconfig XX hw ether XX:XX:XX:XX:XX:XX 进行配置成物理网卡MAC即可。</p>
 
-<h2 id="出现igb-uio-unknown-symbol-uio-unregister-device的解决办法-a-id-sec-2-4-name-sec-2-4-a">出现igb_uio: Unknown symbol uio_unregister_device的解决办法？<a id="sec-2-4" name="sec-2-4"></a></h2>
+<h2 id="出现igb-uio-unknown-symbol-uio-unregister-device的解决办法-a-id-sec-2-5-name-sec-2-5-a">出现igb_uio: Unknown symbol uio_unregister_device的解决办法？<a id="sec-2-5" name="sec-2-5"></a></h2>
 
 <p>答：<br />
    在dpdk/lib/librte_eal/linuxapp/igb_uio/Makefile中添加如下行：</p>
@@ -147,11 +161,11 @@
 <pre><code>KBUILD_EXTRA_SYMBOLS=/usr/src/linux-headers-`uname -r`/Module.symvers
 </code></pre>
 
-<h2 id="使用vmware-exsi虚拟出来的vmnet3类型网卡不能绑定gib网卡将会系统挂掉的解决办法-a-id-sec-2-5-name-sec-2-5-a">使用vmware EXSI虚拟出来的vmnet3类型网卡不能绑定gib网卡将会系统挂掉的解决办法。<a id="sec-2-5" name="sec-2-5"></a></h2>
+<h2 id="使用vmware-exsi虚拟出来的vmnet3类型网卡不能绑定gib网卡将会系统挂掉的解决办法-a-id-sec-2-6-name-sec-2-6-a">使用vmware EXSI虚拟出来的vmnet3类型网卡不能绑定gib网卡将会系统挂掉的解决办法。<a id="sec-2-6" name="sec-2-6"></a></h2>
 
 <p>答：在vmware中换成E1000类型网卡即可正常。</p>
 
-<h2 id="在最小ubuntu-16-04系统下要运行dpdk进程需安装文件列表-a-id-sec-2-6-name-sec-2-6-a">在最小Ubuntu 16.04系统下要运行dpdk进程需安装文件列表。<a id="sec-2-6" name="sec-2-6"></a></h2>
+<h2 id="在最小ubuntu-16-04系统下要运行dpdk进程需安装文件列表-a-id-sec-2-7-name-sec-2-7-a">在最小Ubuntu 16.04系统下要运行dpdk进程需安装文件列表。<a id="sec-2-7" name="sec-2-7"></a></h2>
 
 <p>答: 只要安装如下软件即可。</p>
 
@@ -178,6 +192,52 @@
 <li>apt install tree</li>
 <li>apt install linux-tools-generic</li>
 </ul>
+
+<h2 id="在最小ubuntu-14-04系统下要运行dpdk进程需安装文件列表-a-id-sec-2-8-name-sec-2-8-a">在最小Ubuntu 14.04系统下要运行dpdk进程需安装文件列表。<a id="sec-2-8" name="sec-2-8"></a></h2>
+
+<h3 id="基本按照-a-id-sec-2-8-1-name-sec-2-8-1-a">基本按照<a id="sec-2-8-1" name="sec-2-8-1"></a></h3>
+
+<p>先参照如上Ubuntu 16.04所需的文件列表安装，如出现如下错误再逐一安装修改解决。</p>
+
+<h3 id="内核build文件找不到-a-id-sec-2-8-2-name-sec-2-8-2-a">内核build文件找不到？<a id="sec-2-8-2" name="sec-2-8-2"></a></h3>
+
+<p>到<a href="http://kernel.ubuntu.com/~kernel-ppa/mainline/">http://kernel.ubuntu.com/~kernel-ppa/mainline/</a> 下载对应的Headers包， 使用dpkg命令进行安装。<br />
+例如: dpkg -i linux-headers-4.10.17-041017_4.10.17-041017.201705201051_all.deb, 由于使用tcp_bbr而更新了内核版本。</p>
+
+<h3 id="gcc-错误-unrecognized-command-line-option-fstack-protector-strong-a-id-sec-2-8-3-name-sec-2-8-3-a">gcc: 错误： unrecognized command line option ‘-fstack-protector-strong’<a id="sec-2-8-3" name="sec-2-8-3"></a></h3>
+
+<p>Ubuntu 14.04自带的gcc版本为gcc (Ubuntu 4.8.4-2ubuntu1~14.04.3) 4.8.4, (‘-fstack-protector-strong’ 选项是gcc4.9以后的版本才加入的，也就是说需要安装gcc4.9以后的版本才可以编译通过).<br />
+-   安装gcc 5.4版本</p>
+
+<pre><code>详见：[Ubuntu 14.04 LTS 下升级 gcc 到 gcc-4.9、gcc-5 版本](https://www.cnblogs.com/BlackStorm/p/5183490.html)
+</code></pre>
+
+<h3 id="dpdk在内核4-10-17下编译不过-a-id-sec-2-8-4-name-sec-2-8-4-a">DPDK在内核4.10.17下编译不过？<a id="sec-2-8-4" name="sec-2-8-4"></a></h3>
+
+<p>需要打如下3个patch:<br />
+1.  patch dpdk-dev-1-3-kni-fix-compile-error-for-Linux-4.7.patch, see to <a href="http://dpdk.org/dev/patchwork/patch/13100/">http://dpdk.org/dev/patchwork/patch/13100/</a>
+2.  patch dpdk-dev-kni-fix-build-with-kernel-4.9.patch, see to <a href="http://dpdk.org/dev/patchwork/patch/16651/">http://dpdk.org/dev/patchwork/patch/16651/</a>
+3.  patch dpdk-dev-v2-kni-fix-build-with-kernel-4.8.patch, see to <a href="http://dpdk.org/dev/patchwork/patch/15717/">http://dpdk.org/dev/patchwork/patch/15717/</a>]</p>
+
+<h3 id="fatal-error-dbus-dbus-arch-deps-h-no-such-file-or-directory-a-id-sec-2-8-5-name-sec-2-8-5-a">fatal error: dbus/dbus-arch-deps.h: No such file or directory<a id="sec-2-8-5" name="sec-2-8-5"></a></h3>
+
+<ul>
+<li>apt-get install libdbus-1-dev</li>
+<li>apt-get install libdbus-glib-1-dev</li>
+<li>ln -sf /usr/include/dbus-1.0/dbus /usr/include/dbus</li>
+<li>cp <em>usr/lib/x86_64-linux-gnu/dbus-1.0/include/dbus/dbus-arch-deps.h /usr/include/dbus-1.0/dbus</em></li>
+<li>apt-get install bison</li>
+</ul>
+
+<h3 id="librte-eal-a-eal-common-options-o-undefined-reference-to-symbol-dlopen-glibc-2-2-5-的解决办法-a-id-sec-2-8-6-name-sec-2-8-6-a">librte_eal.a(eal_common_options.o): undefined reference to symbol &lsquo;dlopen@@GLIBC_2.2.5&rsquo;的解决办法？<a id="sec-2-8-6" name="sec-2-8-6"></a></h3>
+
+<p>在编译的Makefile中的CFLAGS变量添加上: -Wl,&#x2013;copy-dt-needed-entries<br />
+详见1: <a href="http://fanrey.iteye.com/blog/2119610">linker问题</a><br />
+详见2: <a href="https://segmentfault.com/a/1190000002462705">https://segmentfault.com/a/1190000002462705</a></p>
+
+<h3 id="rte-meter-c-57-undefined-reference-to-ceil-a-id-sec-2-8-7-name-sec-2-8-7-a">rte_meter.c:57: undefined reference to `ceil&rsquo;?<a id="sec-2-8-7" name="sec-2-8-7"></a></h3>
+
+<p>编译tcpdump时链接报错，已包含<math.h>与-lm了， 还是编译不过，待定。</p>
 
     <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
   <div style="float:right;margin-top:0px;">

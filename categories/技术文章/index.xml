@@ -1889,7 +1889,21 @@ demesg查看输出信息.&lt;/p&gt;
 &lt;p&gt;Q=&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h2 id=&#34;出现这个错误-include-dpdk-rte-memcpy-h-870-2-错误-mm-storeu-si128-的第-2-个实参类型不兼容的解决办法-a-id-sec-2-2-name-sec-2-2-a&#34;&gt;出现这个错误： include/dpdk/rte_memcpy.h:870:2: 错误：‘_mm_storeu_si128’的第 2 个实参类型不兼容的解决办法&lt;a id=&#34;sec-2-2&#34; name=&#34;sec-2-2&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;h2 id=&#34;查看某个库或可执行程序的编译参数-a-id-sec-2-2-name-sec-2-2-a&#34;&gt;查看某个库或可执行程序的编译参数？&lt;a id=&#34;sec-2-2&#34; name=&#34;sec-2-2&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;cd dpdk/x86_64-native-linuxapp-gcc/build/&lt;/li&gt;
+&lt;li&gt;选择进入app  drivers  lib之一的目录&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;3）例如进入lib/librte_meter下&lt;br /&gt;
+4）使用ls -a查看所有隐藏文件&lt;br /&gt;
+5）使用cat命令将会看到如下文件内容：&lt;br /&gt;
+-   .rte_meter.o.cmd: 编译生成该.o文件的所有gcc参数。
+-   .rte_meter.o.d: 编译中依赖的文件
+-   .librte_meter.a.cmd: 链接生成目标文件的命令参数&lt;/p&gt;
+
+&lt;h2 id=&#34;出现这个错误-include-dpdk-rte-memcpy-h-870-2-错误-mm-storeu-si128-的第-2-个实参类型不兼容的解决办法-a-id-sec-2-3-name-sec-2-3-a&#34;&gt;出现这个错误： include/dpdk/rte_memcpy.h:870:2: 错误：‘_mm_storeu_si128’的第 2 个实参类型不兼容的解决办法&lt;a id=&#34;sec-2-3&#34; name=&#34;sec-2-3&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;答：&lt;br /&gt;
 1.  只要在自己的Makefile中增加如下两行即可。&lt;/p&gt;
@@ -1898,13 +1912,13 @@ demesg查看输出信息.&lt;/p&gt;
     include $(RTE_SDK)/mk/internal/rte.build-pre.mk
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;在虚拟机中跑dpdk-网卡接收不正常问题-a-id-sec-2-3-name-sec-2-3-a&#34;&gt;在虚拟机中跑DPDK，网卡接收不正常问题。&lt;a id=&#34;sec-2-3&#34; name=&#34;sec-2-3&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;h2 id=&#34;在虚拟机中跑dpdk-网卡接收不正常问题-a-id-sec-2-4-name-sec-2-4-a&#34;&gt;在虚拟机中跑DPDK，网卡接收不正常问题。&lt;a id=&#34;sec-2-4&#34; name=&#34;sec-2-4&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
 
-&lt;h3 id=&#34;现象-a-id-sec-2-3-1-name-sec-2-3-1-a&#34;&gt;现象&lt;a id=&#34;sec-2-3-1&#34; name=&#34;sec-2-3-1&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;h3 id=&#34;现象-a-id-sec-2-4-1-name-sec-2-4-1-a&#34;&gt;现象&lt;a id=&#34;sec-2-4-1&#34; name=&#34;sec-2-4-1&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
 
 &lt;p&gt;虚拟出来的网卡只收到了少量的ARP包，并且QANS可以响应ARP请求成功，但收不到icmp与DNS包等。&lt;/p&gt;
 
-&lt;h3 id=&#34;调试过程-a-id-sec-2-3-2-name-sec-2-3-2-a&#34;&gt;调试过程&lt;a id=&#34;sec-2-3-2&#34; name=&#34;sec-2-3-2&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;h3 id=&#34;调试过程-a-id-sec-2-4-2-name-sec-2-4-2-a&#34;&gt;调试过程&lt;a id=&#34;sec-2-4-2&#34; name=&#34;sec-2-4-2&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;虚拟网卡虚拟出来的是intel 82540EM网卡。&lt;/li&gt;
@@ -1915,15 +1929,15 @@ demesg查看输出信息.&lt;/p&gt;
 &lt;li&gt;使用DPDK本身提供的接口rte_eth_macaddr_get()进行读取，发现与物理网卡一致而与KNI创建出的虚拟网卡不一致。&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h3 id=&#34;原因-a-id-sec-2-3-3-name-sec-2-3-3-a&#34;&gt;原因&lt;a id=&#34;sec-2-3-3&#34; name=&#34;sec-2-3-3&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;h3 id=&#34;原因-a-id-sec-2-4-3-name-sec-2-4-3-a&#34;&gt;原因&lt;a id=&#34;sec-2-4-3&#34; name=&#34;sec-2-4-3&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
 
 &lt;p&gt;使用虚拟机创建出的KNI虚拟机网卡，每次重启后会随机变化并且与物理网卡不一致，到时ARP学习不正常。&lt;/p&gt;
 
-&lt;h3 id=&#34;解决办法-a-id-sec-2-3-4-name-sec-2-3-4-a&#34;&gt;解决办法&lt;a id=&#34;sec-2-3-4&#34; name=&#34;sec-2-3-4&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;h3 id=&#34;解决办法-a-id-sec-2-4-4-name-sec-2-4-4-a&#34;&gt;解决办法&lt;a id=&#34;sec-2-4-4&#34; name=&#34;sec-2-4-4&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
 
 &lt;p&gt;在KNI创建虚拟机网卡成功后，使用命令: ifconfig XX hw ether XX:XX:XX:XX:XX:XX 进行配置成物理网卡MAC即可。&lt;/p&gt;
 
-&lt;h2 id=&#34;出现igb-uio-unknown-symbol-uio-unregister-device的解决办法-a-id-sec-2-4-name-sec-2-4-a&#34;&gt;出现igb_uio: Unknown symbol uio_unregister_device的解决办法？&lt;a id=&#34;sec-2-4&#34; name=&#34;sec-2-4&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;h2 id=&#34;出现igb-uio-unknown-symbol-uio-unregister-device的解决办法-a-id-sec-2-5-name-sec-2-5-a&#34;&gt;出现igb_uio: Unknown symbol uio_unregister_device的解决办法？&lt;a id=&#34;sec-2-5&#34; name=&#34;sec-2-5&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;答：&lt;br /&gt;
    在dpdk/lib/librte_eal/linuxapp/igb_uio/Makefile中添加如下行：&lt;/p&gt;
@@ -1931,11 +1945,11 @@ demesg查看输出信息.&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;KBUILD_EXTRA_SYMBOLS=/usr/src/linux-headers-`uname -r`/Module.symvers
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;使用vmware-exsi虚拟出来的vmnet3类型网卡不能绑定gib网卡将会系统挂掉的解决办法-a-id-sec-2-5-name-sec-2-5-a&#34;&gt;使用vmware EXSI虚拟出来的vmnet3类型网卡不能绑定gib网卡将会系统挂掉的解决办法。&lt;a id=&#34;sec-2-5&#34; name=&#34;sec-2-5&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;h2 id=&#34;使用vmware-exsi虚拟出来的vmnet3类型网卡不能绑定gib网卡将会系统挂掉的解决办法-a-id-sec-2-6-name-sec-2-6-a&#34;&gt;使用vmware EXSI虚拟出来的vmnet3类型网卡不能绑定gib网卡将会系统挂掉的解决办法。&lt;a id=&#34;sec-2-6&#34; name=&#34;sec-2-6&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;答：在vmware中换成E1000类型网卡即可正常。&lt;/p&gt;
 
-&lt;h2 id=&#34;在最小ubuntu-16-04系统下要运行dpdk进程需安装文件列表-a-id-sec-2-6-name-sec-2-6-a&#34;&gt;在最小Ubuntu 16.04系统下要运行dpdk进程需安装文件列表。&lt;a id=&#34;sec-2-6&#34; name=&#34;sec-2-6&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+&lt;h2 id=&#34;在最小ubuntu-16-04系统下要运行dpdk进程需安装文件列表-a-id-sec-2-7-name-sec-2-7-a&#34;&gt;在最小Ubuntu 16.04系统下要运行dpdk进程需安装文件列表。&lt;a id=&#34;sec-2-7&#34; name=&#34;sec-2-7&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;答: 只要安装如下软件即可。&lt;/p&gt;
 
@@ -1962,6 +1976,52 @@ demesg查看输出信息.&lt;/p&gt;
 &lt;li&gt;apt install tree&lt;/li&gt;
 &lt;li&gt;apt install linux-tools-generic&lt;/li&gt;
 &lt;/ul&gt;
+
+&lt;h2 id=&#34;在最小ubuntu-14-04系统下要运行dpdk进程需安装文件列表-a-id-sec-2-8-name-sec-2-8-a&#34;&gt;在最小Ubuntu 14.04系统下要运行dpdk进程需安装文件列表。&lt;a id=&#34;sec-2-8&#34; name=&#34;sec-2-8&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;h3 id=&#34;基本按照-a-id-sec-2-8-1-name-sec-2-8-1-a&#34;&gt;基本按照&lt;a id=&#34;sec-2-8-1&#34; name=&#34;sec-2-8-1&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;先参照如上Ubuntu 16.04所需的文件列表安装，如出现如下错误再逐一安装修改解决。&lt;/p&gt;
+
+&lt;h3 id=&#34;内核build文件找不到-a-id-sec-2-8-2-name-sec-2-8-2-a&#34;&gt;内核build文件找不到？&lt;a id=&#34;sec-2-8-2&#34; name=&#34;sec-2-8-2&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;到&lt;a href=&#34;http://kernel.ubuntu.com/~kernel-ppa/mainline/&#34;&gt;http://kernel.ubuntu.com/~kernel-ppa/mainline/&lt;/a&gt; 下载对应的Headers包， 使用dpkg命令进行安装。&lt;br /&gt;
+例如: dpkg -i linux-headers-4.10.17-041017_4.10.17-041017.201705201051_all.deb, 由于使用tcp_bbr而更新了内核版本。&lt;/p&gt;
+
+&lt;h3 id=&#34;gcc-错误-unrecognized-command-line-option-fstack-protector-strong-a-id-sec-2-8-3-name-sec-2-8-3-a&#34;&gt;gcc: 错误： unrecognized command line option ‘-fstack-protector-strong’&lt;a id=&#34;sec-2-8-3&#34; name=&#34;sec-2-8-3&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;Ubuntu 14.04自带的gcc版本为gcc (Ubuntu 4.8.4-2ubuntu1~14.04.3) 4.8.4, (‘-fstack-protector-strong’ 选项是gcc4.9以后的版本才加入的，也就是说需要安装gcc4.9以后的版本才可以编译通过).&lt;br /&gt;
+-   安装gcc 5.4版本&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;详见：[Ubuntu 14.04 LTS 下升级 gcc 到 gcc-4.9、gcc-5 版本](https://www.cnblogs.com/BlackStorm/p/5183490.html)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;dpdk在内核4-10-17下编译不过-a-id-sec-2-8-4-name-sec-2-8-4-a&#34;&gt;DPDK在内核4.10.17下编译不过？&lt;a id=&#34;sec-2-8-4&#34; name=&#34;sec-2-8-4&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;需要打如下3个patch:&lt;br /&gt;
+1.  patch dpdk-dev-1-3-kni-fix-compile-error-for-Linux-4.7.patch, see to &lt;a href=&#34;http://dpdk.org/dev/patchwork/patch/13100/&#34;&gt;http://dpdk.org/dev/patchwork/patch/13100/&lt;/a&gt;
+2.  patch dpdk-dev-kni-fix-build-with-kernel-4.9.patch, see to &lt;a href=&#34;http://dpdk.org/dev/patchwork/patch/16651/&#34;&gt;http://dpdk.org/dev/patchwork/patch/16651/&lt;/a&gt;
+3.  patch dpdk-dev-v2-kni-fix-build-with-kernel-4.8.patch, see to &lt;a href=&#34;http://dpdk.org/dev/patchwork/patch/15717/&#34;&gt;http://dpdk.org/dev/patchwork/patch/15717/&lt;/a&gt;]&lt;/p&gt;
+
+&lt;h3 id=&#34;fatal-error-dbus-dbus-arch-deps-h-no-such-file-or-directory-a-id-sec-2-8-5-name-sec-2-8-5-a&#34;&gt;fatal error: dbus/dbus-arch-deps.h: No such file or directory&lt;a id=&#34;sec-2-8-5&#34; name=&#34;sec-2-8-5&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;apt-get install libdbus-1-dev&lt;/li&gt;
+&lt;li&gt;apt-get install libdbus-glib-1-dev&lt;/li&gt;
+&lt;li&gt;ln -sf /usr/include/dbus-1.0/dbus /usr/include/dbus&lt;/li&gt;
+&lt;li&gt;cp &lt;em&gt;usr/lib/x86_64-linux-gnu/dbus-1.0/include/dbus/dbus-arch-deps.h /usr/include/dbus-1.0/dbus&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;apt-get install bison&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;librte-eal-a-eal-common-options-o-undefined-reference-to-symbol-dlopen-glibc-2-2-5-的解决办法-a-id-sec-2-8-6-name-sec-2-8-6-a&#34;&gt;librte_eal.a(eal_common_options.o): undefined reference to symbol &amp;lsquo;dlopen@@GLIBC_2.2.5&amp;rsquo;的解决办法？&lt;a id=&#34;sec-2-8-6&#34; name=&#34;sec-2-8-6&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;在编译的Makefile中的CFLAGS变量添加上: -Wl,&amp;#x2013;copy-dt-needed-entries&lt;br /&gt;
+详见1: &lt;a href=&#34;http://fanrey.iteye.com/blog/2119610&#34;&gt;linker问题&lt;/a&gt;&lt;br /&gt;
+详见2: &lt;a href=&#34;https://segmentfault.com/a/1190000002462705&#34;&gt;https://segmentfault.com/a/1190000002462705&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;rte-meter-c-57-undefined-reference-to-ceil-a-id-sec-2-8-7-name-sec-2-8-7-a&#34;&gt;rte_meter.c:57: undefined reference to `ceil&amp;rsquo;?&lt;a id=&#34;sec-2-8-7&#34; name=&#34;sec-2-8-7&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;编译tcpdump时链接报错，已包含&lt;math.h&gt;与-lm了， 还是编译不过，待定。&lt;/p&gt;
 </description>
         </item>
         
