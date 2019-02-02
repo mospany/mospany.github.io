@@ -64,57 +64,74 @@ fec-builder build -e production
         </item>
         
         <item>
-            <title>VUE开发环境搭建</title>
-            <link>http://mospany.github.io/2018/02/24/vue-dev-env-build/</link>
+            <title>mospan-hugo-blog-manual</title>
+            <link>http://mospany.github.io/2019/02/02/mospan-hugo-blog-manual/</link>
             <pubDate>Sat, 24 Feb 2018 16:32:21 CST</pubDate>
             <author>Mospan</author>
-            <guid>http://mospany.github.io/2018/02/24/vue-dev-env-build/</guid>
+            <guid>http://mospany.github.io/2019/02/02/mospan-hugo-blog-manual/</guid>
             <description>
 
-&lt;h3 id=&#34;安装-a-id-sec-1-name-sec-1-a&#34;&gt;安装&lt;a id=&#34;sec-1&#34; name=&#34;sec-1&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;a id=&#34;orga1cb35c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
-&lt;h4 id=&#34;安装nodejs-a-id-sec-1-1-name-sec-1-1-a&#34;&gt;安装nodejs&lt;a id=&#34;sec-1-1&#34; name=&#34;sec-1-1&#34;&gt;&lt;/a&gt;&lt;/h4&gt;
+&lt;h1 id=&#34;hugo&#34;&gt;Hugo&lt;/h1&gt;
 
-&lt;ol&gt;
-&lt;li&gt;到&lt;a href=&#34;https://nodejs.org/en/download/&#34;&gt;https://nodejs.org/en/download/&lt;/a&gt; 下载对应系统的二进制版本。&lt;/li&gt;
-&lt;li&gt;按照&lt;a href=&#34;http://blog.csdn.net/mrzhouxiaofei/article/details/66974644&#34;&gt;ubuntu16.04下配置nodejs环境&lt;/a&gt;进行安装。&lt;/li&gt;
-&lt;/ol&gt;
+&lt;p&gt;Hugo是一个用Go语言编写的静态网站生成器，它使用起来非常简单，相对于Jekyll复杂的安装设置来说，Hugo仅需要一个二进制文件hugo(hugo.exe)即可轻松用于本地调试和生成静态页面。&lt;/p&gt;
 
-&lt;h4 id=&#34;安装npm-a-id-sec-1-2-name-sec-1-2-a&#34;&gt;安装npm&lt;a id=&#34;sec-1-2&#34; name=&#34;sec-1-2&#34;&gt;&lt;/a&gt;&lt;/h4&gt;
+&lt;p&gt;Hugo生成静态页面的效率很高，我的多篇博客文章生成几乎是瞬间完成的，而用Jekyll需要等待10秒左右。&lt;/p&gt;
 
-&lt;ol&gt;
-&lt;li&gt;创建npm依赖包文件package.json。&lt;/li&gt;
+&lt;p&gt;Hugo自带watch的调试模式，可以在我修改MarkDown文章之后切换到浏览器，页面会检测到更新并且自动刷新，呈现出最终效果，能极大的提高博客书写效率。再加上Hugo是使用Go语言编写，已经没有任何理由不使用Hugo来代替Jekyll作为我的个人博客站点生成器了。&lt;/p&gt;
 
-&lt;li&gt;&lt;p&gt;安装npm依赖&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgb947adc&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
-&lt;h1 id=&#34;install-dependencies&#34;&gt;install dependencies&lt;/h1&gt;
+&lt;h1 id=&#34;usage&#34;&gt;Usage&lt;/h1&gt;
 
-&lt;p&gt;npm install
-npm install fec-builder -g&lt;/p&gt;&lt;/li&gt;
+&lt;p&gt;Demo：&lt;a href=&#34;http://blog.mospan.cn/&#34;&gt;&lt;a href=&#34;http://blog.mospan.cn/&#34;&gt;http://blog.mospan.cn/&lt;/a&gt;&lt;/a&gt;&lt;/p&gt;
 
-&lt;li&gt;&lt;p&gt;如果出现这个报错&amp;rdquo;Module build failed: Error: ENOENT: no such file or directory, scandir &amp;lsquo;/opt/node/lib/node_modules/fec-builder/node_modules/node-sass/vendor&amp;rsquo;&amp;ldquo;,
-直接到/opt/node/lib/node_modules/fec-builder/node_modules/node-sass/目录下执行命令&amp;rdquo;npm rebuild node-sass&amp;rdquo;即可。&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
+&lt;p&gt;界面参考 &lt;a href=&#34;http://cyrillschumacher.com/&#34;&gt;&lt;a href=&#34;http://cyrillschumacher.com/&#34;&gt;http://cyrillschumacher.com/&lt;/a&gt;&lt;/a&gt; 做了一些修改，并做了一个皮肤：panman。&lt;/p&gt;
 
-&lt;h3 id=&#34;启动-a-id-sec-2-name-sec-2-a&#34;&gt;启动&lt;a id=&#34;sec-2&#34; name=&#34;sec-2&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;a id=&#34;org7f70872&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;创建fec-builder软连接：ln -s /opt/node/bin/fec-builder /usr/local/bin/fec-builder，
-直接使用fec-builder命令启动。&lt;/p&gt;
+&lt;h2 id=&#34;源码&#34;&gt;源码&lt;/h2&gt;
 
-&lt;pre&gt;&lt;code&gt;# serve with hot reload at localhost:8080
-fec-builder -p 8080
+&lt;p&gt;下载源码到本地。&lt;/p&gt;
 
-# build for production with minification
-fec-builder build -e production
+&lt;pre&gt;&lt;code&gt;$ git clone git@github.com:mospany/mospan-hugo-blog.git
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;访问-a-id-sec-3-name-sec-3-a&#34;&gt;访问&lt;a id=&#34;sec-3&#34; name=&#34;sec-3&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;a id=&#34;org2ba3115&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;在浏览器地址栏中输入: &lt;a href=&#34;http://XX.XX.XX.XX:8080&#34;&gt;http://XX.XX.XX.XX:8080&lt;/a&gt; 进行访问。&lt;/p&gt;
+&lt;h2 id=&#34;启动调试&#34;&gt;启动调试&lt;/h2&gt;
 
-&lt;h3 id=&#34;调试-a-id-sec-4-name-sec-4-a&#34;&gt;调试&lt;a id=&#34;sec-4&#34; name=&#34;sec-4&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;a id=&#34;org1e1f664&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;使用chrome开发者工具进行调试，详见：&lt;a href=&#34;https://www.jianshu.com/p/cf36d48652f4&#34;&gt;Chrome 开发者工具中文指南&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;本地调试&#34;&gt;本地调试&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cd mospan-hugo-blog
+$ ./debug.py
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;打开浏览器：&lt;a href=&#34;http://localhost:1313&#34;&gt;http://localhost:1313&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgf678066&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;远程调试&#34;&gt;远程调试&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cd mospan-hugo-blog
+$ ./debug.py AA.BB.CC.DD
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;打开浏览器：&lt;a href=&#34;http://AA.BB.CC.DD:1313&#34;&gt;http://AA.BB.CC.DD:1313&lt;/a&gt;
+其中： AA.BB.CC.DD 为本机可访问IP地址。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgb068f13&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;部署&#34;&gt;部署&lt;/h2&gt;
+
+&lt;p&gt;参考 `deploy.py`&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org211f1dc&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;改进记录&#34;&gt;改进记录&lt;/h1&gt;
 </description>
         </item>
         

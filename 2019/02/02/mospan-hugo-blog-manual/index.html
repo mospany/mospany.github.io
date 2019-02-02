@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <base href="http://mospany.github.io/">
-  <title>读书笔记 - 墨斯潘園</title>
+  <title>mospan-hugo-blog-manual - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
-  
-  <meta name="description" content="读书笔记">
+  <meta name="keywords" content=",,">
+  <meta name="description" content="Hugo Hugo是一个用Go语言编写的静态网站生成器，它使用起来非常简单，相对于Jekyll复杂的安装设置来说，Hugo仅需要一个二进制文件hug">
   <meta name="author" content="mospan">
-  <meta itemprop="name" content="读书笔记 - 墨斯潘園">
-  <meta itemprop="description" content="读书笔记">
+  <meta itemprop="name" content="mospan-hugo-blog-manual - 墨斯潘園">
+  <meta itemprop="description" content="Hugo Hugo是一个用Go语言编写的静态网站生成器，它使用起来非常简单，相对于Jekyll复杂的安装设置来说，Hugo仅需要一个二进制文件hug">
   <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
-  <meta name="twitter:title" content="读书笔记 - 墨斯潘園" />
+  <meta name="twitter:title" content="mospan-hugo-blog-manual - 墨斯潘園" />
   
   <meta name="twitter:description" content="">
   <link rel="shortcut icon" href="img/favicon.ico"/>
@@ -59,28 +59,169 @@
 
   </header>
   <div id="container">
-    <div id="main">
-      
-      
-      <h2 id="2017-03">2017-03</h2>
-      
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="http://mospany.github.io/2017/03/07/collection-after-reading/" title="精品文章，阅后收藏" itemprop="url">
-    <h1 itemprop="name">精品文章，阅后收藏</h1>
-    <p itemprop="description">职场人性类 励志 [☆☆☆☆☆] 你同学都身价上亿了，你却还在纠结早晨几点能起床？ [☆☆☆☆☆] 你的收入，为什么还没有指数增长？ [☆☆☆☆☆] 你的</p>
-    <time datetime="2017-03-07 19:13:23 &#43;0800 CST" itemprop="datePublished">2017年03月07日</time>
-  </a>
-</section>
+    <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody">
+    <header class="article-info clearfix">
+  <h1 itemprop="name">
+      <a href="http://mospany.github.io/2019/02/02/mospan-hugo-blog-manual/" title="mospan-hugo-blog-manual" itemprop="url">mospan-hugo-blog-manual</a>
+  </h1>
+  <p class="article-author">By 
+    
+      <a href="http://blog.mospan.cn" title="mospan">mospan</a>
+    
+  </p>
+  <p class="article-time">
+    <time datetime="2018-02-24 16:32:21 &#43;0800 CST" itemprop="datePublished">2018年02月24日</time>
+  </p>
+</header>
 
-        
-      <nav id="page-nav" class="clearfix">
-          
+	<div class="article-content">
+    
+		<div class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+      <nav id="TableOfContents">
+<ul>
+<li><a href="#hugo">Hugo</a></li>
+<li><a href="#usage">Usage</a>
+<ul>
+<li><a href="#源码">源码</a></li>
+<li><a href="#启动调试">启动调试</a>
+<ul>
+<li><a href="#本地调试">本地调试</a></li>
+<li><a href="#远程调试">远程调试</a></li>
+</ul></li>
+<li><a href="#部署">部署</a></li>
+</ul></li>
+<li><a href="#改进记录">改进记录</a></li>
+</ul>
+</nav>
+		</div>
+    
+    
+
+<p><a id="orga1cb35c"></a></p>
+
+<h1 id="hugo">Hugo</h1>
+
+<p>Hugo是一个用Go语言编写的静态网站生成器，它使用起来非常简单，相对于Jekyll复杂的安装设置来说，Hugo仅需要一个二进制文件hugo(hugo.exe)即可轻松用于本地调试和生成静态页面。</p>
+
+<p>Hugo生成静态页面的效率很高，我的多篇博客文章生成几乎是瞬间完成的，而用Jekyll需要等待10秒左右。</p>
+
+<p>Hugo自带watch的调试模式，可以在我修改MarkDown文章之后切换到浏览器，页面会检测到更新并且自动刷新，呈现出最终效果，能极大的提高博客书写效率。再加上Hugo是使用Go语言编写，已经没有任何理由不使用Hugo来代替Jekyll作为我的个人博客站点生成器了。</p>
+
+<p><a id="orgb947adc"></a></p>
+
+<h1 id="usage">Usage</h1>
+
+<p>Demo：<a href="http://blog.mospan.cn/"><a href="http://blog.mospan.cn/">http://blog.mospan.cn/</a></a></p>
+
+<p>界面参考 <a href="http://cyrillschumacher.com/"><a href="http://cyrillschumacher.com/">http://cyrillschumacher.com/</a></a> 做了一些修改，并做了一个皮肤：panman。</p>
+
+<p><a id="org7f70872"></a></p>
+
+<h2 id="源码">源码</h2>
+
+<p>下载源码到本地。</p>
+
+<pre><code>$ git clone git@github.com:mospany/mospan-hugo-blog.git
+</code></pre>
+
+<p><a id="org2ba3115"></a></p>
+
+<h2 id="启动调试">启动调试</h2>
+
+<p><a id="org1e1f664"></a></p>
+
+<h3 id="本地调试">本地调试</h3>
+
+<pre><code>$ cd mospan-hugo-blog
+$ ./debug.py
+</code></pre>
+
+<p>打开浏览器：<a href="http://localhost:1313">http://localhost:1313</a></p>
+
+<p><a id="orgf678066"></a></p>
+
+<h3 id="远程调试">远程调试</h3>
+
+<pre><code>$ cd mospan-hugo-blog
+$ ./debug.py AA.BB.CC.DD
+</code></pre>
+
+<p>打开浏览器：<a href="http://AA.BB.CC.DD:1313">http://AA.BB.CC.DD:1313</a>
+其中： AA.BB.CC.DD 为本机可访问IP地址。</p>
+
+<p><a id="orgb068f13"></a></p>
+
+<h2 id="部署">部署</h2>
+
+<p>参考 `deploy.py`</p>
+
+<p><a id="org211f1dc"></a></p>
+
+<h1 id="改进记录">改进记录</h1>
+
+    <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+  <div style="float:right;margin-top:0px;">
+    <img src="/img/qrcode.jpg" width="129px" height="129px"/>
+    <div style="text-align:center;">微信扫一扫</div>
+  </div>
+  <div style="float:left;margin-top:0px;">
+    <img src="/img/rewardcode.jpg" width="129px" height="129px"/>
+    <div style="text-align:center;">微信扫一扫</div>
+  </div>
+  <div>
+    <p style="margin-top:0px;">作者：<a target="_blank" href="http://blog.mospan.cn/">mospan</a>
+      <br />微信关注：墨斯潘園
+      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2019/02/02/mospan-hugo-blog-manual/">http://mospany.github.io/2019/02/02/mospan-hugo-blog-manual/</a>
+      <br />
+      文章版权归本人所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+  </div>
+</div>
+
+
+	</div>
+  <footer class="article-footer clearfix">
+  
+
+<div class="article-tags">
+  <span></span>
+  
+  <a href="/tags/"></a>
+  
+  <a href="/tags/"></a>
+  
+</div>
 
 
 
-      </nav>
+<div class="article-categories">
+  <span></span>
+  
+  <a class="article-category-link" href="/categories/"></a>
+  
+  <a class="article-category-link" href="/categories/"></a>
+  
+</div>
+
+
+
+  <div class="article-share" id="share">
+    <div data-url="http://mospany.github.io/2019/02/02/mospan-hugo-blog-manual/" data-title="mospan-hugo-blog-manual" data-tsina="3833537679" class="share clearfix">
     </div>
+  </div>
+</footer>
+
+	</article>
+  
+
+
+
+
+
+
+</div>
+
     <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
@@ -443,6 +584,38 @@ $(document).ready(function(){
 
 <script type="text/javascript">
 $(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
   var $this = $('.share'),
       url = $this.attr('data-url'),
       encodedUrl = encodeURIComponent(url),
@@ -469,6 +642,27 @@ $(document).ready(function(){
 });
 </script>
 
+
+<link rel="stylesheet" href="http://mospany.github.io/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="http://mospany.github.io/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
 
 
 
