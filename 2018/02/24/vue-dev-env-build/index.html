@@ -181,6 +181,22 @@ fec-builder build -e production
 
 
 
+<div id="git-comments"></div>
+<link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script>
+<script>
+var gitment = new Gitment({
+  id: '<%= page.date %>', 
+  owner: 'mospany',
+  repo: 'mospan-hugo-blog-gitment',
+  oauth: {
+    client_id: '0cafe299c964f0af2d1e',
+    client_secret: 'ec47ee9481210935a662298791c31da203694a8f',
+  },
+})
+gitment.render('git-comments')
+</script>    
+
 
 </div>
 
