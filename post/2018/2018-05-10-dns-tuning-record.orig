@@ -1,0 +1,26 @@
++++
+categories = ["技术文章"]
+date = "2018-05-10T16:32:21+08:00"
+description = ""
+keywords = ["DNS","调优"]
+tags = ["DNS","调优"]
+title = "DNS调优实录"
+url = "/2018/05/10/dns-tuning-record/"
+
++++
+
+* 解决DNS不准的问题
+** 直接@授权DNS解析正确，而经过了LocalDNS就不准了
+*** 问题1：解决LDNS不准：成都长宽->四川长宽ldns->广州/河北移动
+异常现象: 直接@授权DNS解析正确，而经过了LocalDNS就不准了。解决LDNS不准：成都长宽->四川长宽ldns->广州/河北移
+
+原因分析: 直接@授权DNS解析正确，而经过了LocalDNS就不准了, 说明授权DNS本身没有问题， 可能LocalDNS存在某种隐式规则没有按照授权的结果返回。
+
+解决措施: 经与四川长宽LocalDNS管理人员取得联系， 需要把域名加入到他们的白名单中即可， 他们给出的解释是为了调整外网资源流向, 经加入白名单后DNS解析准确了。
+
+后续处理: 无
+
+** 公共DNS未对自建权威DNS支持ECS
+*** google public DNS
+
+

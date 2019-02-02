@@ -1,0 +1,26 @@
++++
+categories = ["技术文章"]
+date = "2018-06-19T16:32:21+08:00"
+description = ""
+keywords = ["GO","单元测试"]
+tags = ["GO","单元测试"]
+title = "GO单元测试"
+url = "/2018/06/19/go-unit-test/"
+
++++
+
+* 常用命令
+** 统计UT覆盖率
+   + go test --cover
+   + go test --cover -v
+   + go test --cover -coverprofile=c.out
+   + go tool cover -html=c.out
+
+
+
+
+
+
+
+
+
