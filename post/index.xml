@@ -218,5 +218,27 @@
       <description>原来的博客都是在CSDN与博客园里写的，都是按照模板进行编写，能自己自定义的比较少，没有自己的独立域名，用emacs/vim编写上面的博客不</description>
     </item>
     
+    <item>
+      <title></title>
+      <link>http://mospany.github.io/post/2019/2019-02-02-mospan-hugo-blog-manual/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://mospany.github.io/post/2019/2019-02-02-mospan-hugo-blog-manual/</guid>
+      <description>Table of Contents  Hugo Usage  源码 启动调试  本地调试 远程调试  部署  改进记录  +++ toc = true categories = [&amp;ldquo;技术文章&amp;rdquo;] date = &amp;ldquo;2019-02-02 19:38:03&amp;rdquo; description = &amp;ldquo;&amp;rdquo; keywords = [&amp;ldquo;&amp;rdquo;,&amp;ldquo;&amp;rdquo;] tags = [&amp;ldquo;&amp;rdquo;,&amp;ldquo;&amp;rdquo;] title = &amp;ldquo;mospan-hugo-blog-manual&amp;rdquo; url = &amp;ldquo;/2019/02/02/mospan-hugo-blog-manual/&amp;rdquo;
++++
+
+Hugo Hugo是一个用Go语言编写的静态网站生成器，它使用起来非常简单，相对于Jekyll复杂的安装设置来说，Hugo仅需要一个二进制文件hugo(hugo.exe)即可轻松用于本地调试和生成静态页面。
+Hugo生成静态页面的效率很高，我的多篇博客文章生成几乎是瞬间完成的，而用Jekyll需要等待10秒左右。
+Hugo自带watch的调试模式，可以在我修改MarkDown文章之后切换到浏览器，页面会检测到更新并且自动刷新，呈现出最终效果，能极大的提高博客书写效率。再加上Hugo是使用Go语言编写，已经没有任何理由不使用Hugo来代替Jekyll作为我的个人博客站点生成器了。
+
+Usage Demo：http://blog.mospan.cn/
+界面参考 http://cyrillschumacher.com/ 做了一些修改，并做了一个皮肤：panman。
+
+源码 下载源码到本地。
+$ git clone git@github.com:mospany/mospan-hugo-blog.git  
+启动调试 
+本地调试 $ cd mospan-hugo-blog $ .</description>
+    </item>
+    
   </channel>
 </rss>
