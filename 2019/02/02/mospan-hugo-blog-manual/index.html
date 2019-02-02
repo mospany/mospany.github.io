@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <base href="http://mospany.github.io/">
-  <title>mospan-hugo-blog-manual - 墨斯潘園</title>
+  <title>我的博客Hugo使用手册 - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
-  <meta name="keywords" content=",,">
+  <meta name="keywords" content="博客,Hugo,">
   <meta name="description" content="Hugo Hugo是一个用Go语言编写的静态网站生成器，它使用起来非常简单，相对于Jekyll复杂的安装设置来说，Hugo仅需要一个二进制文件hug">
   <meta name="author" content="mospan">
-  <meta itemprop="name" content="mospan-hugo-blog-manual - 墨斯潘園">
+  <meta itemprop="name" content="我的博客Hugo使用手册 - 墨斯潘園">
   <meta itemprop="description" content="Hugo Hugo是一个用Go语言编写的静态网站生成器，它使用起来非常简单，相对于Jekyll复杂的安装设置来说，Hugo仅需要一个二进制文件hug">
   <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
-  <meta name="twitter:title" content="mospan-hugo-blog-manual - 墨斯潘園" />
+  <meta name="twitter:title" content="我的博客Hugo使用手册 - 墨斯潘園" />
   
   <meta name="twitter:description" content="">
   <link rel="shortcut icon" href="img/favicon.ico"/>
@@ -63,7 +63,7 @@
 	<article itemprop="articleBody">
     <header class="article-info clearfix">
   <h1 itemprop="name">
-      <a href="http://mospany.github.io/2019/02/02/mospan-hugo-blog-manual/" title="mospan-hugo-blog-manual" itemprop="url">mospan-hugo-blog-manual</a>
+      <a href="http://mospany.github.io/2019/02/02/mospan-hugo-blog-manual/" title="我的博客Hugo使用手册" itemprop="url">我的博客Hugo使用手册</a>
   </h1>
   <p class="article-author">By 
     
@@ -71,7 +71,7 @@
     
   </p>
   <p class="article-time">
-    <time datetime="2018-02-24 16:32:21 &#43;0800 CST" itemprop="datePublished">2018年02月24日</time>
+    <time datetime="2019-02-02 15:18:53 &#43;0800 CST" itemprop="datePublished">2019年02月02日</time>
   </p>
 </header>
 
@@ -79,29 +79,10 @@
     
 		<div class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-      <nav id="TableOfContents">
-<ul>
-<li><a href="#hugo">Hugo</a></li>
-<li><a href="#usage">Usage</a>
-<ul>
-<li><a href="#源码">源码</a></li>
-<li><a href="#启动调试">启动调试</a>
-<ul>
-<li><a href="#本地调试">本地调试</a></li>
-<li><a href="#远程调试">远程调试</a></li>
-</ul></li>
-<li><a href="#部署">部署</a></li>
-</ul></li>
-<li><a href="#改进记录">改进记录</a></li>
-</ul>
-</nav>
+      
 		</div>
     
-    
-
-<p><a id="orga1cb35c"></a></p>
-
-<h1 id="hugo">Hugo</h1>
+    <h1 id="hugo">Hugo</h1>
 
 <p>Hugo是一个用Go语言编写的静态网站生成器，它使用起来非常简单，相对于Jekyll复杂的安装设置来说，Hugo仅需要一个二进制文件hugo(hugo.exe)即可轻松用于本地调试和生成静态页面。</p>
 
@@ -109,57 +90,75 @@
 
 <p>Hugo自带watch的调试模式，可以在我修改MarkDown文章之后切换到浏览器，页面会检测到更新并且自动刷新，呈现出最终效果，能极大的提高博客书写效率。再加上Hugo是使用Go语言编写，已经没有任何理由不使用Hugo来代替Jekyll作为我的个人博客站点生成器了。</p>
 
-<p><a id="orgb947adc"></a></p>
-
 <h1 id="usage">Usage</h1>
 
-<p>Demo：<a href="http://blog.mospan.cn/"><a href="http://blog.mospan.cn/">http://blog.mospan.cn/</a></a></p>
+<p>Demo：
+<a href="http://blog.mospan.cn/" title="http://blog.mospan.cn/">http://blog.mospan.cn/</a></p>
 
-<p>界面参考 <a href="http://cyrillschumacher.com/"><a href="http://cyrillschumacher.com/">http://cyrillschumacher.com/</a></a> 做了一些修改，并做了一个皮肤：panman。</p>
-
-<p><a id="org7f70872"></a></p>
+<p>界面参考 [http://cyrillschumacher.com/](http://cyrillschumacher.com/) 做了一些修改，并做了一个皮肤：panman。</p>
 
 <h2 id="源码">源码</h2>
 
 <p>下载源码到本地。</p>
 
-<pre><code>$ git clone git@github.com:mospany/mospan-hugo-blog.git
+<pre><code class="language-sh">$ git clone git@github.com:mospany/mospan-hugo-blog.git
 </code></pre>
 
-<p><a id="org2ba3115"></a></p>
+<p>记得把我的个人信息修改成自己的就行。</p>
 
 <h2 id="启动调试">启动调试</h2>
 
-<p><a id="org1e1f664"></a></p>
-
 <h3 id="本地调试">本地调试</h3>
 
-<pre><code>$ cd mospan-hugo-blog
+<pre><code class="language-sh">$ cd mospan-hugo-blog
 $ ./debug.py
 </code></pre>
 
-<p>打开浏览器：<a href="http://localhost:1313">http://localhost:1313</a></p>
-
-<p><a id="orgf678066"></a></p>
+<p>打开浏览器：http://localhost:1313</p>
 
 <h3 id="远程调试">远程调试</h3>
 
-<pre><code>$ cd mospan-hugo-blog
+<pre><code class="language-sh">$ cd mospan-hugo-blog
 $ ./debug.py AA.BB.CC.DD
 </code></pre>
 
-<p>打开浏览器：<a href="http://AA.BB.CC.DD:1313">http://AA.BB.CC.DD:1313</a>
+<p>打开浏览器：http://AA.BB.CC.DD:1313
 其中： AA.BB.CC.DD 为本机可访问IP地址。</p>
 
-<p><a id="orgb068f13"></a></p>
+<h2 id="创作">创作</h2>
+
+<ul>
+现在的hugo可支持markdown与org-mode文件格式，分别对应create-md.py于create-org.py脚本。
+<li>执行create-md.py或create-org.py。</li>
+<li>输入文件标题，最后不要有空格。</li>
+<li>它将根据themes/hugo-panman-theme/archetypes/default.[md|org]模板生成以日期+标题的文件。</li>
+<li>打开新生成文件进行编辑，记得修改头部的categories、keywords、tags、title进行归类区分。</li>
+<li>修改好后，通过push.py进行保存到github文件中。</li>
+</ul>
 
 <h2 id="部署">部署</h2>
 
-<p>参考 `deploy.py`</p>
+<p>如果是第一次部署，执行：</p>
 
-<p><a id="org211f1dc"></a></p>
+<pre><code class="language-sh">$ ./deploy.py first
+</code></pre>
+
+<p>否则</p>
+
+<pre><code class="language-sh">$ ./deploy.py manual
+</code></pre>
+
+<p>即可</p>
 
 <h1 id="改进记录">改进记录</h1>
+
+<h1 id="缺陷">缺陷</h1>
+
+<ul>
+<li>Hugo对org-mode渲染没有markdown好。</li>
+<li>文章标题还需更加美化。</li>
+<li>右边的导航栏在某些浏览器下点击无效。</li>
+</ul>
 
     <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
   <div style="float:right;margin-top:0px;">
@@ -168,7 +167,6 @@ $ ./debug.py AA.BB.CC.DD
   </div>
   <div style="float:left;margin-top:0px;">
     <img src="/img/rewardcode.jpg" width="129px" height="129px"/>
-    <div style="text-align:center;">微信扫一扫</div>
   </div>
   <div>
     <p style="margin-top:0px;">作者：<a target="_blank" href="http://blog.mospan.cn/">mospan</a>
@@ -187,9 +185,9 @@ $ ./debug.py AA.BB.CC.DD
 <div class="article-tags">
   <span></span>
   
-  <a href="/tags/"></a>
+  <a href="/tags/%E5%8D%9A%E5%AE%A2">博客</a>
   
-  <a href="/tags/"></a>
+  <a href="/tags/hugo">Hugo</a>
   
 </div>
 
@@ -198,16 +196,16 @@ $ ./debug.py AA.BB.CC.DD
 <div class="article-categories">
   <span></span>
   
-  <a class="article-category-link" href="/categories/"></a>
+  <a class="article-category-link" href="/categories/%E5%8D%9A%E5%AE%A2">博客</a>
   
-  <a class="article-category-link" href="/categories/"></a>
+  <a class="article-category-link" href="/categories/hugo">Hugo</a>
   
 </div>
 
 
 
   <div class="article-share" id="share">
-    <div data-url="http://mospany.github.io/2019/02/02/mospan-hugo-blog-manual/" data-title="mospan-hugo-blog-manual" data-tsina="3833537679" class="share clearfix">
+    <div data-url="http://mospany.github.io/2019/02/02/mospan-hugo-blog-manual/" data-title="我的博客Hugo使用手册" data-tsina="3833537679" class="share clearfix">
     </div>
   </div>
 </footer>
@@ -251,15 +249,13 @@ $ ./debug.py AA.BB.CC.DD
 	<p class="asidetitle">标签</p>
 		<ul class="clearfix">
       
-			<li><a href="http://mospany.github.io/tags/" title=""><sup>2</sup></a></li>
-      
 			<li><a href="http://mospany.github.io/tags/dns" title="dns">dns<sup>1</sup></a></li>
       
 			<li><a href="http://mospany.github.io/tags/dpdk" title="dpdk">dpdk<sup>2</sup></a></li>
       
 			<li><a href="http://mospany.github.io/tags/emacs" title="emacs">emacs<sup>4</sup></a></li>
       
-			<li><a href="http://mospany.github.io/tags/hugo" title="hugo">hugo<sup>2</sup></a></li>
+			<li><a href="http://mospany.github.io/tags/hugo" title="hugo">hugo<sup>3</sup></a></li>
       
 			<li><a href="http://mospany.github.io/tags/openresty" title="openresty">openresty<sup>1</sup></a></li>
       
@@ -277,7 +273,7 @@ $ ./debug.py AA.BB.CC.DD
       
 			<li><a href="http://mospany.github.io/tags/%e5%89%8d%e7%ab%af" title="前端">前端<sup>1</sup></a></li>
       
-			<li><a href="http://mospany.github.io/tags/%e5%8d%9a%e5%ae%a2" title="博客">博客<sup>6</sup></a></li>
+			<li><a href="http://mospany.github.io/tags/%e5%8d%9a%e5%ae%a2" title="博客">博客<sup>7</sup></a></li>
       
 			<li><a href="http://mospany.github.io/tags/%e5%b7%a5%e5%85%b7" title="工具">工具<sup>1</sup></a></li>
       
@@ -367,7 +363,12 @@ $ ./debug.py AA.BB.CC.DD
       
       
       <li class="archive-list-item">
-        <a class="archive-list-link" href="http://mospany.github.io/post/#2018-02">2018年02月</a><span class="archive-list-count">9</span>
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2019-02">2019年02月</a><span class="archive-list-count">6</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2018-02">2018年02月</a><span class="archive-list-count">3</span>
       </li>
       
       
@@ -377,7 +378,7 @@ $ ./debug.py AA.BB.CC.DD
       
       
       <li class="archive-list-item">
-        <a class="archive-list-link" href="http://mospany.github.io/post/#2017-07">2017年07月</a><span class="archive-list-count">2</span>
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2017-07">2017年07月</a><span class="archive-list-count">3</span>
       </li>
       
       
@@ -392,7 +393,7 @@ $ ./debug.py AA.BB.CC.DD
       
       
       <li class="archive-list-item">
-        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-05">2016年05月</a><span class="archive-list-count">5</span>
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-05">2016年05月</a><span class="archive-list-count">4</span>
       </li>
       
       
@@ -402,7 +403,7 @@ $ ./debug.py AA.BB.CC.DD
       
       
       <li class="archive-list-item">
-        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-02">2016年02月</a><span class="archive-list-count">12</span>
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-02">2016年02月</a><span class="archive-list-count">11</span>
       </li>
       
       
@@ -425,8 +426,6 @@ $ ./debug.py AA.BB.CC.DD
 <div class="tagcloudlist">
   <p class="asidetitle">标签云</p>
   <div class="tagcloudlist clearfix">
-    
-    <a href="http://mospany.github.io/tags/" style="font-size: 12px;"></a>
     
     <a href="http://mospany.github.io/tags/dns" style="font-size: 12px;">dns</a>
     

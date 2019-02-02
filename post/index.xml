@@ -6,10 +6,19 @@
     <description>Recent content in Posts on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sat, 24 Feb 2018 16:32:21 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 02 Feb 2019 15:18:53 +0800</lastBuildDate>
     
 	<atom:link href="http://mospany.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>我的博客Hugo使用手册</title>
+      <link>http://mospany.github.io/2019/02/02/mospan-hugo-blog-manual/</link>
+      <pubDate>Sat, 02 Feb 2019 15:18:53 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2019/02/02/mospan-hugo-blog-manual/</guid>
+      <description>Hugo Hugo是一个用Go语言编写的静态网站生成器，它使用起来非常简单，相对于Jekyll复杂的安装设置来说，Hugo仅需要一个二进制文件hug</description>
+    </item>
     
     <item>
       <title>VUE开发环境搭建</title>
@@ -18,15 +27,6 @@
       
       <guid>http://mospany.github.io/2018/02/24/vue-dev-env-build/</guid>
       <description>安装 安装nodejs 到https://nodejs.org/en/download/ 下载对应系统的二进制版本。 按照ubuntu16.04下配</description>
-    </item>
-    
-    <item>
-      <title>mospan-hugo-blog-manual</title>
-      <link>http://mospany.github.io/2019/02/02/mospan-hugo-blog-manual/</link>
-      <pubDate>Sat, 24 Feb 2018 16:32:21 +0800</pubDate>
-      
-      <guid>http://mospany.github.io/2019/02/02/mospan-hugo-blog-manual/</guid>
-      <description>Hugo Hugo是一个用Go语言编写的静态网站生成器，它使用起来非常简单，相对于Jekyll复杂的安装设置来说，Hugo仅需要一个二进制文件hug</description>
     </item>
     
     <item>

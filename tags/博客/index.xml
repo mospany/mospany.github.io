@@ -6,10 +6,19 @@
     <description>Recent content in 博客 on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sun, 08 May 2016 11:24:43 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 02 Feb 2019 15:18:53 +0800</lastBuildDate>
     
 	<atom:link href="http://mospany.github.io/tags/%E5%8D%9A%E5%AE%A2/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>我的博客Hugo使用手册</title>
+      <link>http://mospany.github.io/2019/02/02/mospan-hugo-blog-manual/</link>
+      <pubDate>Sat, 02 Feb 2019 15:18:53 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2019/02/02/mospan-hugo-blog-manual/</guid>
+      <description>Hugo Hugo是一个用Go语言编写的静态网站生成器，它使用起来非常简单，相对于Jekyll复杂的安装设置来说，Hugo仅需要一个二进制文件hug</description>
+    </item>
     
     <item>
       <title>我的博客演进之路(06)--添加文章列表分页显示</title>
