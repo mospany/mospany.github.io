@@ -21,6 +21,15 @@
     </item>
     
     <item>
+      <title>VUE开发环境搭建</title>
+      <link>http://mospany.github.io/2018/02/24/vue-dev-env-build/</link>
+      <pubDate>Sat, 24 Feb 2018 16:32:21 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2018/02/24/vue-dev-env-build/</guid>
+      <description>安装 安装nodejs 到https://nodejs.org/en/download/ 下载对应系统的二进制版本。 按照ubuntu16.04下配</description>
+    </item>
+    
+    <item>
       <title>emacs整体介绍</title>
       <link>http://mospany.github.io/2017/08/28/emacs-introduction/</link>
       <pubDate>Mon, 28 Aug 2017 07:39:07 +0800</pubDate>
