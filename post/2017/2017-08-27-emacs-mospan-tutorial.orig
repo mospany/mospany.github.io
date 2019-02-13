@@ -137,7 +137,14 @@ url = "/2017/08/25/emacs-mospan-tutorial/"
 |--------+----------------------------------|
 
 *** Golang
-
+**** 阅读代码
+<span style="color:red">注: 一定记得先加代码工程到GOPATH中，否则godef不能跨包或文件夹跳转</span>
+|--------+-------------------|
+| 快捷键 | 描述              |
+|--------+-------------------|
+| f8     | godef-jump        |
+| f7     | gocscope-pop-mark |
+|--------+-------------------|
 **** go-add-tags
      1. 在evil-mode下使用control v命令选择结构体区域
      2. 按下M-x输入go-add-tags
@@ -147,6 +154,7 @@ url = "/2017/08/25/emacs-mospan-tutorial/"
      1. 在evil-mode下使用control v命令选择某些函数区域
      2. 按下M-x输入gotests-region生成这些函数的gotest模板或直接输入gotests将生成本文件的所有函数测试模板。
      3. 将在该目录下生成同名_test.go的测试文件。
+     
 
 
 ** GTD
