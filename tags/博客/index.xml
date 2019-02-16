@@ -2,75 +2,75 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>博客 on 墨斯潘園</title>
-    <link>http://mospany.github.io/tags/%E5%8D%9A%E5%AE%A2/</link>
+    <link>blog.mospan.cn/tags/%E5%8D%9A%E5%AE%A2/</link>
     <description>Recent content in 博客 on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <lastBuildDate>Sat, 02 Feb 2019 15:18:53 +0800</lastBuildDate>
     
-	<atom:link href="http://mospany.github.io/tags/%E5%8D%9A%E5%AE%A2/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="blog.mospan.cn/tags/%E5%8D%9A%E5%AE%A2/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>我的博客Hugo使用手册</title>
-      <link>http://mospany.github.io/2019/02/02/mospan-hugo-blog-manual/</link>
+      <link>blog.mospan.cn/2019/02/02/mospan-hugo-blog-manual/</link>
       <pubDate>Sat, 02 Feb 2019 15:18:53 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2019/02/02/mospan-hugo-blog-manual/</guid>
+      <guid>blog.mospan.cn/2019/02/02/mospan-hugo-blog-manual/</guid>
       <description>Hugo Hugo是一个用Go语言编写的静态网站生成器，它使用起来非常简单，相对于Jekyll复杂的安装设置来说，Hugo仅需要一个二进制文件hug</description>
     </item>
     
     <item>
       <title>我的博客演进之路(06)--添加文章列表分页显示</title>
-      <link>http://mospany.github.io/2016/05/08/my-blog-add-pagination/</link>
+      <link>blog.mospan.cn/2016/05/08/my-blog-add-pagination/</link>
       <pubDate>Sun, 08 May 2016 11:24:43 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2016/05/08/my-blog-add-pagination/</guid>
+      <guid>blog.mospan.cn/2016/05/08/my-blog-add-pagination/</guid>
       <description>背景 由于原来的主页显示是完全平铺，当文章数量较多时， 下拉进度条太长不方便阅读。因此，通过添加文章列表分页显示功能 可以更好的显示与阅读， 每页设</description>
     </item>
     
     <item>
       <title>我的博客演进之路(05)--添加访问统计</title>
-      <link>http://mospany.github.io/2016/02/21/my-blog-add-visit-counter/</link>
+      <link>blog.mospan.cn/2016/02/21/my-blog-add-visit-counter/</link>
       <pubDate>Sun, 21 Feb 2016 09:52:16 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2016/02/21/my-blog-add-visit-counter/</guid>
+      <guid>blog.mospan.cn/2016/02/21/my-blog-add-visit-counter/</guid>
       <description>申请 注册 登陆到amazingcounters进行账号注册。 申请 大致原理为通过注册把自己的域名与统计网站关联后，生成一段html代码拷贝到自己</description>
     </item>
     
     <item>
       <title>我的博客演进之路(04)--调整文章版面显示大小</title>
-      <link>http://mospany.github.io/2016/02/20/my-blog-modify-container-size/</link>
+      <link>blog.mospan.cn/2016/02/20/my-blog-modify-container-size/</link>
       <pubDate>Sat, 20 Feb 2016 10:56:35 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2016/02/20/my-blog-modify-container-size/</guid>
+      <guid>blog.mospan.cn/2016/02/20/my-blog-modify-container-size/</guid>
       <description>由于原来的版面显示有点过小，在现在的宽屏面前有些浪费。于是为了更好的进行阅读显示，特做了如下修改： 打开文件./themes/rapid/st</description>
     </item>
     
     <item>
       <title>我的博客演进之路(03)--添加微信公众号</title>
-      <link>http://mospany.github.io/2016/01/25/my-blog-add-weixin-mp/</link>
+      <link>blog.mospan.cn/2016/01/25/my-blog-add-weixin-mp/</link>
       <pubDate>Sat, 06 Feb 2016 23:24:08 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2016/01/25/my-blog-add-weixin-mp/</guid>
+      <guid>blog.mospan.cn/2016/01/25/my-blog-add-weixin-mp/</guid>
       <description>引言 为了符合当今移动互联网的潮流，也让自己更加了解微信的基础知识与推广运作，我也把自己在博客上写的文章也推送到微信公众号，以便想了解的人提供</description>
     </item>
     
     <item>
       <title>我的博客演进之路(02)--架构与部署概述</title>
-      <link>http://mospany.github.io/2016/01/25/my-blog-architecture/</link>
+      <link>blog.mospan.cn/2016/01/25/my-blog-architecture/</link>
       <pubDate>Mon, 25 Jan 2016 23:24:08 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2016/01/25/my-blog-architecture/</guid>
+      <guid>blog.mospan.cn/2016/01/25/my-blog-architecture/</guid>
       <description>部署图总览 经过调研与分析，能满足我博客需求的大致部署图如下： 角色说明 github 主要存放了本博客的资料文件，利用了github的pages功能提供了网</description>
     </item>
     
     <item>
       <title>我的博客演进之路(01)--正式上线</title>
-      <link>http://mospany.github.io/2016/01/24/my-blog-online/</link>
+      <link>blog.mospan.cn/2016/01/24/my-blog-online/</link>
       <pubDate>Sun, 24 Jan 2016 09:34:08 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2016/01/24/my-blog-online/</guid>
+      <guid>blog.mospan.cn/2016/01/24/my-blog-online/</guid>
       <description>原来的博客都是在CSDN与博客园里写的，都是按照模板进行编写，能自己自定义的比较少，没有自己的独立域名，用emacs/vim编写上面的博客不</description>
     </item>
     

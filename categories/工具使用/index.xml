@@ -2,39 +2,39 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>工具使用 on 墨斯潘園</title>
-    <link>http://mospany.github.io/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/</link>
+    <link>blog.mospan.cn/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/</link>
     <description>Recent content in 工具使用 on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <lastBuildDate>Sun, 29 May 2016 09:33:53 +0800</lastBuildDate>
     
-	<atom:link href="http://mospany.github.io/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="blog.mospan.cn/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>org-mode使用手册</title>
-      <link>http://mospany.github.io/2016/05/29/org-manual/</link>
+      <link>blog.mospan.cn/2016/05/29/org-manual/</link>
       <pubDate>Sun, 29 May 2016 09:33:53 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2016/05/29/org-manual/</guid>
+      <guid>blog.mospan.cn/2016/05/29/org-manual/</guid>
       <description>总介 摘要 : org大概能够做什么的摘要 Org是一种通过纯文本方式来快速而有效地记录笔记,处理待办列表,做项目计划的mode. Org通过一些NO</description>
     </item>
     
     <item>
       <title>怎样才能拥有个人独立域名邮箱？</title>
-      <link>http://mospany.github.io/2016/03/31/independent-mailbox/</link>
+      <link>blog.mospan.cn/2016/03/31/independent-mailbox/</link>
       <pubDate>Thu, 31 Mar 2016 21:11:24 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2016/03/31/independent-mailbox/</guid>
+      <guid>blog.mospan.cn/2016/03/31/independent-mailbox/</guid>
       <description>背景 在创建开源项目或小团队创业初期，由于没有精力或财力自己搭建内部邮件服务器，为了使大家沟通更顺畅更一致，也为了与客户沟通显得更加专业一些，</description>
     </item>
     
     <item>
       <title>在Linux下我常用的软件工具</title>
-      <link>http://mospany.github.io/2016/02/09/my-linux-common-tools/</link>
+      <link>blog.mospan.cn/2016/02/09/my-linux-common-tools/</link>
       <pubDate>Tue, 09 Feb 2016 19:09:11 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2016/02/09/my-linux-common-tools/</guid>
+      <guid>blog.mospan.cn/2016/02/09/my-linux-common-tools/</guid>
       <description>编程编辑 emacs emacs是我最为常用的工具，大部分工作都在它下面完成，差不多是“开机&amp;ndash;&amp;gt;emacs&amp;ndash;&amp;gt;关机”</description>
     </item>
     

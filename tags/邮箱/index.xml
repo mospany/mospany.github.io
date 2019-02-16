@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>邮箱 on 墨斯潘園</title>
-    <link>http://mospany.github.io/tags/%E9%82%AE%E7%AE%B1/</link>
+    <link>blog.mospan.cn/tags/%E9%82%AE%E7%AE%B1/</link>
     <description>Recent content in 邮箱 on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <lastBuildDate>Thu, 31 Mar 2016 21:11:24 +0800</lastBuildDate>
     
-	<atom:link href="http://mospany.github.io/tags/%E9%82%AE%E7%AE%B1/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="blog.mospan.cn/tags/%E9%82%AE%E7%AE%B1/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>怎样才能拥有个人独立域名邮箱？</title>
-      <link>http://mospany.github.io/2016/03/31/independent-mailbox/</link>
+      <link>blog.mospan.cn/2016/03/31/independent-mailbox/</link>
       <pubDate>Thu, 31 Mar 2016 21:11:24 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2016/03/31/independent-mailbox/</guid>
+      <guid>blog.mospan.cn/2016/03/31/independent-mailbox/</guid>
       <description>背景 在创建开源项目或小团队创业初期，由于没有精力或财力自己搭建内部邮件服务器，为了使大家沟通更顺畅更一致，也为了与客户沟通显得更加专业一些，</description>
     </item>
     

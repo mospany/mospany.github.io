@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>生活记录 on 墨斯潘園</title>
-    <link>http://mospany.github.io/tags/%E7%94%9F%E6%B4%BB%E8%AE%B0%E5%BD%95/</link>
+    <link>blog.mospan.cn/tags/%E7%94%9F%E6%B4%BB%E8%AE%B0%E5%BD%95/</link>
     <description>Recent content in 生活记录 on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <lastBuildDate>Tue, 26 Jan 2016 08:28:37 +0800</lastBuildDate>
     
-	<atom:link href="http://mospany.github.io/tags/%E7%94%9F%E6%B4%BB%E8%AE%B0%E5%BD%95/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="blog.mospan.cn/tags/%E7%94%9F%E6%B4%BB%E8%AE%B0%E5%BD%95/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>记2015年度公司员工大会与获奖实录</title>
-      <link>http://mospany.github.io/2016/01/26/2015-fastweb-outstanding-engineer/</link>
+      <link>blog.mospan.cn/2016/01/26/2015-fastweb-outstanding-engineer/</link>
       <pubDate>Tue, 26 Jan 2016 08:28:37 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2016/01/26/2015-fastweb-outstanding-engineer/</guid>
+      <guid>blog.mospan.cn/2016/01/26/2015-fastweb-outstanding-engineer/</guid>
       <description>引言 今年自己荣幸拿了个公司的一个奖，在此感谢下公司领导的栽培与同事的帮助，谢谢大家。 获奖感言 大家好， 我叫mospan，家乡贵州荔波， 布依族，</description>
     </item>
     

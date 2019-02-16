@@ -2,228 +2,228 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on 墨斯潘園</title>
-    <link>http://mospany.github.io/post/</link>
+    <link>blog.mospan.cn/post/</link>
     <description>Recent content in Posts on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <lastBuildDate>Sat, 02 Feb 2019 15:18:53 +0800</lastBuildDate>
     
-	<atom:link href="http://mospany.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="blog.mospan.cn/post/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>我的博客Hugo使用手册</title>
-      <link>http://mospany.github.io/2019/02/02/mospan-hugo-blog-manual/</link>
+      <link>blog.mospan.cn/2019/02/02/mospan-hugo-blog-manual/</link>
       <pubDate>Sat, 02 Feb 2019 15:18:53 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2019/02/02/mospan-hugo-blog-manual/</guid>
+      <guid>blog.mospan.cn/2019/02/02/mospan-hugo-blog-manual/</guid>
       <description>Hugo Hugo是一个用Go语言编写的静态网站生成器，它使用起来非常简单，相对于Jekyll复杂的安装设置来说，Hugo仅需要一个二进制文件hug</description>
     </item>
     
     <item>
       <title>VUE开发环境搭建</title>
-      <link>http://mospany.github.io/2018/02/24/vue-dev-env-build/</link>
+      <link>blog.mospan.cn/2018/02/24/vue-dev-env-build/</link>
       <pubDate>Sat, 24 Feb 2018 16:32:21 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2018/02/24/vue-dev-env-build/</guid>
+      <guid>blog.mospan.cn/2018/02/24/vue-dev-env-build/</guid>
       <description>安装 安装nodejs 到https://nodejs.org/en/download/ 下载对应系统的二进制版本。 按照ubuntu16.04下配</description>
     </item>
     
     <item>
       <title>emacs整体介绍</title>
-      <link>http://mospany.github.io/2017/08/28/emacs-introduction/</link>
+      <link>blog.mospan.cn/2017/08/28/emacs-introduction/</link>
       <pubDate>Mon, 28 Aug 2017 07:39:07 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2017/08/28/emacs-introduction/</guid>
+      <guid>blog.mospan.cn/2017/08/28/emacs-introduction/</guid>
       <description>描述 此PPT上描述的大部分功能是我折腾玩过的，现在整理分享出来以便有兴趣的读者对强大几乎无所不能的emacs有个大致的了解，让更多的人加入e</description>
     </item>
     
     <item>
       <title>emacs.mospan使用指南</title>
-      <link>http://mospany.github.io/2017/08/25/emacs-mospan-tutorial/</link>
+      <link>blog.mospan.cn/2017/08/25/emacs-mospan-tutorial/</link>
       <pubDate>Sun, 27 Aug 2017 17:08:26 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2017/08/25/emacs-mospan-tutorial/</guid>
+      <guid>blog.mospan.cn/2017/08/25/emacs-mospan-tutorial/</guid>
       <description>概述 我自从2011年开始使用自己折腾的emacs到现在，参考或实现了不少功能使其满足我工作与学习所需，虽然它依然有一些瑕疵，但尝试了其他配置</description>
     </item>
     
     <item>
       <title>spacemacs使用初探</title>
-      <link>http://mospany.github.io/2017/08/25/spacemacs-use-exploration/</link>
+      <link>blog.mospan.cn/2017/08/25/spacemacs-use-exploration/</link>
       <pubDate>Thu, 24 Aug 2017 17:08:26 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2017/08/25/spacemacs-use-exploration/</guid>
+      <guid>blog.mospan.cn/2017/08/25/spacemacs-use-exploration/</guid>
       <description>概述 我自从2011年开始使用自己折腾的emacs到现在， 用着它写golang时发现函数列表与补全功能不太好使，一直知道spacemacs的名</description>
     </item>
     
     <item>
       <title>DNS体系之_基础</title>
-      <link>http://mospany.github.io/2017/07/17/dns-architecture-base/</link>
+      <link>blog.mospan.cn/2017/07/17/dns-architecture-base/</link>
       <pubDate>Thu, 20 Jul 2017 07:39:07 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2017/07/17/dns-architecture-base/</guid>
+      <guid>blog.mospan.cn/2017/07/17/dns-architecture-base/</guid>
       <description>描述 此《DNS体系基础》为在公司进行的一次内部分享， 现也把它放到博客中来，以便更多的读者分享交流。PPT内容由我个人的理解编写与部分来自互联</description>
     </item>
     
     <item>
       <title>精品文章，阅后收藏</title>
-      <link>http://mospany.github.io/2017/03/07/collection-after-reading/</link>
+      <link>blog.mospan.cn/2017/03/07/collection-after-reading/</link>
       <pubDate>Tue, 07 Mar 2017 19:13:23 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2017/03/07/collection-after-reading/</guid>
+      <guid>blog.mospan.cn/2017/03/07/collection-after-reading/</guid>
       <description>职场人性类 励志 [☆☆☆☆☆] 你同学都身价上亿了，你却还在纠结早晨几点能起床？ [☆☆☆☆☆] 你的收入，为什么还没有指数增长？ [☆☆☆☆☆] 你的</description>
     </item>
     
     <item>
       <title>openresty&#43;redis实践记录</title>
-      <link>http://mospany.github.io/2017/03/02/openresty&#43;redis-practices/</link>
+      <link>blog.mospan.cn/2017/03/02/openresty&#43;redis-practices/</link>
       <pubDate>Thu, 02 Mar 2017 11:14:08 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2017/03/02/openresty&#43;redis-practices/</guid>
+      <guid>blog.mospan.cn/2017/03/02/openresty&#43;redis-practices/</guid>
       <description>安装 openresty安装 详见 openresty安装 redis安装 执行如下命令： sudo apt-get update sudo apt-get install redis-server 详见 Ubuntu安装配置Redis redis启</description>
     </item>
     
     <item>
       <title>个人常用面试题及其参考答案</title>
-      <link>http://mospany.github.io/2017/03/01/personal-interview-questions/</link>
+      <link>blog.mospan.cn/2017/03/01/personal-interview-questions/</link>
       <pubDate>Wed, 01 Mar 2017 19:27:08 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2017/03/01/personal-interview-questions/</guid>
+      <guid>blog.mospan.cn/2017/03/01/personal-interview-questions/</guid>
       <description>开篇 请您自我介绍一下你自己？ 回答提示：一般人回答这个问题过于平常，只说姓名、年龄、爱好、工作经验，这些在简历上都有。其实，企业最希望知道的是</description>
     </item>
     
     <item>
       <title>DPDK开发随记</title>
-      <link>http://mospany.github.io/2016/09/06/dpdk-develop-notes/</link>
+      <link>blog.mospan.cn/2016/09/06/dpdk-develop-notes/</link>
       <pubDate>Tue, 06 Sep 2016 19:37:20 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2016/09/06/dpdk-develop-notes/</guid>
+      <guid>blog.mospan.cn/2016/09/06/dpdk-develop-notes/</guid>
       <description>性能调优 rte_rand() 现象：使用top perf -g查看时发现__drand48_iterate()所占比例达到40%以上。 分析：跟踪__drand48_ite</description>
     </item>
     
     <item>
       <title>org-mode使用手册</title>
-      <link>http://mospany.github.io/2016/05/29/org-manual/</link>
+      <link>blog.mospan.cn/2016/05/29/org-manual/</link>
       <pubDate>Sun, 29 May 2016 09:33:53 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2016/05/29/org-manual/</guid>
+      <guid>blog.mospan.cn/2016/05/29/org-manual/</guid>
       <description>总介 摘要 : org大概能够做什么的摘要 Org是一种通过纯文本方式来快速而有效地记录笔记,处理待办列表,做项目计划的mode. Org通过一些NO</description>
     </item>
     
     <item>
       <title>我的博客演进之路(06)--添加文章列表分页显示</title>
-      <link>http://mospany.github.io/2016/05/08/my-blog-add-pagination/</link>
+      <link>blog.mospan.cn/2016/05/08/my-blog-add-pagination/</link>
       <pubDate>Sun, 08 May 2016 11:24:43 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2016/05/08/my-blog-add-pagination/</guid>
+      <guid>blog.mospan.cn/2016/05/08/my-blog-add-pagination/</guid>
       <description>背景 由于原来的主页显示是完全平铺，当文章数量较多时， 下拉进度条太长不方便阅读。因此，通过添加文章列表分页显示功能 可以更好的显示与阅读， 每页设</description>
     </item>
     
     <item>
       <title>怎样才能拥有个人独立域名邮箱？</title>
-      <link>http://mospany.github.io/2016/03/31/independent-mailbox/</link>
+      <link>blog.mospan.cn/2016/03/31/independent-mailbox/</link>
       <pubDate>Thu, 31 Mar 2016 21:11:24 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2016/03/31/independent-mailbox/</guid>
+      <guid>blog.mospan.cn/2016/03/31/independent-mailbox/</guid>
       <description>背景 在创建开源项目或小团队创业初期，由于没有精力或财力自己搭建内部邮件服务器，为了使大家沟通更顺畅更一致，也为了与客户沟通显得更加专业一些，</description>
     </item>
     
     <item>
       <title>基于DPDK开发高性能DNS服务器实践总结</title>
-      <link>http://mospany.github.io/2016/03/14/xns-on-dpdk/</link>
+      <link>blog.mospan.cn/2016/03/14/xns-on-dpdk/</link>
       <pubDate>Mon, 14 Mar 2016 22:02:57 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2016/03/14/xns-on-dpdk/</guid>
+      <guid>blog.mospan.cn/2016/03/14/xns-on-dpdk/</guid>
       <description>简述 有幸全程参与了基于DPDK1下一代高性能CloudXNS2服务器开发，从未知到慢慢熟悉，其中也走了些弯路也 踩过一些坑，一路走来有些感受与</description>
     </item>
     
     <item>
       <title>我的博客演进之路(05)--添加访问统计</title>
-      <link>http://mospany.github.io/2016/02/21/my-blog-add-visit-counter/</link>
+      <link>blog.mospan.cn/2016/02/21/my-blog-add-visit-counter/</link>
       <pubDate>Sun, 21 Feb 2016 09:52:16 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2016/02/21/my-blog-add-visit-counter/</guid>
+      <guid>blog.mospan.cn/2016/02/21/my-blog-add-visit-counter/</guid>
       <description>申请 注册 登陆到amazingcounters进行账号注册。 申请 大致原理为通过注册把自己的域名与统计网站关联后，生成一段html代码拷贝到自己</description>
     </item>
     
     <item>
       <title>我的博客演进之路(04)--调整文章版面显示大小</title>
-      <link>http://mospany.github.io/2016/02/20/my-blog-modify-container-size/</link>
+      <link>blog.mospan.cn/2016/02/20/my-blog-modify-container-size/</link>
       <pubDate>Sat, 20 Feb 2016 10:56:35 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2016/02/20/my-blog-modify-container-size/</guid>
+      <guid>blog.mospan.cn/2016/02/20/my-blog-modify-container-size/</guid>
       <description>由于原来的版面显示有点过小，在现在的宽屏面前有些浪费。于是为了更好的进行阅读显示，特做了如下修改： 打开文件./themes/rapid/st</description>
     </item>
     
     <item>
       <title>pango设计与实现(02)--快速开始</title>
-      <link>http://mospany.github.io/2016/02/14/pango-development-quick-start/</link>
+      <link>blog.mospan.cn/2016/02/14/pango-development-quick-start/</link>
       <pubDate>Sun, 14 Feb 2016 16:57:25 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2016/02/14/pango-development-quick-start/</guid>
+      <guid>blog.mospan.cn/2016/02/14/pango-development-quick-start/</guid>
       <description>安装 安装前准备 确保你的本地环境已经安装好如下软件： git. Go 1.4+ 源码安装 下载源码到本地 git clone https://github.com/mospany/pango.git 设置好环境变量 cd pango export GOPATH=`pwd` 编译 make 如果编译成功，将在当前目录下</description>
     </item>
     
     <item>
       <title>pango设计与实现(01)--介绍</title>
-      <link>http://mospany.github.io/2016/02/14/pango-development-introduce/</link>
+      <link>blog.mospan.cn/2016/02/14/pango-development-introduce/</link>
       <pubDate>Sun, 14 Feb 2016 12:22:12 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2016/02/14/pango-development-introduce/</guid>
+      <guid>blog.mospan.cn/2016/02/14/pango-development-introduce/</guid>
       <description>概述 pango我个人发起的基于hugo的变种开源项目，是一个快速与灵活的静态网页生成器，使用GO语言开发。 主要基于如下目的： 巩固学习web前</description>
     </item>
     
     <item>
       <title>在Linux下我常用的软件工具</title>
-      <link>http://mospany.github.io/2016/02/09/my-linux-common-tools/</link>
+      <link>blog.mospan.cn/2016/02/09/my-linux-common-tools/</link>
       <pubDate>Tue, 09 Feb 2016 19:09:11 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2016/02/09/my-linux-common-tools/</guid>
+      <guid>blog.mospan.cn/2016/02/09/my-linux-common-tools/</guid>
       <description>编程编辑 emacs emacs是我最为常用的工具，大部分工作都在它下面完成，差不多是“开机&amp;ndash;&amp;gt;emacs&amp;ndash;&amp;gt;关机”</description>
     </item>
     
     <item>
       <title>读《老卫聊架构：做技术，应该先有深度再谈广度》随记</title>
-      <link>http://mospany.github.io/2016/02/09/mr-wei-talk-architecture/</link>
+      <link>blog.mospan.cn/2016/02/09/mr-wei-talk-architecture/</link>
       <pubDate>Tue, 09 Feb 2016 17:12:34 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2016/02/09/mr-wei-talk-architecture/</guid>
+      <guid>blog.mospan.cn/2016/02/09/mr-wei-talk-architecture/</guid>
       <description>背景 主要交流内容包括以下几点： 为什么要成为一名架构师？ 好的架构师需要T型的复合型人才 架构师最重要的能力是战略分解能力 架构师的跨界思维能力 架构</description>
     </item>
     
     <item>
       <title>我的博客演进之路(03)--添加微信公众号</title>
-      <link>http://mospany.github.io/2016/01/25/my-blog-add-weixin-mp/</link>
+      <link>blog.mospan.cn/2016/01/25/my-blog-add-weixin-mp/</link>
       <pubDate>Sat, 06 Feb 2016 23:24:08 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2016/01/25/my-blog-add-weixin-mp/</guid>
+      <guid>blog.mospan.cn/2016/01/25/my-blog-add-weixin-mp/</guid>
       <description>引言 为了符合当今移动互联网的潮流，也让自己更加了解微信的基础知识与推广运作，我也把自己在博客上写的文章也推送到微信公众号，以便想了解的人提供</description>
     </item>
     
     <item>
       <title>记2015年度公司员工大会与获奖实录</title>
-      <link>http://mospany.github.io/2016/01/26/2015-fastweb-outstanding-engineer/</link>
+      <link>blog.mospan.cn/2016/01/26/2015-fastweb-outstanding-engineer/</link>
       <pubDate>Tue, 26 Jan 2016 08:28:37 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2016/01/26/2015-fastweb-outstanding-engineer/</guid>
+      <guid>blog.mospan.cn/2016/01/26/2015-fastweb-outstanding-engineer/</guid>
       <description>引言 今年自己荣幸拿了个公司的一个奖，在此感谢下公司领导的栽培与同事的帮助，谢谢大家。 获奖感言 大家好， 我叫mospan，家乡贵州荔波， 布依族，</description>
     </item>
     
     <item>
       <title>我的博客演进之路(02)--架构与部署概述</title>
-      <link>http://mospany.github.io/2016/01/25/my-blog-architecture/</link>
+      <link>blog.mospan.cn/2016/01/25/my-blog-architecture/</link>
       <pubDate>Mon, 25 Jan 2016 23:24:08 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2016/01/25/my-blog-architecture/</guid>
+      <guid>blog.mospan.cn/2016/01/25/my-blog-architecture/</guid>
       <description>部署图总览 经过调研与分析，能满足我博客需求的大致部署图如下： 角色说明 github 主要存放了本博客的资料文件，利用了github的pages功能提供了网</description>
     </item>
     
     <item>
       <title>我的博客演进之路(01)--正式上线</title>
-      <link>http://mospany.github.io/2016/01/24/my-blog-online/</link>
+      <link>blog.mospan.cn/2016/01/24/my-blog-online/</link>
       <pubDate>Sun, 24 Jan 2016 09:34:08 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2016/01/24/my-blog-online/</guid>
+      <guid>blog.mospan.cn/2016/01/24/my-blog-online/</guid>
       <description>原来的博客都是在CSDN与博客园里写的，都是按照模板进行编写，能自己自定义的比较少，没有自己的独立域名，用emacs/vim编写上面的博客不</description>
     </item>
     

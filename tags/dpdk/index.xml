@@ -2,30 +2,30 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Dpdk on 墨斯潘園</title>
-    <link>http://mospany.github.io/tags/dpdk/</link>
+    <link>blog.mospan.cn/tags/dpdk/</link>
     <description>Recent content in Dpdk on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <lastBuildDate>Tue, 06 Sep 2016 19:37:20 +0800</lastBuildDate>
     
-	<atom:link href="http://mospany.github.io/tags/dpdk/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="blog.mospan.cn/tags/dpdk/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>DPDK开发随记</title>
-      <link>http://mospany.github.io/2016/09/06/dpdk-develop-notes/</link>
+      <link>blog.mospan.cn/2016/09/06/dpdk-develop-notes/</link>
       <pubDate>Tue, 06 Sep 2016 19:37:20 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2016/09/06/dpdk-develop-notes/</guid>
+      <guid>blog.mospan.cn/2016/09/06/dpdk-develop-notes/</guid>
       <description>性能调优 rte_rand() 现象：使用top perf -g查看时发现__drand48_iterate()所占比例达到40%以上。 分析：跟踪__drand48_ite</description>
     </item>
     
     <item>
       <title>基于DPDK开发高性能DNS服务器实践总结</title>
-      <link>http://mospany.github.io/2016/03/14/xns-on-dpdk/</link>
+      <link>blog.mospan.cn/2016/03/14/xns-on-dpdk/</link>
       <pubDate>Mon, 14 Mar 2016 22:02:57 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2016/03/14/xns-on-dpdk/</guid>
+      <guid>blog.mospan.cn/2016/03/14/xns-on-dpdk/</guid>
       <description>简述 有幸全程参与了基于DPDK1下一代高性能CloudXNS2服务器开发，从未知到慢慢熟悉，其中也走了些弯路也 踩过一些坑，一路走来有些感受与</description>
     </item>
     

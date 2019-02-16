@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Spacemacs on 墨斯潘園</title>
-    <link>http://mospany.github.io/tags/spacemacs/</link>
+    <link>blog.mospan.cn/tags/spacemacs/</link>
     <description>Recent content in Spacemacs on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <lastBuildDate>Thu, 24 Aug 2017 17:08:26 +0800</lastBuildDate>
     
-	<atom:link href="http://mospany.github.io/tags/spacemacs/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="blog.mospan.cn/tags/spacemacs/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>spacemacs使用初探</title>
-      <link>http://mospany.github.io/2017/08/25/spacemacs-use-exploration/</link>
+      <link>blog.mospan.cn/2017/08/25/spacemacs-use-exploration/</link>
       <pubDate>Thu, 24 Aug 2017 17:08:26 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2017/08/25/spacemacs-use-exploration/</guid>
+      <guid>blog.mospan.cn/2017/08/25/spacemacs-use-exploration/</guid>
       <description>概述 我自从2011年开始使用自己折腾的emacs到现在， 用着它写golang时发现函数列表与补全功能不太好使，一直知道spacemacs的名</description>
     </item>
     
