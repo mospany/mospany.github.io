@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Openresty on 墨斯潘園</title>
-    <link>blog.mospan.cn/tags/openresty/</link>
+    <link>http://mospany.github.io/tags/openresty/</link>
     <description>Recent content in Openresty on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <lastBuildDate>Thu, 02 Mar 2017 11:14:08 +0800</lastBuildDate>
     
-	<atom:link href="blog.mospan.cn/tags/openresty/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://mospany.github.io/tags/openresty/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>openresty&#43;redis实践记录</title>
-      <link>blog.mospan.cn/2017/03/02/openresty&#43;redis-practices/</link>
+      <link>http://mospany.github.io/2017/03/02/openresty&#43;redis-practices/</link>
       <pubDate>Thu, 02 Mar 2017 11:14:08 +0800</pubDate>
       
-      <guid>blog.mospan.cn/2017/03/02/openresty&#43;redis-practices/</guid>
+      <guid>http://mospany.github.io/2017/03/02/openresty&#43;redis-practices/</guid>
       <description>安装 openresty安装 详见 openresty安装 redis安装 执行如下命令： sudo apt-get update sudo apt-get install redis-server 详见 Ubuntu安装配置Redis redis启</description>
     </item>
     

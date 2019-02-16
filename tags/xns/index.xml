@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Xns on 墨斯潘園</title>
-    <link>blog.mospan.cn/tags/xns/</link>
+    <link>http://mospany.github.io/tags/xns/</link>
     <description>Recent content in Xns on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <lastBuildDate>Mon, 14 Mar 2016 22:02:57 +0800</lastBuildDate>
     
-	<atom:link href="blog.mospan.cn/tags/xns/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://mospany.github.io/tags/xns/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>基于DPDK开发高性能DNS服务器实践总结</title>
-      <link>blog.mospan.cn/2016/03/14/xns-on-dpdk/</link>
+      <link>http://mospany.github.io/2016/03/14/xns-on-dpdk/</link>
       <pubDate>Mon, 14 Mar 2016 22:02:57 +0800</pubDate>
       
-      <guid>blog.mospan.cn/2016/03/14/xns-on-dpdk/</guid>
+      <guid>http://mospany.github.io/2016/03/14/xns-on-dpdk/</guid>
       <description>简述 有幸全程参与了基于DPDK1下一代高性能CloudXNS2服务器开发，从未知到慢慢熟悉，其中也走了些弯路也 踩过一些坑，一路走来有些感受与</description>
     </item>
     

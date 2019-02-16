@@ -2,47 +2,47 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on 墨斯潘園</title>
-    <link>blog.mospan.cn/categories/</link>
+    <link>http://mospany.github.io/categories/</link>
     <description>Recent content in Categories on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     
-	<atom:link href="blog.mospan.cn/categories/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://mospany.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>工具使用</title>
-      <link>blog.mospan.cn/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/</link>
+      <link>http://mospany.github.io/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/</link>
       <pubDate>Sun, 29 May 2016 09:33:53 +0800</pubDate>
       
-      <guid>blog.mospan.cn/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/</guid>
+      <guid>http://mospany.github.io/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/</guid>
       <description></description>
     </item>
     
     <item>
       <title>技术文章</title>
-      <link>blog.mospan.cn/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/</link>
+      <link>http://mospany.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/</link>
       <pubDate>Sat, 02 Feb 2019 15:18:53 +0800</pubDate>
       
-      <guid>blog.mospan.cn/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/</guid>
+      <guid>http://mospany.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/</guid>
       <description></description>
     </item>
     
     <item>
       <title>生活记录</title>
-      <link>blog.mospan.cn/categories/%E7%94%9F%E6%B4%BB%E8%AE%B0%E5%BD%95/</link>
+      <link>http://mospany.github.io/categories/%E7%94%9F%E6%B4%BB%E8%AE%B0%E5%BD%95/</link>
       <pubDate>Tue, 26 Jan 2016 08:28:37 +0800</pubDate>
       
-      <guid>blog.mospan.cn/categories/%E7%94%9F%E6%B4%BB%E8%AE%B0%E5%BD%95/</guid>
+      <guid>http://mospany.github.io/categories/%E7%94%9F%E6%B4%BB%E8%AE%B0%E5%BD%95/</guid>
       <description></description>
     </item>
     
     <item>
       <title>读书笔记</title>
-      <link>blog.mospan.cn/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link>
+      <link>http://mospany.github.io/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link>
       <pubDate>Tue, 07 Mar 2017 19:13:23 +0800</pubDate>
       
-      <guid>blog.mospan.cn/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
+      <guid>http://mospany.github.io/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
       <description></description>
     </item>
     

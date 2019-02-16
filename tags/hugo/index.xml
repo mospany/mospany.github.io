@@ -2,39 +2,39 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Hugo on 墨斯潘園</title>
-    <link>blog.mospan.cn/tags/hugo/</link>
+    <link>http://mospany.github.io/tags/hugo/</link>
     <description>Recent content in Hugo on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <lastBuildDate>Sat, 02 Feb 2019 15:18:53 +0800</lastBuildDate>
     
-	<atom:link href="blog.mospan.cn/tags/hugo/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://mospany.github.io/tags/hugo/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>我的博客Hugo使用手册</title>
-      <link>blog.mospan.cn/2019/02/02/mospan-hugo-blog-manual/</link>
+      <link>http://mospany.github.io/2019/02/02/mospan-hugo-blog-manual/</link>
       <pubDate>Sat, 02 Feb 2019 15:18:53 +0800</pubDate>
       
-      <guid>blog.mospan.cn/2019/02/02/mospan-hugo-blog-manual/</guid>
+      <guid>http://mospany.github.io/2019/02/02/mospan-hugo-blog-manual/</guid>
       <description>Hugo Hugo是一个用Go语言编写的静态网站生成器，它使用起来非常简单，相对于Jekyll复杂的安装设置来说，Hugo仅需要一个二进制文件hug</description>
     </item>
     
     <item>
       <title>pango设计与实现(02)--快速开始</title>
-      <link>blog.mospan.cn/2016/02/14/pango-development-quick-start/</link>
+      <link>http://mospany.github.io/2016/02/14/pango-development-quick-start/</link>
       <pubDate>Sun, 14 Feb 2016 16:57:25 +0800</pubDate>
       
-      <guid>blog.mospan.cn/2016/02/14/pango-development-quick-start/</guid>
+      <guid>http://mospany.github.io/2016/02/14/pango-development-quick-start/</guid>
       <description>安装 安装前准备 确保你的本地环境已经安装好如下软件： git. Go 1.4+ 源码安装 下载源码到本地 git clone https://github.com/mospany/pango.git 设置好环境变量 cd pango export GOPATH=`pwd` 编译 make 如果编译成功，将在当前目录下</description>
     </item>
     
     <item>
       <title>pango设计与实现(01)--介绍</title>
-      <link>blog.mospan.cn/2016/02/14/pango-development-introduce/</link>
+      <link>http://mospany.github.io/2016/02/14/pango-development-introduce/</link>
       <pubDate>Sun, 14 Feb 2016 12:22:12 +0800</pubDate>
       
-      <guid>blog.mospan.cn/2016/02/14/pango-development-introduce/</guid>
+      <guid>http://mospany.github.io/2016/02/14/pango-development-introduce/</guid>
       <description>概述 pango我个人发起的基于hugo的变种开源项目，是一个快速与灵活的静态网页生成器，使用GO语言开发。 主要基于如下目的： 巩固学习web前</description>
     </item>
     

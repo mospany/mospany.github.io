@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>读书笔记 on 墨斯潘園</title>
-    <link>blog.mospan.cn/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link>
+    <link>http://mospany.github.io/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link>
     <description>Recent content in 读书笔记 on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <lastBuildDate>Tue, 07 Mar 2017 19:13:23 +0800</lastBuildDate>
     
-	<atom:link href="blog.mospan.cn/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://mospany.github.io/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>精品文章，阅后收藏</title>
-      <link>blog.mospan.cn/2017/03/07/collection-after-reading/</link>
+      <link>http://mospany.github.io/2017/03/07/collection-after-reading/</link>
       <pubDate>Tue, 07 Mar 2017 19:13:23 +0800</pubDate>
       
-      <guid>blog.mospan.cn/2017/03/07/collection-after-reading/</guid>
+      <guid>http://mospany.github.io/2017/03/07/collection-after-reading/</guid>
       <description>职场人性类 励志 [☆☆☆☆☆] 你同学都身价上亿了，你却还在纠结早晨几点能起床？ [☆☆☆☆☆] 你的收入，为什么还没有指数增长？ [☆☆☆☆☆] 你的</description>
     </item>
     

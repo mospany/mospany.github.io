@@ -2,39 +2,39 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>独立 on 墨斯潘園</title>
-    <link>blog.mospan.cn/tags/%E7%8B%AC%E7%AB%8B/</link>
+    <link>http://mospany.github.io/tags/%E7%8B%AC%E7%AB%8B/</link>
     <description>Recent content in 独立 on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <lastBuildDate>Thu, 31 Mar 2016 21:11:24 +0800</lastBuildDate>
     
-	<atom:link href="blog.mospan.cn/tags/%E7%8B%AC%E7%AB%8B/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://mospany.github.io/tags/%E7%8B%AC%E7%AB%8B/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>怎样才能拥有个人独立域名邮箱？</title>
-      <link>blog.mospan.cn/2016/03/31/independent-mailbox/</link>
+      <link>http://mospany.github.io/2016/03/31/independent-mailbox/</link>
       <pubDate>Thu, 31 Mar 2016 21:11:24 +0800</pubDate>
       
-      <guid>blog.mospan.cn/2016/03/31/independent-mailbox/</guid>
+      <guid>http://mospany.github.io/2016/03/31/independent-mailbox/</guid>
       <description>背景 在创建开源项目或小团队创业初期，由于没有精力或财力自己搭建内部邮件服务器，为了使大家沟通更顺畅更一致，也为了与客户沟通显得更加专业一些，</description>
     </item>
     
     <item>
       <title>我的博客演进之路(02)--架构与部署概述</title>
-      <link>blog.mospan.cn/2016/01/25/my-blog-architecture/</link>
+      <link>http://mospany.github.io/2016/01/25/my-blog-architecture/</link>
       <pubDate>Mon, 25 Jan 2016 23:24:08 +0800</pubDate>
       
-      <guid>blog.mospan.cn/2016/01/25/my-blog-architecture/</guid>
+      <guid>http://mospany.github.io/2016/01/25/my-blog-architecture/</guid>
       <description>部署图总览 经过调研与分析，能满足我博客需求的大致部署图如下： 角色说明 github 主要存放了本博客的资料文件，利用了github的pages功能提供了网</description>
     </item>
     
     <item>
       <title>我的博客演进之路(01)--正式上线</title>
-      <link>blog.mospan.cn/2016/01/24/my-blog-online/</link>
+      <link>http://mospany.github.io/2016/01/24/my-blog-online/</link>
       <pubDate>Sun, 24 Jan 2016 09:34:08 +0800</pubDate>
       
-      <guid>blog.mospan.cn/2016/01/24/my-blog-online/</guid>
+      <guid>http://mospany.github.io/2016/01/24/my-blog-online/</guid>
       <description>原来的博客都是在CSDN与博客园里写的，都是按照模板进行编写，能自己自定义的比较少，没有自己的独立域名，用emacs/vim编写上面的博客不</description>
     </item>
     
