@@ -138,7 +138,7 @@ url = "/2017/08/25/emacs-mospan-tutorial/"
 
 *** Golang
 **** 阅读代码
-<span style="color:red">注: 一定记得先加代码工程到GOPATH中，否则godef不能跨包或文件夹跳转</span>
+<span style="color:red">注: 一定记得先加代码工程到GOPATH中，否则godef不能跨包或文件夹跳转, 可以通过go build是否成功来验证配置正确性</span>
 |--------+-------------------|
 | 快捷键 | 描述              |
 |--------+-------------------|
