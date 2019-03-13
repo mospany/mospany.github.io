@@ -106,6 +106,7 @@
 <li><a href="#在todo行上">在TODO行上</a></li>
 <li><a href="#日历">日历</a></li>
 </ul></li>
+<li><a href="#dired">dired</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -113,14 +114,14 @@
     
     
 
-<p><a id="org18e8baa"></a></p>
+<p><a id="orgb78fa63"></a></p>
 
 <h1 id="概述">概述</h1>
 
 <p>我自从2011年开始使用自己折腾的emacs到现在，参考或实现了不少功能使其满足我工作与学习所需，虽然它依然有一些瑕疵，但尝试了其他配置或IDE之后依然觉得它是最符合我习惯的，
 我一般用它来写Golang、C、Lua、Shell、GTD和Blog，基本已满足我所需和习惯。</p>
 
-<p><a id="org99705ff"></a></p>
+<p><a id="org5d6a881"></a></p>
 
 <h1 id="安装">安装</h1>
 
@@ -133,14 +134,14 @@ mv .emacs .emacs.bak
 
 <p>如果你的系统没有安装Emacs，需要先安装Emacs，请注意Emacs版本至少为24.4。</p>
 
-<p><a id="org24f8ea3"></a></p>
+<p><a id="orgf3834a5"></a></p>
 
 <h2 id="安装emacs-mospan">安装emacs.mospan</h2>
 
 <pre><code>git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
 </code></pre>
 
-<p><a id="org9738058"></a></p>
+<p><a id="org019db62"></a></p>
 
 <h3 id="安装依赖工具">安装依赖工具</h3>
 
@@ -161,7 +162,7 @@ sudo apt-get install stardict
 <p>把上面的apt-get换成brew即可。</p></li>
 </ol>
 
-<p><a id="org2cdb0e6"></a></p>
+<p><a id="org7aa3195"></a></p>
 
 <h2 id="启动emacs-mospan">启动emacs.mospan</h2>
 
@@ -170,11 +171,11 @@ sudo apt-get install stardict
 
 <p>初次启动emacs.mospan会进行初始化配置（启动时会询问使用简、全哪套配置方案），安装依赖有可能需要一段时间。</p>
 
-<p><a id="orgb4f8302"></a></p>
+<p><a id="orgde9b5c8"></a></p>
 
 <h1 id="使用">使用</h1>
 
-<p><a id="org6edbed6"></a></p>
+<p><a id="org5113925"></a></p>
 
 <h2 id="显示">显示</h2>
 
@@ -243,7 +244,7 @@ sudo apt-get install stardict
 </tbody>
 </table>
 
-<p><a id="orgd24f453"></a></p>
+<p><a id="org7785fbd"></a></p>
 
 <h2 id="功能键">功能键</h2>
 
@@ -366,7 +367,7 @@ sudo apt-get install stardict
 </tbody>
 </table>
 
-<p><a id="org9061343"></a></p>
+<p><a id="org7d91d92"></a></p>
 
 <h2 id="编辑">编辑</h2>
 
@@ -525,11 +526,11 @@ sudo apt-get install stardict
 </tbody>
 </table>
 
-<p><a id="org023418d"></a></p>
+<p><a id="org1ce50c4"></a></p>
 
 <h2 id="编程">编程</h2>
 
-<p><a id="org7ba59d8"></a></p>
+<p><a id="org5d685d4"></a></p>
 
 <h3 id="c">C</h3>
 
@@ -646,14 +647,14 @@ sudo apt-get install stardict
 </tbody>
 </table>
 
-<p><a id="org258ae38"></a></p>
+<p><a id="org076d6b0"></a></p>
 
 <h3 id="golang">Golang</h3>
 
 <ol>
 <li><p>阅读代码</p>
 
-<p><span style="color:red">注: 一定记得先加代码工程到GOPATH中，否则godef不能跨包或文件夹跳转</span></p>
+<p><span style="color:red">注: 一定记得先加代码工程到GOPATH中，否则godef不能跨包或文件夹跳转, 可以通过go build是否成功来验证配置正确性</span></p>
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
     
@@ -701,11 +702,11 @@ sudo apt-get install stardict
 </ol></li>
 </ol>
 
-<p><a id="org9c35824"></a></p>
+<p><a id="org414c281"></a></p>
 
 <h2 id="gtd">GTD</h2>
 
-<p><a id="org61a539b"></a></p>
+<p><a id="org2ee9915"></a></p>
 
 <h3 id="全局">全局</h3>
 
@@ -750,7 +751,7 @@ sudo apt-get install stardict
 </tbody>
 </table>
 
-<p><a id="org3ccc4ac"></a></p>
+<p><a id="org7560972"></a></p>
 
 <h3 id="在todo行上">在TODO行上</h3>
 
@@ -819,7 +820,7 @@ sudo apt-get install stardict
 </tbody>
 </table>
 
-<p><a id="org5819c88"></a></p>
+<p><a id="org8d42a21"></a></p>
 
 <h3 id="日历">日历</h3>
 
@@ -920,6 +921,57 @@ sudo apt-get install stardict
 <tr>
 <td class="org-left">M-></td>
 <td class="org-left">移动到一年的末尾</td>
+</tr>
+</tbody>
+</table>
+
+<p><a id="org312712d"></a></p>
+
+<h2 id="dired">dired</h2>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">快捷键</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="org-left">M-x d</td>
+<td class="org-left">打开dired模式</td>
+</tr>
+
+
+<tr>
+<td class="org-left">v</td>
+<td class="org-left">以只读方式查看文件</td>
+</tr>
+
+
+<tr>
+<td class="org-left">q</td>
+<td class="org-left">q for View-quit, 退出查看, 目录生效，文件中可能不生效，可以使用M-x V-q 或 Q 代替</td>
+</tr>
+
+
+<tr>
+<td class="org-left">Q</td>
+<td class="org-left">Q for View-quit-all, 退出所有查看</td>
+</tr>
+
+
+<tr>
+<td class="org-left">o</td>
+<td class="org-left">另一个窗口中，打开文件或目录</td>
 </tr>
 </tbody>
 </table>

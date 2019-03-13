@@ -185,14 +185,14 @@ fec-builder build -e production
             <guid>http://mospany.github.io/2017/08/25/emacs-mospan-tutorial/</guid>
             <description>
 
-&lt;p&gt;&lt;a id=&#34;org18e8baa&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgb78fa63&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;概述&#34;&gt;概述&lt;/h1&gt;
 
 &lt;p&gt;我自从2011年开始使用自己折腾的emacs到现在，参考或实现了不少功能使其满足我工作与学习所需，虽然它依然有一些瑕疵，但尝试了其他配置或IDE之后依然觉得它是最符合我习惯的，
 我一般用它来写Golang、C、Lua、Shell、GTD和Blog，基本已满足我所需和习惯。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org99705ff&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org5d6a881&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;安装&#34;&gt;安装&lt;/h1&gt;
 
@@ -205,14 +205,14 @@ mv .emacs .emacs.bak
 
 &lt;p&gt;如果你的系统没有安装Emacs，需要先安装Emacs，请注意Emacs版本至少为24.4。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org24f8ea3&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgf3834a5&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;安装emacs-mospan&#34;&gt;安装emacs.mospan&lt;/h2&gt;
 
 &lt;pre&gt;&lt;code&gt;git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;a id=&#34;org9738058&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org019db62&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;安装依赖工具&#34;&gt;安装依赖工具&lt;/h3&gt;
 
@@ -233,7 +233,7 @@ sudo apt-get install stardict
 &lt;p&gt;把上面的apt-get换成brew即可。&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;&lt;a id=&#34;org2cdb0e6&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org7aa3195&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;启动emacs-mospan&#34;&gt;启动emacs.mospan&lt;/h2&gt;
 
@@ -242,11 +242,11 @@ sudo apt-get install stardict
 
 &lt;p&gt;初次启动emacs.mospan会进行初始化配置（启动时会询问使用简、全哪套配置方案），安装依赖有可能需要一段时间。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgb4f8302&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgde9b5c8&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;使用&#34;&gt;使用&lt;/h1&gt;
 
-&lt;p&gt;&lt;a id=&#34;org6edbed6&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org5113925&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;显示&#34;&gt;显示&lt;/h2&gt;
 
@@ -315,7 +315,7 @@ sudo apt-get install stardict
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgd24f453&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org7785fbd&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;功能键&#34;&gt;功能键&lt;/h2&gt;
 
@@ -438,7 +438,7 @@ sudo apt-get install stardict
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;&lt;a id=&#34;org9061343&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org7d91d92&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;编辑&#34;&gt;编辑&lt;/h2&gt;
 
@@ -597,11 +597,11 @@ sudo apt-get install stardict
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;&lt;a id=&#34;org023418d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org1ce50c4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;编程&#34;&gt;编程&lt;/h2&gt;
 
-&lt;p&gt;&lt;a id=&#34;org7ba59d8&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org5d685d4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;c&#34;&gt;C&lt;/h3&gt;
 
@@ -718,14 +718,14 @@ sudo apt-get install stardict
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;&lt;a id=&#34;org258ae38&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org076d6b0&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;golang&#34;&gt;Golang&lt;/h3&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;p&gt;阅读代码&lt;/p&gt;
 
-&lt;p&gt;&lt;span style=&#34;color:red&#34;&gt;注: 一定记得先加代码工程到GOPATH中，否则godef不能跨包或文件夹跳转&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style=&#34;color:red&#34;&gt;注: 一定记得先加代码工程到GOPATH中，否则godef不能跨包或文件夹跳转, 可以通过go build是否成功来验证配置正确性&lt;/span&gt;&lt;/p&gt;
 
 &lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
     
@@ -773,11 +773,11 @@ sudo apt-get install stardict
 &lt;/ol&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;&lt;a id=&#34;org9c35824&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org414c281&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;gtd&#34;&gt;GTD&lt;/h2&gt;
 
-&lt;p&gt;&lt;a id=&#34;org61a539b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org2ee9915&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;全局&#34;&gt;全局&lt;/h3&gt;
 
@@ -822,7 +822,7 @@ sudo apt-get install stardict
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;&lt;a id=&#34;org3ccc4ac&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org7560972&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;在todo行上&#34;&gt;在TODO行上&lt;/h3&gt;
 
@@ -891,7 +891,7 @@ sudo apt-get install stardict
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;&lt;a id=&#34;org5819c88&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org8d42a21&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;日历&#34;&gt;日历&lt;/h3&gt;
 
@@ -992,6 +992,57 @@ sudo apt-get install stardict
 &lt;tr&gt;
 &lt;td class=&#34;org-left&#34;&gt;M-&gt;&lt;/td&gt;
 &lt;td class=&#34;org-left&#34;&gt;移动到一年的末尾&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;a id=&#34;org312712d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;dired&#34;&gt;dired&lt;/h2&gt;
+
+&lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
+
+
+&lt;colgroup&gt;
+&lt;col  class=&#34;org-left&#34; /&gt;
+
+&lt;col  class=&#34;org-left&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;快捷键&lt;/th&gt;
+&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;描述&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;M-x d&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;打开dired模式&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;v&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;以只读方式查看文件&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;q&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;q for View-quit, 退出查看, 目录生效，文件中可能不生效，可以使用M-x V-q 或 Q 代替&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;Q&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;Q for View-quit-all, 退出所有查看&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;o&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;另一个窗口中，打开文件或目录&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
