@@ -154,16 +154,11 @@ url = "/2017/08/25/emacs-mospan-tutorial/"
      1. 在evil-mode下使用control v命令选择某些函数区域
      2. 按下M-x输入gotests-region生成这些函数的gotest模板或直接输入gotests将生成本文件的所有函数测试模板。
      3. 将在该目录下生成同名_test.go的测试文件。
-<<<<<<< HEAD
-     
-=======
         
 **** gocode自动补全
      1.正常安装gocode后，出现自动补全不了时，一般都是GOPATH没有包含到和没有进行go install的问题。
        原因：gocode查找的是libXX.a库而不是源代码文本，需要go install后就找到了。
        [[https://www.cnblogs.com/Open_Source/p/8159098.html][Emacs golang用户代码无法补全问题]]
->>>>>>> Emacs golang用户代码无法补全问题
-
 
 ** GTD
 *** 全局  
