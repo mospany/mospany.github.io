@@ -156,9 +156,14 @@ url = "/2017/08/25/emacs-mospan-tutorial/"
      3. 将在该目录下生成同名_test.go的测试文件。
         
 **** gocode自动补全
-     1.正常安装gocode后，出现自动补全不了时，一般都是GOPATH没有包含到和没有进行go install的问题。
+     正常安装gocode后，出现自动补全不了时，一般都是GOPATH没有包含到和没有进行go install的问题。
+     - 用户代码无法自动补全
        原因：gocode查找的是libXX.a库而不是源代码文本，需要go install后就找到了。
        [[https://www.cnblogs.com/Open_Source/p/8159098.html][Emacs golang用户代码无法补全问题]]
+     - 标准库无法自动补全
+       原因是由于没有把标准库路径加入到GOPATH中，例如：把/usr/local/go加入到GOPATH 
+     - 25个保留关键字补全
+       gocode补全很强大，但是一些关键字import, package等不会补全。
 
 ** GTD
 *** 全局  
