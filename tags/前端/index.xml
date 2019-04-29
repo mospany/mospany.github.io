@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>前端 on 墨斯潘園</title>
+    <link>http://mospany.github.io/tags/%E5%89%8D%E7%AB%AF/</link>
+    <description>Recent content in 前端 on 墨斯潘園</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sat, 24 Feb 2018 16:32:21 +0800</lastBuildDate>
+    
+	<atom:link href="http://mospany.github.io/tags/%E5%89%8D%E7%AB%AF/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>VUE开发环境搭建</title>
+      <link>http://mospany.github.io/2018/02/24/vue-dev-env-build/</link>
+      <pubDate>Sat, 24 Feb 2018 16:32:21 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2018/02/24/vue-dev-env-build/</guid>
+      <description>安装 安装nodejs 到https://nodejs.org/en/download/ 下载对应系统的二进制版本。 按照ubuntu16.04下配</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Dns on 墨斯潘園</title>
+    <link>http://mospany.github.io/tags/dns/</link>
+    <description>Recent content in Dns on 墨斯潘園</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Thu, 20 Jul 2017 07:39:07 +0800</lastBuildDate>
+    
+	<atom:link href="http://mospany.github.io/tags/dns/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>DNS体系之_基础</title>
+      <link>http://mospany.github.io/2017/07/17/dns-architecture-base/</link>
+      <pubDate>Thu, 20 Jul 2017 07:39:07 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2017/07/17/dns-architecture-base/</guid>
+      <description>描述 此《DNS体系基础》为在公司进行的一次内部分享， 现也把它放到博客中来，以便更多的读者分享交流。PPT内容由我个人的理解编写与部分来自互联</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,761 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <base href="http://mospany.github.io/">
+  <title>DPDK开发随记 - 墨斯潘園</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+  <meta name="keywords" content="dpdk,">
+  <meta name="description" content="DPDK开发笔记">
+  <meta name="author" content="mospan">
+  <meta itemprop="name" content="DPDK开发随记 - 墨斯潘園">
+  <meta itemprop="description" content="DPDK开发笔记">
+  <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@mospan" />
+  <meta name="twitter:title" content="DPDK开发随记 - 墨斯潘園" />
+  <meta name="twitter:description" content="DPDK开发笔记" />
+  <link rel="shortcut icon" href="img/favicon.ico"/>
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png" />
+  <link rel="stylesheet" href="highlight/styles/github.css">
+  <script src="highlight/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <link rel="stylesheet" href="font/hack/css/hack.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <div>
+  
+  <div id="imglogo">
+    <a href="http://mospany.github.io/"><img src="http://mospany.github.io/img/logo.jpg" alt="墨斯潘園" title="墨斯潘園"/></a>
+  </div>
+  
+  <div id="textlogo">
+    <h1 class="site-name"><a href="http://mospany.github.io/" title="墨斯潘園">墨斯潘園</a></h1>
+    <h2 class="blog-motto">技术改变生活，学习成就未来</h2>
+  </div>
+  <div class="navbar"><a class="navbutton navmobile" href="#" title="menu"></a></div>
+  <nav class="animated">
+    <ul>
+      
+      <li><a href="/">首页</a></li> 
+      
+      <li><a href="/about">关于</a></li> 
+      
+      <li>
+        <form class="search" method="get" action="https://www.google.com/search">
+          <div>
+            <input type="text" id="search" name="q" placeholder="搜索">
+          </div>
+        </form>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+  </header>
+  <div id="container">
+    <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody">
+    <header class="article-info clearfix">
+  <h1 itemprop="name">
+      <a href="http://mospany.github.io/2016/09/06/dpdk-develop-notes/" title="DPDK开发随记" itemprop="url">DPDK开发随记</a>
+  </h1>
+  <p class="article-author">By 
+    
+      <a href="http://blog.mospan.cn" title="mospan">mospan</a>
+    
+  </p>
+  <p class="article-time">
+    <time datetime="2016-09-06 19:37:20 &#43;0800 CST" itemprop="datePublished">2016年09月06日</time>
+  </p>
+</header>
+
+	<div class="article-content">
+    
+    
+
+<h1 id="性能调优-a-id-sec-1-name-sec-1-a">性能调优<a id="sec-1" name="sec-1"></a></h1>
+
+<h2 id="rte-rand-a-id-sec-1-1-name-sec-1-1-a">rte_rand()<a id="sec-1-1" name="sec-1-1"></a></h2>
+
+<ul>
+<li>现象：使用top perf -g查看时发现__drand48_iterate()所占比例达到40%以上。</li>
+<li>分析：跟踪__drand48_iterate()跟随机数有关， 查看代码响应记录按权重比例负载时使用了rte_rand().</li>
+<li>测试：屏蔽掉rte_rand()，性能上升了100多万。</li>
+</ul>
+
+<h1 id="faq-a-id-sec-2-name-sec-2-a">FAQ<a id="sec-2" name="sec-2"></a></h1>
+
+<h2 id="打开dpdk工程makefile编译详细信息-a-id-sec-2-1-name-sec-2-1-a">打开DPDK工程Makefile编译详细信息？<a id="sec-2-1" name="sec-2-1"></a></h2>
+
+<p>答：<br />
+1.  打开dpdk/mk/rte.sdkroot.mk文件。</p>
+
+<ol>
+<li><p>把变量Q赋为空。</p>
+
+<h1 id="define-q-to-or-not-q-is-used-to-prefix-all-shell-commands-to">define Q to &lsquo;@&rsquo; or not. $(Q) is used to prefix all shell commands to</h1>
+
+<h1 id="be-executed-silently">be executed silently.</h1>
+
+<p>Q=</p></li>
+</ol>
+
+<h2 id="查看某个库或可执行程序的编译参数-a-id-sec-2-2-name-sec-2-2-a">查看某个库或可执行程序的编译参数？<a id="sec-2-2" name="sec-2-2"></a></h2>
+
+<ol>
+<li>cd dpdk/x86_64-native-linuxapp-gcc/build/</li>
+<li>选择进入app  drivers  lib之一的目录</li>
+</ol>
+
+<p>3）例如进入lib/librte_meter下<br />
+4）使用ls -a查看所有隐藏文件<br />
+5）使用cat命令将会看到如下文件内容：<br />
+-   .rte_meter.o.cmd: 编译生成该.o文件的所有gcc参数。
+-   .rte_meter.o.d: 编译中依赖的文件
+-   .librte_meter.a.cmd: 链接生成目标文件的命令参数</p>
+
+<h2 id="出现这个错误-include-dpdk-rte-memcpy-h-870-2-错误-mm-storeu-si128-的第-2-个实参类型不兼容的解决办法-a-id-sec-2-3-name-sec-2-3-a">出现这个错误： include/dpdk/rte_memcpy.h:870:2: 错误：‘_mm_storeu_si128’的第 2 个实参类型不兼容的解决办法<a id="sec-2-3" name="sec-2-3"></a></h2>
+
+<p>答：<br />
+1.  只要在自己的Makefile中增加如下两行即可。</p>
+
+<pre><code>    include $(RTE_SDK)/mk/rte.vars.mk
+    include $(RTE_SDK)/mk/internal/rte.build-pre.mk
+</code></pre>
+
+<h2 id="在虚拟机中跑dpdk-网卡接收不正常问题-a-id-sec-2-4-name-sec-2-4-a">在虚拟机中跑DPDK，网卡接收不正常问题。<a id="sec-2-4" name="sec-2-4"></a></h2>
+
+<h3 id="现象-a-id-sec-2-4-1-name-sec-2-4-1-a">现象<a id="sec-2-4-1" name="sec-2-4-1"></a></h3>
+
+<p>虚拟出来的网卡只收到了少量的ARP包，并且QANS可以响应ARP请求成功，但收不到icmp与DNS包等。</p>
+
+<h3 id="调试过程-a-id-sec-2-4-2-name-sec-2-4-2-a">调试过程<a id="sec-2-4-2" name="sec-2-4-2"></a></h3>
+
+<ol>
+<li>虚拟网卡虚拟出来的是intel 82540EM网卡。</li>
+<li>查看DPDK官方支持网卡列表，支持intel 82540，但不知道与82540EM有哪些细微差别。</li>
+<li>尝试了virtual下可配的虚拟网卡(82545em，82543gc, 82545em，virtio-net)，无一完全成功。</li>
+<li>网卡流量统计，确实只收到了少量与arp包数等同的包(一直ping了10多分钟)。</li>
+<li>查看了KNI创建的虚拟网卡发现每次启动MAC地址都随机的变化，查看了官方文档与网上结论说有些时候网卡MAC会随机变化，但没有说具体原因情况。</li>
+<li>使用DPDK本身提供的接口rte_eth_macaddr_get()进行读取，发现与物理网卡一致而与KNI创建出的虚拟网卡不一致。</li>
+</ol>
+
+<h3 id="原因-a-id-sec-2-4-3-name-sec-2-4-3-a">原因<a id="sec-2-4-3" name="sec-2-4-3"></a></h3>
+
+<p>使用虚拟机创建出的KNI虚拟机网卡，每次重启后会随机变化并且与物理网卡不一致，到时ARP学习不正常。</p>
+
+<h3 id="解决办法-a-id-sec-2-4-4-name-sec-2-4-4-a">解决办法<a id="sec-2-4-4" name="sec-2-4-4"></a></h3>
+
+<p>在KNI创建虚拟机网卡成功后，使用命令: ifconfig XX hw ether XX:XX:XX:XX:XX:XX 进行配置成物理网卡MAC即可。</p>
+
+<h2 id="出现igb-uio-unknown-symbol-uio-unregister-device的解决办法-a-id-sec-2-5-name-sec-2-5-a">出现igb_uio: Unknown symbol uio_unregister_device的解决办法？<a id="sec-2-5" name="sec-2-5"></a></h2>
+
+<p>答：<br />
+   在dpdk/lib/librte_eal/linuxapp/igb_uio/Makefile中添加如下行：</p>
+
+<pre><code>KBUILD_EXTRA_SYMBOLS=/usr/src/linux-headers-`uname -r`/Module.symvers
+</code></pre>
+
+<h2 id="使用vmware-exsi虚拟出来的vmnet3类型网卡不能绑定gib网卡将会系统挂掉的解决办法-a-id-sec-2-6-name-sec-2-6-a">使用vmware EXSI虚拟出来的vmnet3类型网卡不能绑定gib网卡将会系统挂掉的解决办法。<a id="sec-2-6" name="sec-2-6"></a></h2>
+
+<p>答：在vmware中换成E1000类型网卡即可正常。</p>
+
+<h2 id="在最小ubuntu-16-04系统下要运行dpdk进程需安装文件列表-a-id-sec-2-7-name-sec-2-7-a">在最小Ubuntu 16.04系统下要运行dpdk进程需安装文件列表。<a id="sec-2-7" name="sec-2-7"></a></h2>
+
+<p>答: 只要安装如下软件即可。</p>
+
+<ul>
+<li>apt-get update</li>
+<li>apt-get install openssh-server</li>
+<li>apt-get install tcpdump</li>
+<li>apt install gcc</li>
+<li>apt install libpcap-dev</li>
+<li>apt install lrzsz</li>
+<li>apt install kernel-source</li>
+<li>apt-get install kernel-source</li>
+<li>apt-get install linux-headers-`uname -r`</li>
+<li>apt install python</li>
+<li>apt-get install make</li>
+<li>apt install libpcap-dev</li>
+<li>apt install doxygen</li>
+<li>apt-get install libdbus-1-dev</li>
+<li>apt-get install libdbus-glib-1-dev</li>
+<li>ln -sf dbus-1.0/dbus dbus</li>
+<li>apt install libssl-dev</li>
+<li>apt-get install libexpat1-dev</li>
+<li>apt install flex</li>
+<li>apt install tree</li>
+<li>apt install linux-tools-generic</li>
+</ul>
+
+<h2 id="在最小ubuntu-14-04系统下要运行dpdk进程需安装文件列表-a-id-sec-2-8-name-sec-2-8-a">在最小Ubuntu 14.04系统下要运行dpdk进程需安装文件列表。<a id="sec-2-8" name="sec-2-8"></a></h2>
+
+<h3 id="基本按照-a-id-sec-2-8-1-name-sec-2-8-1-a">基本按照<a id="sec-2-8-1" name="sec-2-8-1"></a></h3>
+
+<p>先参照如上Ubuntu 16.04所需的文件列表安装，如出现如下错误再逐一安装修改解决。</p>
+
+<h3 id="内核build文件找不到-a-id-sec-2-8-2-name-sec-2-8-2-a">内核build文件找不到？<a id="sec-2-8-2" name="sec-2-8-2"></a></h3>
+
+<p>到<a href="http://kernel.ubuntu.com/~kernel-ppa/mainline/">http://kernel.ubuntu.com/~kernel-ppa/mainline/</a> 下载对应的Headers包， 使用dpkg命令进行安装。<br />
+例如: dpkg -i linux-headers-4.10.17-041017_4.10.17-041017.201705201051_all.deb, 由于使用tcp_bbr而更新了内核版本。</p>
+
+<h3 id="gcc-错误-unrecognized-command-line-option-fstack-protector-strong-a-id-sec-2-8-3-name-sec-2-8-3-a">gcc: 错误： unrecognized command line option ‘-fstack-protector-strong’<a id="sec-2-8-3" name="sec-2-8-3"></a></h3>
+
+<p>Ubuntu 14.04自带的gcc版本为gcc (Ubuntu 4.8.4-2ubuntu1~14.04.3) 4.8.4, (‘-fstack-protector-strong’ 选项是gcc4.9以后的版本才加入的，也就是说需要安装gcc4.9以后的版本才可以编译通过).<br />
+-   安装gcc 5.4版本</p>
+
+<pre><code>详见：[Ubuntu 14.04 LTS 下升级 gcc 到 gcc-4.9、gcc-5 版本](https://www.cnblogs.com/BlackStorm/p/5183490.html)
+</code></pre>
+
+<h3 id="dpdk在内核4-10-17下编译不过-a-id-sec-2-8-4-name-sec-2-8-4-a">DPDK在内核4.10.17下编译不过？<a id="sec-2-8-4" name="sec-2-8-4"></a></h3>
+
+<p>需要打如下3个patch:<br />
+1.  patch dpdk-dev-1-3-kni-fix-compile-error-for-Linux-4.7.patch, see to <a href="http://dpdk.org/dev/patchwork/patch/13100/">http://dpdk.org/dev/patchwork/patch/13100/</a>
+2.  patch dpdk-dev-kni-fix-build-with-kernel-4.9.patch, see to <a href="http://dpdk.org/dev/patchwork/patch/16651/">http://dpdk.org/dev/patchwork/patch/16651/</a>
+3.  patch dpdk-dev-v2-kni-fix-build-with-kernel-4.8.patch, see to <a href="http://dpdk.org/dev/patchwork/patch/15717/">http://dpdk.org/dev/patchwork/patch/15717/</a>]</p>
+
+<h3 id="fatal-error-dbus-dbus-arch-deps-h-no-such-file-or-directory-a-id-sec-2-8-5-name-sec-2-8-5-a">fatal error: dbus/dbus-arch-deps.h: No such file or directory<a id="sec-2-8-5" name="sec-2-8-5"></a></h3>
+
+<ul>
+<li>apt-get install libdbus-1-dev</li>
+<li>apt-get install libdbus-glib-1-dev</li>
+<li>ln -sf /usr/include/dbus-1.0/dbus /usr/include/dbus</li>
+<li>cp <em>usr/lib/x86_64-linux-gnu/dbus-1.0/include/dbus/dbus-arch-deps.h /usr/include/dbus-1.0/dbus</em></li>
+<li>apt-get install bison</li>
+</ul>
+
+<h3 id="librte-eal-a-eal-common-options-o-undefined-reference-to-symbol-dlopen-glibc-2-2-5-的解决办法-a-id-sec-2-8-6-name-sec-2-8-6-a">librte_eal.a(eal_common_options.o): undefined reference to symbol &lsquo;dlopen@@GLIBC_2.2.5&rsquo;的解决办法？<a id="sec-2-8-6" name="sec-2-8-6"></a></h3>
+
+<p>在编译的Makefile中的CFLAGS变量添加上: -Wl,&#x2013;copy-dt-needed-entries<br />
+详见1: <a href="http://fanrey.iteye.com/blog/2119610">linker问题</a><br />
+详见2: <a href="https://segmentfault.com/a/1190000002462705">https://segmentfault.com/a/1190000002462705</a></p>
+
+<h3 id="rte-meter-c-57-undefined-reference-to-ceil-a-id-sec-2-8-7-name-sec-2-8-7-a">rte_meter.c:57: undefined reference to `ceil&rsquo;?<a id="sec-2-8-7" name="sec-2-8-7"></a></h3>
+
+<p>编译tcpdump时链接报错，已包含<math.h>与-lm了， 还是编译不过，待定。</p>
+
+    <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+  <div style="float:right;margin-top:0px;">
+    <img src="/img/qrcode.jpg" width="129px" height="129px"/>
+    <div style="text-align:center;">微信扫一扫</div>
+  </div>
+  <div style="float:left;margin-top:0px;">
+    <img src="/img/rewardcode.jpg" width="129px" height="129px"/>
+  </div>
+  <div>
+    <p style="margin-top:0px;">作者：<a target="_blank" href="http://blog.mospan.cn/">mospan</a>
+      <br />微信关注：墨斯潘園
+      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2016/09/06/dpdk-develop-notes/">http://mospany.github.io/2016/09/06/dpdk-develop-notes/</a>
+      <br />
+      文章版权归本人所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+  </div>
+</div>
+
+
+	</div>
+  <footer class="article-footer clearfix">
+  
+
+<div class="article-tags">
+  <span></span>
+  
+  <a href="/tags/dpdk">dpdk</a>
+  
+</div>
+
+
+
+<div class="article-categories">
+  <span></span>
+  
+  <a class="article-category-link" href="/categories/dpdk">dpdk</a>
+  
+</div>
+
+
+
+  <div class="article-share" id="share">
+    <div data-url="http://mospany.github.io/2016/09/06/dpdk-develop-notes/" data-title="DPDK开发随记" data-tsina="3833537679" class="share clearfix">
+    </div>
+  </div>
+</footer>
+
+	</article>
+  
+
+
+
+
+
+<div id="git-comments"></div>
+<link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
+<script src="https://billts.site/js/gitment.js"></script>
+<script>
+var gitment = new Gitment({
+  id: '<%= page.date %>',
+  owner: 'mospany',
+  repo: 'mospan-hugo-blog-gitment',
+  oauth: {
+    client_id: '0cafe299c964f0af2d1e',
+    client_secret: 'ec47ee9481210935a662298791c31da203694a8f',
+  },
+})
+gitment.render('git-comments')
+</script>    
+
+
+</div>
+
+    <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+  
+
+<div class="categorieslist">
+  <p class="asidetitle">分类</p>
+  <ul>
+    
+    <li><a href="http://mospany.github.io/categories/%e5%b7%a5%e5%85%b7%e4%bd%bf%e7%94%a8" title="工具使用">工具使用<sup>3</sup></a></li>
+    
+    <li><a href="http://mospany.github.io/categories/%e6%8a%80%e6%9c%af%e6%96%87%e7%ab%a0" title="技术文章">技术文章<sup>20</sup></a></li>
+    
+    <li><a href="http://mospany.github.io/categories/%e7%94%9f%e6%b4%bb%e8%ae%b0%e5%bd%95" title="生活记录">生活记录<sup>1</sup></a></li>
+    
+    <li><a href="http://mospany.github.io/categories/%e8%af%bb%e4%b9%a6%e7%ac%94%e8%ae%b0" title="读书笔记">读书笔记<sup>2</sup></a></li>
+    
+  </ul>
+</div>
+
+
+
+  
+
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+      
+			<li><a href="http://mospany.github.io/tags/dns" title="dns">dns<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/dpdk" title="dpdk">dpdk<sup>2</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/emacs" title="emacs">emacs<sup>4</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/hugo" title="hugo">hugo<sup>3</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/openresty" title="openresty">openresty<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/org-mode" title="org-mode">org-mode<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/pango" title="pango">pango<sup>2</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/redis" title="redis">redis<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/spacemacs" title="spacemacs">spacemacs<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/vue" title="vue">vue<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/xns" title="xns">xns<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e5%89%8d%e7%ab%af" title="前端">前端<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e5%8d%9a%e5%ae%a2" title="博客">博客<sup>7</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e5%b7%a5%e5%85%b7" title="工具">工具<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e5%be%ae%e4%bf%a1" title="微信">微信<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e6%9e%b6%e6%9e%84" title="架构">架构<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e7%8b%ac%e7%ab%8b" title="独立">独立<sup>3</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e7%94%9f%e6%b4%bb%e8%ae%b0%e5%bd%95" title="生活记录">生活记录<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e8%af%bb%e4%b9%a6%e7%ac%94%e8%ae%b0" title="读书笔记">读书笔记<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e9%82%ae%e7%ae%b1" title="邮箱">邮箱<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e9%9d%a2%e8%af%95" title="面试">面试<sup>1</sup></a></li>
+      
+		</ul>
+</div>
+
+
+
+    <div class="linkslist">
+  <p class="asidetitle">我的关注</p>
+    <ul>
+          <li>
+            	<a href="http://www.csdn.net/" target="_blank" title="中国软件开发网(CSDN)">中国软件开发网(CSDN)</a>
+          </li>
+          <li>
+            	<a href="http://www.golangtc.com/" target="_blank" title="Golang中国">Golang中国</a>
+          </li>
+          <li>
+            	<a href="http://blog.qiniu.com/" target="_blank" title="七牛团队博客">七牛团队博客</a>
+          </li>
+          <li>
+            	<a href="http://csrd.aliapp.com/" target="_blank" title="阿里核心系统团队博客">阿里核心系统团队博客</a>
+          </li>
+          <li>
+            	<a href="http://coolshell.cn/" target="_blank" title="酷壳－陈浩">酷壳－陈浩</a>
+          </li>
+          <li>
+            	<a href="http://www.ruanyifeng.com/blog/" target="_blank" title="阮一峰的网络日志">阮一峰的网络日志</a>
+          </li>
+          <li>
+            	<a href="https://blog.dandyweng.com/" target="_blank" title="homeschooler－翁天信的博客">homeschooler－翁天信的博客</a>
+          </li>
+          <li>
+            	<a href="http://www.jeffjade.com/" target="_blank" title="晚晴幽草轩">晚晴幽草轩</a>
+          </li>
+          <li>
+            	<a href="https://nicejade.github.io/index.html" target="_blank" title="天意人间舫">天意人间舫</a>
+          </li>
+    </ul>
+</div>
+
+    <div class="linkslist">
+  <p class="asidetitle">在线书籍</p>
+    <ul>
+          <li>
+            	<a href="https://docs.ruanjiadeng.com/gopl-zh/index.html" target="_blank" title="Go语言圣经（中文版）">Go语言圣经（中文版）</a>
+          </li>
+          <li>
+            	<a href="http://studygolang.com/pkgdoc" target="_blank" title="Go语言标准库">Go语言标准库</a>
+          </li>
+          <li>
+            	<a href="http://www.w3school.com.cn/" target="_blank" title="w3school 在线教程">w3school 在线教程</a>
+          </li>
+    </ul>
+</div>
+
+    <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+          <li>
+            	<a href="http://www.cloudxns.net/" target="_blank" title="CloudXNS官网">CloudXNS官网</a>
+          </li>
+          <li>
+            	<a href="http://www.chinatesters.com/" target="_blank" title="华夏评测师家园">华夏评测师家园</a>
+          </li>
+    </ul>
+</div>
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle">归档</p>
+    <ul class="archive-list">
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2019-02">2019年02月</a><span class="archive-list-count">6</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2018-02">2018年02月</a><span class="archive-list-count">3</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2017-08">2017年08月</a><span class="archive-list-count">5</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2017-07">2017年07月</a><span class="archive-list-count">3</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2017-03">2017年03月</a><span class="archive-list-count">8</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-09">2016年09月</a><span class="archive-list-count">2</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-05">2016年05月</a><span class="archive-list-count">4</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-03">2016年03月</a><span class="archive-list-count">5</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-02">2016年02月</a><span class="archive-list-count">11</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-01">2016年01月</a><span class="archive-list-count">6</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#0001-01">0001年01月</a><span class="archive-list-count">1</span>
+      </li>
+      
+    </ul>
+
+  </div>
+
+
+  
+
+<div class="tagcloudlist">
+  <p class="asidetitle">标签云</p>
+  <div class="tagcloudlist clearfix">
+    
+    <a href="http://mospany.github.io/tags/dns" style="font-size: 12px;">dns</a>
+    
+    <a href="http://mospany.github.io/tags/dpdk" style="font-size: 12px;">dpdk</a>
+    
+    <a href="http://mospany.github.io/tags/emacs" style="font-size: 12px;">emacs</a>
+    
+    <a href="http://mospany.github.io/tags/hugo" style="font-size: 12px;">hugo</a>
+    
+    <a href="http://mospany.github.io/tags/openresty" style="font-size: 12px;">openresty</a>
+    
+    <a href="http://mospany.github.io/tags/org-mode" style="font-size: 12px;">org-mode</a>
+    
+    <a href="http://mospany.github.io/tags/pango" style="font-size: 12px;">pango</a>
+    
+    <a href="http://mospany.github.io/tags/redis" style="font-size: 12px;">redis</a>
+    
+    <a href="http://mospany.github.io/tags/spacemacs" style="font-size: 12px;">spacemacs</a>
+    
+    <a href="http://mospany.github.io/tags/vue" style="font-size: 12px;">vue</a>
+    
+    <a href="http://mospany.github.io/tags/xns" style="font-size: 12px;">xns</a>
+    
+    <a href="http://mospany.github.io/tags/%e5%89%8d%e7%ab%af" style="font-size: 12px;">前端</a>
+    
+    <a href="http://mospany.github.io/tags/%e5%8d%9a%e5%ae%a2" style="font-size: 12px;">博客</a>
+    
+    <a href="http://mospany.github.io/tags/%e5%b7%a5%e5%85%b7" style="font-size: 12px;">工具</a>
+    
+    <a href="http://mospany.github.io/tags/%e5%be%ae%e4%bf%a1" style="font-size: 12px;">微信</a>
+    
+    <a href="http://mospany.github.io/tags/%e6%9e%b6%e6%9e%84" style="font-size: 12px;">架构</a>
+    
+    <a href="http://mospany.github.io/tags/%e7%8b%ac%e7%ab%8b" style="font-size: 12px;">独立</a>
+    
+    <a href="http://mospany.github.io/tags/%e7%94%9f%e6%b4%bb%e8%ae%b0%e5%bd%95" style="font-size: 12px;">生活记录</a>
+    
+    <a href="http://mospany.github.io/tags/%e8%af%bb%e4%b9%a6%e7%ac%94%e8%ae%b0" style="font-size: 12px;">读书笔记</a>
+    
+    <a href="http://mospany.github.io/tags/%e9%82%ae%e7%ae%b1" style="font-size: 12px;">邮箱</a>
+    
+    <a href="http://mospany.github.io/tags/%e9%9d%a2%e8%af%95" style="font-size: 12px;">面试</a>
+    
+  </div>
+</div>
+
+
+
+  
+</aside>
+</div>
+
+  </div>
+  <footer><div id="footer" >
+  
+  <div class="line">
+    <span></span>
+    <div style='background:no-repeat url("http://mospany.github.io/img/author.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  <div class="line">
+    <div style='background:no-repeat url("http://mospany.github.io/img/qiniu_logo.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  <div class="line">
+    <div style='background:no-repeat url("http://mospany.github.io/img/fastweb_logo.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  <div class="line">
+    <div style='background:no-repeat url("http://mospany.github.io/img/leadsec_logo.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  <div class="line">
+    <div style='background:no-repeat url("http://mospany.github.io/img/raisecom_logo.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  <div class="line">
+    <div style='background:no-repeat url("http://mospany.github.io/img/jbt_logo.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  
+  
+  <div class="social-font clearfix">
+    
+    <a href="http://weibo.com/mospan" target="_blank" title="weibo"></a>
+    
+    
+    <a href="https://twitter.com/mospan" target="_blank" title="twitter"></a>
+    
+    
+    <a href="https://github.com/mospany" target="_blank" title="github"></a>
+    
+    
+    <a href="https://www.facebook.com/mospan" target="_blank" title="facebook"></a>
+    
+    
+    <a href="https://www.linkedin.com/mospan" target="_blank" title="linkedin"></a>
+    
+  </div>
+  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/mospany/mospan-hugo-blog/tree/master/themes/hugo-panman-theme" target="_blank" title="hugo-panman-theme">hugo-panman-theme</a> © 2019
+    
+    <a href="http://mospany.github.io/" target="_blank" title="mospan">mospan</a>
+    
+  </p>
+</div>
+</footer>
+  <script src="http://mospany.github.io/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+done = false;
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  $('form.search').on('submit', function (event) {
+    if (false === done) {
+      event.preventDefault();
+      var orgVal = $(this).find('#search').val();
+      $(this).find('#search').val('site:http:\/\/mospany.github.io\/ ' + orgVal);
+      done = true;
+      $(this).submit();
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});
+</script>
+
+
+<link rel="stylesheet" href="http://mospany.github.io/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="http://mospany.github.io/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>微信 on 墨斯潘園</title>
+    <link>http://mospany.github.io/tags/%E5%BE%AE%E4%BF%A1/</link>
+    <description>Recent content in 微信 on 墨斯潘園</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sat, 06 Feb 2016 23:24:08 +0800</lastBuildDate>
+    
+	<atom:link href="http://mospany.github.io/tags/%E5%BE%AE%E4%BF%A1/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>我的博客演进之路(03)--添加微信公众号</title>
+      <link>http://mospany.github.io/2016/01/25/my-blog-add-weixin-mp/</link>
+      <pubDate>Sat, 06 Feb 2016 23:24:08 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2016/01/25/my-blog-add-weixin-mp/</guid>
+      <description>引言 为了符合当今移动互联网的潮流，也让自己更加了解微信的基础知识与推广运作，我也把自己在博客上写的文章也推送到微信公众号，以便想了解的人提供</description>
+    </item>
+    
+  </channel>
+</rss>
