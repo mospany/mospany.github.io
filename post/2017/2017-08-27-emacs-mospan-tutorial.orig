@@ -1,5 +1,5 @@
 +++
-categories = ["技术文章"]
+categories = [技术文章"]
 date = "2017-08-27T17:08:26+08:00"
 description = ""
 keywords = ["emacs"]
@@ -157,16 +157,14 @@ url = "/2017/08/25/emacs-mospan-tutorial/"
         
 **** gocode自动补全
      正常安装gocode后，出现自动补全不了时，一般都是GOPATH没有包含到和没有进行go install的问题。
-     - 用户代码无法自动补全
+     
+     - 关键字无法自动补全
 
-       原因：gocode查找的是libXX.a库而不是源代码文本，需要go install后就找到了。
-       [[https://www.cnblogs.com/Open_Source/p/8159098.html][Emacs golang用户代码无法补全问题]]
+       原因是由于没有把标准库路径加入到GOPATH中，例如：把/usr/local/go加入到GOPATH
+       
      - 标准库无法自动补全
-
-       原因是由于没有把标准库路径加入到GOPATH中，例如：把/usr/local/go加入到GOPATH 
-     - 25个保留关键字补全
-
-       gocode补全很强大，但是一些关键字import, package等不会补全。但可以通过修改auto-complete-settings.el中进行实现, 要补全的关键字在auto-complete/dict/go-mode中。
+     
+              gocode补全很强大，但是一些关键字import, package等不会补全。但可以通过修改auto-complete-settings.el中进行实现, 要补全的关键字在auto-complete/dict/go-mode中。
        #+BEGIN_SRC elisp
 (defun ac-settings-4-php ()
   (setq ac-sources
@@ -200,6 +198,11 @@ url = "/2017/08/25/emacs-mospan-tutorial/"
    ('php-mode-hook    'ac-settings-4-php) ;;php关键字补全还不好使，20190429 by mosp
    ('tcl-mode-hook    'ac-settings-4-tcl)))
        #+END_SRC
+   
+       - 用户库代码无法自动补全
+       原因：gocode查找的是libXX.a库而不是源代码文本，需要go install后就找到了。
+       [[https://www.cnblogs.com/Open_Source/p/8159098.html][Emacs golang用户代码无法补全问题]]
+
 
 ** GTD
 *** 全局  
