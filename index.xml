@@ -185,14 +185,14 @@ fec-builder build -e production
             <guid>http://mospany.github.io/2017/08/25/emacs-mospan-tutorial/</guid>
             <description>
 
-&lt;p&gt;&lt;a id=&#34;org8712146&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org3c7530e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;概述&#34;&gt;概述&lt;/h1&gt;
 
 &lt;p&gt;我自从2011年开始使用自己折腾的emacs到现在，参考或实现了不少功能使其满足我工作与学习所需，虽然它依然有一些瑕疵，但尝试了其他配置或IDE之后依然觉得它是最符合我习惯的，
 我一般用它来写Golang、C、Lua、Shell、GTD和Blog，基本已满足我所需和习惯。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org981527c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org0b95e71&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;安装&#34;&gt;安装&lt;/h1&gt;
 
@@ -205,14 +205,14 @@ mv .emacs .emacs.bak
 
 &lt;p&gt;如果你的系统没有安装Emacs，需要先安装Emacs，请注意Emacs版本至少为24.4。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org5e75a64&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orged65bcd&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;安装emacs-mospan&#34;&gt;安装emacs.mospan&lt;/h2&gt;
 
 &lt;pre&gt;&lt;code&gt;git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;a id=&#34;org13a60d6&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgd20d9b2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;安装依赖工具&#34;&gt;安装依赖工具&lt;/h3&gt;
 
@@ -233,7 +233,7 @@ sudo apt-get install stardict
 &lt;p&gt;把上面的apt-get换成brew即可。&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgb03658e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgb424485&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;启动emacs-mospan&#34;&gt;启动emacs.mospan&lt;/h2&gt;
 
@@ -242,11 +242,11 @@ sudo apt-get install stardict
 
 &lt;p&gt;初次启动emacs.mospan会进行初始化配置（启动时会询问使用简、全哪套配置方案），安装依赖有可能需要一段时间。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org2e9345b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org27431cd&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;使用&#34;&gt;使用&lt;/h1&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgd30aab3&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org684b509&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;显示&#34;&gt;显示&lt;/h2&gt;
 
@@ -315,7 +315,7 @@ sudo apt-get install stardict
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;&lt;a id=&#34;org208475b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgab5de29&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;功能键&#34;&gt;功能键&lt;/h2&gt;
 
@@ -438,7 +438,7 @@ sudo apt-get install stardict
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;&lt;a id=&#34;org4e8016b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org86127ae&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;编辑&#34;&gt;编辑&lt;/h2&gt;
 
@@ -597,11 +597,11 @@ sudo apt-get install stardict
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgb013deb&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org52d5247&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;编程&#34;&gt;编程&lt;/h2&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgbc750b1&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org48fb514&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;c&#34;&gt;C&lt;/h3&gt;
 
@@ -718,7 +718,7 @@ sudo apt-get install stardict
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgf3fe147&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org7b94789&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;golang&#34;&gt;Golang&lt;/h3&gt;
 
@@ -816,23 +816,20 @@ sudo apt-get install stardict
    (&#39;py-mode-hook    &#39;ac-settings-4-python)
    (&#39;php-mode-hook    &#39;ac-settings-4-php) ;;php关键字补全还不好使，20190429 by mosp
    (&#39;tcl-mode-hook    &#39;ac-settings-4-tcl)))
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 
-&lt;ul&gt;
-&lt;li&gt;用户库代码无法自动补全
-&lt;br /&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;原因：gocode查找的是libXX.a库而不是源代码文本，需要go install后就找到了。
-&lt;a href=&#34;https://www.cnblogs.com/Open_Source/p/8159098.html&#34;&gt;Emacs golang用户代码无法补全问题&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;用户库代码无法自动补全
+原因：gocode查找的是libXX.a库而不是源代码文本，需要go install后就找到了。
+一定不要设置GOBIN环境变量，否则go install将把二进制安装到GOBIN下而不是本工程目录下了。
+  &lt;a href=&#34;https://www.cnblogs.com/Open_Source/p/8159098.html&#34;&gt;Emacs golang用户代码无法补全问题&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgb814a51&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org8c1263d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;gtd&#34;&gt;GTD&lt;/h2&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgfcef881&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org6d38953&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;全局&#34;&gt;全局&lt;/h3&gt;
 
@@ -877,7 +874,7 @@ sudo apt-get install stardict
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;&lt;a id=&#34;org2d931f1&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org33dbe49&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;在todo行上&#34;&gt;在TODO行上&lt;/h3&gt;
 
@@ -946,7 +943,7 @@ sudo apt-get install stardict
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;&lt;a id=&#34;orged22a73&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org8ab0281&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;日历&#34;&gt;日历&lt;/h3&gt;
 
@@ -1051,7 +1048,7 @@ sudo apt-get install stardict
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;&lt;a id=&#34;org70c4de5&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgc280f58&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;dired&#34;&gt;dired&lt;/h2&gt;
 

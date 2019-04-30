@@ -199,8 +199,9 @@ url = "/2017/08/25/emacs-mospan-tutorial/"
    ('tcl-mode-hook    'ac-settings-4-tcl)))
        #+END_SRC
    
-       - 用户库代码无法自动补全
-       原因：gocode查找的是libXX.a库而不是源代码文本，需要go install后就找到了。
+   - 用户库代码无法自动补全
+     原因：gocode查找的是libXX.a库而不是源代码文本，需要go install后就找到了。
+     一定不要设置GOBIN环境变量，否则go install将把二进制安装到GOBIN下而不是本工程目录下了。
        [[https://www.cnblogs.com/Open_Source/p/8159098.html][Emacs golang用户代码无法补全问题]]
 
 
