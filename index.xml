@@ -185,14 +185,14 @@ fec-builder build -e production
             <guid>http://mospany.github.io/2017/08/25/emacs-mospan-tutorial/</guid>
             <description>
 
-&lt;p&gt;&lt;a id=&#34;org3c7530e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgbd01d25&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;概述&#34;&gt;概述&lt;/h1&gt;
 
 &lt;p&gt;我自从2011年开始使用自己折腾的emacs到现在，参考或实现了不少功能使其满足我工作与学习所需，虽然它依然有一些瑕疵，但尝试了其他配置或IDE之后依然觉得它是最符合我习惯的，
 我一般用它来写Golang、C、Lua、Shell、GTD和Blog，基本已满足我所需和习惯。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org0b95e71&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org1543e0f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;安装&#34;&gt;安装&lt;/h1&gt;
 
@@ -205,14 +205,14 @@ mv .emacs .emacs.bak
 
 &lt;p&gt;如果你的系统没有安装Emacs，需要先安装Emacs，请注意Emacs版本至少为24.4。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orged65bcd&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org1db6571&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;安装emacs-mospan&#34;&gt;安装emacs.mospan&lt;/h2&gt;
 
 &lt;pre&gt;&lt;code&gt;git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgd20d9b2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org0367a5e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;安装依赖工具&#34;&gt;安装依赖工具&lt;/h3&gt;
 
@@ -233,7 +233,7 @@ sudo apt-get install stardict
 &lt;p&gt;把上面的apt-get换成brew即可。&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgb424485&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org1bfd30b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;启动emacs-mospan&#34;&gt;启动emacs.mospan&lt;/h2&gt;
 
@@ -242,11 +242,11 @@ sudo apt-get install stardict
 
 &lt;p&gt;初次启动emacs.mospan会进行初始化配置（启动时会询问使用简、全哪套配置方案），安装依赖有可能需要一段时间。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org27431cd&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org4edf2b3&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;使用&#34;&gt;使用&lt;/h1&gt;
 
-&lt;p&gt;&lt;a id=&#34;org684b509&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgad4aa7d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;显示&#34;&gt;显示&lt;/h2&gt;
 
@@ -315,7 +315,7 @@ sudo apt-get install stardict
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgab5de29&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org2721feb&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;功能键&#34;&gt;功能键&lt;/h2&gt;
 
@@ -438,7 +438,7 @@ sudo apt-get install stardict
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;&lt;a id=&#34;org86127ae&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org088cc36&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;编辑&#34;&gt;编辑&lt;/h2&gt;
 
@@ -597,11 +597,11 @@ sudo apt-get install stardict
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;&lt;a id=&#34;org52d5247&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgf7d420e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;编程&#34;&gt;编程&lt;/h2&gt;
 
-&lt;p&gt;&lt;a id=&#34;org48fb514&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org5361956&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;c&#34;&gt;C&lt;/h3&gt;
 
@@ -718,7 +718,7 @@ sudo apt-get install stardict
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;&lt;a id=&#34;org7b94789&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgafb3e60&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;golang&#34;&gt;Golang&lt;/h3&gt;
 
@@ -777,45 +777,62 @@ sudo apt-get install stardict
 &lt;p&gt;正常安装gocode后，出现自动补全不了时，一般都是GOPATH没有包含到和没有进行go install的问题。&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;&lt;p&gt;关键字无法自动补全&lt;/p&gt;
+&lt;li&gt;&lt;p&gt;标准库代码无法自动补全&lt;/p&gt;
 
-&lt;p&gt;原因是由于没有把标准库路径加入到GOPATH中，例如：把/usr/local/go加入到GOPATH&lt;/p&gt;&lt;/li&gt;
+&lt;p&gt;原因是由于没有把标准库路径加入到GOPATH中，例如：把/usr/local/go加入到GOPATH&lt;/p&gt;
 
-&lt;li&gt;&lt;p&gt;标准库无法自动补全&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;  ### go develop ###
+  export GOROOT=/usr/local/go
+  export GOARCH=amd64
+  #export GOOS=linux
+  export GOOS=darwin
+  # export GOBIN=$GOROOT/bin/  一定不要设置GOBIN
+  export GOTOOLS=$GOROOT/pkg/tool/
+  export PATH=$PATH:$GOROOT/bin:$GOTOOLS
 
-&lt;p&gt;gocode补全很强大，但是一些关键字import, package等不会补全。但可以通过修改auto-complete-settings.el中进行实现, 要补全的关键字在auto-complete/dict/go-mode中。&lt;/p&gt;
+  ### mospan golang env setting ##
+  export GOPATH=~/goget:$GOROOT
+  GO111MODULE=auto
+  gocode -s &amp;amp;
+  gocode set propose-builtins true &amp;amp;
+  gocode set autobuild true &amp;amp;
+  #+BEGIN_SRC 
 
-&lt;pre&gt;&lt;code&gt;(defun ac-settings-4-php ()
-  (setq ac-sources
-        &#39;(ac-source-yasnippet
-          ac-source-abbrev
-          ac-source-words-in-buffer
-          ac-source-words-in-same-mode-buffers
-          ac-source-files-in-current-dir
-          ac-source-filename)))
+- 保留关键字无法自动补全
 
-(am-add-hooks
- `(lisp-mode-hook emacs-lisp-mode-hook lisp-interaction-mode-hook
-                  svn-log-edit-mode-hook change-log-mode-hook)
- &#39;ac-settings-4-lisp)
+         gocode补全很强大，但是一些关键字import, package等不会补全。但可以通过修改auto-complete-settings.el中进行实现, 要补全的关键字在auto-complete/dict/go-mode中。
+  #+BEGIN_SRC elisp
+  (defun ac-settings-4-php ()
+    (setq ac-sources
+          &#39;(ac-source-yasnippet
+            ac-source-abbrev
+            ac-source-words-in-buffer
+            ac-source-words-in-same-mode-buffers
+            ac-source-files-in-current-dir
+            ac-source-filename)))
 
-(apply-args-list-to-fun
- (lambda (hook fun)
-   (am-add-hooks hook fun))
- `((&#39;java-mode-hook   &#39;ac-settings-4-java)
-   (&#39;c-mode-hook      &#39;ac-settings-4-c)
-   (&#39;c++-mode-hook    &#39;ac-settings-4-cpp)
-   (&#39;text-mode-hook   &#39;ac-settings-4-text)
-   (&#39;eshell-mode-hook &#39;ac-settings-4-eshell)
-   (&#39;ruby-mode-hook   &#39;ac-settings-4-ruby)
-   (&#39;html-mode-hook   &#39;ac-settings-4-html)
-   (&#39;awk-mode-hook    &#39;ac-settings-4-awk)
-   (&#39;go-mode-hook    &#39;ac-settings-4-go)
-   (&#39;lua-mode-hook    &#39;ac-settings-4-lua) ;;lua关键字补全还不好使，20190429 by mosp
-   (&#39;sh-mode-hook    &#39;ac-settings-4-sh)
-   (&#39;py-mode-hook    &#39;ac-settings-4-python)
-   (&#39;php-mode-hook    &#39;ac-settings-4-php) ;;php关键字补全还不好使，20190429 by mosp
-   (&#39;tcl-mode-hook    &#39;ac-settings-4-tcl)))
+  (am-add-hooks
+   `(lisp-mode-hook emacs-lisp-mode-hook lisp-interaction-mode-hook
+                    svn-log-edit-mode-hook change-log-mode-hook)
+   &#39;ac-settings-4-lisp)
+
+  (apply-args-list-to-fun
+   (lambda (hook fun)
+     (am-add-hooks hook fun))
+   `((&#39;java-mode-hook   &#39;ac-settings-4-java)
+     (&#39;c-mode-hook      &#39;ac-settings-4-c)
+     (&#39;c++-mode-hook    &#39;ac-settings-4-cpp)
+     (&#39;text-mode-hook   &#39;ac-settings-4-text)
+     (&#39;eshell-mode-hook &#39;ac-settings-4-eshell)
+     (&#39;ruby-mode-hook   &#39;ac-settings-4-ruby)
+     (&#39;html-mode-hook   &#39;ac-settings-4-html)
+     (&#39;awk-mode-hook    &#39;ac-settings-4-awk)
+     (&#39;go-mode-hook    &#39;ac-settings-4-go)
+     (&#39;lua-mode-hook    &#39;ac-settings-4-lua) ;;lua关键字补全还不好使，20190429 by mosp
+     (&#39;sh-mode-hook    &#39;ac-settings-4-sh)
+     (&#39;py-mode-hook    &#39;ac-settings-4-python)
+     (&#39;php-mode-hook    &#39;ac-settings-4-php) ;;php关键字补全还不好使，20190429 by mosp
+     (&#39;tcl-mode-hook    &#39;ac-settings-4-tcl)))
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 
 &lt;li&gt;&lt;p&gt;用户库代码无法自动补全
@@ -825,11 +842,11 @@ sudo apt-get install stardict
 &lt;/ul&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;&lt;a id=&#34;org8c1263d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org08adc25&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;gtd&#34;&gt;GTD&lt;/h2&gt;
 
-&lt;p&gt;&lt;a id=&#34;org6d38953&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org985fc62&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;全局&#34;&gt;全局&lt;/h3&gt;
 
@@ -874,7 +891,7 @@ sudo apt-get install stardict
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;&lt;a id=&#34;org33dbe49&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgc9aa3a5&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;在todo行上&#34;&gt;在TODO行上&lt;/h3&gt;
 
@@ -943,7 +960,7 @@ sudo apt-get install stardict
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;&lt;a id=&#34;org8ab0281&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgc9a8804&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;日历&#34;&gt;日历&lt;/h3&gt;
 
@@ -1048,7 +1065,7 @@ sudo apt-get install stardict
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgc280f58&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org53e1655&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;dired&#34;&gt;dired&lt;/h2&gt;
 

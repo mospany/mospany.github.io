@@ -158,45 +158,62 @@ url = "/2017/08/25/emacs-mospan-tutorial/"
 **** gocode自动补全
      正常安装gocode后，出现自动补全不了时，一般都是GOPATH没有包含到和没有进行go install的问题。
      
-     - 关键字无法自动补全
+     - 标准库代码无法自动补全
 
        原因是由于没有把标准库路径加入到GOPATH中，例如：把/usr/local/go加入到GOPATH
+       #+BEGIN_SRC shell
+       ### go develop ###
+       export GOROOT=/usr/local/go
+       export GOARCH=amd64
+       #export GOOS=linux
+       export GOOS=darwin
+       # export GOBIN=$GOROOT/bin/  一定不要设置GOBIN
+       export GOTOOLS=$GOROOT/pkg/tool/
+       export PATH=$PATH:$GOROOT/bin:$GOTOOLS
+
+       ### mospan golang env setting ##
+       export GOPATH=~/goget:$GOROOT
+       GO111MODULE=auto
+       gocode -s &
+       gocode set propose-builtins true &
+       gocode set autobuild true &
+       #+BEGIN_SRC 
        
-     - 标准库无法自动补全
+     - 保留关键字无法自动补全
      
               gocode补全很强大，但是一些关键字import, package等不会补全。但可以通过修改auto-complete-settings.el中进行实现, 要补全的关键字在auto-complete/dict/go-mode中。
        #+BEGIN_SRC elisp
-(defun ac-settings-4-php ()
-  (setq ac-sources
-        '(ac-source-yasnippet
-          ac-source-abbrev
-          ac-source-words-in-buffer
-          ac-source-words-in-same-mode-buffers
-          ac-source-files-in-current-dir
-          ac-source-filename)))
-
-(am-add-hooks
- `(lisp-mode-hook emacs-lisp-mode-hook lisp-interaction-mode-hook
-                  svn-log-edit-mode-hook change-log-mode-hook)
- 'ac-settings-4-lisp)
-
-(apply-args-list-to-fun
- (lambda (hook fun)
-   (am-add-hooks hook fun))
- `(('java-mode-hook   'ac-settings-4-java)
-   ('c-mode-hook      'ac-settings-4-c)
-   ('c++-mode-hook    'ac-settings-4-cpp)
-   ('text-mode-hook   'ac-settings-4-text)
-   ('eshell-mode-hook 'ac-settings-4-eshell)
-   ('ruby-mode-hook   'ac-settings-4-ruby)
-   ('html-mode-hook   'ac-settings-4-html)
-   ('awk-mode-hook    'ac-settings-4-awk)
-   ('go-mode-hook    'ac-settings-4-go)
-   ('lua-mode-hook    'ac-settings-4-lua) ;;lua关键字补全还不好使，20190429 by mosp
-   ('sh-mode-hook    'ac-settings-4-sh)
-   ('py-mode-hook    'ac-settings-4-python)
-   ('php-mode-hook    'ac-settings-4-php) ;;php关键字补全还不好使，20190429 by mosp
-   ('tcl-mode-hook    'ac-settings-4-tcl)))
+       (defun ac-settings-4-php ()
+         (setq ac-sources
+               '(ac-source-yasnippet
+                 ac-source-abbrev
+                 ac-source-words-in-buffer
+                 ac-source-words-in-same-mode-buffers
+                 ac-source-files-in-current-dir
+                 ac-source-filename)))
+       
+       (am-add-hooks
+        `(lisp-mode-hook emacs-lisp-mode-hook lisp-interaction-mode-hook
+                         svn-log-edit-mode-hook change-log-mode-hook)
+        'ac-settings-4-lisp)
+       
+       (apply-args-list-to-fun
+        (lambda (hook fun)
+          (am-add-hooks hook fun))
+        `(('java-mode-hook   'ac-settings-4-java)
+          ('c-mode-hook      'ac-settings-4-c)
+          ('c++-mode-hook    'ac-settings-4-cpp)
+          ('text-mode-hook   'ac-settings-4-text)
+          ('eshell-mode-hook 'ac-settings-4-eshell)
+          ('ruby-mode-hook   'ac-settings-4-ruby)
+          ('html-mode-hook   'ac-settings-4-html)
+          ('awk-mode-hook    'ac-settings-4-awk)
+          ('go-mode-hook    'ac-settings-4-go)
+          ('lua-mode-hook    'ac-settings-4-lua) ;;lua关键字补全还不好使，20190429 by mosp
+          ('sh-mode-hook    'ac-settings-4-sh)
+          ('py-mode-hook    'ac-settings-4-python)
+          ('php-mode-hook    'ac-settings-4-php) ;;php关键字补全还不好使，20190429 by mosp
+          ('tcl-mode-hook    'ac-settings-4-tcl)))
        #+END_SRC
    
    - 用户库代码无法自动补全
