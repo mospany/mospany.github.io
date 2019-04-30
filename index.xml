@@ -767,7 +767,7 @@ sudo apt-get install stardict
 &lt;li&gt;&lt;p&gt;gotests&lt;/p&gt;
 
 &lt;ol&gt;
-&lt;li&gt;在evil-mode下使用control v命令选择某些函数区域&lt;/li&gt;
+&lt;li&gt;在evil-mode下使用v命令选择某些函数区域&lt;/li&gt;
 &lt;li&gt;按下M-x输入gotests-region生成这些函数的gotest模板或直接输入gotests将生成本文件的所有函数测试模板。&lt;/li&gt;
 &lt;li&gt;将在该目录下生成同名_test.go的测试文件。&lt;/li&gt;
 &lt;/ol&gt;&lt;/li&gt;
