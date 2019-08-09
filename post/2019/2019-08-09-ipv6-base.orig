@@ -1,0 +1,29 @@
++++
+toc = true
+categories = ["技术文章"]
+date = "2019-08-09T20:14:27+08:00"
+description = ""
+keywords = ["IPv6",""]
+tags = ["IPv6",""]
+title = "IPv6技术概览"
+url = "/2019/08/09/ipv6-base/"
+
++++
+
+* 为什么要用IPv6
+  - IPv4地址匮乏
+  - NAT非根本解决办法，破坏了端到端模型
+  - 新技术对IP协议催生了更多的需求
+  - 政策驱动: 计划使用5-10年的时间建成全球最大的IPv6商用网络。
+
+* IPv6优势
+  - 近乎无限的地址空间
+  - 更简洁的报文头部
+  - 内置的安全性
+  - 更好的QoS支持
+  - 更好的移动性
+  - 编址层次等级
+
+* IPv6技术--标准(RFC) 
+  [[http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-rfc.png][ipv6-rfc]]  
+
