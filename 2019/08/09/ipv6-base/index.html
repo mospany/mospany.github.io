@@ -3,18 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <base href="http://mospany.github.io/">
-  <title>pango设计与实现(02)--快速开始 - 墨斯潘園</title>
+  <title>IPv6技术总览 - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
-  <meta name="keywords" content="hugo,pango,">
-  <meta name="description" content="主要描述了pango的编译、安装与典型使用">
+  <meta name="keywords" content="IPv6,">
+  <meta name="description" content="为什么要用IPv6 IPv4地址匮乏 NAT非根本解决办法，破坏了端到端模型 新技术对IP协议催生了更多的需求 政策驱动: 计划使用5-10年的时间建">
   <meta name="author" content="mospan">
-  <meta itemprop="name" content="pango设计与实现(02)--快速开始 - 墨斯潘園">
-  <meta itemprop="description" content="主要描述了pango的编译、安装与典型使用">
+  <meta itemprop="name" content="IPv6技术总览 - 墨斯潘園">
+  <meta itemprop="description" content="为什么要用IPv6 IPv4地址匮乏 NAT非根本解决办法，破坏了端到端模型 新技术对IP协议催生了更多的需求 政策驱动: 计划使用5-10年的时间建">
   <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
-  <meta name="twitter:title" content="pango设计与实现(02)--快速开始 - 墨斯潘園" />
-  <meta name="twitter:description" content="主要描述了pango的编译、安装与典型使用" />
+  <meta name="twitter:title" content="IPv6技术总览 - 墨斯潘園" />
+  
+  <meta name="twitter:description" content="">
   <link rel="shortcut icon" href="img/favicon.ico"/>
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png" />
@@ -62,7 +63,7 @@
 	<article itemprop="articleBody">
     <header class="article-info clearfix">
   <h1 itemprop="name">
-      <a href="http://mospany.github.io/2016/02/14/pango-development-quick-start/" title="pango设计与实现(02)--快速开始" itemprop="url">pango设计与实现(02)--快速开始</a>
+      <a href="http://mospany.github.io/2019/08/09/ipv6-base/" title="IPv6技术总览" itemprop="url">IPv6技术总览</a>
   </h1>
   <p class="article-author">By 
     
@@ -70,49 +71,54 @@
     
   </p>
   <p class="article-time">
-    <time datetime="2016-02-14 16:57:25 &#43;0800 CST" itemprop="datePublished">2016年02月14日</time>
+    <time datetime="2019-08-09 17:14:27 &#43;0800 CST" itemprop="datePublished">2019年08月09日</time>
   </p>
 </header>
 
 	<div class="article-content">
     
+		<div class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+      <nav id="TableOfContents">
+<ul>
+<li><a href="#为什么要用ipv6">为什么要用IPv6</a></li>
+<li><a href="#ipv6优势">IPv6优势</a></li>
+<li><a href="#ipv6技术-x2013-标准-rfc">IPv6技术&#x2013;标准(RFC)</a></li>
+</ul>
+</nav>
+		</div>
+    
     
 
-<h1 id="安装">安装</h1>
+<p><a id="org4f99312"></a></p>
 
-<h2 id="安装前准备">安装前准备</h2>
-
-<p>确保你的本地环境已经安装好如下软件：</p>
+<h1 id="为什么要用ipv6">为什么要用IPv6</h1>
 
 <ul>
-<li>git.</li>
-<li>Go 1.4+</li>
+<li>IPv4地址匮乏</li>
+<li>NAT非根本解决办法，破坏了端到端模型</li>
+<li>新技术对IP协议催生了更多的需求</li>
+<li>政策驱动: 计划使用5-10年的时间建成全球最大的IPv6商用网络。</li>
 </ul>
 
-<h2 id="源码安装">源码安装</h2>
+<p><a id="orga769083"></a></p>
 
-<h3 id="下载源码到本地">下载源码到本地</h3>
+<h1 id="ipv6优势">IPv6优势</h1>
 
-<pre><code>   git clone https://github.com/mospany/pango.git
-</code></pre>
+<ul>
+<li>近乎无限的地址空间</li>
+<li>更简洁的报文头部</li>
+<li>内置的安全性</li>
+<li>更好的QoS支持</li>
+<li>更好的移动性</li>
+<li>编址层次等级</li>
+</ul>
 
-<h3 id="设置好环境变量">设置好环境变量</h3>
+<p><a id="org32001e2"></a></p>
 
-<pre><code>   cd pango
-   export GOPATH=`pwd`
-</code></pre>
+<h1 id="ipv6技术-x2013-标准-rfc">IPv6技术&#x2013;标准(RFC)</h1>
 
-<h3 id="编译">编译</h3>
-
-<pre><code>   make
-</code></pre>
-
-<p>如果编译成功，将在当前目录下生成目标可执行二进制程序：pango</p>
-
-<h3 id="安装-1">安装</h3>
-
-<pre><code>   make install
-</code></pre>
+<p><a href="http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-rfc.png">ipv6-rfc</a></p>
 
     <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
   <div style="float:right;margin-top:0px;">
@@ -125,7 +131,7 @@
   <div>
     <p style="margin-top:0px;">作者：<a target="_blank" href="http://blog.mospan.cn/">mospan</a>
       <br />微信关注：墨斯潘園
-      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2016/02/14/pango-development-quick-start/">http://mospany.github.io/2016/02/14/pango-development-quick-start/</a>
+      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2019/08/09/ipv6-base/">http://mospany.github.io/2019/08/09/ipv6-base/</a>
       <br />
       文章版权归本人所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
   </div>
@@ -139,9 +145,7 @@
 <div class="article-tags">
   <span></span>
   
-  <a href="/tags/hugo">hugo</a>
-  
-  <a href="/tags/pango">pango</a>
+  <a href="/tags/ipv6">IPv6</a>
   
 </div>
 
@@ -150,16 +154,14 @@
 <div class="article-categories">
   <span></span>
   
-  <a class="article-category-link" href="/categories/hugo">hugo</a>
-  
-  <a class="article-category-link" href="/categories/pango">pango</a>
+  <a class="article-category-link" href="/categories/ipv6">IPv6</a>
   
 </div>
 
 
 
   <div class="article-share" id="share">
-    <div data-url="http://mospany.github.io/2016/02/14/pango-development-quick-start/" data-title="pango设计与实现(02)--快速开始" data-tsina="3833537679" class="share clearfix">
+    <div data-url="http://mospany.github.io/2019/08/09/ipv6-base/" data-title="IPv6技术总览" data-tsina="3833537679" class="share clearfix">
     </div>
   </div>
 </footer>

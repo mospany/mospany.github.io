@@ -5,7 +5,47 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Fri, 02 Aug 2019 07:39:07 CST</updated>
+        <updated>Fri, 09 Aug 2019 17:14:27 CST</updated>
+        
+        <item>
+            <title>IPv6技术总览</title>
+            <link>http://mospany.github.io/2019/08/09/ipv6-base/</link>
+            <pubDate>Fri, 09 Aug 2019 17:14:27 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://mospany.github.io/2019/08/09/ipv6-base/</guid>
+            <description>
+
+&lt;p&gt;&lt;a id=&#34;org4f99312&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;为什么要用ipv6&#34;&gt;为什么要用IPv6&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;IPv4地址匮乏&lt;/li&gt;
+&lt;li&gt;NAT非根本解决办法，破坏了端到端模型&lt;/li&gt;
+&lt;li&gt;新技术对IP协议催生了更多的需求&lt;/li&gt;
+&lt;li&gt;政策驱动: 计划使用5-10年的时间建成全球最大的IPv6商用网络。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a id=&#34;orga769083&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;ipv6优势&#34;&gt;IPv6优势&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;近乎无限的地址空间&lt;/li&gt;
+&lt;li&gt;更简洁的报文头部&lt;/li&gt;
+&lt;li&gt;内置的安全性&lt;/li&gt;
+&lt;li&gt;更好的QoS支持&lt;/li&gt;
+&lt;li&gt;更好的移动性&lt;/li&gt;
+&lt;li&gt;编址层次等级&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a id=&#34;org32001e2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;ipv6技术-x2013-标准-rfc&#34;&gt;IPv6技术&amp;#x2013;标准(RFC)&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-rfc.png&#34;&gt;ipv6-rfc&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
         
         <item>
             <title>IPv6技术概览</title>
@@ -6185,328 +6225,6 @@ tags        A tags match to select entries that should contribute.  See
 &lt;h1 id=&#34;结语&#34;&gt;结语&lt;/h1&gt;
 
 &lt;p&gt;通过上述的步骤就可以像那么回事的使用个人独立域名邮箱了。&lt;/p&gt;
-</description>
-        </item>
-        
-        <item>
-            <title>基于DPDK开发高性能DNS服务器实践总结</title>
-            <link>http://mospany.github.io/2016/03/14/xns-on-dpdk/</link>
-            <pubDate>Mon, 14 Mar 2016 22:02:57 CST</pubDate>
-            <author>Mospan</author>
-            <guid>http://mospany.github.io/2016/03/14/xns-on-dpdk/</guid>
-            <description>
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/china-DPDK-summit-2015-main-page.png&#34; alt=&#34;中国2015DPDK开发者大会主页&#34; /&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;简述&#34;&gt;简述&lt;/h1&gt;
-
-&lt;p&gt;有幸全程参与了基于DPDK&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;下一代高性能&lt;a href=&#34;http://www.cloudxns.net/&#34;&gt;CloudXNS&lt;/a&gt;&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:2&#34;&gt;&lt;a href=&#34;#fn:2&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;服务器开发，从未知到慢慢熟悉，其中也走了些弯路也
-    踩过一些坑，一路走来有些感受与心得体会，在此进行梳理下，以对这一阶段做下些小的总结，也可以与同僚们进行交流学习。&lt;/p&gt;
-
-&lt;h1 id=&#34;背景&#34;&gt;背景&lt;/h1&gt;
-
-&lt;p&gt;上一代XNS服务器是基于Linux内核进行开发，单机性能达到数百万级别QPS&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:3&#34;&gt;&lt;a href=&#34;#fn:3&#34;&gt;3&lt;/a&gt;&lt;/sup&gt;，相对于BIND&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:4&#34;&gt;&lt;a href=&#34;#fn:4&#34;&gt;4&lt;/a&gt;&lt;/sup&gt;来说已经高了很多,平常处理正常毫无压力，但在
-    受大量DDOS攻击时服务质量大大降低,虽然我们采用了远端清洗与近地防御的安措施，与受攻击时调度其他应急服务器来抗，但增加了服务器与
-    人工干预成本。为了更好的抗DDOS攻击与服务更多的用户，需求单机处理千万级别的替代方案呼之欲出。&lt;/p&gt;
-
-&lt;h1 id=&#34;目标设定&#34;&gt;目标设定&lt;/h1&gt;
-
-&lt;ol&gt;
-&lt;li&gt;单机处理能力千万级别。&lt;/li&gt;
-&lt;li&gt;性能，性能，性能。(重要的事重复三遍)&lt;/li&gt;
-&lt;li&gt;稳定压倒一切。(此话不是我说的)&lt;/li&gt;
-&lt;li&gt;社区活跃，已有商用案例。&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h1 id=&#34;需求调研&#34;&gt;需求调研&lt;/h1&gt;
-
-&lt;p&gt;　　按照上述的目标设定需求，要达到单机处理千万级别的只能采用轮询而非中断方式，在市面上的可实现技术方案有DPDK/pf_ring/netmap等.
-    其中DPDK为Intel公司主推，并有BAT之类的大型公司进行商用，而且也比较适合处理UDP类型协议。经过权衡之下，我们决定采用DPDK进行
-    下一代XNS的替代方案。&lt;/p&gt;
-
-&lt;h2 id=&#34;优点&#34;&gt;优点&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;性能高&lt;/li&gt;
-&lt;li&gt;用户态开发&lt;/li&gt;
-&lt;li&gt;死后易重启&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;缺点&#34;&gt;缺点&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;无网络协议栈&lt;/li&gt;
-&lt;li&gt;开发困难，周期长&lt;/li&gt;
-&lt;li&gt;参考资料相对还匮乏&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;dpdk核心思想&#34;&gt;DPDK核心思想&lt;/h1&gt;
-
-&lt;h2 id=&#34;组织结构&#34;&gt;组织结构&lt;/h2&gt;
-
-&lt;p&gt;　　DPDK 的组成架构如下图所示,相关技术原理概述如下:
-   &lt;img src=&#34;http://blog.mospan.cn/post/img/DPDK-archite.png&#34; alt=&#34;DPDK组织架构图&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;　　在最底部的内核态(Linux Kernel)DPDK 有两个模块:KNI 与 IGB_UIO。
-   其中,KNI 提供给用户一个使用 Linux 内核态的协议栈,以及传统的 Linux 网络工具(如ethtool, ifconfig)。IGB_UIO(igb_uio.ko 和
-   kni.ko. IGB_UIO)则借助了 UIO 技术,在初始化过程中将网卡硬件寄存器映射到用户态。&lt;/p&gt;
-
-&lt;p&gt;　　DPDK 的上层用户态由很多库组成,主要包括核心部件库(Core Libraries)、平台相关模块(Platform)、网卡轮询模式驱动模块(PMD-Natives&amp;amp;
-   Virtual)、QoS 库、报文转发分类算法(Classify)等几大类,用户应用程序可以使用这些库进行二次开发.&lt;/p&gt;
-
-&lt;h2 id=&#34;用户态模式下的pmd-driver&#34;&gt;用户态模式下的PMD Driver&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;去除了中断影响，减少了操作系统内核的开销，消除了IO吞吐瓶颈；&lt;/li&gt;
-&lt;li&gt;避免了内核态和用户态的报文拷贝；用户态下软件崩溃，不会影响系统的稳定性；&lt;/li&gt;
-&lt;li&gt;Intel提供的PMD驱动，充分利用指令和网卡的性能；&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;hugepage和m-buf管理&#34;&gt;HugePage和m_buf管理&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;提供2M和1G的巨页，减少了TLB Miss，TLB Miss严重影响报文转发性能；&lt;/li&gt;
-&lt;li&gt;高效的m_buf管理，能够灵活的组织报文，包括多buffer接收，分片/重组，都能够轻松应对；&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;ring&#34;&gt;Ring&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;无锁化的消息队列，实际验证，性能充足；&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;82599-sr-iov-nic&#34;&gt;82599 SR-IOV NIC&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;实现虚拟化下高速吞吐；&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;vector-instance-向量指令&#34;&gt;Vector Instance /向量指令&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;明显的降低内存等待开销，提升CPU的流水线效率。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;项目规划&#34;&gt;项目规划&lt;/h1&gt;
-
-&lt;p&gt;　　为了使DPDK更好的在我司使用与发扬光大，我大致规划了初期、中期与长期三步走策略实现目标。&lt;/p&gt;
-
-&lt;h2 id=&#34;初期目标&#34;&gt;初期目标&lt;/h2&gt;
-
-&lt;p&gt;&lt;strong&gt;实现一个最简单的DNS demo.&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;需求：&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;网络可达。&lt;/li&gt;
-&lt;li&gt;Dig示例域名可正确响应。
-&lt;br /&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;中期目标&#34;&gt;中期目标&lt;/h2&gt;
-
-&lt;p&gt;&lt;strong&gt;实现一个高性能高并发的DNS服务&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;需求:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;单机性能提高5倍以上。&lt;/li&gt;
-&lt;li&gt;形成完整DNS产品服务(XNS、public DNS)。&lt;/li&gt;
-&lt;li&gt;平台与服务逻辑分离。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;长期目标&#34;&gt;长期目标&lt;/h2&gt;
-
-&lt;p&gt;&lt;strong&gt;实现高性能高并发的网络加速平台与应用体系&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;需求：&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;平台具有可移植性。&lt;/li&gt;
-&lt;li&gt;可透明承载多种业务(UDP/TCP)服务。&lt;/li&gt;
-&lt;li&gt;平台与服务物理分离。&lt;/li&gt;
-&lt;li&gt;可承载其他高级语言与虚拟化。
-&lt;br /&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;开发初试&#34;&gt;开发初试&lt;/h1&gt;
-
-&lt;p&gt;　　为了验证其的可行性，我们对它进行了最小原型开发，实现了一个最简单的DNS服务程序，使其网络可达，dig能正确响应。&lt;/p&gt;
-
-&lt;p&gt;　　由于刚开始对DPDK一无所知，为了网络可达首先要面对的问题是服务器IP在哪儿配置的问题(这也许是一些初学者会面对的幼稚问题)，还好已有前辈
-   在QQ大致网上了解一些原理与其源码示例，采用其源码examples目录下l3fwd为基础进行最小原型开发demo。&lt;/p&gt;
-
-&lt;p&gt;　　为了使网络可达，我们做了如下开发：&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;先在simpleDNS服务端中临时配置一个服务IP进行过滤.&lt;/li&gt;
-&lt;li&gt;在DNS客户端通过手工配置ARP表使得客户端ping/dig操作的请求包可达服务端，&lt;/li&gt;
-&lt;li&gt;在simpleDNS服务端做解析请求包，如果是DNS请求构造响应包，其他类型如ARP/ICMP请求则通过KNI入接口ingress()重入Linux内核由
-其来处理后再通过KNI的egress()接口响应给客户端。&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;经过上述编码调试后，最简单的原型验证通过了，为下面的全面开发提供了参考依据。&lt;/p&gt;
-
-&lt;h1 id=&#34;架构设计&#34;&gt;架构设计&lt;/h1&gt;
-
-&lt;p&gt;　　由于此项目是在基于DPDK进行二次开发，我一般对开源项目的使用原则是：&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;应使开源项目融入到项目工程中，而不是项目工程融入到开源项目中&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;因此我对它们进行分3层设计与实现：&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;内核层
-主要为Linux内核本身与插入igb_uio.ko与rte_kni.ko.&lt;/li&gt;
-&lt;li&gt;平台层
-
-&lt;ul&gt;
-&lt;li&gt;分为DPDK原生库与fastNP扩展库，分别在不同目录进行隔离。&lt;/li&gt;
-&lt;li&gt;DPDK源码树本身，没有任务的修改，是为了更好的升级、开发与维护。&lt;/li&gt;
-&lt;li&gt;对DPDK某些接口进行二次封装与业务所需的公共库，一般各种业务应用调用。&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;业务层
-业务应用的各种实现，可直接调用fastNP平台层与DPDK原生层的API。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;全面开发&#34;&gt;全面开发&lt;/h1&gt;
-
-&lt;h2 id=&#34;源码组织管理&#34;&gt;源码组织管理&lt;/h2&gt;
-
-&lt;p&gt;为了所有源码可以一键编译、一键打包，编写一套符合所需的Makefile进行源码管理。&lt;/p&gt;
-
-&lt;h2 id=&#34;fastnp扩展库开发&#34;&gt;fastNP扩展库开发&lt;/h2&gt;
-
-&lt;p&gt;　　扩展库源码不在DPDK源码目录中，需要很好的理解DPDK下面mk/目录下的各种Makefile原理，
-   使其的各种编译选项与属性能够传递到扩展库中。&lt;/p&gt;
-
-&lt;p&gt;扩展库主要实现如下部分功能：&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;基础数据结构库。
-  如：高效双链表、用户态RCU接口等。&lt;/li&gt;
-&lt;li&gt;轻量级用户态协议栈
-  目前主要实现轻量级简易型UDP协议栈，以实现二三层转发为主。&lt;/li&gt;
-&lt;li&gt;HOOK挂载与处理机制
-  仿造了Linux netfilter框架实现5个点钩子挂载与处理。&lt;/li&gt;
-&lt;li&gt;高性能日志库
-  参考了目录主流高性能日志与线程安全，实现了一个数百万行打印的高性能日志系统。
-等等&amp;hellip;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2 id=&#34;业务层开发&#34;&gt;业务层开发&lt;/h2&gt;
-
-&lt;p&gt;第一个应用主要是把原有内核版本的KANS源码移植到用户态的SANSD中。&lt;/p&gt;
-
-&lt;h2 id=&#34;控制查看命令开发&#34;&gt;控制查看命令开发&lt;/h2&gt;
-
-&lt;p&gt;为了方便对平台与业务层的查看与控制，我们基于Libcmdline库开发了sansctl命令，可支持命令补全等。&lt;/p&gt;
-
-&lt;h2 id=&#34;发包工具开发&#34;&gt;发包工具开发&lt;/h2&gt;
-
-&lt;p&gt;为了能进行千万级别的高性能测试，基于pktgen-dpdk进行开发使其可以构造DNS请求与控制发送速率功能的spktgen，主界面如下图：
-   &lt;img src=&#34;http://blog.mospan.cn/post/img/spktgen_main_page.jpg&#34; alt=&#34;spktgen发包主界面&#34; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;抓包工具开发&#34;&gt;抓包工具开发&lt;/h2&gt;
-
-&lt;p&gt;由于现有tcpdump不能抓取DPDK接管的网卡数据，也在其基础上开发可在DPDK下抓包的spktdump，以便调试与定位。&lt;/p&gt;
-
-&lt;h2 id=&#34;其他开发&#34;&gt;其他开发&lt;/h2&gt;
-
-&lt;p&gt;从略。&lt;/p&gt;
-
-&lt;h1 id=&#34;踩过的坑&#34;&gt;踩过的坑&lt;/h1&gt;
-
-&lt;h2 id=&#34;架构模式选择&#34;&gt;架构模式选择&lt;/h2&gt;
-
-&lt;p&gt;　　DPDK提供了两种模式可供选择：Run-to-completion与pipeline模式。在官网文档与DPDK开发者大会中都提到了这两种模式，
-   但都没说哪种模式更好，要看场景而定。我们在最初设计时，不仅考虑DNS服务器还考虑以后负载均衡设备的使用，选择了
-   可支持这两种模式。&lt;/p&gt;
-
-&lt;p&gt;在测试性能时，发现某种情况下不同模式都有优缺点，经常在这两种模式中来回切换测试，造成了一些干扰与浪费了点时间。&lt;/p&gt;
-
-&lt;h2 id=&#34;编译选项一致&#34;&gt;编译选项一致&lt;/h2&gt;
-
-&lt;p&gt;在测试性能时一定使用-O3选项并且编译选项需与DPDK本身app编译选项一致。否则会影响很大的性能。&lt;/p&gt;
-
-&lt;p&gt;DPDK本身app编译选项可以在编译目录下的.XXX.o.cmd文件查看到。&lt;/p&gt;
-
-&lt;h2 id=&#34;变量percore化&#34;&gt;变量percore化&lt;/h2&gt;
-
-&lt;p&gt;　　所用的全局变量尽量percore化，这样可以防止cache miss。例如统计部分要用percore化，计算或显示时再把他们加到一起，
-   这个也影响不小的性能。&lt;/p&gt;
-
-&lt;h2 id=&#34;代码逻辑简化&#34;&gt;代码逻辑简化&lt;/h2&gt;
-
-&lt;p&gt;　　由于业务层代码是从内核版本中移植过来的，老早功能就通过了，但性能一直上不来，后来经过代码review发现很多影响性能点，
-   又重新优化或精简了下代码逻辑，去掉了不少冗余代码。&lt;/p&gt;
-
-&lt;h2 id=&#34;rcu锁占用性能&#34;&gt;RCU锁占用性能&lt;/h2&gt;
-
-&lt;p&gt;扩大RCU临界区&lt;/p&gt;
-
-&lt;h2 id=&#34;域名压缩占用性能&#34;&gt;域名压缩占用性能&lt;/h2&gt;
-
-&lt;p&gt;应答区中的域名不压缩。&lt;/p&gt;
-
-&lt;h2 id=&#34;master-lcore不要作为收发处理&#34;&gt;master lcore不要作为收发处理&lt;/h2&gt;
-
-&lt;p&gt;如果master lcore作为收发处理，如有数据下方或打印统计时将严重丢包，大大影响收发性能。&lt;/p&gt;
-
-&lt;h1 id=&#34;有待完善&#34;&gt;有待完善&lt;/h1&gt;
-
-&lt;h2 id=&#34;dpdk&#34;&gt;DPDK&lt;/h2&gt;
-
-&lt;h3 id=&#34;缺少配置文件&#34;&gt;缺少配置文件&lt;/h3&gt;
-
-&lt;p&gt;　　现在DPDK代码与核数越来越多,依然使用命令行参数的方式进行启动，可配置与阅读性比较差，应该有自己的配置文件进行解析即可。
-   尤其是网卡、队列、逻辑核配置序列太难配置了，尤其是使用核数比较多的情况。&lt;/p&gt;
-
-&lt;p&gt;例如：(0,0,2),(0,1,4),(0,2,6),(0,3,8),(0,4,10),(0,5,12),(0,6,14),(0,7,16),(0,8,18),(0,9,20),(0,10,22),(0,11,24),(0,12,26),(0,13,28)&lt;/p&gt;
-
-&lt;p&gt;不知道各位同学知不道有什么国际规范的缩写方式配置,请麻烦告知一下，OK？&lt;/p&gt;
-
-&lt;h3 id=&#34;pktgen-dpdk驱动bug&#34;&gt;pktgen-dpdk驱动bug&lt;/h3&gt;
-
-&lt;p&gt;　　当使用pktgen-dpdk进行测试时，频繁的启停可能会使万兆光纤网卡处于DOWN状态，重启命令或reboot系统都不管用，必须对服务器
-    进行冷重启才行，这对测试比较浪费时间或者远程调试操作堪忧。&lt;/p&gt;
-
-&lt;h3 id=&#34;examples下编码质量参差不齐&#34;&gt;examples下编码质量参差不齐&lt;/h3&gt;
-
-&lt;p&gt;　　DPDK库本身的编码质量还是比较规范统一的，而其examples下的示例代码编码质量参差不齐。&lt;/p&gt;
-
-&lt;h3 id=&#34;fastnp本身&#34;&gt;fastNP本身&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;BOND与多网卡有待支持。&lt;/li&gt;
-&lt;li&gt;邻居发现与路由功能有待支持。&lt;/li&gt;
-&lt;li&gt;TCP协议栈有待支持。&lt;/li&gt;
-&lt;li&gt;虚拟化功能有待支持。&lt;/li&gt;
-&lt;li&gt;更高级语言功能有待支持。&lt;/li&gt;
-&lt;li&gt;Libc与系统调用劫持功能有待支持。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;总结&#34;&gt;总结&lt;/h1&gt;
-
-&lt;p&gt;经过这一段时间的开发，使得我对DPDK、内存、CPU、用户态网卡驱动有了更深的了解，使得性能达到了万兆网卡线速水平，单机抗攻击能力为1300万QPS，收发平衡能力为1000万QPS的预期目标，
-   总之DPDK框架代码写得还是挺不错的，值得仔细研究，现在我只是对它怎么使用与部分源码有了一定的认识，很多精华部分有待深入剖析。&lt;/p&gt;
-
-&lt;h1 id=&#34;footnotes&#34;&gt;Footnotes&lt;/h1&gt;
-&lt;div class=&#34;footnotes&#34;&gt;
-
-&lt;hr /&gt;
-
-&lt;ol&gt;
-&lt;li id=&#34;fn:1&#34;&gt;DPDK: intel dpdk(Data Plane Development Kit,数据面开发套件)是 intel 公司发布的一款数据包转发处理套件；
- &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:1&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li id=&#34;fn:2&#34;&gt;CloudXNS: 面向云计算的权威智能DNS。
- &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:2&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li id=&#34;fn:3&#34;&gt;QPS: 每秒查询率(Query Per Second).
- &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:3&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li id=&#34;fn:4&#34;&gt;BIND: Bind是一款开放源码的DNS服务器软件,Bind由美国加州大学Berkeley分校开发和维护的,全名为Berkeley Internet Name Domain, 它是目前世界上使用最为广泛的DNS服务器软件.
- &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:4&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
 </description>
         </item>
         
