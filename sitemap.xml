@@ -2,7 +2,30 @@
     
     <url>
         <loc>http://mospany.github.io/categories/</loc>
-        <lastmod>2019-08-09T17:14:27+08:00</lastmod>
+        <lastmod>2019-08-11T05:54:34+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/post/</loc>
+        <lastmod>2019-08-11T05:54:34+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/2019/08/11/openresty-salon-site-record/</loc>
+        <lastmod>2019-08-11T05:54:34+08:00</lastmod>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/</loc>
+        <lastmod>2019-08-11T05:54:34+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/</loc>
+        <lastmod>2019-08-11T05:54:34+08:00</lastmod>
         <priority>0</priority>
     </url>
     
@@ -18,25 +41,7 @@
     </url>
     
     <url>
-        <loc>http://mospany.github.io/post/</loc>
-        <lastmod>2019-08-09T17:14:27+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
         <loc>http://mospany.github.io/tags/</loc>
-        <lastmod>2019-08-09T17:14:27+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/</loc>
-        <lastmod>2019-08-09T17:14:27+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/</loc>
         <lastmod>2019-08-09T17:14:27+08:00</lastmod>
         <priority>0</priority>
     </url>
@@ -164,14 +169,14 @@
     </url>
     
     <url>
-        <loc>http://mospany.github.io/tags/dpdk/</loc>
+        <loc>http://mospany.github.io/2016/09/06/dpdk-develop-notes/</loc>
         <lastmod>2016-09-06T19:37:20+08:00</lastmod>
-        <priority>0</priority>
     </url>
     
     <url>
-        <loc>http://mospany.github.io/2016/09/06/dpdk-develop-notes/</loc>
+        <loc>http://mospany.github.io/tags/dpdk/</loc>
         <lastmod>2016-09-06T19:37:20+08:00</lastmod>
+        <priority>0</priority>
     </url>
     
     <url>

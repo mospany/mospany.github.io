@@ -6,10 +6,19 @@
     <description>Recent content in Posts on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Fri, 09 Aug 2019 17:14:27 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 11 Aug 2019 05:54:34 +0800</lastBuildDate>
     
 	<atom:link href="http://mospany.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>又见春哥，OR沙龙现场记实</title>
+      <link>http://mospany.github.io/2019/08/11/openresty-salon-site-record/</link>
+      <pubDate>Sun, 11 Aug 2019 05:54:34 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2019/08/11/openresty-salon-site-record/</guid>
+      <description>引言 第一次见到春哥本尊(活体)是在2015年是在360举行的openresty大会，历经4年再次在北京现场感受春哥技术热情与现场号召力，即使</description>
+    </item>
     
     <item>
       <title>IPv6技术概览</title>

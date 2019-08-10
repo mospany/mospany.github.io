@@ -1,0 +1,28 @@
++++
+toc = true
+categories = ["技术文章"]
+date = "2019-08-11T05:54:34+08:00"
+description = ""
+keywords = ["openresty","OR"]
+tagss = ["openresty","OR"]
+title = "又见春哥，OR沙龙现场记实"
+url = "/2019/08/11/openresty-salon-site-record/"
+
++++
+
+[[http://blog.mospan.cn/post/img/2019/openresty-salon/main.jpeg]]
+
+* 引言
+  第一次见到春哥本尊(活体)是在2015年是在360举行的openresty大会，历经4年再次在北京现场感受春哥技术热情与现场号召力，即使收了99元门票费现场200个座位座无虚席， 就像开个人演唱会一样，一个人演讲一下午非常辛苦，没有人提前离开，可见春哥在技术圈的影响力。这么说吧， 在中国认为最能拿得出手的开源项目就两个，一个是章文嵩博士开启现在比较稳定变化不大的[[http://zh.linuxvirtualserver.org/][LVS]]项目， 另外一个是章宜春发起在全球广泛使用还在蓬勃发展的[[https://openresty.org/cn/][openresty]]项目，可以说双章把中国开源技术带到世界先进水平。
+  这次大会春哥认真准备了4份PPT，现场演示了很多技巧，亮点多多，我个人认为最大的亮点有：
+  - 动态追踪技术
+  - 各种小语言及周边库建设 
+  - 编程与禅修
+  - ...
+
+* 会议流程
+*Openresty北京技术沙龙*
+- 时间：8 月 10 日（周六）13:30-19:00
+- 地点：北京丽都皇冠假日酒店（北京朝阳区将台路6号）酒店二层宴会厅A
+[[http://blog.mospan.cn/post/img/2019/openresty-salon/meeting.jpeg]]
+

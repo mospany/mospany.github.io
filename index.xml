@@ -5,7 +5,46 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Fri, 09 Aug 2019 17:14:27 CST</updated>
+        <updated>Sun, 11 Aug 2019 05:54:34 CST</updated>
+        
+        <item>
+            <title>又见春哥，OR沙龙现场记实</title>
+            <link>http://mospany.github.io/2019/08/11/openresty-salon-site-record/</link>
+            <pubDate>Sun, 11 Aug 2019 05:54:34 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://mospany.github.io/2019/08/11/openresty-salon-site-record/</guid>
+            <description>
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/openresty-salon/main.jpeg&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgeb9e300&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;引言&#34;&gt;引言&lt;/h1&gt;
+
+&lt;p&gt;第一次见到春哥本尊(活体)是在2015年是在360举行的openresty大会，历经4年再次在北京现场感受春哥技术热情与现场号召力，即使收了99元门票费现场200个座位座无虚席， 就像开个人演唱会一样，一个人演讲一下午非常辛苦，没有人提前离开，可见春哥在技术圈的影响力。这么说吧， 在中国认为最能拿得出手的开源项目就两个，一个是章文嵩博士开启现在比较稳定变化不大的&lt;a href=&#34;http://zh.linuxvirtualserver.org/&#34;&gt;LVS&lt;/a&gt;项目， 另外一个是章宜春发起在全球广泛使用还在蓬勃发展的&lt;a href=&#34;https://openresty.org/cn/&#34;&gt;openresty&lt;/a&gt;项目，可以说双章把中国开源技术带到世界先进水平。
+这次大会春哥认真准备了4份PPT，现场演示了很多技巧，亮点多多，我个人认为最大的亮点有：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;动态追踪技术&lt;/li&gt;
+&lt;li&gt;各种小语言及周边库建设&lt;/li&gt;
+&lt;li&gt;编程与禅修&lt;/li&gt;
+&lt;li&gt;&amp;#x2026;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a id=&#34;org67685b4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;会议流程&#34;&gt;会议流程&lt;/h1&gt;
+
+&lt;p&gt;&lt;strong&gt;Openresty北京技术沙龙&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;时间：8 月 10 日（周六）13:30-19:00&lt;/li&gt;
+&lt;li&gt;地点：北京丽都皇冠假日酒店（北京朝阳区将台路6号）酒店二层宴会厅A&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/openresty-salon/meeting.jpeg&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+</description>
+        </item>
         
         <item>
             <title>IPv6技术概览</title>
@@ -6171,60 +6210,6 @@ tags        A tags match to select entries that should contribute.  See
 
 &lt;p&gt;显示如下图红色框内显示：
 &lt;img src=&#34;http://blog.mospan.cn/post/img/my-blog-add-pagination.png&#34; alt=&#34;文章列表分页显示&#34; /&gt;&lt;/p&gt;
-</description>
-        </item>
-        
-        <item>
-            <title>怎样才能拥有个人独立域名邮箱？</title>
-            <link>http://mospany.github.io/2016/03/31/independent-mailbox/</link>
-            <pubDate>Thu, 31 Mar 2016 21:11:24 CST</pubDate>
-            <author>Mospan</author>
-            <guid>http://mospany.github.io/2016/03/31/independent-mailbox/</guid>
-            <description>
-
-&lt;h1 id=&#34;背景&#34;&gt;背景&lt;/h1&gt;
-
-&lt;p&gt;在创建开源项目或小团队创业初期，由于没有精力或财力自己搭建内部邮件服务器，为了使大家沟通更顺畅更一致，也为了与客户沟通显得更加专业一些，拥有一致的独立域名邮箱显得也挺重要的。
-那么可以借助于网上成熟的免费企业邮箱来配置自己的独立域名邮箱也可以达到效果，只不过私密邮件的安全问题自己掂量好就行。&lt;/p&gt;
-
-&lt;h1 id=&#34;前提条件&#34;&gt;前提条件&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;先拥有自己的域名，申请方式从略。&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;其次把自己的域名托管到授权DNS服务器上，例如: &lt;a href=&#34;www.dnspod.cn&#34;&gt;DNSPod&lt;/a&gt;, &lt;a href=&#34;http://www.cloudxns.net/&#34;&gt;CloudXNS&lt;/a&gt;等等。&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;申请配置步骤&#34;&gt;申请配置步骤&lt;/h1&gt;
-
-&lt;ol&gt;
-&lt;li&gt;打开&lt;a href=&#34;http://ym.163.com/&#34;&gt;网易免费企业邮&lt;/a&gt;按照提示说明进行注册与登陆。&lt;/li&gt;
-&lt;li&gt;登陆到自己域名托管商网站进行域名配置：
-
-&lt;ul&gt;
-&lt;li&gt;配置MX记录指向mx.ym.163.com.&lt;/li&gt;
-&lt;li&gt;配置TXT记录为&amp;rdquo;v=spf1 include:spf.163.com ~all&amp;rdquo;, 这一条是为防止其他的邮件服务器把该地址列为垃圾邮件处理。
-配置界面大致如下：
-&lt;img src=&#34;http://blog.mospan.cn/post/img/mospan-mailbox-dns-setting.png&#34; alt=&#34;个人邮箱DNS配置界面&#34; /&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h1 id=&#34;使用说明&#34;&gt;使用说明&lt;/h1&gt;
-
-&lt;ol&gt;
-&lt;li&gt;这里管理页面，可以增加新的账号，同时可以注销企业邮箱。
- &lt;img src=&#34;http://blog.mospan.cn/post/img/mospan-mail-inbox.png&#34; alt=&#34;管理页面&#34; /&gt;&lt;/li&gt;
-&lt;li&gt;成员列表界面可以对该域名下的所有邮箱进行管理。
- &lt;img src=&#34;http://blog.mospan.cn/post/img/mospan-mailbox-members.png&#34; alt=&#34;成员列表界面&#34; /&gt;&lt;/li&gt;
-&lt;li&gt;邮件组界面可以对各个成员进行分组管理，以便好统一发送接收邮件。
- &lt;img src=&#34;http://blog.mospan.cn/post/img/mospan-mailbox-group.png&#34; alt=&#34;邮件组管理界面&#34; /&gt;&lt;/li&gt;
-&lt;li&gt;邮箱页面，很简洁，也很方便，网易做了那么多年的邮箱也是可以放心的，很棒。
- &lt;img src=&#34;http://blog.mospan.cn/post/img/mospan-mail-inbox.png&#34; alt=&#34;&#34; /&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h1 id=&#34;结语&#34;&gt;结语&lt;/h1&gt;
-
-&lt;p&gt;通过上述的步骤就可以像那么回事的使用个人独立域名邮箱了。&lt;/p&gt;
 </description>
         </item>
         

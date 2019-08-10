@@ -3,18 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <base href="http://mospany.github.io/">
-  <title>我的博客演进之路(05)--添加访问统计 - 墨斯潘園</title>
+  <title>又见春哥，OR沙龙现场记实 - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
-  <meta name="keywords" content="博客,访问统计,">
-  <meta name="description" content="添加博客访问统计功能，以便了解访问量情况。">
+  <meta name="keywords" content="openresty,OR,">
+  <meta name="description" content="引言 第一次见到春哥本尊(活体)是在2015年是在360举行的openresty大会，历经4年再次在北京现场感受春哥技术热情与现场号召力，即使">
   <meta name="author" content="mospan">
-  <meta itemprop="name" content="我的博客演进之路(05)--添加访问统计 - 墨斯潘園">
-  <meta itemprop="description" content="添加博客访问统计功能，以便了解访问量情况。">
+  <meta itemprop="name" content="又见春哥，OR沙龙现场记实 - 墨斯潘園">
+  <meta itemprop="description" content="引言 第一次见到春哥本尊(活体)是在2015年是在360举行的openresty大会，历经4年再次在北京现场感受春哥技术热情与现场号召力，即使">
   <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
-  <meta name="twitter:title" content="我的博客演进之路(05)--添加访问统计 - 墨斯潘園" />
-  <meta name="twitter:description" content="添加博客访问统计功能，以便了解访问量情况。" />
+  <meta name="twitter:title" content="又见春哥，OR沙龙现场记实 - 墨斯潘園" />
+  
+  <meta name="twitter:description" content="">
   <link rel="shortcut icon" href="img/favicon.ico"/>
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png" />
@@ -62,7 +63,7 @@
 	<article itemprop="articleBody">
     <header class="article-info clearfix">
   <h1 itemprop="name">
-      <a href="http://mospany.github.io/2016/02/21/my-blog-add-visit-counter/" title="我的博客演进之路(05)--添加访问统计" itemprop="url">我的博客演进之路(05)--添加访问统计</a>
+      <a href="http://mospany.github.io/2019/08/11/openresty-salon-site-record/" title="又见春哥，OR沙龙现场记实" itemprop="url">又见春哥，OR沙龙现场记实</a>
   </h1>
   <p class="article-author">By 
     
@@ -70,76 +71,52 @@
     
   </p>
   <p class="article-time">
-    <time datetime="2016-02-21 09:52:16 &#43;0800 CST" itemprop="datePublished">2016年02月21日</time>
+    <time datetime="2019-08-11 05:54:34 &#43;0800 CST" itemprop="datePublished">2019年08月11日</time>
   </p>
 </header>
 
 	<div class="article-content">
     
+		<div class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+      <nav id="TableOfContents">
+<ul>
+<li><a href="#引言">引言</a></li>
+<li><a href="#会议流程">会议流程</a></li>
+</ul>
+</nav>
+		</div>
+    
     
 
-<h1 id="申请">申请</h1>
+<p><img src="http://blog.mospan.cn/post/img/2019/openresty-salon/main.jpeg" alt="img" /></p>
 
-<h2 id="注册">注册</h2>
+<p><a id="orgeb9e300"></a></p>
 
-<p>登陆到<a href="http://www.amazingcounters.com/">amazingcounters</a>进行账号注册。</p>
+<h1 id="引言">引言</h1>
 
-<h2 id="申请-1">申请</h2>
+<p>第一次见到春哥本尊(活体)是在2015年是在360举行的openresty大会，历经4年再次在北京现场感受春哥技术热情与现场号召力，即使收了99元门票费现场200个座位座无虚席， 就像开个人演唱会一样，一个人演讲一下午非常辛苦，没有人提前离开，可见春哥在技术圈的影响力。这么说吧， 在中国认为最能拿得出手的开源项目就两个，一个是章文嵩博士开启现在比较稳定变化不大的<a href="http://zh.linuxvirtualserver.org/">LVS</a>项目， 另外一个是章宜春发起在全球广泛使用还在蓬勃发展的<a href="https://openresty.org/cn/">openresty</a>项目，可以说双章把中国开源技术带到世界先进水平。
+这次大会春哥认真准备了4份PPT，现场演示了很多技巧，亮点多多，我个人认为最大的亮点有：</p>
 
-<p>大致原理为通过注册把自己的域名与统计网站关联后，生成一段html代码拷贝到自己网站上相应显示位置即可。申请步骤如下：</p>
+<ul>
+<li>动态追踪技术</li>
+<li>各种小语言及周边库建设</li>
+<li>编程与禅修</li>
+<li>&#x2026;</li>
+</ul>
 
-<p>1.点击“创建” 。</p>
+<p><a id="org67685b4"></a></p>
 
-<p><img src="http://blog.mospan.cn/post/img/my-blog-add-visit-counter_1.png" alt="开始创建" /></p>
+<h1 id="会议流程">会议流程</h1>
 
-<p>2.选择统计显示样式。</p>
+<p><strong>Openresty北京技术沙龙</strong></p>
 
-<p><img src="http://blog.mospan.cn/post/img/my-blog-add-visit-counter_2.png" alt="选择显示样式" /></p>
+<ul>
+<li>时间：8 月 10 日（周六）13:30-19:00</li>
+<li>地点：北京丽都皇冠假日酒店（北京朝阳区将台路6号）酒店二层宴会厅A</li>
+</ul>
 
-<p>3.选择完进入下一步</p>
-
-<p><img src="http://blog.mospan.cn/post/img/my-blog-add-visit-counter_3.png" alt="显示样式后下一步" /></p>
-
-<p>4.填写网站关联信息</p>
-
-<p><img src="http://blog.mospan.cn/post/img/my-blog-add-visit-counter_4.png" alt="填写网站关联信息" /></p>
-
-<p>5.生成关联html并拷贝下来</p>
-
-<p><img src="http://blog.mospan.cn/post/img/my-blog-add-visit-counter_5.png" alt="生成关联html" /></p>
-
-<h1 id="使用">使用</h1>
-
-<p>首先，在本博客源码新建文件：themes/rapid/layouts/partials/visit.counter.html,内容如下：</p>
-
-<pre><code class="language-html">  &lt;!-- 添加访问统计--&gt;
-  &lt;div align=&quot;center&quot; &gt;
-   &lt;p&gt;访问人数:  
-    &lt;a href=&quot;http://www.amazingcounters.com&quot;&gt;
-     &lt;img border=&quot;0&quot; src=&quot;http://cc.amazingcounters.com/counter.php?i=xxxxxx&amp;c=xxxxx&quot; alt=&quot;UV&quot; title=&quot;访问人数&quot;&gt;
-    &lt;/a&gt;
-   &lt;/p&gt;
-  &lt;/div&gt;
-  &lt;div align=&quot;center&quot;&gt;
-   &lt;p&gt;总访问量:
-    &lt;a href=&quot;http://www.amazingcounters.com&quot;&gt;
-     &lt;img border=&quot;0&quot; src=&quot;http://cc.amazingcounters.com/counter.php?i=xxxxx&amp;c=xxxxx&quot; alt=&quot;PV&quot; title=&quot;总访问量&quot;&gt;
-    &lt;/a&gt;
-   &lt;/p&gt;
-  &lt;/div&gt;
-</code></pre>
-
-<p>其次，在该显示的html文件(themes/rapid/layouts/partials/sidebarLeft.html与themes/rapid/layouts/partials/sidebarLeftCategories.html)调用如上文件即可。</p>
-
-<pre><code class="language-html">    {{ partial &quot;visit.counter.html&quot; . }}
-    {{ partial &quot;wechat.html&quot; . }}
-</code></pre>
-
-<h1 id="效果">效果</h1>
-
-<p>显示效果如下：</p>
-
-<p><img src="http://blog.mospan.cn/post/img/my-blog-add-visit-counter-result.png" alt="访问统计显示效果" /></p>
+<p><img src="http://blog.mospan.cn/post/img/2019/openresty-salon/meeting.jpeg" alt="img" /></p>
 
     <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
   <div style="float:right;margin-top:0px;">
@@ -152,7 +129,7 @@
   <div>
     <p style="margin-top:0px;">作者：<a target="_blank" href="http://blog.mospan.cn/">mospan</a>
       <br />微信关注：墨斯潘園
-      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2016/02/21/my-blog-add-visit-counter/">http://mospany.github.io/2016/02/21/my-blog-add-visit-counter/</a>
+      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2019/08/11/openresty-salon-site-record/">http://mospany.github.io/2019/08/11/openresty-salon-site-record/</a>
       <br />
       文章版权归本人所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
   </div>
@@ -163,26 +140,8 @@
   <footer class="article-footer clearfix">
   
 
-<div class="article-tags">
-  <span></span>
-  
-  <a href="/tags/%E5%8D%9A%E5%AE%A2">博客</a>
-  
-</div>
-
-
-
-<div class="article-categories">
-  <span></span>
-  
-  <a class="article-category-link" href="/categories/%E5%8D%9A%E5%AE%A2">博客</a>
-  
-</div>
-
-
-
   <div class="article-share" id="share">
-    <div data-url="http://mospany.github.io/2016/02/21/my-blog-add-visit-counter/" data-title="我的博客演进之路(05)--添加访问统计" data-tsina="3833537679" class="share clearfix">
+    <div data-url="http://mospany.github.io/2019/08/11/openresty-salon-site-record/" data-title="又见春哥，OR沙龙现场记实" data-tsina="3833537679" class="share clearfix">
     </div>
   </div>
 </footer>
