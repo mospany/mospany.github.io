@@ -17,7 +17,7 @@
 
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/openresty-salon/main.jpeg&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgeb9e300&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgbe7fbb9&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;引言&#34;&gt;引言&lt;/h1&gt;
 
@@ -31,7 +31,10 @@
 &lt;li&gt;&amp;#x2026;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a id=&#34;org67685b4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;免责声明&lt;/strong&gt;
+如下为本人记录本次技术沙龙部分精要和个人理解，如有错误之处，欢迎指正。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orge0a96ba&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;会议流程&#34;&gt;会议流程&lt;/h1&gt;
 
@@ -43,6 +46,227 @@
 &lt;/ul&gt;
 
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/openresty-salon/meeting.jpeg&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org731738c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;部分精要&#34;&gt;部分精要&lt;/h1&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgae2f336&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;应用开发&#34;&gt;应用开发&lt;/h2&gt;
+
+&lt;p&gt;基于Openresty开发应用的优势：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;小巧&lt;/strong&gt;: lua作为嵌入式脚本放在openresty和游戏中开发很小巧&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;高效&lt;/strong&gt;: lua开发非常高效，比用C开发nginx模块要高效很多，入门门槛也低。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;成熟稳定&lt;/strong&gt;: 已经大规模广泛商业应用，尤其现在CDN行业基本都用openresty作为前端。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;全动态&lt;/strong&gt;: 可以通过edge语言生成不用重启即可生效，程序既数据，数据既程序。&lt;/li&gt;
+&lt;li&gt;&amp;#x2026;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/openresty-salon/compare-go.jpeg&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org6d60254&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;应用场景&#34;&gt;应用场景&lt;/h2&gt;
+
+&lt;p&gt;刚开始写openresty主要是想通过它来做一个完整的blog，包含前后端的webserver，目前ope 做着做着发现在CDN领域应该广泛，它主要应用场景:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;命令行应用(编译器、系统编程工具、测试工具)&lt;/li&gt;
+&lt;li&gt;网关类型应用(API、负载均衡、CDN等)&lt;/li&gt;
+&lt;li&gt;Web应用(连接数据库、memcached、redis等等)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a id=&#34;orga82b642&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;测试驱动&#34;&gt;测试驱动&lt;/h3&gt;
+
+&lt;p&gt;现在主要通过测试驱动学习、测试驱动开发方法，早期主要抄书，通过肌肉记忆，当抄到一大半时候不懂的慢慢就懂了，看似抄书节奏放慢其实可以更好的理解，书读百遍其义自现。早期抄书有些时候主要是书都是借的，不抄的话以后就看不到了，还透露有些书废寝忘食的抄完后，朋友看自己那么喜欢这本书就说这本书就送给你吧，自己哭笑不得，白抄那么累了。&lt;/p&gt;
+
+&lt;p&gt;自己怎么在两三月内精通nginx核心会开发C模块，一边抄代码一边通过&lt;a href=&#34;https://metacpan.org/pod/Test:Nginx&#34;&gt;Test:Nginx&lt;/a&gt;测试驱动学习开发。它的第一个nginx开源项目&lt;a href=&#34;https://github.com/openresty/echo-nginx-module&#34;&gt;echo-nginx-module&lt;/a&gt;是这样完成的，即使现在还是很多人学习入手nginx的基础, nginx echo模块是在nginx程序上扩展了echo输出字符的功能, 对于调试很方便。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgb810c07&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;resty-cli&#34;&gt;Resty CLI&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;resty -e &#39;ngx.(&amp;quot;hello,world!&amp;quot;)
+
+restydoc ngx.pipe
+
+restydoc -s content_by_lua
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;orge6eaafd&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;resty&#34;&gt;resty&lt;/h3&gt;
+
+&lt;p&gt;resty-cli - OpenResty的高级命令行实用程序，可以像使用 lua 或者 luajit 命令行工具一样直接从命令行运行 resty 命令行实用程序来运行openresty脚本。 它可以使用 OpenResty Lua创建各种命令行实用程序， 现场演示了下该命令与其他语言如python、perl、nodejs等性能对比，都优于python、nodejs。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgebad122&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;restydoc&#34;&gt;restydoc&lt;/h3&gt;
+
+&lt;p&gt;OpenResty 附带了非常完善的用户参考手册 restydoc，提供与 UNIX 手册 man 相同的功能，可以检索 OpenResty 里所有组件的帮助文档，包括但不限于：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;OpenResty 各个组件的介绍和用法；&lt;/li&gt;
+&lt;li&gt;OpenResty 指令和功能接口的用法；&lt;/li&gt;
+&lt;li&gt;Nginx 介绍、用法、基本工作原理；&lt;/li&gt;
+&lt;li&gt;Lua/LuaJIT 语法要素。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a id=&#34;org85f1347&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;调试与调优&#34;&gt;调试与调优&lt;/h2&gt;
+
+&lt;p&gt;通过打印日志可以解决大部分的问题，通过动态追踪可以解决高层次的问题。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;打印日志&lt;/li&gt;
+&lt;li&gt;测试驱动&lt;/li&gt;
+&lt;li&gt;动态追踪(火焰图、SystemTap、GDB、OpenResty Trace)&lt;/li&gt;
+&lt;li&gt;Openresty Cloud&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgac11789&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;如何编写高效的lua代码&#34;&gt;如何编写高效的Lua代码&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;避免或减少在热代码路径上创建GC对象(string、table、function)&lt;/li&gt;
+&lt;li&gt;lua-tablepool&lt;/li&gt;
+&lt;li&gt;避免闭包&lt;/li&gt;
+&lt;li&gt;尽量使用Lua模块&lt;/li&gt;
+&lt;li&gt;拼接字符串的正确做法&lt;/li&gt;
+&lt;li&gt;让热代码路径被JIT编译&lt;/li&gt;
+&lt;li&gt;自动优化的可能性(lux编译器)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgfb483ca&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;更多的开源教程与演示视频&#34;&gt;更多的开源教程与演示视频&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;blog.openresty.com&lt;/li&gt;
+&lt;li&gt;youtube/bilibili&lt;/li&gt;
+&lt;li&gt;由Openresty Showman批量制作&lt;/li&gt;
+&lt;li&gt;由Openresty Trace展示软件内部真实细节&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgbff1b17&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;怎样阅读openresty源码&#34;&gt;怎样阅读openresty源码&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Nginx核心&lt;/li&gt;
+&lt;li&gt;LuaJit核心&lt;/li&gt;
+&lt;li&gt;ngx_http_lua等模块&lt;/li&gt;
+&lt;li&gt;lua-resty-*标准库&lt;/li&gt;
+&lt;li&gt;按需阅读，只读核心代码路径&lt;/li&gt;
+&lt;li&gt;学习代码风格规范: &lt;a href=&#34;https://openresty.org/en/c-coding-style-guide.html&#34;&gt;https://openresty.org/en/c-coding-style-guide.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a id=&#34;org05de733&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;核心开发&#34;&gt;核心开发&lt;/h1&gt;
+
+&lt;p&gt;核心开发主要讲解主题如下，由于没有完全听懂先列出主题，以后再分解。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Openresty核心结构&lt;/li&gt;
+&lt;li&gt;luajit内部实现结构&lt;/li&gt;
+&lt;li&gt;全新的基于luajit ffi的Lua API实现&lt;/li&gt;
+&lt;li&gt;全新的ngx_meta_lua模块&lt;/li&gt;
+&lt;li&gt;Test:Nginx测试台&lt;/li&gt;
+&lt;li&gt;valgrind测试模式&lt;/li&gt;
+&lt;li&gt;mockeagain测试模式&lt;/li&gt;
+&lt;li&gt;memcheck模式&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/openresty-salon/test-nginx.jpeg&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgfac76d2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;小语言与周边建设&#34;&gt;小语言与周边建设&lt;/h1&gt;
+
+&lt;p&gt;春哥曾经说过要学习好技术，主要是：英语、数学、计算机科学，我个人认为计算机科学里最主要的是计算机操作系统、算法、编译原理，曾经有个老师说如何衡量你对某个语言的理解程度，就看你是否自己写出其编译器，再用自己写的编译器与官方编译器对比，就是你对这个语言的理解程度，到目前为止个人还没写过编译器表示汗颜。 他本次分享自己写的小语言如下：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;OpsLang: 更高效更智能的自动化运维语言&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;OpsLang 快速上手
+&lt;a href=&#34;https://doc.openresty.com.cn/zh/opslang/&#34;&gt;https://doc.openresty.com.cn/zh/opslang/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/openresty-salon/opslang.jpeg&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;edgelang: 更加接近自然语言，使用更短的语句可翻译生成lua代码&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Edge 语言用户手册
+&lt;a href=&#34;https://doc.openresty.com.cn/zh/edgelang/&#34;&gt;https://doc.openresty.com.cn/zh/edgelang/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/openresty-salon/edgelang.jpeg&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;fanlang: 类似DSL基于Perl 6语言的语法设计&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;fanlang 用户手册
+&lt;a href=&#34;https://doc.openresty.com.cn/en/fanlang/&#34;&gt;https://doc.openresty.com.cn/en/fanlang/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/openresty-salon/fanlang.jpeg&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;ylang:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Ylang 用户手册
+&lt;a href=&#34;https://doc.openresty.com.cn/en/ylang/&#34;&gt;https://doc.openresty.com.cn/en/ylang/&lt;/a&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;ylua:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Ylua 用户手册
+&lt;a href=&#34;https://doc.openresty.com.cn/en/ylua/&#34;&gt;https://doc.openresty.com.cn/en/ylua/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgb9642fe&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;动态追踪&#34;&gt;动态追踪&lt;/h1&gt;
+
+&lt;p&gt;动态追踪技术是一种不用停机停程序、不用修改当前代码情况下的一种调试调优技术，它的一般原理如下：
+&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/openresty-salon/dtrace.jpeg&#34; alt=&#34;img&#34; /&gt;
+他还现场演示了如何使用动态追踪技术观察程序内部真实细节和不改代码加入探针调试，大致原理是把各种语言都编译成ylang中间语言进行调试。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/openresty-salon/dtrace-stats.jpeg&#34; alt=&#34;img&#34; /&gt;
+&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/openresty-salon/dtrace-lua.jpeg&#34; alt=&#34;img&#34; /&gt;
+&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/openresty-salon/dtrace-c.jpeg&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;动态追踪技术详见春哥写的：&lt;a href=&#34;https://openresty.org/posts/dynamic-tracing/&#34;&gt;动态追踪技术漫谈&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgf244bdd&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;编程与禅修&#34;&gt;编程与禅修&lt;/h1&gt;
+
+&lt;p&gt;技术的尽头是宗教，炒币的尽头是嫩模，编程就像学习各种武功，当武功越高毒素越多，需要像佛法之类的心法来综合，一个修外一个修内，武功越高需要的佛法也越高，否则会走火入魔的。&lt;/p&gt;
+
+&lt;p&gt;人们通常说的四禅八定，属于修世间禅的层次和境界。世间禅的禅定层次恰好与三界层次一样，三界是欲界、色界、无色界。世间禅中，欲界中的定有欲界定、未到地定两种。佛家认为，这两种所谓的定，不能算是真正的人定，只是达到身心初步的轻安，为进人四禅八定作准备而已。四禅八定指初禅、二禅、三禅、四禅及空无边处定、识无边处定、无所有处定、非想非非想处定八种依次升进的坐禅人定层次和境界。坐禅者人定，如果依次达到初禅、二禅、三禅、四禅四种境界，就能自然达到脱离欲界众生共同具有的饮食男女之欲，但心念中仍有固定形态的物质身体存在，故名色界四禅。坐禅者如果修过色界四禅，再依次人空无边处定、识无边处定、无所有处定、非想非非想处定四种定者，修持者意识中已没有物质身体的存在，故名无色界四定，也叫四空定。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org25b3296&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;推荐书&#34;&gt;推荐书&lt;/h1&gt;
+
+&lt;p&gt;春哥在会上唯一推荐的书是《&lt;a href=&#34;https://item.jd.com/43659041937.html&#34;&gt;The Practice of Programming&lt;/a&gt;》, 对应的中文版为《&lt;a href=&#34;https://item.jd.com/31648488755.html&#34;&gt;程序设计实践&lt;/a&gt;》,建议读英文版本，春哥说这本书读了很多年很多次，每次读都有新的体会新的收获。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org3beb885&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;小结&#34;&gt;小结&lt;/h1&gt;
+
+&lt;p&gt;一如技术深似海(可能还没入门), 同样是80后人与人差距啥这么大呢，有些时候感觉人与人之间的差距甚至大于人与动物之间的差距，路漫漫其修远兮，吾将上下而求索。&lt;/p&gt;
 </description>
         </item>
         
