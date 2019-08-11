@@ -71,7 +71,7 @@
 
 &lt;h2 id=&#34;应用场景&#34;&gt;应用场景&lt;/h2&gt;
 
-&lt;p&gt;刚开始写openresty主要是想通过它来做一个完整的blog，包含前后端的webserver，目前ope 做着做着发现在CDN领域应该广泛，它主要应用场景:&lt;/p&gt;
+&lt;p&gt;刚开始写openresty主要是想通过它来做一个完整的blog，包含前后端的webserver，目前openresty做着做着发现在CDN领域应该广泛，它主要应用场景:&lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;命令行应用(编译器、系统编程工具、测试工具)&lt;/li&gt;

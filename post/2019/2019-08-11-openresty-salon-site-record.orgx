@@ -1,5 +1,4 @@
 +++
-toc = true
 categories = ["技术文章"]
 date = "2019-08-11T05:54:34+08:00"
 description = ""
@@ -40,7 +39,7 @@ url = "/2019/08/11/openresty-salon-site-record/"
 [[http://blog.mospan.cn/post/img/2019/openresty-salon/compare-go.jpeg]]
 
 ** 应用场景
-   刚开始写openresty主要是想通过它来做一个完整的blog，包含前后端的webserver，目前ope 做着做着发现在CDN领域应该广泛，它主要应用场景:
+   刚开始写openresty主要是想通过它来做一个完整的blog，包含前后端的webserver，目前openresty 做着做着发现在CDN领域应该广泛，它主要应用场景:
    - 命令行应用(编译器、系统编程工具、测试工具)
    - 网关类型应用(API、负载均衡、CDN等)
    - Web应用(连接数据库、memcached、redis等等)
