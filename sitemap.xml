@@ -30,7 +30,19 @@
     </url>
     
     <url>
+        <loc>http://mospany.github.io/tags/</loc>
+        <lastmod>2019-08-09T17:14:27+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
         <loc>http://mospany.github.io/tags/ipv6/</loc>
+        <lastmod>2019-08-09T17:14:27+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/</loc>
         <lastmod>2019-08-09T17:14:27+08:00</lastmod>
         <priority>0</priority>
     </url>
@@ -38,12 +50,6 @@
     <url>
         <loc>http://mospany.github.io/2019/08/09/ipv6-base/</loc>
         <lastmod>2019-08-09T17:14:27+08:00</lastmod>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/</loc>
-        <lastmod>2019-08-09T17:14:27+08:00</lastmod>
-        <priority>0</priority>
     </url>
     
     <url>
@@ -169,14 +175,14 @@
     </url>
     
     <url>
-        <loc>http://mospany.github.io/2016/09/06/dpdk-develop-notes/</loc>
-        <lastmod>2016-09-06T19:37:20+08:00</lastmod>
-    </url>
-    
-    <url>
         <loc>http://mospany.github.io/tags/dpdk/</loc>
         <lastmod>2016-09-06T19:37:20+08:00</lastmod>
         <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/2016/09/06/dpdk-develop-notes/</loc>
+        <lastmod>2016-09-06T19:37:20+08:00</lastmod>
     </url>
     
     <url>

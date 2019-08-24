@@ -271,14 +271,16 @@ restydoc -s content_by_lua
         </item>
         
         <item>
-            <title>IPv6技术概览</title>
+            <title>总有你所不知的IPv6</title>
             <link>http://mospany.github.io/2019/08/09/ipv6-base/</link>
             <pubDate>Fri, 09 Aug 2019 17:14:27 CST</pubDate>
             <author>Mospan</author>
             <guid>http://mospany.github.io/2019/08/09/ipv6-base/</guid>
             <description>
 
-&lt;p&gt;&lt;a id=&#34;org98e0a5b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-main.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org7153db2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;为什么要用ipv6&#34;&gt;为什么要用IPv6&lt;/h1&gt;
 
@@ -289,7 +291,7 @@ restydoc -s content_by_lua
 &lt;li&gt;政策驱动: 计划使用5-10年的时间建成全球最大的IPv6商用网络。&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgdb141c5&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org99df977&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;ipv6优势&#34;&gt;IPv6优势&lt;/h1&gt;
 
@@ -302,11 +304,246 @@ restydoc -s content_by_lua
 &lt;li&gt;编址层次等级&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a id=&#34;org9746832&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgd95f7b9&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
-&lt;h1 id=&#34;ipv6技术-x2013-标准-rfc&#34;&gt;IPv6技术&amp;#x2013;标准(RFC)&lt;/h1&gt;
+&lt;h1 id=&#34;ipv6技术&#34;&gt;IPv6技术&lt;/h1&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-rfc.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgdb662b7&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;标准-rfc&#34;&gt;标准(RFC)&lt;/h2&gt;
+
+&lt;p&gt;IPv6协议族RFC如下， 其中&lt;br /&gt;
+&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-rfc.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org5206c42&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;报文格式&#34;&gt;报文格式&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-header.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org86e63ec&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;地址&#34;&gt;地址&lt;/h2&gt;
+
+&lt;p&gt;巨大的地址空间&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;IPv4&lt;/strong&gt;&lt;br /&gt;
+地址长度：32位&lt;br /&gt;
+地址空间：2的32次方，约42亿(世界上平均3个人有2个IP地址)&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;IPv6&lt;/strong&gt;&lt;br /&gt;
+地址长度：128位&lt;br /&gt;
+地址空间：2的128次方，约3.4 x 10^38个(地球上的每一粒沙子都有IP地址)&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgb5f4a26&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;表示&#34;&gt;表示&lt;/h3&gt;
+
+&lt;p&gt;非压缩： 2001:0da8:0207:0000:0000:0000:8207&lt;br /&gt;
+  压缩前导0：2001:0da8:0207:0:0:0:0:8207&lt;br /&gt;
+  压缩: 2001:0d08:0207::8207     注：只能有一个::&lt;br /&gt;
+  内嵌IPv4地址： ::192.168.1.1&lt;br /&gt;
+&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-addr.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org45240f2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;分类&#34;&gt;分类&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/ipv6-base/addr-type.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgc393d37&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;手工配置&#34;&gt;手工配置&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;添加IPv6地址&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ip -6 addr add &amp;lt;ipv6address&amp;gt;/&amp;lt;prefixlength&amp;gt; dev &amp;lt;interface&amp;gt;
+
+ip -6 addr add 2001::1/64 dev eth0
+
+ifconfig &amp;lt;interface&amp;gt; inet6 add &amp;lt;ipv6address&amp;gt;/&amp;lt;prefixlength&amp;gt; 
+
+ifconfig eth0 inet6 add 2001::1/64
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;添加默认路由&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ip -6 route add &amp;lt;ipv6address&amp;gt;/&amp;lt;prefixlength&amp;gt; via &amp;lt;ipv6address&amp;gt;
+
+ip -6 route add default via 2001::1 
+
+route -A inet6 add &amp;lt;ipv6address&amp;gt;/&amp;lt;prefixlength&amp;gt; gw
+
+route -A inet6 add default gw 2001::1 
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;查看路由&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ip -6 route show
+
+route -6
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgfceef90&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;无状态配置&#34;&gt;无状态配置&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/ipv6-base/auto-1.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/ipv6-base/auto-2.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgb9e21c6&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;常用命令&#34;&gt;常用命令&lt;/h2&gt;
+
+&lt;p&gt;&lt;a id=&#34;org0c8050d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;查看ip&#34;&gt;查看ip&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;ip -6 addr 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org6fb2aa2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;查看路由&#34;&gt;查看路由&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;ip -6 route
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org61af432&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;查看多播地址&#34;&gt;查看多播地址&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;ip -6 maddr
+netstat -gn
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org63ec676&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;查看dns-aaaa记录-走ipv4路线&#34;&gt;查看dns AAAA记录(走IPv4路线)&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;dig -t AAAA www.xxx.com
+nslookup -query=AAAA www.xxx.com
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org7daeb0d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;查看dns-aaaa记录-走ipv6路线&#34;&gt;查看dns AAAA记录(走IPv6路线)&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;dig @2001::1 -6 -t AAAA www.xxx.com
+nslookup -query=AAAA www.xxx.com 2001::1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;orga77ab52&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;查看dns-aaaa记录-走ipv6路线-最完整-最靠谱的办法&#34;&gt;查看dns AAAA记录(走IPv6路线, 最完整，最靠谱的办法)&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;dig @2001::1 -6 -t AAAA www.xxx.com +trace
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org45360d2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;curl&#34;&gt;curl&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;curl -6 https://www.xxx.com
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org057b4c5&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;ping&#34;&gt;ping&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;ping6 www.xxx.com
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org1c0cc11&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;trace-route&#34;&gt;trace route&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;mtr -6 www.xxx.com
+traceroute6 www.xxx.com 
+tracert6 www.xxx.com 
+tracepath6 www.xxx.com 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgc2abd09&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;ping-1&#34;&gt;ping&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;ping6 www.xxx.com
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgfff80fe&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;邻居地址解析-类似ipv4中的arping&#34;&gt;邻居地址解析，类似IPv4中的arping&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;ndisc6 -n 2001::1 eth0
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgd938f52&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;iptables&#34;&gt;iptables&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;ip6tables-save
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgadce995&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;tcpdump&#34;&gt;tcpdump&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;tcpdump -nnn -i eth0 ip6
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org256ec07&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;在线工具&#34;&gt;在线工具&lt;/h2&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgb504cc6&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;公共dns列列表&#34;&gt;公共dns列列表&lt;/h3&gt;
+
+&lt;p&gt;地址: &lt;a href=&#34;http://dns.icoa.cn/ipv6/&#34;&gt;http://dns.icoa.cn/ipv6/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org2375de0&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;查询-网站是否提供ipv6&#34;&gt;查询⽹网站是否提供IPv6&lt;/h3&gt;
+
+&lt;p&gt;地址:&lt;br /&gt;
+&lt;a href=&#34;https://ready.chair6.net/&#34;&gt;https://ready.chair6.net/&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&#34;http://ip6tools.com/#checkWebServer&#34;&gt;http://ip6tools.com/#checkWebServer&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orge79d392&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;查询我-自-己是否拥有公-网ipv6地址&#34;&gt;查询我⾃自⼰己是否拥有公⽹网IPv6地址&lt;/h3&gt;
+
+&lt;p&gt;地址：&lt;br /&gt;
+&lt;a href=&#34;http://www.test-ipv6.com&#34;&gt;http://www.test-ipv6.com&lt;/a&gt;&lt;br /&gt;
+&lt;a href=&#34;http://ip6tools.com/#WhatisMyIPv6Address&#34;&gt;http://ip6tools.com/#WhatisMyIPv6Address&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org48954cb&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;协议栈&#34;&gt;协议栈&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-stack.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org79e6a67&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;现状&#34;&gt;现状&lt;/h1&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-now.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgeab4d81&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;过渡技术&#34;&gt;过渡技术&lt;/h1&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-transit.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgc9070ad&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;展望&#34;&gt;展望&lt;/h1&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-preview.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 </description>
         </item>
         

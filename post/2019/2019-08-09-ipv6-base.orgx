@@ -1,14 +1,17 @@
 +++
+#+OPTIONS: \n:t
 toc = true
 categories = ["技术文章"]
 date = "2019-08-09T17:14:27+08:00"
 description = ""
 keywords = ["IPv6",""]
 tags = ["IPv6",""]
-title = "IPv6技术概览"
+title = "总有你所不知的IPv6"
 url = "/2019/08/09/ipv6-base/"
 
 +++
+
+  [[http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-main.png]]  
 
 * 为什么要用IPv6
   - IPv4地址匮乏
@@ -30,20 +33,150 @@ url = "/2019/08/09/ipv6-base/"
   [[http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-rfc.png]]  
 
 ** 报文格式
+  [[http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-header.png]]  
 
 ** 地址
+   巨大的地址空间
+
+   *IPv4*
+   地址长度：32位
+   地址空间：2的32次方，约42亿(世界上平均3个人有2个IP地址)
+   
+   *IPv6*
+   地址长度：128位
+   地址空间：2的128次方，约3.4 x 10^38个(地球上的每一粒沙子都有IP地址)
 *** 表示
+    非压缩： 2001:0da8:0207:0000:0000:0000:8207
+    压缩前导0：2001:0da8:0207:0:0:0:0:8207
+    压缩: 2001:0d08:0207::8207     注：只能有一个::
+    内嵌IPv4地址： ::192.168.1.1
+  [[http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-addr.png]]  
 *** 分类
+  [[http://blog.mospan.cn/post/img/2019/ipv6-base/addr-type.png]]  
 *** 手工配置
+**** 添加IPv6地址
+
+     #+BEGIN_SRC sh
+
+     ip -6 addr add <ipv6address>/<prefixlength> dev <interface>
+      
+     ip -6 addr add 2001::1/64 dev eth0
+     
+     ifconfig <interface> inet6 add <ipv6address>/<prefixlength> 
+
+     ifconfig eth0 inet6 add 2001::1/64
+     
+     #+END_SRC
+
+**** 添加默认路由
+     #+BEGIN_SRC sh
+     ip -6 route add <ipv6address>/<prefixlength> via <ipv6address>
+
+     ip -6 route add default via 2001::1 
+     
+     route -A inet6 add <ipv6address>/<prefixlength> gw
+
+     route -A inet6 add default gw 2001::1 
+     
+     #+END_SRC
+     
+**** 查看路由
+     #+BEGIN_SRC sh
+
+     ip -6 route show
+
+     route -6
+     
+     #+END_SRC
+
 *** 无状态配置
+
+  [[http://blog.mospan.cn/post/img/2019/ipv6-base/auto-1.png]]  
+
+  [[http://blog.mospan.cn/post/img/2019/ipv6-base/auto-2.png]]  
+
 ** 常用命令
+*** 查看ip
+    #+BEGIN_SRC sh
+    ip -6 addr 
+    #+END_SRC
+*** 查看路由
+    #+BEGIN_SRC sh
+    ip -6 route
+    #+END_SRC
+*** 查看多播地址
+    #+BEGIN_SRC sh
+    ip -6 maddr
+    netstat -gn
+    #+END_SRC
+*** 查看dns AAAA记录(走IPv4路线)
+    #+BEGIN_SRC sh
+    dig -t AAAA www.xxx.com
+    nslookup -query=AAAA www.xxx.com
+    #+END_SRC
+*** 查看dns AAAA记录(走IPv6路线)
+    #+BEGIN_SRC sh
+    dig @2001::1 -6 -t AAAA www.xxx.com
+    nslookup -query=AAAA www.xxx.com 2001::1
+    #+END_SRC
+*** 查看dns AAAA记录(走IPv6路线, 最完整，最靠谱的办法)
+    #+BEGIN_SRC sh
+    dig @2001::1 -6 -t AAAA www.xxx.com +trace
+    #+END_SRC
+*** curl
+    #+BEGIN_SRC sh
+    curl -6 https://www.xxx.com
+    #+END_SRC 
+*** ping
+    #+BEGIN_SRC sh
+    ping6 www.xxx.com
+    #+END_SRC
+*** trace route
+    #+BEGIN_SRC sh
+    mtr -6 www.xxx.com
+    traceroute6 www.xxx.com 
+    tracert6 www.xxx.com 
+    tracepath6 www.xxx.com 
+    #+END_SRC
+*** ping
+    #+BEGIN_SRC sh
+    ping6 www.xxx.com
+    #+END_SRC
+*** 邻居地址解析，类似IPv4中的arping 
+    #+BEGIN_SRC sh
+    ndisc6 -n 2001::1 eth0
+    #+END_SRC
+*** iptables
+    #+BEGIN_SRC sh
+    ip6tables-save
+    #+END_SRC
+*** tcpdump 
+    #+BEGIN_SRC sh
+    tcpdump -nnn -i eth0 ip6
+    #+END_SRC
 ** 在线工具
+*** 公共dns列列表
+    地址: http://dns.icoa.cn/ipv6/
+*** 查询⽹网站是否提供IPv6
+    地址:
+    https://ready.chair6.net/
+    http://ip6tools.com/#checkWebServer
+*** 查询我⾃自⼰己是否拥有公⽹网IPv6地址
+    地址：
+    http://www.test-ipv6.com
+    http://ip6tools.com/#WhatisMyIPv6Address
+
 ** 协议栈
+  [[http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-stack.png]]  
 
 * 现状
+
+  [[http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-now.png]]  
   
 * 过渡技术
+  
+  [[http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-transit.png]]  
 
 * 展望
-
+  [[http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-preview.png]]  
   

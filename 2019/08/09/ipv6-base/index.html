@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <base href="http://mospany.github.io/">
-  <title>IPv6技术概览 - 墨斯潘園</title>
+  <title>总有你所不知的IPv6 - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
-  <meta name="keywords" content="IPv6,">
+  <meta name="keywords" content="IPv6,,">
   <meta name="description" content="为什么要用IPv6 IPv4地址匮乏 NAT非根本解决办法，破坏了端到端模型 新技术对IP协议催生了更多的需求 政策驱动: 计划使用5-10年的时间建">
   <meta name="author" content="mospan">
-  <meta itemprop="name" content="IPv6技术概览 - 墨斯潘園">
+  <meta itemprop="name" content="总有你所不知的IPv6 - 墨斯潘園">
   <meta itemprop="description" content="为什么要用IPv6 IPv4地址匮乏 NAT非根本解决办法，破坏了端到端模型 新技术对IP协议催生了更多的需求 政策驱动: 计划使用5-10年的时间建">
   <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
-  <meta name="twitter:title" content="IPv6技术概览 - 墨斯潘園" />
+  <meta name="twitter:title" content="总有你所不知的IPv6 - 墨斯潘園" />
   
   <meta name="twitter:description" content="">
   <link rel="shortcut icon" href="img/favicon.ico"/>
@@ -63,7 +63,7 @@
 	<article itemprop="articleBody">
     <header class="article-info clearfix">
   <h1 itemprop="name">
-      <a href="http://mospany.github.io/2019/08/09/ipv6-base/" title="IPv6技术概览" itemprop="url">IPv6技术概览</a>
+      <a href="http://mospany.github.io/2019/08/09/ipv6-base/" title="总有你所不知的IPv6" itemprop="url">总有你所不知的IPv6</a>
   </h1>
   <p class="article-author">By 
     
@@ -83,14 +83,53 @@
 <ul>
 <li><a href="#为什么要用ipv6">为什么要用IPv6</a></li>
 <li><a href="#ipv6优势">IPv6优势</a></li>
-<li><a href="#ipv6技术-x2013-标准-rfc">IPv6技术&#x2013;标准(RFC)</a></li>
+<li><a href="#ipv6技术">IPv6技术</a>
+<ul>
+<li><a href="#标准-rfc">标准(RFC)</a></li>
+<li><a href="#报文格式">报文格式</a></li>
+<li><a href="#地址">地址</a>
+<ul>
+<li><a href="#表示">表示</a></li>
+<li><a href="#分类">分类</a></li>
+<li><a href="#手工配置">手工配置</a></li>
+<li><a href="#无状态配置">无状态配置</a></li>
+</ul></li>
+<li><a href="#常用命令">常用命令</a>
+<ul>
+<li><a href="#查看ip">查看ip</a></li>
+<li><a href="#查看路由">查看路由</a></li>
+<li><a href="#查看多播地址">查看多播地址</a></li>
+<li><a href="#查看dns-aaaa记录-走ipv4路线">查看dns AAAA记录(走IPv4路线)</a></li>
+<li><a href="#查看dns-aaaa记录-走ipv6路线">查看dns AAAA记录(走IPv6路线)</a></li>
+<li><a href="#查看dns-aaaa记录-走ipv6路线-最完整-最靠谱的办法">查看dns AAAA记录(走IPv6路线, 最完整，最靠谱的办法)</a></li>
+<li><a href="#curl">curl</a></li>
+<li><a href="#ping">ping</a></li>
+<li><a href="#trace-route">trace route</a></li>
+<li><a href="#ping-1">ping</a></li>
+<li><a href="#邻居地址解析-类似ipv4中的arping">邻居地址解析，类似IPv4中的arping</a></li>
+<li><a href="#iptables">iptables</a></li>
+<li><a href="#tcpdump">tcpdump</a></li>
+</ul></li>
+<li><a href="#在线工具">在线工具</a>
+<ul>
+<li><a href="#公共dns列列表">公共dns列列表</a></li>
+<li><a href="#查询-网站是否提供ipv6">查询⽹网站是否提供IPv6</a></li>
+<li><a href="#查询我-自-己是否拥有公-网ipv6地址">查询我⾃自⼰己是否拥有公⽹网IPv6地址</a></li>
+</ul></li>
+<li><a href="#协议栈">协议栈</a></li>
+</ul></li>
+<li><a href="#现状">现状</a></li>
+<li><a href="#过渡技术">过渡技术</a></li>
+<li><a href="#展望">展望</a></li>
 </ul>
 </nav>
 		</div>
     
     
 
-<p><a id="org98e0a5b"></a></p>
+<p><img src="http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-main.png" alt="img" /></p>
+
+<p><a id="org7153db2"></a></p>
 
 <h1 id="为什么要用ipv6">为什么要用IPv6</h1>
 
@@ -101,7 +140,7 @@
 <li>政策驱动: 计划使用5-10年的时间建成全球最大的IPv6商用网络。</li>
 </ul>
 
-<p><a id="orgdb141c5"></a></p>
+<p><a id="org99df977"></a></p>
 
 <h1 id="ipv6优势">IPv6优势</h1>
 
@@ -114,11 +153,246 @@
 <li>编址层次等级</li>
 </ul>
 
-<p><a id="org9746832"></a></p>
+<p><a id="orgd95f7b9"></a></p>
 
-<h1 id="ipv6技术-x2013-标准-rfc">IPv6技术&#x2013;标准(RFC)</h1>
+<h1 id="ipv6技术">IPv6技术</h1>
 
-<p><img src="http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-rfc.png" alt="img" /></p>
+<p><a id="orgdb662b7"></a></p>
+
+<h2 id="标准-rfc">标准(RFC)</h2>
+
+<p>IPv6协议族RFC如下， 其中<br />
+<img src="http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-rfc.png" alt="img" /></p>
+
+<p><a id="org5206c42"></a></p>
+
+<h2 id="报文格式">报文格式</h2>
+
+<p><img src="http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-header.png" alt="img" /></p>
+
+<p><a id="org86e63ec"></a></p>
+
+<h2 id="地址">地址</h2>
+
+<p>巨大的地址空间</p>
+
+<p><strong>IPv4</strong><br />
+地址长度：32位<br />
+地址空间：2的32次方，约42亿(世界上平均3个人有2个IP地址)</p>
+
+<p><strong>IPv6</strong><br />
+地址长度：128位<br />
+地址空间：2的128次方，约3.4 x 10^38个(地球上的每一粒沙子都有IP地址)</p>
+
+<p><a id="orgb5f4a26"></a></p>
+
+<h3 id="表示">表示</h3>
+
+<p>非压缩： 2001:0da8:0207:0000:0000:0000:8207<br />
+  压缩前导0：2001:0da8:0207:0:0:0:0:8207<br />
+  压缩: 2001:0d08:0207::8207     注：只能有一个::<br />
+  内嵌IPv4地址： ::192.168.1.1<br />
+<img src="http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-addr.png" alt="img" /></p>
+
+<p><a id="org45240f2"></a></p>
+
+<h3 id="分类">分类</h3>
+
+<p><img src="http://blog.mospan.cn/post/img/2019/ipv6-base/addr-type.png" alt="img" /></p>
+
+<p><a id="orgc393d37"></a></p>
+
+<h3 id="手工配置">手工配置</h3>
+
+<ol>
+<li><p>添加IPv6地址</p>
+
+<pre><code>ip -6 addr add &lt;ipv6address&gt;/&lt;prefixlength&gt; dev &lt;interface&gt;
+
+ip -6 addr add 2001::1/64 dev eth0
+
+ifconfig &lt;interface&gt; inet6 add &lt;ipv6address&gt;/&lt;prefixlength&gt; 
+
+ifconfig eth0 inet6 add 2001::1/64
+</code></pre></li>
+
+<li><p>添加默认路由</p>
+
+<pre><code>ip -6 route add &lt;ipv6address&gt;/&lt;prefixlength&gt; via &lt;ipv6address&gt;
+
+ip -6 route add default via 2001::1 
+
+route -A inet6 add &lt;ipv6address&gt;/&lt;prefixlength&gt; gw
+
+route -A inet6 add default gw 2001::1 
+</code></pre></li>
+
+<li><p>查看路由</p>
+
+<pre><code>ip -6 route show
+
+route -6
+</code></pre></li>
+</ol>
+
+<p><a id="orgfceef90"></a></p>
+
+<h3 id="无状态配置">无状态配置</h3>
+
+<p><img src="http://blog.mospan.cn/post/img/2019/ipv6-base/auto-1.png" alt="img" /></p>
+
+<p><img src="http://blog.mospan.cn/post/img/2019/ipv6-base/auto-2.png" alt="img" /></p>
+
+<p><a id="orgb9e21c6"></a></p>
+
+<h2 id="常用命令">常用命令</h2>
+
+<p><a id="org0c8050d"></a></p>
+
+<h3 id="查看ip">查看ip</h3>
+
+<pre><code>ip -6 addr 
+</code></pre>
+
+<p><a id="org6fb2aa2"></a></p>
+
+<h3 id="查看路由">查看路由</h3>
+
+<pre><code>ip -6 route
+</code></pre>
+
+<p><a id="org61af432"></a></p>
+
+<h3 id="查看多播地址">查看多播地址</h3>
+
+<pre><code>ip -6 maddr
+netstat -gn
+</code></pre>
+
+<p><a id="org63ec676"></a></p>
+
+<h3 id="查看dns-aaaa记录-走ipv4路线">查看dns AAAA记录(走IPv4路线)</h3>
+
+<pre><code>dig -t AAAA www.xxx.com
+nslookup -query=AAAA www.xxx.com
+</code></pre>
+
+<p><a id="org7daeb0d"></a></p>
+
+<h3 id="查看dns-aaaa记录-走ipv6路线">查看dns AAAA记录(走IPv6路线)</h3>
+
+<pre><code>dig @2001::1 -6 -t AAAA www.xxx.com
+nslookup -query=AAAA www.xxx.com 2001::1
+</code></pre>
+
+<p><a id="orga77ab52"></a></p>
+
+<h3 id="查看dns-aaaa记录-走ipv6路线-最完整-最靠谱的办法">查看dns AAAA记录(走IPv6路线, 最完整，最靠谱的办法)</h3>
+
+<pre><code>dig @2001::1 -6 -t AAAA www.xxx.com +trace
+</code></pre>
+
+<p><a id="org45360d2"></a></p>
+
+<h3 id="curl">curl</h3>
+
+<pre><code>curl -6 https://www.xxx.com
+</code></pre>
+
+<p><a id="org057b4c5"></a></p>
+
+<h3 id="ping">ping</h3>
+
+<pre><code>ping6 www.xxx.com
+</code></pre>
+
+<p><a id="org1c0cc11"></a></p>
+
+<h3 id="trace-route">trace route</h3>
+
+<pre><code>mtr -6 www.xxx.com
+traceroute6 www.xxx.com 
+tracert6 www.xxx.com 
+tracepath6 www.xxx.com 
+</code></pre>
+
+<p><a id="orgc2abd09"></a></p>
+
+<h3 id="ping-1">ping</h3>
+
+<pre><code>ping6 www.xxx.com
+</code></pre>
+
+<p><a id="orgfff80fe"></a></p>
+
+<h3 id="邻居地址解析-类似ipv4中的arping">邻居地址解析，类似IPv4中的arping</h3>
+
+<pre><code>ndisc6 -n 2001::1 eth0
+</code></pre>
+
+<p><a id="orgd938f52"></a></p>
+
+<h3 id="iptables">iptables</h3>
+
+<pre><code>ip6tables-save
+</code></pre>
+
+<p><a id="orgadce995"></a></p>
+
+<h3 id="tcpdump">tcpdump</h3>
+
+<pre><code>tcpdump -nnn -i eth0 ip6
+</code></pre>
+
+<p><a id="org256ec07"></a></p>
+
+<h2 id="在线工具">在线工具</h2>
+
+<p><a id="orgb504cc6"></a></p>
+
+<h3 id="公共dns列列表">公共dns列列表</h3>
+
+<p>地址: <a href="http://dns.icoa.cn/ipv6/">http://dns.icoa.cn/ipv6/</a></p>
+
+<p><a id="org2375de0"></a></p>
+
+<h3 id="查询-网站是否提供ipv6">查询⽹网站是否提供IPv6</h3>
+
+<p>地址:<br />
+<a href="https://ready.chair6.net/">https://ready.chair6.net/</a><br />
+<a href="http://ip6tools.com/#checkWebServer">http://ip6tools.com/#checkWebServer</a></p>
+
+<p><a id="orge79d392"></a></p>
+
+<h3 id="查询我-自-己是否拥有公-网ipv6地址">查询我⾃自⼰己是否拥有公⽹网IPv6地址</h3>
+
+<p>地址：<br />
+<a href="http://www.test-ipv6.com">http://www.test-ipv6.com</a><br />
+<a href="http://ip6tools.com/#WhatisMyIPv6Address">http://ip6tools.com/#WhatisMyIPv6Address</a></p>
+
+<p><a id="org48954cb"></a></p>
+
+<h2 id="协议栈">协议栈</h2>
+
+<p><img src="http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-stack.png" alt="img" /></p>
+
+<p><a id="org79e6a67"></a></p>
+
+<h1 id="现状">现状</h1>
+
+<p><img src="http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-now.png" alt="img" /></p>
+
+<p><a id="orgeab4d81"></a></p>
+
+<h1 id="过渡技术">过渡技术</h1>
+
+<p><img src="http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-transit.png" alt="img" /></p>
+
+<p><a id="orgc9070ad"></a></p>
+
+<h1 id="展望">展望</h1>
+
+<p><img src="http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-preview.png" alt="img" /></p>
 
     <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
   <div style="float:right;margin-top:0px;">
@@ -147,6 +421,8 @@
   
   <a href="/tags/ipv6">IPv6</a>
   
+  <a href="/tags/"></a>
+  
 </div>
 
 
@@ -156,12 +432,14 @@
   
   <a class="article-category-link" href="/categories/ipv6">IPv6</a>
   
+  <a class="article-category-link" href="/categories/"></a>
+  
 </div>
 
 
 
   <div class="article-share" id="share">
-    <div data-url="http://mospany.github.io/2019/08/09/ipv6-base/" data-title="IPv6技术概览" data-tsina="3833537679" class="share clearfix">
+    <div data-url="http://mospany.github.io/2019/08/09/ipv6-base/" data-title="总有你所不知的IPv6" data-tsina="3833537679" class="share clearfix">
     </div>
   </div>
 </footer>
@@ -220,6 +498,8 @@ gitment.render('git-comments')
 <div class="tagslist">
 	<p class="asidetitle">标签</p>
 		<ul class="clearfix">
+      
+			<li><a href="http://mospany.github.io/tags/" title=""><sup>1</sup></a></li>
       
 			<li><a href="http://mospany.github.io/tags/dns" title="dns">dns<sup>1</sup></a></li>
       
@@ -337,7 +617,7 @@ gitment.render('git-comments')
       
       
       <li class="archive-list-item">
-        <a class="archive-list-link" href="http://mospany.github.io/post/#2019-08">2019年08月</a><span class="archive-list-count">9</span>
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2019-08">2019年08月</a><span class="archive-list-count">10</span>
       </li>
       
       
@@ -400,6 +680,8 @@ gitment.render('git-comments')
 <div class="tagcloudlist">
   <p class="asidetitle">标签云</p>
   <div class="tagcloudlist clearfix">
+    
+    <a href="http://mospany.github.io/tags/" style="font-size: 12px;"></a>
     
     <a href="http://mospany.github.io/tags/dns" style="font-size: 12px;">dns</a>
     
