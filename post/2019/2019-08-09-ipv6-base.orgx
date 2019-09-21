@@ -6,7 +6,7 @@ date = "2019-08-09T17:14:27+08:00"
 description = ""
 keywords = ["IPv6",""]
 tags = ["IPv6",""]
-title = "总有你所不知的IPv6"
+title = "IPv6已来，您Get了多少？"
 url = "/2019/08/09/ipv6-base/"
 
 +++
@@ -14,12 +14,15 @@ url = "/2019/08/09/ipv6-base/"
   [[http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-main.png]]  
 
 * 为什么要用IPv6
+  如今互联网主要使用IPv4, 感觉已经蓬勃发展了够用了，那为什么还需要使用IPv6呢？主要有如下原因：
   - IPv4地址匮乏
   - NAT非根本解决办法，破坏了端到端模型
   - 新技术对IP协议催生了更多的需求
   - 政策驱动: 计划使用5-10年的时间建成全球最大的IPv6商用网络。
+ 随着5G、IOT万物互联的到来，IPv4已经不方便或不能承载如此大的需求了，更多的应用呼吁着IPv6尽快落地。
 
 * IPv6优势
+  既然IPv4有以上不足，那IPv6有什么优势呢？主要如下：
   - 近乎无限的地址空间
   - 更简洁的报文头部
   - 内置的安全性
@@ -29,14 +32,30 @@ url = "/2019/08/09/ipv6-base/"
 
 * IPv6技术
 ** 标准(RFC) 
-  IPv6协议族RFC如下， 其中
+  IPv6协议由很多RFC组成，IPv6协议族RFC如下， 其中
   [[http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-rfc.png]]  
+  RFC5942 - IPv6子网模式：链路和子网前缀间的关系
+  RFC5569 - IPv4/IPv6过渡技术之—— 6rd
+  RFC3056 - IPv4/IPv6过渡技术之—— 6to4
+  RFC2473 - IPv6标准中的通用分组隧道化
+  RFC6333 - IPv4/IPv6过渡技术之——双栈精简版
+  RFC5214 - IPv4/IPv6过渡技术之——ISATAP
+  RFC4213 - IPv6主机和路由器的基本转换机制-双栈和隧
+  RFC3775 - IPv6中的移动性支持
+  RFC3053 - IPv4/IPv6过渡技术之——隧道代理
+  RFC6434 - 对IPv6节点的要求
+  RFC4294 - 对IPv6节点的要求
+  RFC4294 - IPv6的默认地址选择
+  RFC6071 - IP安全(IPsec)
+  RFC5340 - IPv6的动态路由协议OSPFv3
+  RFC3315 - DHCPv6 
 
 ** 报文格式
+  IPv6报文格式与IPv4有一定相似，但比它简化和固定了好多，这样更容易解析与传输。
   [[http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-header.png]]  
 
 ** 地址
-   巨大的地址空间
+   巨大的地址空间, 相当于地球上每粒沙子都有自己的地址。
 
    *IPv4*
    地址长度：32位
@@ -52,6 +71,7 @@ url = "/2019/08/09/ipv6-base/"
     内嵌IPv4地址： ::192.168.1.1
   [[http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-addr.png]]  
 *** 分类
+  IPv6也分单播、组播，但没有了广播，增加了任播anycast，它允许同一个IP配置在多台服务器上，通过路由的方式自动访问离用户的最近的服务器上去。
   [[http://blog.mospan.cn/post/img/2019/ipv6-base/addr-type.png]]  
 *** 手工配置
 **** 添加IPv6地址
@@ -90,7 +110,7 @@ url = "/2019/08/09/ipv6-base/"
      #+END_SRC
 
 *** 无状态配置
-
+  IPv6的无状态配置是比较吸引我的一个特点，只要路由器支持插上网线就自动分配到全球唯一的地址就能自动联网。
   [[http://blog.mospan.cn/post/img/2019/ipv6-base/auto-1.png]]  
 
   [[http://blog.mospan.cn/post/img/2019/ipv6-base/auto-2.png]]  
@@ -167,16 +187,33 @@ url = "/2019/08/09/ipv6-base/"
     http://ip6tools.com/#WhatisMyIPv6Address
 
 ** 协议栈
+  IPv6与IPv4协议栈比较相似，经过精心设计后去掉了不少冗余或不合理部分，更加简洁强大。
   [[http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-stack.png]]  
 
 * 现状
-
+  IPv6目前用户覆盖率还不高，尤其是中国, 主要原因是钱，运营商通过维护或改造现有IPv4网络基本满足了目前大家的使用要求，在没有其他利益或政策驱动下很难主动自己贴钱去升级网络，再者需要大家都升级后才能完全使用，谁不愿意劳民伤财的去干这件事。但随着中国想努力引领世界，在政策与应用驱动下IPv6将大大加快。
   [[http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-now.png]]  
-  
+
 * 过渡技术
   
   [[http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-transit.png]]  
+  过渡技术主要解决IPv4和IPv6网络共存情况下的互联互通，主要由三种策略：
+  - 双栈协议：设备升级到IPv6同时保留IPv4支持，应用程序可以选择使用IPv4或IPv6; 协议应用允许应用逐渐从IPv4过渡到IPv6。
+  - 隧道封装：IPv6报文作为IPv4的载荷，或由MPLS承载在IPv4 internet海洋中连接多个IPv6孤岛
+  - 协议转换：提供IPv4和IPv6的互通动作，如NAT-PT等提供IPv6与IPv4互相访问的技术，适用于IPv6 internet与IPv4 internet共存，而两者又需要互相通讯的需求。
+** 双栈协议
+   设备升级到IPv6的同时保留IPv4支持，应用程序可以选择使用IPv6或IPv4协议。
+   所有的过渡技术都是基于双协议栈实现的。
+   优点：互通性好、易于理解、实现简单。
+   缺点：
+         - 对每个IPv4节点都要升级，成本较大，没有解决IPv4地址紧缺的问题。
+         - 部署复杂，所有设备都同时配置IPv4和IPv6；
+         - 对设备性能要求高，既要运行IPv6，又要运行IPv4。
+** 隧道封装
+   - IPv6 over IPv4 手动隧道(配置隧道)：隧道两端的边界路由器上通过静态指定隧道的源IPv4地址和目的IPv4地址而创建的隧道。
+   - IPv6 over IPv4 GRE隧道(GRE隧道)： 使用IPv4的GRE隧道上承载IPv6流而实现IPv6互通。
 
 * 展望
+  随着IPv6的普及与更多的应用落地， 使得人与人、物与物之间通信更加频繁，将催生出很多革命创新型应用或巨头公司，谁主沉浮，让我们拭目以待吧。
   [[http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-preview.png]]  
   
