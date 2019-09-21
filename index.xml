@@ -271,7 +271,7 @@ restydoc -s content_by_lua
         </item>
         
         <item>
-            <title>IPv6已来，您Get了多少？</title>
+            <title>IPv6时代已来，您Get了多少？</title>
             <link>http://mospany.github.io/2019/08/09/ipv6-base/</link>
             <pubDate>Fri, 09 Aug 2019 17:14:27 CST</pubDate>
             <author>Mospan</author>
@@ -549,7 +549,7 @@ tracepath6 www.xxx.com
 
 &lt;h2 id=&#34;协议栈&#34;&gt;协议栈&lt;/h2&gt;
 
-&lt;p&gt;IPv6与IPv4协议栈比较相似，经过精心设计后去掉了不少冗余或不合理部分，更加简洁强大。&lt;br /&gt;
+&lt;p&gt;IPv6与IPv4协议栈比较相似，经过精心设计后去掉了不少冗余或不合理部分，代码部分将近少了一半，使得更加简洁强大。&lt;br /&gt;
 &lt;img src=&#34;http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-stack.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;a id=&#34;org7b102ac&#34;&gt;&lt;/a&gt;&lt;/p&gt;
