@@ -14,11 +14,95 @@ url = "/2019/10/17/vim-in-emacs/"
 
 * 神器传说
 在猿的世界里，流传着两大神器的传说： 一个是神的编辑器Emacs，另一个是编辑器之神Vim。
-追求独步天下的高手为了得到它驾驭它，在江湖里宣起了几十年的血雨腥风:
+追求独步天下的高手为了得到它驾驭它，在江湖里宣起了几十年的血雨腥风至今任无法收拾呈蔓延趋势:
  - 有的把Emacs比作屠龙宝刀，Vim则是倚天剑， 有“武林至尊，宝刀屠龙，号令天下，莫敢不从，倚天不出，谁与争锋”之势。
  - 用Emacs的是海盗， 用Vim的是忍者。Emacs大而全， Vi小而快，Vi有两大模式：“命令模式”和“插入模式”，分别对应忍者的：“匿踪模式”和“战斗模式”；
  - 性子暴躁的喜欢vim，性格平缓的喜欢emacs，用vim能让你享受到敲击出噼里啪啦的肌肉快感， 而用emacs却能让心如止水、修心养性的感受。
 怎么样才能做到神在使用编辑器之神呢？
 
 * 追寻编辑器的心路历程
+  猿在江湖漂为了少挨刀，要么追求绝世武功，要么无上兵器，功夫不负有心人，最终找到它前也一路坎坷：
+  - 第一次见到师傅习武，仍是DOS时代使用的Turbo C（妈呀暴露年龄了），只见白色光标在蓝屏之间闪烁挥之不去。 
+  - 进入师门后先后经历了notepad、UltraEdit、visual c++ 6.0等刀、枪、剑、戟、斧、钺、钩、叉、鞭、锏、锤、挝、镋、棍、槊、棒、拐、流星锤十八种兵器，打下十八铜人阵拿到双证后下山出道。
+  - 出道后先后尝试用了UltraEdit、visual c++ 6.0、sourceinsight、eclipse、sublime text、VS Code、Vim等始终不尽如意。
+  - 直到后来遇见emacs， 才感受到了它的强大，作为一个伪装成的编辑器的操作系统，用着用着有时想单手操作，于是想到了把vim集成到emacs，既能享受到了emacs的强大又能用到vim的快捷，每天都有左右互博的久违感觉，目前已用多年再也纠结其他编辑器认定了它就是唯一的终极编辑器。
+  - 为什么喜欢全键盘的终端模式而不用带鼠标的现在GUI IDE环境， 一个是全键盘更快更能专注其中， 而是现在已是云时代部署在公司开发时到家里也即可使用而不用同步不用每天背mbp回来，终端模式是最好的选择。
+  - 都说编辑器分为三种， 一种是Vim，一种是emacs，剩下的就是Other， 你是属于哪一种呢？ 欢迎在留言下方分享您的使用心得。
+  它们大致学习曲线如下：
+  [[http://blog.mospan.cn/post/img/2019/vim-in-emacs/learning-curves.png]]  
+
+* emacs功能概览
+ - 收发电子邮件
+ - 通过FTP/TRAMP编辑远程档案
+ - 通过Telnet登录主机
+ - 上新闻组
+ - 对多种编程语言的编辑
+ - 调试程序，结合GDB，EDebug等，支持C/C++，Perl，
+ Python，Lisp等等
+ - 玩游戏
+ - 管理日程，Task，ToDo，约会等
+ - 个人信息管理
+ - 文件比较
+ - 阅读info和man文档
+ - 浏览网站
+ - 为各种程序（TeX等）提供统一的操作界面
+
+  [[http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-frame.png]]  
+
+* 文档编辑
+- 写文档(org)
+- 做幻灯片(beamer)
+- 做表格
+- 列编辑(cua)
+- 记笔记(evernote)
+- 写博客(cnblogs)
+- 时间管理(gtd)
+- 任务计划(gtd)
+- 思维导图(freemind)
+
+** Org-mode
+Org-模式（Org-mode）是文本编辑软件Emacs的一种支持内容分级显示的编辑模式。
+这种模式支持写 to-do 列表，日志管理，做笔记，做工程计划或者写网页。
+
+  [[http://blog.mospan.cn/post/img/2019/vim-in-emacs/org-mode.png]]  
+
+* 编程相关
+- 适用多种语言编写
+- 代码阅读(XCscope和ecb)
+- 代码调试(gdb)
+- 代码搜索定位(grep)
+- 代码着色
+- 自动补全
+- 统一注释格式(doxymacs)
+- 代码折叠
+- 智能编译
   
+** 版本控制(git)
+在emacs用git功能，更加方便的进行git库的提交/查看等版本控制功能。
+
+  [[http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-git.png]]  
+
+* 休闲娱乐
+- 看电影听音乐(EMMS)
+- 心理医生(doctor)
+- 游戏(俄罗斯方块/贪食蛇)
+- 屏幕保护(zone)
+** 看电影听音乐(EMMS)
+EMMS 让你可以在 Emacs 里面播放多媒体文件，他被设计的小巧干净，使用外部 播放器进行播放。是一个小巧、可扩展的完全由 Elisp写成的多媒体系统，支持 多种音频、视频格式以及流媒体播放(这事实上由你所使用的播放器决定)，可以 进行标签操作、方便的播放列表管理以及打分制度，
+总之，这正是我想要的。
+*** 听音乐
+  [[http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-music.png]]  
+
+*** 看电影 
+  [[http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-movice.png]]  
+
+** 游戏
+   俄罗斯方块或贪食蛇等
+  [[http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-game.png]]  
+
+* 做美食
+** 煮咖啡、 炒川菜
+   RFC中支持超文本咖啡壶协议（RFC2324）与茶壶协议(RFC7168),而emacs提供了完全支持RFC2323的coffee.el插件提供控制展示界面，只要你有一根网线，加一个支持此协议的咖啡壶，你确实可以用emacs煮咖啡，甚至有人已经用它来炒过川菜。
+  [[http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-cook.png]]  
+   
+
