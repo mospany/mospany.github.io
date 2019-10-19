@@ -18,12 +18,12 @@
 
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/vim-in-emacs/main.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orge664f2d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org05d4dfe&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;神器传说&#34;&gt;神器传说&lt;/h1&gt;
 
 &lt;p&gt;在猿的世界里，流传着两大神器的传说： 一个是神的编辑器Emacs，另一个是编辑器之神Vim。&lt;br /&gt;
-追求独步天下的高手为了得到它驾驭它，在江湖里宣起了几十年的血雨腥风:&lt;/p&gt;
+追求独步天下的高手为了得到它驾驭它，在江湖里宣起了几十年的血雨腥风至今任无法收拾呈蔓延趋势:&lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;有的把Emacs比作屠龙宝刀，Vim则是倚天剑， 有“武林至尊，宝刀屠龙，号令天下，莫敢不从，倚天不出，谁与争锋”之势。&lt;/li&gt;
@@ -33,9 +33,148 @@
 
 &lt;p&gt;怎么样才能做到神在使用编辑器之神呢？&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org68187ca&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org5bd7c8d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;追寻编辑器的心路历程&#34;&gt;追寻编辑器的心路历程&lt;/h1&gt;
+
+&lt;p&gt;猿在江湖漂为了少挨刀，要么追求绝世武功，要么无上兵器，功夫不负有心人，最终找到它前也一路坎坷：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;第一次见到师傅习武，仍是DOS时代使用的Turbo C（妈呀暴露年龄了），只见白色光标在蓝屏之间闪烁挥之不去。&lt;/li&gt;
+&lt;li&gt;进入师门后先后经历了notepad、UltraEdit、visual c++ 6.0等刀、枪、剑、戟、斧、钺、钩、叉、鞭、锏、锤、挝、镋、棍、槊、棒、拐、流星锤十八种兵器，打下十八铜人阵拿到双证后下山出道。&lt;/li&gt;
+&lt;li&gt;出道后先后尝试用了UltraEdit、visual c++ 6.0、sourceinsight、eclipse、sublime text、VS Code、Vim等始终不尽如意。&lt;/li&gt;
+&lt;li&gt;直到后来遇见emacs， 才感受到了它的强大，作为一个伪装成的编辑器的操作系统，用着用着有时想单手操作，于是想到了把vim集成到emacs，既能享受到了emacs的强大又能用到vim的快捷，每天都有左右互博的久违感觉，目前已用多年再也纠结其他编辑器认定了它就是唯一的终极编辑器。&lt;/li&gt;
+&lt;li&gt;为什么喜欢全键盘的终端模式而不用带鼠标的现在GUI IDE环境， 一个是全键盘更快更能专注其中， 而是现在已是云时代部署在公司开发时到家里也即可使用而不用同步不用每天背mbp回来，终端模式是最好的选择。&lt;/li&gt;
+&lt;li&gt;都说编辑器分为三种， 一种是Vim，一种是emacs，剩下的就是Other， 你是属于哪一种呢？ 欢迎在留言下方分享您的使用心得。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;它们大致学习曲线如下：&lt;br /&gt;
+&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/vim-in-emacs/learning-curves.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org8908130&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;emacs功能概览&#34;&gt;emacs功能概览&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;收发电子邮件&lt;/li&gt;
+&lt;li&gt;通过FTP/TRAMP编辑远程档案&lt;/li&gt;
+&lt;li&gt;通过Telnet登录主机&lt;/li&gt;
+&lt;li&gt;上新闻组&lt;/li&gt;
+&lt;li&gt;对多种编程语言的编辑&lt;/li&gt;
+&lt;li&gt;调试程序，结合GDB，EDebug等，支持C/C++，Perl，&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Python，Lisp等等&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;玩游戏&lt;/li&gt;
+&lt;li&gt;管理日程，Task，ToDo，约会等&lt;/li&gt;
+&lt;li&gt;个人信息管理&lt;/li&gt;
+&lt;li&gt;文件比较&lt;/li&gt;
+&lt;li&gt;阅读info和man文档&lt;/li&gt;
+&lt;li&gt;浏览网站&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;为各种程序（TeX等）提供统一的操作界面&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-frame.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a id=&#34;org9523b75&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;文档编辑&#34;&gt;文档编辑&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;写文档(org)&lt;/li&gt;
+&lt;li&gt;做幻灯片(beamer)&lt;/li&gt;
+&lt;li&gt;做表格&lt;/li&gt;
+&lt;li&gt;列编辑(cua)&lt;/li&gt;
+&lt;li&gt;记笔记(evernote)&lt;/li&gt;
+&lt;li&gt;写博客(cnblogs)&lt;/li&gt;
+&lt;li&gt;时间管理(gtd)&lt;/li&gt;
+&lt;li&gt;任务计划(gtd)&lt;/li&gt;
+&lt;li&gt;思维导图(freemind)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgb3ea8b7&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;org-mode&#34;&gt;Org-mode&lt;/h2&gt;
+
+&lt;p&gt;Org-模式（Org-mode）是文本编辑软件Emacs的一种支持内容分级显示的编辑模式。&lt;br /&gt;
+这种模式支持写 to-do 列表，日志管理，做笔记，做工程计划或者写网页。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/vim-in-emacs/org-mode.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org6b2e6a2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;编程相关&#34;&gt;编程相关&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;适用多种语言编写&lt;/li&gt;
+&lt;li&gt;代码阅读(XCscope和ecb)&lt;/li&gt;
+&lt;li&gt;代码调试(gdb)&lt;/li&gt;
+&lt;li&gt;代码搜索定位(grep)&lt;/li&gt;
+&lt;li&gt;代码着色&lt;/li&gt;
+&lt;li&gt;自动补全&lt;/li&gt;
+&lt;li&gt;统一注释格式(doxymacs)&lt;/li&gt;
+&lt;li&gt;代码折叠&lt;/li&gt;
+&lt;li&gt;智能编译&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a id=&#34;org44b8f1f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;版本控制-git&#34;&gt;版本控制(git)&lt;/h2&gt;
+
+&lt;p&gt;在emacs用git功能，更加方便的进行git库的提交/查看等版本控制功能。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-git.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org9f930a3&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;休闲娱乐&#34;&gt;休闲娱乐&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;看电影听音乐(EMMS)&lt;/li&gt;
+&lt;li&gt;心理医生(doctor)&lt;/li&gt;
+&lt;li&gt;游戏(俄罗斯方块/贪食蛇)&lt;/li&gt;
+&lt;li&gt;屏幕保护(zone)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a id=&#34;org301cfb4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;看电影听音乐-emms&#34;&gt;看电影听音乐(EMMS)&lt;/h2&gt;
+
+&lt;p&gt;EMMS 让你可以在 Emacs 里面播放多媒体文件，他被设计的小巧干净，使用外部 播放器进行播放。是一个小巧、可扩展的完全由 Elisp写成的多媒体系统，支持 多种音频、视频格式以及流媒体播放(这事实上由你所使用的播放器决定)，可以 进行标签操作、方便的播放列表管理以及打分制度，&lt;br /&gt;
+总之，这正是我想要的。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orga1acd7e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;听音乐&#34;&gt;听音乐&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-music.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgcf92e19&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;看电影&#34;&gt;看电影&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-movice.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgbe3cbba&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;游戏&#34;&gt;游戏&lt;/h2&gt;
+
+&lt;p&gt;俄罗斯方块或贪食蛇等&lt;br /&gt;
+&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-game.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org24f729b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;做美食&#34;&gt;做美食&lt;/h1&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgecaf4a0&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;煮咖啡-炒川菜&#34;&gt;煮咖啡、 炒川菜&lt;/h2&gt;
+
+&lt;p&gt;RFC中支持超文本咖啡壶协议（RFC2324）与茶壶协议(RFC7168),而emacs提供了完全支持RFC2323的coffee.el插件提供控制展示界面，只要你有一根网线，加一个支持此协议的咖啡壶，你确实可以用emacs煮咖啡，甚至有人已经用它来炒过川菜。&lt;br /&gt;
+&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-cook.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 </description>
         </item>
         

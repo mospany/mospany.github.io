@@ -81,12 +81,12 @@
 
 <p><img src="http://blog.mospan.cn/post/img/2019/vim-in-emacs/main.png" alt="img" /></p>
 
-<p><a id="orge664f2d"></a></p>
+<p><a id="org05d4dfe"></a></p>
 
 <h1 id="神器传说">神器传说</h1>
 
 <p>在猿的世界里，流传着两大神器的传说： 一个是神的编辑器Emacs，另一个是编辑器之神Vim。<br />
-追求独步天下的高手为了得到它驾驭它，在江湖里宣起了几十年的血雨腥风:</p>
+追求独步天下的高手为了得到它驾驭它，在江湖里宣起了几十年的血雨腥风至今任无法收拾呈蔓延趋势:</p>
 
 <ul>
 <li>有的把Emacs比作屠龙宝刀，Vim则是倚天剑， 有“武林至尊，宝刀屠龙，号令天下，莫敢不从，倚天不出，谁与争锋”之势。</li>
@@ -96,9 +96,148 @@
 
 <p>怎么样才能做到神在使用编辑器之神呢？</p>
 
-<p><a id="org68187ca"></a></p>
+<p><a id="org5bd7c8d"></a></p>
 
 <h1 id="追寻编辑器的心路历程">追寻编辑器的心路历程</h1>
+
+<p>猿在江湖漂为了少挨刀，要么追求绝世武功，要么无上兵器，功夫不负有心人，最终找到它前也一路坎坷：</p>
+
+<ul>
+<li>第一次见到师傅习武，仍是DOS时代使用的Turbo C（妈呀暴露年龄了），只见白色光标在蓝屏之间闪烁挥之不去。</li>
+<li>进入师门后先后经历了notepad、UltraEdit、visual c++ 6.0等刀、枪、剑、戟、斧、钺、钩、叉、鞭、锏、锤、挝、镋、棍、槊、棒、拐、流星锤十八种兵器，打下十八铜人阵拿到双证后下山出道。</li>
+<li>出道后先后尝试用了UltraEdit、visual c++ 6.0、sourceinsight、eclipse、sublime text、VS Code、Vim等始终不尽如意。</li>
+<li>直到后来遇见emacs， 才感受到了它的强大，作为一个伪装成的编辑器的操作系统，用着用着有时想单手操作，于是想到了把vim集成到emacs，既能享受到了emacs的强大又能用到vim的快捷，每天都有左右互博的久违感觉，目前已用多年再也纠结其他编辑器认定了它就是唯一的终极编辑器。</li>
+<li>为什么喜欢全键盘的终端模式而不用带鼠标的现在GUI IDE环境， 一个是全键盘更快更能专注其中， 而是现在已是云时代部署在公司开发时到家里也即可使用而不用同步不用每天背mbp回来，终端模式是最好的选择。</li>
+<li>都说编辑器分为三种， 一种是Vim，一种是emacs，剩下的就是Other， 你是属于哪一种呢？ 欢迎在留言下方分享您的使用心得。</li>
+</ul>
+
+<p>它们大致学习曲线如下：<br />
+<img src="http://blog.mospan.cn/post/img/2019/vim-in-emacs/learning-curves.png" alt="img" /></p>
+
+<p><a id="org8908130"></a></p>
+
+<h1 id="emacs功能概览">emacs功能概览</h1>
+
+<ul>
+<li>收发电子邮件</li>
+<li>通过FTP/TRAMP编辑远程档案</li>
+<li>通过Telnet登录主机</li>
+<li>上新闻组</li>
+<li>对多种编程语言的编辑</li>
+<li>调试程序，结合GDB，EDebug等，支持C/C++，Perl，</li>
+</ul>
+
+<p>Python，Lisp等等</p>
+
+<ul>
+<li>玩游戏</li>
+<li>管理日程，Task，ToDo，约会等</li>
+<li>个人信息管理</li>
+<li>文件比较</li>
+<li>阅读info和man文档</li>
+<li>浏览网站</li>
+
+<li><p>为各种程序（TeX等）提供统一的操作界面</p>
+
+<p><img src="http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-frame.png" alt="img" /></p></li>
+</ul>
+
+<p><a id="org9523b75"></a></p>
+
+<h1 id="文档编辑">文档编辑</h1>
+
+<ul>
+<li>写文档(org)</li>
+<li>做幻灯片(beamer)</li>
+<li>做表格</li>
+<li>列编辑(cua)</li>
+<li>记笔记(evernote)</li>
+<li>写博客(cnblogs)</li>
+<li>时间管理(gtd)</li>
+<li>任务计划(gtd)</li>
+<li>思维导图(freemind)</li>
+</ul>
+
+<p><a id="orgb3ea8b7"></a></p>
+
+<h2 id="org-mode">Org-mode</h2>
+
+<p>Org-模式（Org-mode）是文本编辑软件Emacs的一种支持内容分级显示的编辑模式。<br />
+这种模式支持写 to-do 列表，日志管理，做笔记，做工程计划或者写网页。</p>
+
+<p><img src="http://blog.mospan.cn/post/img/2019/vim-in-emacs/org-mode.png" alt="img" /></p>
+
+<p><a id="org6b2e6a2"></a></p>
+
+<h1 id="编程相关">编程相关</h1>
+
+<ul>
+<li>适用多种语言编写</li>
+<li>代码阅读(XCscope和ecb)</li>
+<li>代码调试(gdb)</li>
+<li>代码搜索定位(grep)</li>
+<li>代码着色</li>
+<li>自动补全</li>
+<li>统一注释格式(doxymacs)</li>
+<li>代码折叠</li>
+<li>智能编译</li>
+</ul>
+
+<p><a id="org44b8f1f"></a></p>
+
+<h2 id="版本控制-git">版本控制(git)</h2>
+
+<p>在emacs用git功能，更加方便的进行git库的提交/查看等版本控制功能。</p>
+
+<p><img src="http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-git.png" alt="img" /></p>
+
+<p><a id="org9f930a3"></a></p>
+
+<h1 id="休闲娱乐">休闲娱乐</h1>
+
+<ul>
+<li>看电影听音乐(EMMS)</li>
+<li>心理医生(doctor)</li>
+<li>游戏(俄罗斯方块/贪食蛇)</li>
+<li>屏幕保护(zone)</li>
+</ul>
+
+<p><a id="org301cfb4"></a></p>
+
+<h2 id="看电影听音乐-emms">看电影听音乐(EMMS)</h2>
+
+<p>EMMS 让你可以在 Emacs 里面播放多媒体文件，他被设计的小巧干净，使用外部 播放器进行播放。是一个小巧、可扩展的完全由 Elisp写成的多媒体系统，支持 多种音频、视频格式以及流媒体播放(这事实上由你所使用的播放器决定)，可以 进行标签操作、方便的播放列表管理以及打分制度，<br />
+总之，这正是我想要的。</p>
+
+<p><a id="orga1acd7e"></a></p>
+
+<h3 id="听音乐">听音乐</h3>
+
+<p><img src="http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-music.png" alt="img" /></p>
+
+<p><a id="orgcf92e19"></a></p>
+
+<h3 id="看电影">看电影</h3>
+
+<p><img src="http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-movice.png" alt="img" /></p>
+
+<p><a id="orgbe3cbba"></a></p>
+
+<h2 id="游戏">游戏</h2>
+
+<p>俄罗斯方块或贪食蛇等<br />
+<img src="http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-game.png" alt="img" /></p>
+
+<p><a id="org24f729b"></a></p>
+
+<h1 id="做美食">做美食</h1>
+
+<p><a id="orgecaf4a0"></a></p>
+
+<h2 id="煮咖啡-炒川菜">煮咖啡、 炒川菜</h2>
+
+<p>RFC中支持超文本咖啡壶协议（RFC2324）与茶壶协议(RFC7168),而emacs提供了完全支持RFC2323的coffee.el插件提供控制展示界面，只要你有一根网线，加一个支持此协议的咖啡壶，你确实可以用emacs煮咖啡，甚至有人已经用它来炒过川菜。<br />
+<img src="http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-cook.png" alt="img" /></p>
 
     <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
   <div style="float:right;margin-top:0px;">
