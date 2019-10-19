@@ -31,6 +31,45 @@ url = "/2019/10/17/vim-in-emacs/"
   它们大致学习曲线如下：
   [[http://blog.mospan.cn/post/img/2019/vim-in-emacs/learning-curves.png]]  
 
+* 安装配置
+  要想在emacs使用vim，其实是在emacs配置中增加Vim模拟器evil-mode即可。
+  先从官网下载git clone git://gitorious.org/evil/evil.git到.emacs.d下再安装,
+  在配置文件里.emacs或init.el里增加如下配置：
+  #+BEGIN_SRC lisp
+
+  (add-to-list 'load-path "~/.emacs.d/evil")
+  (require 'evil)
+  (evil-mode 1)
+  ;(setq evil-default-state 'emacs) ;; emacs-mode
+  (setq evil-default-state 'normal) ;; vim-normal-mode
+
+  #+END_SRC
+  要在emacs和vim模式里面随意切换使用：C-z。
+  也可以把emacs中想用的功能映射到evil-mode下，这样就可以拥有了emacs中所有功能的快捷操作方式，它大致配置如下：
+  #+BEGIN_SRC lisp
+  ;; I learn this trick from ReneFroger, need latest expand-region
+  ;; @see https://github.com/redguardtoo/evil-matchit/issues/38
+  (define-key evil-visual-state-map (kbd "v") 'er/expand-region)
+  (define-key evil-insert-state-map (kbd "C-e") 'move-end-of-line)
+  (define-key evil-insert-state-map (kbd "C-k") 'kill-line)
+  (define-key evil-insert-state-map (kbd "M-j") 'yas-expand)
+  (define-key evil-emacs-state-map (kbd "M-j") 'yas-expand)
+  (global-set-key (kbd "C-r") 'undo-tree-redo)
+
+  ;; My frequently used commands are listed here
+  (setq evil-leader/leader ",")
+  (require 'evil-leader)
+  (evil-leader/set-key
+   ;windowmove
+   "wh" 'windmove-left
+   "wl" 'windmove-right
+   "wk" 'windmove-up
+   "wj" 'windmove-down
+  )
+  #+END_SRC
+  具体可参考https://github.com/mospany/emacs.d-for-linux/blob/master/config/init-evil.el即可。
+  
+
 * emacs功能概览
  - 收发电子邮件
  - 通过FTP/TRAMP编辑远程档案

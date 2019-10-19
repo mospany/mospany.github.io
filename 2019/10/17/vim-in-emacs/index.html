@@ -81,7 +81,7 @@
 
 <p><img src="http://blog.mospan.cn/post/img/2019/vim-in-emacs/main.png" alt="img" /></p>
 
-<p><a id="org05d4dfe"></a></p>
+<p><a id="orgdbd1829"></a></p>
 
 <h1 id="神器传说">神器传说</h1>
 
@@ -96,7 +96,7 @@
 
 <p>怎么样才能做到神在使用编辑器之神呢？</p>
 
-<p><a id="org5bd7c8d"></a></p>
+<p><a id="org9bee0d2"></a></p>
 
 <h1 id="追寻编辑器的心路历程">追寻编辑器的心路历程</h1>
 
@@ -114,7 +114,48 @@
 <p>它们大致学习曲线如下：<br />
 <img src="http://blog.mospan.cn/post/img/2019/vim-in-emacs/learning-curves.png" alt="img" /></p>
 
-<p><a id="org8908130"></a></p>
+<p><a id="org3716a5b"></a></p>
+
+<h1 id="安装配置">安装配置</h1>
+
+<p>要想在emacs使用vim，其实是在emacs配置中增加Vim模拟器evil-mode即可。<br />
+先从官网下载git clone git://gitorious.org/evil/evil.git到.emacs.d下再安装,<br />
+在配置文件里.emacs或init.el里增加如下配置：</p>
+
+<pre><code>(add-to-list 'load-path &quot;~/.emacs.d/evil&quot;)
+(require 'evil)
+(evil-mode 1)
+;(setq evil-default-state 'emacs) ;; emacs-mode
+(setq evil-default-state 'normal) ;; vim-normal-mode
+</code></pre>
+
+<p>要在emacs和vim模式里面随意切换使用：C-z。<br />
+也可以把emacs中想用的功能映射到evil-mode下，这样就可以拥有了emacs中所有功能的快捷操作方式，它大致配置如下：</p>
+
+<pre><code>;; I learn this trick from ReneFroger, need latest expand-region
+;; @see https://github.com/redguardtoo/evil-matchit/issues/38
+(define-key evil-visual-state-map (kbd &quot;v&quot;) 'er/expand-region)
+(define-key evil-insert-state-map (kbd &quot;C-e&quot;) 'move-end-of-line)
+(define-key evil-insert-state-map (kbd &quot;C-k&quot;) 'kill-line)
+(define-key evil-insert-state-map (kbd &quot;M-j&quot;) 'yas-expand)
+(define-key evil-emacs-state-map (kbd &quot;M-j&quot;) 'yas-expand)
+(global-set-key (kbd &quot;C-r&quot;) 'undo-tree-redo)
+
+;; My frequently used commands are listed here
+(setq evil-leader/leader &quot;,&quot;)
+(require 'evil-leader)
+(evil-leader/set-key
+ ;windowmove
+ &quot;wh&quot; 'windmove-left
+ &quot;wl&quot; 'windmove-right
+ &quot;wk&quot; 'windmove-up
+ &quot;wj&quot; 'windmove-down
+)
+</code></pre>
+
+<p>具体可参考<a href="https://github.com/mospany/emacs.d-for-linux/blob/master/config/init-evil.el即可">https://github.com/mospany/emacs.d-for-linux/blob/master/config/init-evil.el即可</a>。</p>
+
+<p><a id="orge046aca"></a></p>
 
 <h1 id="emacs功能概览">emacs功能概览</h1>
 
@@ -142,7 +183,7 @@
 <p><img src="http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-frame.png" alt="img" /></p></li>
 </ul>
 
-<p><a id="org9523b75"></a></p>
+<p><a id="org166e498"></a></p>
 
 <h1 id="文档编辑">文档编辑</h1>
 
@@ -158,7 +199,7 @@
 <li>思维导图(freemind)</li>
 </ul>
 
-<p><a id="orgb3ea8b7"></a></p>
+<p><a id="orgb22db31"></a></p>
 
 <h2 id="org-mode">Org-mode</h2>
 
@@ -167,7 +208,7 @@
 
 <p><img src="http://blog.mospan.cn/post/img/2019/vim-in-emacs/org-mode.png" alt="img" /></p>
 
-<p><a id="org6b2e6a2"></a></p>
+<p><a id="orgf33b210"></a></p>
 
 <h1 id="编程相关">编程相关</h1>
 
@@ -183,7 +224,7 @@
 <li>智能编译</li>
 </ul>
 
-<p><a id="org44b8f1f"></a></p>
+<p><a id="org4dcec9d"></a></p>
 
 <h2 id="版本控制-git">版本控制(git)</h2>
 
@@ -191,7 +232,7 @@
 
 <p><img src="http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-git.png" alt="img" /></p>
 
-<p><a id="org9f930a3"></a></p>
+<p><a id="orgc0f6593"></a></p>
 
 <h1 id="休闲娱乐">休闲娱乐</h1>
 
@@ -202,37 +243,37 @@
 <li>屏幕保护(zone)</li>
 </ul>
 
-<p><a id="org301cfb4"></a></p>
+<p><a id="orgfc36767"></a></p>
 
 <h2 id="看电影听音乐-emms">看电影听音乐(EMMS)</h2>
 
 <p>EMMS 让你可以在 Emacs 里面播放多媒体文件，他被设计的小巧干净，使用外部 播放器进行播放。是一个小巧、可扩展的完全由 Elisp写成的多媒体系统，支持 多种音频、视频格式以及流媒体播放(这事实上由你所使用的播放器决定)，可以 进行标签操作、方便的播放列表管理以及打分制度，<br />
 总之，这正是我想要的。</p>
 
-<p><a id="orga1acd7e"></a></p>
+<p><a id="orgefe8084"></a></p>
 
 <h3 id="听音乐">听音乐</h3>
 
 <p><img src="http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-music.png" alt="img" /></p>
 
-<p><a id="orgcf92e19"></a></p>
+<p><a id="org71fcae1"></a></p>
 
 <h3 id="看电影">看电影</h3>
 
 <p><img src="http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-movice.png" alt="img" /></p>
 
-<p><a id="orgbe3cbba"></a></p>
+<p><a id="org2740f5f"></a></p>
 
 <h2 id="游戏">游戏</h2>
 
 <p>俄罗斯方块或贪食蛇等<br />
 <img src="http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-game.png" alt="img" /></p>
 
-<p><a id="org24f729b"></a></p>
+<p><a id="orgded90a9"></a></p>
 
 <h1 id="做美食">做美食</h1>
 
-<p><a id="orgecaf4a0"></a></p>
+<p><a id="orgebe7bab"></a></p>
 
 <h2 id="煮咖啡-炒川菜">煮咖啡、 炒川菜</h2>
 

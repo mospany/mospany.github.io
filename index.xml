@@ -18,7 +18,7 @@
 
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/vim-in-emacs/main.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org05d4dfe&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgdbd1829&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;神器传说&#34;&gt;神器传说&lt;/h1&gt;
 
@@ -33,7 +33,7 @@
 
 &lt;p&gt;怎么样才能做到神在使用编辑器之神呢？&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org5bd7c8d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org9bee0d2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;追寻编辑器的心路历程&#34;&gt;追寻编辑器的心路历程&lt;/h1&gt;
 
@@ -51,7 +51,48 @@
 &lt;p&gt;它们大致学习曲线如下：&lt;br /&gt;
 &lt;img src=&#34;http://blog.mospan.cn/post/img/2019/vim-in-emacs/learning-curves.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org8908130&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org3716a5b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;安装配置&#34;&gt;安装配置&lt;/h1&gt;
+
+&lt;p&gt;要想在emacs使用vim，其实是在emacs配置中增加Vim模拟器evil-mode即可。&lt;br /&gt;
+先从官网下载git clone git://gitorious.org/evil/evil.git到.emacs.d下再安装,&lt;br /&gt;
+在配置文件里.emacs或init.el里增加如下配置：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;(add-to-list &#39;load-path &amp;quot;~/.emacs.d/evil&amp;quot;)
+(require &#39;evil)
+(evil-mode 1)
+;(setq evil-default-state &#39;emacs) ;; emacs-mode
+(setq evil-default-state &#39;normal) ;; vim-normal-mode
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;要在emacs和vim模式里面随意切换使用：C-z。&lt;br /&gt;
+也可以把emacs中想用的功能映射到evil-mode下，这样就可以拥有了emacs中所有功能的快捷操作方式，它大致配置如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;;; I learn this trick from ReneFroger, need latest expand-region
+;; @see https://github.com/redguardtoo/evil-matchit/issues/38
+(define-key evil-visual-state-map (kbd &amp;quot;v&amp;quot;) &#39;er/expand-region)
+(define-key evil-insert-state-map (kbd &amp;quot;C-e&amp;quot;) &#39;move-end-of-line)
+(define-key evil-insert-state-map (kbd &amp;quot;C-k&amp;quot;) &#39;kill-line)
+(define-key evil-insert-state-map (kbd &amp;quot;M-j&amp;quot;) &#39;yas-expand)
+(define-key evil-emacs-state-map (kbd &amp;quot;M-j&amp;quot;) &#39;yas-expand)
+(global-set-key (kbd &amp;quot;C-r&amp;quot;) &#39;undo-tree-redo)
+
+;; My frequently used commands are listed here
+(setq evil-leader/leader &amp;quot;,&amp;quot;)
+(require &#39;evil-leader)
+(evil-leader/set-key
+ ;windowmove
+ &amp;quot;wh&amp;quot; &#39;windmove-left
+ &amp;quot;wl&amp;quot; &#39;windmove-right
+ &amp;quot;wk&amp;quot; &#39;windmove-up
+ &amp;quot;wj&amp;quot; &#39;windmove-down
+)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;具体可参考&lt;a href=&#34;https://github.com/mospany/emacs.d-for-linux/blob/master/config/init-evil.el即可&#34;&gt;https://github.com/mospany/emacs.d-for-linux/blob/master/config/init-evil.el即可&lt;/a&gt;。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orge046aca&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;emacs功能概览&#34;&gt;emacs功能概览&lt;/h1&gt;
 
@@ -79,7 +120,7 @@
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-frame.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a id=&#34;org9523b75&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org166e498&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;文档编辑&#34;&gt;文档编辑&lt;/h1&gt;
 
@@ -95,7 +136,7 @@
 &lt;li&gt;思维导图(freemind)&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgb3ea8b7&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgb22db31&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;org-mode&#34;&gt;Org-mode&lt;/h2&gt;
 
@@ -104,7 +145,7 @@
 
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/vim-in-emacs/org-mode.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org6b2e6a2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgf33b210&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;编程相关&#34;&gt;编程相关&lt;/h1&gt;
 
@@ -120,7 +161,7 @@
 &lt;li&gt;智能编译&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a id=&#34;org44b8f1f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org4dcec9d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;版本控制-git&#34;&gt;版本控制(git)&lt;/h2&gt;
 
@@ -128,7 +169,7 @@
 
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-git.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org9f930a3&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgc0f6593&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;休闲娱乐&#34;&gt;休闲娱乐&lt;/h1&gt;
 
@@ -139,37 +180,37 @@
 &lt;li&gt;屏幕保护(zone)&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a id=&#34;org301cfb4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgfc36767&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;看电影听音乐-emms&#34;&gt;看电影听音乐(EMMS)&lt;/h2&gt;
 
 &lt;p&gt;EMMS 让你可以在 Emacs 里面播放多媒体文件，他被设计的小巧干净，使用外部 播放器进行播放。是一个小巧、可扩展的完全由 Elisp写成的多媒体系统，支持 多种音频、视频格式以及流媒体播放(这事实上由你所使用的播放器决定)，可以 进行标签操作、方便的播放列表管理以及打分制度，&lt;br /&gt;
 总之，这正是我想要的。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orga1acd7e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgefe8084&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;听音乐&#34;&gt;听音乐&lt;/h3&gt;
 
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-music.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgcf92e19&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org71fcae1&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;看电影&#34;&gt;看电影&lt;/h3&gt;
 
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-movice.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgbe3cbba&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org2740f5f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;游戏&#34;&gt;游戏&lt;/h2&gt;
 
 &lt;p&gt;俄罗斯方块或贪食蛇等&lt;br /&gt;
 &lt;img src=&#34;http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-game.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org24f729b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgded90a9&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;做美食&#34;&gt;做美食&lt;/h1&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgecaf4a0&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgebe7bab&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;煮咖啡-炒川菜&#34;&gt;煮咖啡、 炒川菜&lt;/h2&gt;
 
