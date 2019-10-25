@@ -6,10 +6,19 @@
     <description>Recent content in Posts on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 17 Oct 2019 13:54:40 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 25 Oct 2019 14:06:08 +0800</lastBuildDate>
     
 	<atom:link href="http://mospany.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>从《习总：加快区块链发展》中我们如何应对</title>
+      <link>http://mospany.github.io/2019/10/25/learn-blockchain-view/</link>
+      <pubDate>Fri, 25 Oct 2019 14:06:08 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2019/10/25/learn-blockchain-view/</guid>
+      <description>引言 今天一则《习总：加快推动区块链产业创新发展》新闻在圈内炸开了锅， 让曾经炽手可热现在却处于寒冬时期的区块链行业又看到了曙光， 让从业人员可以</description>
+    </item>
     
     <item>
       <title>编辑器终结者: vim与emacs双剑合璧</title>
