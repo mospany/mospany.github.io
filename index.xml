@@ -16,32 +16,44 @@
             <guid>http://mospany.github.io/2019/11/14/dns-base/</guid>
             <description>
 
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/dns-base/main.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org5e785b3&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orga57a6db&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;dns是什么&#34;&gt;DNS是什么？&lt;/h1&gt;
 
 &lt;ul&gt;
-&lt;li&gt;因特尔域名系统&lt;/li&gt;
-&lt;li&gt;提供域名到IP地址的映射，或反之&lt;/li&gt;
-&lt;li&gt;是分布式、C/S结构的服务&lt;/li&gt;
-&lt;li&gt;主要定义在RFC1034/1035上&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;因特尔域名系统&lt;br /&gt;
+DNS是Domain Name System(域名系统)的缩写，互联网的入口服务，监听53端口。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;提供域名到IP地址的映射，或反之&lt;br /&gt;
+将域名和IP地址相互映射的一个分布式数据库，能够更方便地访问互联网。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;是分布式、C/S结构的服务&lt;br /&gt;
+DNS是一个倒树形结构的分布式服务。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;主要定义在RFC1034/1035上&lt;br /&gt;
+其中RFC1034为域名的概念和设施, RFC1035为域名的概念和设施。&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a id=&#34;org01ca526&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgf21c435&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;为什么需要dns&#34;&gt;为什么需要DNS？&lt;/h1&gt;
 
 &lt;ul&gt;
-&lt;li&gt;IP地址难以记忆与理解&lt;/li&gt;
-&lt;li&gt;邮件投递需要寻址 (MX)&lt;/li&gt;
-&lt;li&gt;域身份鉴定 (DomainKey, SPF)&lt;/li&gt;
-&lt;li&gt;负载均衡(轮询、最小连接)&lt;/li&gt;
-&lt;li&gt;CDN、GSLB&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;IP地址难以记忆与理解&lt;br /&gt;
+IPv4地址形如192.168.1.1，而IPv6地址形如x:x:x:x:x:x:x:x的128位地址，非常难以记忆和理解，平时我们上网只要在浏览器上输入域名地址如wwww.baidu.com，由DNS系统翻译成所对应的IP地址更加方便一些。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;邮件投递需要寻址 (MX)&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;域身份鉴定 (DomainKey, SPF)&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;负载均衡(轮询、最小连接)&lt;br /&gt;
+通过配置多条A记录实现访问轮询，也通过配置权重来进行负载均衡。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;CDN、GSLB&lt;br /&gt;
+CDN和GSLB主要利用DNS的CNAME记录来流量的接入与调度。&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgd8772a4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgfe8becb&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;什么是域-zone-与域名-domain&#34;&gt;什么是域(zone)与域名(domain)？&lt;/h1&gt;
 
@@ -61,23 +73,32 @@
 &lt;li&gt;域名的最大长度为255个字符，单个label最大为63个字符&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a id=&#34;org054b0a1&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orga5e50c4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;dns基本概念&#34;&gt;DNS基本概念&lt;/h1&gt;
 
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/dns-base/concept.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orge2a2b47&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;DNS是一种倒树形的分布式系统，每一层存储它下一级的记录信息，自顶向下的查找过程。&lt;/li&gt;
+&lt;li&gt;DNS主要分为授权和缓存，其他缓存DNS又分为Local（运营商本地） 和 public（公共） DNS。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a id=&#34;org081a6e5&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;dns报文格式&#34;&gt;DNS报文格式&lt;/h1&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/dns-base/format.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/dns-base/format.png&#34; alt=&#34;img&#34; /&gt;&lt;br /&gt;
+DNS报文如上图所示，其他左图为报文完整格式，后图区域数据展开形式。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgc48b61d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgc9600cf&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;dns-rr-资源记录集&#34;&gt;DNS RR(资源记录集)&lt;/h1&gt;
 
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/dns-base/rr.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;通过dig工具探测典型结果如上图所示，包含多条的域名、生存时间TTL、记录类型、记录数据rdata组成。&lt;br /&gt;
+其中TTL为该记录可缓存的时间秒数。&lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;DNS RR(资源记录集)&lt;/li&gt;
@@ -85,19 +106,40 @@
 &lt;li&gt;type: 常用有A、CNAME、MX、TXT等&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgb85e173&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;详见：&lt;a href=&#34;https://ephen.me/2016/dns-rr/&#34;&gt;https://ephen.me/2016/dns-rr/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgc38c77f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;ends-client-subnet&#34;&gt;ends-client-subnet&lt;/h1&gt;
 
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/dns-base/edns.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org3b256d4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;正常情况下，DNS服务器只能获取到跟它通信的客户端(一般是local DNS)IP来进行区域解析，edns机制是允许在报文中携带用户真实IP来进行区域解析。&lt;br /&gt;
+例如: 假设202.106.0.1是北京联通用户，它配置的DNS解析服务器为8.8.8.8，在不支持edns情况下，授权DNS将根据8.8.8.8来解析到国外去，如果支持了edns会根据202.106.0.1来解析到国内服务器中来，这样解析更加准确。&lt;/p&gt;
+
+&lt;p&gt;详见：&lt;a href=&#34;http://www.cnblogs.com/cobbliu/p/3188632.html&#34;&gt;http://www.cnblogs.com/cobbliu/p/3188632.html&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org9e17f41&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;dns解析过程&#34;&gt;DNS解析过程&lt;/h1&gt;
 
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/dns-base/resolv.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org3291953&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;在浏览器中输入域名后DNS域名解析过程如下:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;浏览器DNS缓存中搜索&lt;/li&gt;
+&lt;li&gt;在操作系统DNS缓存中搜索&lt;/li&gt;
+&lt;li&gt;读取系统hosts文件，查找其中是否有对应的ip&lt;/li&gt;
+&lt;li&gt;向本地配置的首选DNS服务器发起域名解析请求&lt;br /&gt;
+
+&lt;ul&gt;
+&lt;li&gt;本地DNS收到请求后，查找自己的缓存，如找到则直接响应给客户端&lt;/li&gt;
+&lt;li&gt;如未找到，则授权DNS服务器进行迭代查找，最终构造完整的响应给客户端。&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a id=&#34;org6cc97d0&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;dns组织机构&#34;&gt;DNS组织机构&lt;/h1&gt;
 

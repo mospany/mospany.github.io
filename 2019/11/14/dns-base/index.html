@@ -6,10 +6,10 @@
   <title>互联网最重要入口DNS系列(1): 基本常识 - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
   <meta name="keywords" content="互联网,DNS,">
-  <meta name="description" content="DNS是什么？ 因特尔域名系统 提供域名到IP地址的映射，或反之 是分布式、C/S结构的服务 主要定义在RFC1034/1035上 为什么需要DNS？">
+  <meta name="description" content="DNS是什么？ 因特尔域名系统 DNS是Domain Name System(域名系统)的缩写，互联网的入口服务，监听53端口。 提供域名到IP地址的映射，">
   <meta name="author" content="mospan">
   <meta itemprop="name" content="互联网最重要入口DNS系列(1): 基本常识 - 墨斯潘園">
-  <meta itemprop="description" content="DNS是什么？ 因特尔域名系统 提供域名到IP地址的映射，或反之 是分布式、C/S结构的服务 主要定义在RFC1034/1035上 为什么需要DNS？">
+  <meta itemprop="description" content="DNS是什么？ 因特尔域名系统 DNS是Domain Name System(域名系统)的缩写，互联网的入口服务，监听53端口。 提供域名到IP地址的映射，">
   <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
@@ -79,32 +79,44 @@
     
     
 
-<p><img src="http://blog.mospan.cn/post/img/2019/dns-base/main.png" alt="img" /></p>
-
-<p><a id="org5e785b3"></a></p>
+<p><a id="orga57a6db"></a></p>
 
 <h1 id="dns是什么">DNS是什么？</h1>
 
 <ul>
-<li>因特尔域名系统</li>
-<li>提供域名到IP地址的映射，或反之</li>
-<li>是分布式、C/S结构的服务</li>
-<li>主要定义在RFC1034/1035上</li>
+<li><p>因特尔域名系统<br />
+DNS是Domain Name System(域名系统)的缩写，互联网的入口服务，监听53端口。</p></li>
+
+<li><p>提供域名到IP地址的映射，或反之<br />
+将域名和IP地址相互映射的一个分布式数据库，能够更方便地访问互联网。</p></li>
+
+<li><p>是分布式、C/S结构的服务<br />
+DNS是一个倒树形结构的分布式服务。</p></li>
+
+<li><p>主要定义在RFC1034/1035上<br />
+其中RFC1034为域名的概念和设施, RFC1035为域名的概念和设施。</p></li>
 </ul>
 
-<p><a id="org01ca526"></a></p>
+<p><a id="orgf21c435"></a></p>
 
 <h1 id="为什么需要dns">为什么需要DNS？</h1>
 
 <ul>
-<li>IP地址难以记忆与理解</li>
-<li>邮件投递需要寻址 (MX)</li>
-<li>域身份鉴定 (DomainKey, SPF)</li>
-<li>负载均衡(轮询、最小连接)</li>
-<li>CDN、GSLB</li>
+<li><p>IP地址难以记忆与理解<br />
+IPv4地址形如192.168.1.1，而IPv6地址形如x:x:x:x:x:x:x:x的128位地址，非常难以记忆和理解，平时我们上网只要在浏览器上输入域名地址如wwww.baidu.com，由DNS系统翻译成所对应的IP地址更加方便一些。</p></li>
+
+<li><p>邮件投递需要寻址 (MX)</p></li>
+
+<li><p>域身份鉴定 (DomainKey, SPF)</p></li>
+
+<li><p>负载均衡(轮询、最小连接)<br />
+通过配置多条A记录实现访问轮询，也通过配置权重来进行负载均衡。</p></li>
+
+<li><p>CDN、GSLB<br />
+CDN和GSLB主要利用DNS的CNAME记录来流量的接入与调度。</p></li>
 </ul>
 
-<p><a id="orgd8772a4"></a></p>
+<p><a id="orgfe8becb"></a></p>
 
 <h1 id="什么是域-zone-与域名-domain">什么是域(zone)与域名(domain)？</h1>
 
@@ -124,23 +136,32 @@
 <li>域名的最大长度为255个字符，单个label最大为63个字符</li>
 </ul>
 
-<p><a id="org054b0a1"></a></p>
+<p><a id="orga5e50c4"></a></p>
 
 <h1 id="dns基本概念">DNS基本概念</h1>
 
 <p><img src="http://blog.mospan.cn/post/img/2019/dns-base/concept.png" alt="img" /></p>
 
-<p><a id="orge2a2b47"></a></p>
+<ul>
+<li>DNS是一种倒树形的分布式系统，每一层存储它下一级的记录信息，自顶向下的查找过程。</li>
+<li>DNS主要分为授权和缓存，其他缓存DNS又分为Local（运营商本地） 和 public（公共） DNS。</li>
+</ul>
+
+<p><a id="org081a6e5"></a></p>
 
 <h1 id="dns报文格式">DNS报文格式</h1>
 
-<p><img src="http://blog.mospan.cn/post/img/2019/dns-base/format.png" alt="img" /></p>
+<p><img src="http://blog.mospan.cn/post/img/2019/dns-base/format.png" alt="img" /><br />
+DNS报文如上图所示，其他左图为报文完整格式，后图区域数据展开形式。</p>
 
-<p><a id="orgc48b61d"></a></p>
+<p><a id="orgc9600cf"></a></p>
 
 <h1 id="dns-rr-资源记录集">DNS RR(资源记录集)</h1>
 
 <p><img src="http://blog.mospan.cn/post/img/2019/dns-base/rr.png" alt="img" /></p>
+
+<p>通过dig工具探测典型结果如上图所示，包含多条的域名、生存时间TTL、记录类型、记录数据rdata组成。<br />
+其中TTL为该记录可缓存的时间秒数。</p>
 
 <ul>
 <li>DNS RR(资源记录集)</li>
@@ -148,19 +169,40 @@
 <li>type: 常用有A、CNAME、MX、TXT等</li>
 </ul>
 
-<p><a id="orgb85e173"></a></p>
+<p>详见：<a href="https://ephen.me/2016/dns-rr/">https://ephen.me/2016/dns-rr/</a></p>
+
+<p><a id="orgc38c77f"></a></p>
 
 <h1 id="ends-client-subnet">ends-client-subnet</h1>
 
 <p><img src="http://blog.mospan.cn/post/img/2019/dns-base/edns.png" alt="img" /></p>
 
-<p><a id="org3b256d4"></a></p>
+<p>正常情况下，DNS服务器只能获取到跟它通信的客户端(一般是local DNS)IP来进行区域解析，edns机制是允许在报文中携带用户真实IP来进行区域解析。<br />
+例如: 假设202.106.0.1是北京联通用户，它配置的DNS解析服务器为8.8.8.8，在不支持edns情况下，授权DNS将根据8.8.8.8来解析到国外去，如果支持了edns会根据202.106.0.1来解析到国内服务器中来，这样解析更加准确。</p>
+
+<p>详见：<a href="http://www.cnblogs.com/cobbliu/p/3188632.html">http://www.cnblogs.com/cobbliu/p/3188632.html</a></p>
+
+<p><a id="org9e17f41"></a></p>
 
 <h1 id="dns解析过程">DNS解析过程</h1>
 
 <p><img src="http://blog.mospan.cn/post/img/2019/dns-base/resolv.png" alt="img" /></p>
 
-<p><a id="org3291953"></a></p>
+<p>在浏览器中输入域名后DNS域名解析过程如下:</p>
+
+<ul>
+<li>浏览器DNS缓存中搜索</li>
+<li>在操作系统DNS缓存中搜索</li>
+<li>读取系统hosts文件，查找其中是否有对应的ip</li>
+<li>向本地配置的首选DNS服务器发起域名解析请求<br />
+
+<ul>
+<li>本地DNS收到请求后，查找自己的缓存，如找到则直接响应给客户端</li>
+<li>如未找到，则授权DNS服务器进行迭代查找，最终构造完整的响应给客户端。</li>
+</ul></li>
+</ul>
+
+<p><a id="org6cc97d0"></a></p>
 
 <h1 id="dns组织机构">DNS组织机构</h1>
 

@@ -17,7 +17,7 @@
       <pubDate>Thu, 14 Nov 2019 22:30:22 +0800</pubDate>
       
       <guid>http://mospany.github.io/2019/11/14/dns-base/</guid>
-      <description>DNS是什么？ 因特尔域名系统 提供域名到IP地址的映射，或反之 是分布式、C/S结构的服务 主要定义在RFC1034/1035上 为什么需要DNS？</description>
+      <description>DNS是什么？ 因特尔域名系统 DNS是Domain Name System(域名系统)的缩写，互联网的入口服务，监听53端口。 提供域名到IP地址的映射，</description>
     </item>
     
   </channel>
