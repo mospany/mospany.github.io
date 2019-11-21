@@ -1,0 +1,138 @@
++++
+#+OPTIONS: \n:t
+categories = ["技术文章"]
+date = "2019-11-14T22:30:22+08:00"
+description = ""
+keywords = ["互联网","DNS"]
+tags = ["互联网","DNS"]
+title = "互联网最重要入口DNS系列(1): 基本常识"
+url = "/2019/11/14/dns-base/"
+
++++
+
+* DNS是什么？
+  - 因特尔域名系统
+    DNS是Domain Name System(域名系统)的缩写，互联网的入口服务，监听53端口。
+
+  - 提供域名到IP地址的映射，或反之
+    将域名和IP地址相互映射的一个分布式数据库，能够更方便地访问互联网。
+    
+  - 是分布式、C/S结构的服务
+    DNS是一个倒树形结构的分布式服务。
+
+  - 主要定义在RFC1034/1035上
+    其中RFC1034为域名的概念和设施, RFC1035为域名的概念和设施。
+
+* 为什么需要DNS？
+  - IP地址难以记忆与理解
+    IPv4地址形如192.168.1.1，而IPv6地址形如x:x:x:x:x:x:x:x的128位地址，非常难以记忆和理解，平时我们上网只要在浏览器上输入域名地址如wwww.baidu.com，由DNS系统翻译成所对应的IP地址更加方便一些。
+
+  - 邮件投递需要寻址 (MX)
+    
+  - 域身份鉴定 (DomainKey, SPF)
+
+  - 负载均衡(轮询、最小连接)
+    通过配置多条A记录实现访问轮询，也通过配置权重来进行负载均衡。
+    
+  - CDN、GSLB
+    CDN和GSLB主要利用DNS的CNAME记录来流量的接入与调度。
+
+* 什么是域(zone)与域名(domain)？
+  - “.”是域，是所有其他域的起始点
+  - 宇宙大爆炸：混沌初开，乾坤乃定
+
+  [[http://blog.mospan.cn/post/img/2019/dns-base/zone.png]]  
+
+  - com.、com.cn.、cn、net.是域
+  - mospan.cn.、mospx.com.也是域
+  - blog.mospan.cn.、www.mospx.com.是域名
+  - domain = host(主机名) + zone
+  - 标准的域名与主机名，只包括字母、数字、短横线和点
+  - 域名的最大长度为255个字符，单个label最大为63个字符
+
+* DNS基本概念
+  
+  [[http://blog.mospan.cn/post/img/2019/dns-base/concept.png]]  
+  - DNS是一种倒树形的分布式系统，每一层存储它下一级的记录信息，自顶向下的查找过程。
+  - DNS主要分为授权和缓存，其他缓存DNS又分为Local（运营商本地） 和 public（公共） DNS。
+
+
+* DNS报文格式
+  
+  [[http://blog.mospan.cn/post/img/2019/dns-base/format.png]]  
+  DNS报文如上图所示，其他左图为报文完整格式，后图区域数据展开形式。
+   
+
+* DNS RR(资源记录集)
+  
+  [[http://blog.mospan.cn/post/img/2019/dns-base/rr.png]]  
+
+  通过dig工具探测典型结果如上图所示，包含多条的域名、生存时间TTL、记录类型、记录数据rdata组成。
+  其中TTL为该记录可缓存的时间秒数。
+  - DNS RR(资源记录集)
+  - ttl:  缓存生存时间(单位：秒)，4个字节)
+  - type: 常用有A、CNAME、MX、TXT等
+
+  详见：https://ephen.me/2016/dns-rr/
+
+* ends-client-subnet
+
+  [[http://blog.mospan.cn/post/img/2019/dns-base/edns.png]]  
+  
+  正常情况下，DNS服务器只能获取到跟它通信的客户端(一般是local DNS)IP来进行区域解析，edns机制是允许在报文中携带用户真实IP来进行区域解析。
+  例如: 假设202.106.0.1是北京联通用户，它配置的DNS解析服务器为8.8.8.8，在不支持edns情况下，授权DNS将根据8.8.8.8来解析到国外去，如果支持了edns会根据202.106.0.1来解析到国内服务器中来，这样解析更加准确。
+
+  详见：http://www.cnblogs.com/cobbliu/p/3188632.html
+
+* DNS解析过程
+
+  [[http://blog.mospan.cn/post/img/2019/dns-base/resolv.png]]  
+
+  在浏览器中输入域名后DNS域名解析过程如下:
+  - 浏览器DNS缓存中搜索
+  - 在操作系统DNS缓存中搜索
+  - 读取系统hosts文件，查找其中是否有对应的ip
+  - 向本地配置的首选DNS服务器发起域名解析请求
+    + 本地DNS收到请求后，查找自己的缓存，如找到则直接响应给客户端
+    + 如未找到，则授权DNS服务器进行迭代查找，最终构造完整的响应给客户端。
+
+* DNS组织机构
+  - ICANN(互联网名称与数字地址分配机构)
+    + IP地址分配
+    + 协议标识符的指派
+    + 通用顶级域名（gTLD）管理
+    + 国家和地区顶级域名（ccTLD）系统的管理
+    + 根服务器系统的管理
+  - Registry:   注册局。
+    + 维护区数据、委托注册机构提供注册服务。(CNNIC)
+  - Registrar:   注册机构。
+    + 代表注册局提供注册服务。(万网、新网)
+  - Registrant:   域名所有者。
+  - 托管机构:  为域名所有者提供域名托管服务。(dnspod、XNS)
+
+  - 根服务器。
+    + 全球有13个根服务器，每个根服务器由不同的机构管理，每个服务器都有若干的镜像，使用anycast技术提供就近访问。
+    + 大部分服务器在美国，北京和香港有根的镜像服务器。
+    + 根区的内容由ICANN管理， 除了现有的TLD，ICANN已经开放了顶级域的注册。
+    + 全球有13台根服务器(242节点)。
+      * a.root-servers.net.  ~~  m.root-servers.net.。
+      * 美国10台
+        - A(Verisign, 6);   B(ISI, 1)
+        - C(Cogent, 6);   B(UMD, 1)
+        - E(NASA, 1);   B(ISC, 49)
+        - G(DOD, 6);   H(US Army, 2)
+        - J(Verisign, 70);   H(ICANN, 39)
+      * 欧洲2台
+        - J(RIPE NCC, 18);   H(SE, 33)
+      * 日本1台
+        - M(WIDE, 6)
+        
+  [[http://blog.mospan.cn/post/img/2019/dns-base/root.png]]  
+          
+       
+
+      
+    
+  
+  
+

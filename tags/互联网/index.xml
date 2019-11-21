@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>互联网 on 墨斯潘園</title>
+    <link>http://mospany.github.io/tags/%E4%BA%92%E8%81%94%E7%BD%91/</link>
+    <description>Recent content in 互联网 on 墨斯潘園</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Thu, 14 Nov 2019 22:30:22 +0800</lastBuildDate>
+    
+	<atom:link href="http://mospany.github.io/tags/%E4%BA%92%E8%81%94%E7%BD%91/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>互联网最重要入口DNS系列(1): 基本常识</title>
+      <link>http://mospany.github.io/2019/11/14/dns-base/</link>
+      <pubDate>Thu, 14 Nov 2019 22:30:22 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2019/11/14/dns-base/</guid>
+      <description>DNS是什么？ 因特尔域名系统 提供域名到IP地址的映射，或反之 是分布式、C/S结构的服务 主要定义在RFC1034/1035上 为什么需要DNS？</description>
+    </item>
+    
+  </channel>
+</rss>
