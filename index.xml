@@ -8,20 +8,24 @@
         <updated>Sat, 10 Sep 2022 16:13:51 CST</updated>
         
         <item>
-            <title>K8S学习笔记: 目录</title>
-            <link>http://mospany.github.io/2022/09/10/k8s-study/</link>
+            <title>K8S学习笔记(01): 目录</title>
+            <link>http://mospany.github.io/2022/09/10/k8s-study-toc/</link>
             <pubDate>Sat, 10 Sep 2022 16:13:51 CST</pubDate>
             <author>Mospan</author>
-            <guid>http://mospany.github.io/2022/09/10/k8s-study/</guid>
+            <guid>http://mospany.github.io/2022/09/10/k8s-study-toc/</guid>
             <description>
+
+&lt;p&gt;&lt;a id=&#34;orge1989fc&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;描述&#34;&gt;描述&lt;/h1&gt;
 
 &lt;p&gt;K8S学习笔记目录&lt;/p&gt;
 
+&lt;p&gt;&lt;a id=&#34;org9b603ac&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
 &lt;h1 id=&#34;目录&#34;&gt;目录&lt;/h1&gt;
 
-&lt;p&gt;&lt;center&gt;&lt;embed src=&#34;&lt;http://blog.mospan.cn/post/img/k8s/k8s-study-toc.pdf&gt;&amp;rdquo; width=100% height=&amp;ldquo;800&amp;rdquo;&amp;gt;&lt;/center&gt;&lt;/p&gt;
+&lt;p&gt;&lt;center&gt;&lt;embed src=&#34;http://blog.mospan.cn//post/img/k8s/k8s-study-toc.pdf&#34; width=100% height=&#34;800&#34;&gt;&lt;/center&gt;&lt;/p&gt;
 </description>
         </item>
         
