@@ -1,9 +1,56 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    
+    <url>
+        <loc>http://mospany.github.io/tags/</loc>
+        <lastmod>2019-11-14T22:30:22+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/categories/</loc>
+        <lastmod>2019-11-14T22:30:22+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/dns/</loc>
+        <lastmod>2019-11-14T22:30:22+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/post/</loc>
+        <lastmod>2019-11-14T22:30:22+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/</loc>
+        <lastmod>2019-11-14T22:30:22+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/%E4%BA%92%E8%81%94%E7%BD%91/</loc>
+        <lastmod>2019-11-14T22:30:22+08:00</lastmod>
+        <priority>0</priority>
+    </url>
     
     <url>
         <loc>http://mospany.github.io/2019/11/14/dns-base/</loc>
         <lastmod>2019-11-14T22:30:22+08:00</lastmod>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/</loc>
+        <lastmod>2019-11-14T22:30:22+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/</loc>
+        <lastmod>2019-11-14T22:30:22+08:00</lastmod>
+        <priority>0</priority>
     </url>
     
     <url>
@@ -17,6 +64,18 @@
     </url>
     
     <url>
+        <loc>http://mospany.github.io/tags/emacs/</loc>
+        <lastmod>2019-10-17T13:54:40+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/vim/</loc>
+        <lastmod>2019-10-17T13:54:40+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
         <loc>http://mospany.github.io/2019/10/17/vim-in-emacs/</loc>
         <lastmod>2019-10-17T13:54:40+08:00</lastmod>
     </url>
@@ -27,8 +86,26 @@
     </url>
     
     <url>
+        <loc>http://mospany.github.io/categories/%E8%81%8C%E5%9C%BA%E4%BA%BA%E7%94%9F/</loc>
+        <lastmod>2019-10-14T14:17:41+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/%E8%81%8C%E5%9C%BA%E4%BA%BA%E7%94%9F/</loc>
+        <lastmod>2019-10-14T14:17:41+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
         <loc>http://mospany.github.io/2019/08/11/openresty-salon-site-record/</loc>
         <lastmod>2019-08-11T05:54:34+08:00</lastmod>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/ipv6/</loc>
+        <lastmod>2019-08-09T17:14:27+08:00</lastmod>
+        <priority>0</priority>
     </url>
     
     <url>
@@ -42,13 +119,37 @@
     </url>
     
     <url>
+        <loc>http://mospany.github.io/tags/hugo/</loc>
+        <lastmod>2019-02-02T15:18:53+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/%E5%8D%9A%E5%AE%A2/</loc>
+        <lastmod>2019-02-02T15:18:53+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
         <loc>http://mospany.github.io/2019/02/02/mospan-hugo-blog-manual/</loc>
         <lastmod>2019-02-02T15:18:53+08:00</lastmod>
     </url>
     
     <url>
+        <loc>http://mospany.github.io/tags/vue/</loc>
+        <lastmod>2018-02-24T16:32:21+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
         <loc>http://mospany.github.io/2018/02/24/vue-dev-env-build/</loc>
         <lastmod>2018-02-24T16:32:21+08:00</lastmod>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/%E5%89%8D%E7%AB%AF/</loc>
+        <lastmod>2018-02-24T16:32:21+08:00</lastmod>
+        <priority>0</priority>
     </url>
     
     <url>
@@ -59,6 +160,12 @@
     <url>
         <loc>http://mospany.github.io/2017/08/25/emacs-mospan-tutorial/</loc>
         <lastmod>2017-08-27T17:08:26+08:00</lastmod>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/spacemacs/</loc>
+        <lastmod>2017-08-24T17:08:26+08:00</lastmod>
+        <priority>0</priority>
     </url>
     
     <url>
@@ -77,8 +184,32 @@
     </url>
     
     <url>
+        <loc>http://mospany.github.io/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</loc>
+        <lastmod>2017-03-07T19:13:23+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</loc>
+        <lastmod>2017-03-07T19:13:23+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/openresty/</loc>
+        <lastmod>2017-03-02T11:14:08+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
         <loc>http://mospany.github.io/2017/03/02/openresty&#43;redis-practices/</loc>
         <lastmod>2017-03-02T11:14:08+08:00</lastmod>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/redis/</loc>
+        <lastmod>2017-03-02T11:14:08+08:00</lastmod>
+        <priority>0</priority>
     </url>
     
     <url>
@@ -87,13 +218,37 @@
     </url>
     
     <url>
+        <loc>http://mospany.github.io/tags/%E9%9D%A2%E8%AF%95/</loc>
+        <lastmod>2017-03-01T19:27:08+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/dpdk/</loc>
+        <lastmod>2016-09-06T19:37:20+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
         <loc>http://mospany.github.io/2016/09/06/dpdk-develop-notes/</loc>
         <lastmod>2016-09-06T19:37:20+08:00</lastmod>
     </url>
     
     <url>
+        <loc>http://mospany.github.io/tags/org-mode/</loc>
+        <lastmod>2016-05-29T09:33:53+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
         <loc>http://mospany.github.io/2016/05/29/org-manual/</loc>
         <lastmod>2016-05-29T09:33:53+08:00</lastmod>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/</loc>
+        <lastmod>2016-05-29T09:33:53+08:00</lastmod>
+        <priority>0</priority>
     </url>
     
     <url>
@@ -104,6 +259,24 @@
     <url>
         <loc>http://mospany.github.io/2016/03/31/independent-mailbox/</loc>
         <lastmod>2016-03-31T21:11:24+08:00</lastmod>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/%E7%8B%AC%E7%AB%8B/</loc>
+        <lastmod>2016-03-31T21:11:24+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/%E9%82%AE%E7%AE%B1/</loc>
+        <lastmod>2016-03-31T21:11:24+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/xns/</loc>
+        <lastmod>2016-03-14T22:02:57+08:00</lastmod>
+        <priority>0</priority>
     </url>
     
     <url>
@@ -122,6 +295,12 @@
     </url>
     
     <url>
+        <loc>http://mospany.github.io/tags/pango/</loc>
+        <lastmod>2016-02-14T16:57:25+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
         <loc>http://mospany.github.io/2016/02/14/pango-development-quick-start/</loc>
         <lastmod>2016-02-14T16:57:25+08:00</lastmod>
     </url>
@@ -137,13 +316,43 @@
     </url>
     
     <url>
+        <loc>http://mospany.github.io/tags/%E5%B7%A5%E5%85%B7/</loc>
+        <lastmod>2016-02-09T19:09:11+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/%E6%9E%B6%E6%9E%84/</loc>
+        <lastmod>2016-02-09T17:12:34+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
         <loc>http://mospany.github.io/2016/02/09/mr-wei-talk-architecture/</loc>
         <lastmod>2016-02-09T17:12:34+08:00</lastmod>
     </url>
     
     <url>
+        <loc>http://mospany.github.io/tags/%E5%BE%AE%E4%BF%A1/</loc>
+        <lastmod>2016-02-06T23:24:08+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
         <loc>http://mospany.github.io/2016/01/25/my-blog-add-weixin-mp/</loc>
         <lastmod>2016-02-06T23:24:08+08:00</lastmod>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/categories/%E7%94%9F%E6%B4%BB%E8%AE%B0%E5%BD%95/</loc>
+        <lastmod>2016-01-26T08:28:37+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/%E7%94%9F%E6%B4%BB%E8%AE%B0%E5%BD%95/</loc>
+        <lastmod>2016-01-26T08:28:37+08:00</lastmod>
+        <priority>0</priority>
     </url>
     
     <url>
@@ -167,212 +376,8 @@
     </url>
     
     <url>
-        <loc>http://mospany.github.io/tags/</loc>
-        <lastmod>2019-10-26T13:12:03+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/categories/</loc>
+        <loc>http://mospany.github.io/post/2022/2022-09-10-k8s-study/</loc>
         <lastmod>0001-01-01T00:00:00+00:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/dns/</loc>
-        <lastmod>2019-11-14T22:30:22+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/dpdk/</loc>
-        <lastmod>2016-09-06T19:37:20+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/emacs/</loc>
-        <lastmod>2019-10-17T13:54:40+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/hugo/</loc>
-        <lastmod>2019-02-02T15:18:53+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/ipv6/</loc>
-        <lastmod>2019-08-09T17:14:27+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/openresty/</loc>
-        <lastmod>2017-03-02T11:14:08+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/org-mode/</loc>
-        <lastmod>2016-05-29T09:33:53+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/pango/</loc>
-        <lastmod>2016-02-14T16:57:25+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/post/</loc>
-        <lastmod>2019-11-14T22:30:22+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/redis/</loc>
-        <lastmod>2017-03-02T11:14:08+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/spacemacs/</loc>
-        <lastmod>2017-08-24T17:08:26+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/</loc>
-        <lastmod>2019-10-26T13:12:03+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/vim/</loc>
-        <lastmod>2019-10-17T13:54:40+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/vue/</loc>
-        <lastmod>2018-02-24T16:32:21+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/xns/</loc>
-        <lastmod>2016-03-14T22:02:57+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/%E4%BA%92%E8%81%94%E7%BD%91/</loc>
-        <lastmod>2019-11-14T22:30:22+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/%E5%89%8D%E7%AB%AF/</loc>
-        <lastmod>2018-02-24T16:32:21+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/%E5%8D%9A%E5%AE%A2/</loc>
-        <lastmod>2019-02-02T15:18:53+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/</loc>
-        <lastmod>2019-11-14T22:30:22+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/%E5%B7%A5%E5%85%B7/</loc>
-        <lastmod>2016-02-09T19:09:11+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/</loc>
-        <lastmod>2016-05-29T09:33:53+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/%E5%BE%AE%E4%BF%A1/</loc>
-        <lastmod>2016-02-06T23:24:08+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/</loc>
-        <lastmod>2019-11-14T22:30:22+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/%E6%9E%B6%E6%9E%84/</loc>
-        <lastmod>2016-02-09T17:12:34+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/%E7%8B%AC%E7%AB%8B/</loc>
-        <lastmod>2016-03-31T21:11:24+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/%E7%94%9F%E6%B4%BB%E8%AE%B0%E5%BD%95/</loc>
-        <lastmod>2016-01-26T08:28:37+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/categories/%E7%94%9F%E6%B4%BB%E8%AE%B0%E5%BD%95/</loc>
-        <lastmod>2016-01-26T08:28:37+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/%E8%81%8C%E5%9C%BA%E4%BA%BA%E7%94%9F/</loc>
-        <lastmod>2019-10-14T14:17:41+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/categories/%E8%81%8C%E5%9C%BA%E4%BA%BA%E7%94%9F/</loc>
-        <lastmod>2019-10-14T14:17:41+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</loc>
-        <lastmod>2017-03-07T19:13:23+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</loc>
-        <lastmod>2017-03-07T19:13:23+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/%E9%82%AE%E7%AE%B1/</loc>
-        <lastmod>2016-03-31T21:11:24+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/%E9%9D%A2%E8%AF%95/</loc>
-        <lastmod>2017-03-01T19:27:08+08:00</lastmod>
         <priority>0</priority>
     </url>
     

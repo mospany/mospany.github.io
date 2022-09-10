@@ -1,0 +1,115 @@
++++
+#+OPTIONS: \n:t
+toc = true
+categories = ["技术文章"]
+date = "2019-11-23T13:35:38+08:00"
+description = ""
+keywords = ["互联网","DNS"]
+tags = ["互联网","DNS"]
+title = "互联网最重要入口系列(2): DNS组成"
+url = "/2019/11/23/dns-compose/"
+
++++
+
+* 引言
+  上篇《DNS基本常识》大致讲解了DNS协议、解析过程等，今天在上篇的基础上继续讲解DNS体系是由哪些组件组成。
+
+* DNS体系组成
+  DNS体系主要由如下组成：
+
+  - 域名注册服务器
+    代表注册局提供域名注册服务。(例如: godaddy、万网、新网)
+
+  - 域名备案系统
+    在中国大陆提供经营性网站域名应当在域名备案系统和相关管理局办理备案，否则关停或罚款。
+    
+  - whois服务器
+    用来查询域名是否已经被注册，以及注册域名的详细信息的数据库（如域名所有人、域名注册商）。
+    
+  - 递归DNS服务器
+    递归DNS服务器也可称为缓存DNS服务器，一般来说该服务器既有缓存又有递归功能，它相当于授权DNS的代理。
+    + 包含ISPDNS、public DNS、自建本地DNS。
+
+  - 授权DNS服务器
+    授权DNS也称为权威DNS，它负责域名本身的记录管理(增删改)。
+    + 包含根DNS服务器、各级授权DNS。
+ 
+* 域名注册服务器
+  - 域名怎么得来
+    域名一般要到域名注册商那进行注册购买，且只能申请未被注册的域名或向域名拥有者进行高价转让购买，说购买其实是租，每年都要向注册局付一定的费用，一般刚开始注册时几元到几百元不等，精品域名一般能卖到很贵，域名谐称玉米，炒域名的人一般自称米农，当你成功的注册或购买上，你将对该域名有一定时间的使用权。
+    + 需到域名注册商网站上注册申请。(万网、新网)
+    国内最贵的域名交易如下，国际上还有更多昂贵域名：
+    
+  [[http://blog.mospan.cn/post/img/2019/dns-compose/domain-change.png]]  
+
+  - 域名注册协议
+    + RRP协议(RFC2832)、EPP协议(RFC3731)
+  - 域名状态
+
+  [[http://blog.mospan.cn/post/img/2019/dns-compose/domain-status.png]]  
+
+    详见：https://help.aliyun.com/knowledge_detail/35793.html
+
+* whois服务器
+  - whois是什么？
+    + 谁是（Who is）这个域名或IP地址的负责人与注册信息？
+  - whois查询
+
+  [[http://blog.mospan.cn/post/img/2019/dns-compose/whois.png]]  
+
+  - 用途
+    + 判断域名是否接管、到期等
+
+* 递归DNS服务器
+ 递归DNS也就是本地配置地址的域名服务器, 在linux下对应的配置文件为/etc/resolv.conf，也可通过DHCP获取，当客户端查询本机缓存时没有查到，将向递归DNS服务器查询，递归DNS也先查本地缓存当查不到时再像上层服务器发起迭代查询。
+ - 主要功能有缓存、递归、转发、ACL、广告植入
+ - 缓存设计要点： 大容量，高命中，老化回收，预取、请求合并
+ - 递归设计要点：多递归关联递归、超时处理、状态处理、递归合并
+ - ISPDNS优点：距离近响应快、调度准确
+   ISPDNS也就是运营商DNS，一般距离用户比较近响应比较快。
+ - PUBDNS优点：支持EDNS0、BGP-anycast、防劫持
+   PUBDNS也就是公共DNS，像现在常用的google的8.8.8.8，Cloudflare的1.1.1.1, 国内的114.114.114.114、腾讯的119.29.29.29、阿里的223.5.5.5等， 公共DNS主要是支持EDNS0通过anycast技术使用同一个IP在全网提供DNS服务能力。
+
+* 权威DNS服务器
+ 权威DNS也称为授权DNS，它主要负责被托管域名的解析、记录管理和监控等。
+ - 主要功能有常规记录、301/302/LINK跳转、subzone、域名绑定
+ - 设计要点： 解析精准、生效快体验好、稳定高性能，安全易运维
+ - 调优点：节点本地覆盖、协议标准可兼容
+
+** 注册权威DNS服务器
+
+ - 配置胶水记录
+
+  [[http://blog.mospan.cn/post/img/2019/dns-compose/glue.png]]  
+  如果自己搭建权威DNS服务器，需要配置胶水记录才能让上级服务器找到自己，其实胶水记录就是NS和A记录的组合，就相当于告诉某个域名的NS服务器是谁，地址是哪个IP，以便迭代查询直接连接。
+
+ - 检查注册信息(http://www.internic.net/whois.html )
+
+  [[http://blog.mospan.cn/post/img/2019/dns-compose/reg-result.png]]  
+
+  最后在whois服务器上查看该NS域名是否注册成功。
+
+** 权威DNS服务器托管域名
+ - 注册商处修改NS
+   
+  [[http://blog.mospan.cn/post/img/2019/dns-compose/modify-ns.png]]  
+  当申请到域名后，需在注册商网站处把域名的NS指向新的授权DNS服务器，才能把解析请求引流到新的授权DNS服务器上来。
+
+ - 配置解析记录并检查解析结果
+
+  [[http://blog.mospan.cn/post/img/2019/dns-compose/checkns.png]]  
+  最后再到新的授权DNS服务器上配置解析记录并使用dig验证解析结果的正确性。
+
+
+** 权威DNS效果
+ - 全网性能
+
+  [[http://blog.mospan.cn/post/img/2019/dns-compose/bench.png]]  
+
+
+ - 全网可用性
+  
+  [[http://blog.mospan.cn/post/img/2019/dns-compose/usabilty.png]]  
+
+  最后再通过基调(听云)、博睿等第三方评测工具对新的授权DNS进行全网测试，它主要是在全球几十万个客户端(包括服务器、个人电脑、手机、嵌入式设备等)模拟真实用户查询该域名记录并分析记录可用性和时间，以便找出某个区域的性能和可用性差地方进行调优，最终可以为全网用户提供优质的DNS服务能力。
+

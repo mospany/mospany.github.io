@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Openresty on 墨斯潘園</title>
+    <title>openresty on 墨斯潘園</title>
     <link>http://mospany.github.io/tags/openresty/</link>
-    <description>Recent content in Openresty on 墨斯潘園</description>
+    <description>Recent content in openresty on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <lastBuildDate>Thu, 02 Mar 2017 11:14:08 +0800</lastBuildDate>
