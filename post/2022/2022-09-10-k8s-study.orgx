@@ -3,9 +3,9 @@
 categories = ["技术文章"]
 date = "2022-09-10T16:13:51+08:00"
 description = ""
-keywords = ["k8s","目录"]
-tags = ["k8s","目录"]
-title = "K8S学习笔记(01)): 目录"
+keywords = ["K8S"]
+tags = ["K8S"]
+title = "K8S学习笔记(01): 目录"
 url = "/2022/09/10/k8s-study-toc/"
 
 +++
