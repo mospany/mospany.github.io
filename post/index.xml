@@ -6,10 +6,19 @@
     <description>Recent content in Posts on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 14 Nov 2019 22:30:22 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 10 Sep 2022 16:13:51 +0800</lastBuildDate>
     
 	<atom:link href="http://mospany.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>K8S学习笔记: 目录</title>
+      <link>http://mospany.github.io/2022/09/10/k8s-study/</link>
+      <pubDate>Sat, 10 Sep 2022 16:13:51 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2022/09/10/k8s-study/</guid>
+      <description>描述 K8S学习笔记目录 目录 &amp;rdquo; width=100% height=&amp;ldquo;800&amp;rdquo;&amp;gt;</description>
+    </item>
     
     <item>
       <title>互联网最重要入口DNS系列(1): 基本常识</title>
@@ -297,26 +306,6 @@
       
       <guid>http://mospany.github.io/2016/01/24/my-blog-online/</guid>
       <description>原来的博客都是在CSDN与博客园里写的，都是按照模板进行编写，能自己自定义的比较少，没有自己的独立域名，用emacs/vim编写上面的博客不</description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>http://mospany.github.io/post/2022/2022-09-10-k8s-study/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>http://mospany.github.io/post/2022/2022-09-10-k8s-study/</guid>
-      <description>Table of Contents +++
-toc = true
-categories = [&amp;ldquo;技术文章&amp;rdquo;]
-date = &amp;ldquo;2022-09-10T16:13:51+08:00&amp;rdquo;
-description = &amp;ldquo;&amp;rdquo;
-keywords = [&amp;ldquo;k8s&amp;rdquo;,&amp;ldquo;目录&amp;rdquo;]
-tags = [&amp;ldquo;k8s&amp;rdquo;,&amp;ldquo;目录&amp;rdquo;]
-title = &amp;ldquo;k8s-study&amp;rdquo;
-url = &amp;ldquo;/2022/09/10/k8s-study/&amp;rdquo;
-+++
-K8S学习笔记目录
-&amp;rdquo; width=100% height=&amp;ldquo;800&amp;rdquo;&amp;gt;</description>
     </item>
     
   </channel>
