@@ -5,7 +5,42 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Sat, 10 Sep 2022 16:13:51 CST</updated>
+        <updated>Tue, 13 Sep 2022 19:48:30 CST</updated>
+        
+        <item>
+            <title>K8S学习笔记(03): Mac系统安装k8s集群</title>
+            <link>http://mospany.github.io/2022/09/13/k8s-study-install-for-mac/</link>
+            <pubDate>Tue, 13 Sep 2022 19:48:30 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://mospany.github.io/2022/09/13/k8s-study-install-for-mac/</guid>
+            <description>&lt;h1 id=&#34;版本介绍&#34;&gt;版本介绍&lt;/h1&gt;
+
+&lt;h2 id=&#34;mac系统版本&#34;&gt;Mac系统版本&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://blog.mospan.cn/post/img/k8s/k8s/k8s-install-for-mac/macos-version.png&#34; title=&#34;http://blog.mospan.cn/post/img/k8s/k8s/k8s-install-for-mac/macos-version.png&#34;&gt;http://blog.mospan.cn/post/img/k8s/k8s/k8s-install-for-mac/macos-version.png&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;docker-desktop-版本&#34;&gt;Docker Desktop 版本&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://blog.mospan.cn/post/img/k8s/k8s/k8s-install-for-mac/docker-version.png&#34; title=&#34;http://blog.mospan.cn/post/img/k8s/k8s/k8s-install-for-mac/docker-version.png&#34;&gt;http://blog.mospan.cn/post/img/k8s/k8s/k8s-install-for-mac/docker-version.png&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;k8s-版本&#34;&gt;K8S 版本&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://blog.mospan.cn/post/img/k8s/k8s/k8s-install-for-mac/k8s-version.png&#34; title=&#34;http://blog.mospan.cn/post/img/k8s/k8s/k8s-install-for-mac/k8s-version.png&#34;&gt;http://blog.mospan.cn/post/img/k8s/k8s/k8s-install-for-mac/k8s-version.png&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;安装&#34;&gt;安装&lt;/h1&gt;
+
+&lt;h2 id=&#34;docker安装&#34;&gt;Docker安装&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;   brew install -cask docker
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;开机自启动k8s&#34;&gt;开机自启动K8S&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://blog.mospan.cn/post/img/k8s/k8s/k8s-install-for-mac/docker-statup-k8s.png&#34; title=&#34;http://blog.mospan.cn/post/img/k8s/k8s/k8s-install-for-mac/docker-statup-k8s.png&#34;&gt;http://blog.mospan.cn/post/img/k8s/k8s/k8s-install-for-mac/docker-statup-k8s.png&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;重启成功后查看K8S集群。&lt;/p&gt;
+</description>
+        </item>
         
         <item>
             <title>K8S学习笔记(01): 目录</title>
@@ -2759,24 +2794,6 @@ mv .emacs .emacs.bak
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-</description>
-        </item>
-        
-        <item>
-            <title>DNS体系之_基础</title>
-            <link>http://mospany.github.io/2017/07/17/dns-architecture-base/</link>
-            <pubDate>Thu, 20 Jul 2017 07:39:07 CST</pubDate>
-            <author>Mospan</author>
-            <guid>http://mospany.github.io/2017/07/17/dns-architecture-base/</guid>
-            <description>
-
-&lt;h1 id=&#34;描述&#34;&gt;描述&lt;/h1&gt;
-
-&lt;p&gt;此《DNS体系基础》为在公司进行的一次内部分享， 现也把它放到博客中来，以便更多的读者分享交流。PPT内容由我个人的理解编写与部分来自互联网上的整理。&lt;/p&gt;
-
-&lt;h1 id=&#34;ppt内容&#34;&gt;PPT内容&lt;/h1&gt;
-
-&lt;p&gt;&lt;center&gt;&lt;embed src=&#34;http://blog.mospan.cn/post/img/dns-architecture-base.pdf&#34; width=100% height=&#34;800&#34;&gt;&lt;/center&gt;&lt;/p&gt;
 </description>
         </item>
         

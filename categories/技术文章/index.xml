@@ -6,10 +6,19 @@
     <description>Recent content in 技术文章 on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sat, 10 Sep 2022 16:13:51 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 13 Sep 2022 19:48:30 +0800</lastBuildDate>
     
 	<atom:link href="http://mospany.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>K8S学习笔记(03): Mac系统安装k8s集群</title>
+      <link>http://mospany.github.io/2022/09/13/k8s-study-install-for-mac/</link>
+      <pubDate>Tue, 13 Sep 2022 19:48:30 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2022/09/13/k8s-study-install-for-mac/</guid>
+      <description>版本介绍 Mac系统版本 http://blog.mospan.cn/post/img/k8s/k8s/k8s-install-for-mac/macos-version.png Docker Desktop 版本 http://blog.mospan.cn/post/img/k8s/k8s/k8s-install-for-mac/docker-version.png K8S 版本 http://blog.mospan.cn/post/img/k8s/k8s/k8s-install-for-mac/k8s-version.png 安装 Docker安装 brew install -cask docker 开机自启动K8S http://blog.mospan.cn/post/img/k8s/k8s/k8s-install-for-mac/docker-statup-k8s.png 重启成功后查看K8S集群。</description>
+    </item>
     
     <item>
       <title>K8S学习笔记(01): 目录</title>
