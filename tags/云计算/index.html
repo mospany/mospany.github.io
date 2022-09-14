@@ -3,45 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <base href="http://mospany.github.io/">
-  <title> - 墨斯潘園</title>
+  <title>云计算 - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
   
-  <meta name="description" content="Table of Contents  版本介绍  Mac系统版本 Docker Desktop 版本 K8S 版本  安装  Docker安装 开机自启动K8S   &#43;
-categories = [&ldquo;技术文章&rdquo;]
-date = &ldquo;2022-09-13T19:48:30&#43;08:00&rdquo;
-description = &ldquo;&rdquo;
-keywords = [&ldquo;K8S&rdquo;,&ldquo;云计算&rdquo;] tags = [&ldquo;K8S&rdquo;, &ldquo;云计算&rdquo;] title = &ldquo;K8S学习笔记(03): Mac系统安装k8s集群&rdquo;
-url = &ldquo;/2022/09/13/k8s-study-install-for-mac/&rdquo;
-&#43;
-
-版本介绍 
-Mac系统版本 
-Docker Desktop 版本 
-K8S 版本 
-安装 
-Docker安装 brew install -cask docker  
-开机自启动K8S 重启成功后查看K8S集群。">
+  <meta name="description" content="云计算">
   <meta name="author" content="mospan">
-  <meta itemprop="name" content=" - 墨斯潘園">
-  <meta itemprop="description" content="Table of Contents  版本介绍  Mac系统版本 Docker Desktop 版本 K8S 版本  安装  Docker安装 开机自启动K8S   &#43;
-categories = [&ldquo;技术文章&rdquo;]
-date = &ldquo;2022-09-13T19:48:30&#43;08:00&rdquo;
-description = &ldquo;&rdquo;
-keywords = [&ldquo;K8S&rdquo;,&ldquo;云计算&rdquo;] tags = [&ldquo;K8S&rdquo;, &ldquo;云计算&rdquo;] title = &ldquo;K8S学习笔记(03): Mac系统安装k8s集群&rdquo;
-url = &ldquo;/2022/09/13/k8s-study-install-for-mac/&rdquo;
-&#43;
-
-版本介绍 
-Mac系统版本 
-Docker Desktop 版本 
-K8S 版本 
-安装 
-Docker安装 brew install -cask docker  
-开机自启动K8S 重启成功后查看K8S集群。">
+  <meta itemprop="name" content="云计算 - 墨斯潘園">
+  <meta itemprop="description" content="云计算">
   <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
-  <meta name="twitter:title" content=" - 墨斯潘園" />
+  <meta name="twitter:title" content="云计算 - 墨斯潘園" />
   
   <meta name="twitter:description" content="">
   <link rel="shortcut icon" href="img/favicon.ico"/>
@@ -87,151 +59,28 @@ Docker安装 brew install -cask docker
 
   </header>
   <div id="container">
-    <div id="main" class="post" itemscope itemprop="blogPost">
-	<article itemprop="articleBody">
-    <header class="article-info clearfix">
-  <h1 itemprop="name">
-      <a href="http://mospany.github.io/post/2022/2022-09-13-k8s-study-install-for-mac/" title="" itemprop="url"></a>
-  </h1>
-  <p class="article-author">By 
-    
-      <a href="http://blog.mospan.cn" title="mospan">mospan</a>
-    
-  </p>
-  <p class="article-time">
-    <time datetime="0001-01-01 00:00:00 &#43;0000 UTC" itemprop="datePublished">0001年01月01日</time>
-  </p>
-</header>
+    <div id="main">
+      
+      
+      <h2 id="2022-09">2022-09</h2>
+      
+      
+      <section class="post" itemscope itemprop="blogPost">
+    <a href="http://mospany.github.io/2022/09/13/k8s-study-install-for-mac/" title="K8S学习笔记(03): Mac系统安装k8s集群" itemprop="url">
+    <h1 itemprop="name">K8S学习笔记(03): Mac系统安装k8s集群</h1>
+    <p itemprop="description">版本介绍 Mac系统版本 Docker Desktop 版本 K8S 版本 安装 Docker安装 brew install -cask docker 开机自启动K8S 重启成功后查看K8S集群。 安装Kubernetes Dashboard kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.6.1/aio/deploy/recommended.yaml</p>
+    <time datetime="2022-09-13 19:48:30 &#43;0800 CST" itemprop="datePublished">2022年09月13日</time>
+  </a>
+</section>
 
-	<div class="article-content">
-    
-    
-
-<h1 id="table-of-contents">Table of Contents</h1>
-
-<ol>
-<li><a href="#org5615798">版本介绍</a>
-
-<ol>
-<li><a href="#org85d7597">Mac系统版本</a></li>
-<li><a href="#orgeeea430">Docker Desktop 版本</a></li>
-<li><a href="#org1c52dee">K8S 版本</a></li>
-</ol></li>
-<li><a href="#org4c76c0c">安装</a>
-
-<ol>
-<li><a href="#orgf70efc0">Docker安装</a></li>
-<li><a href="#orga85e73d">开机自启动K8S</a></li>
-</ol></li>
-</ol>
-
-<p><del>+</del></p>
-
-<p>categories = [&ldquo;技术文章&rdquo;]<br />
-date = &ldquo;2022-09-13T19:48:30+08:00&rdquo;<br />
-description = &ldquo;&rdquo;<br />
-keywords = [&ldquo;K8S&rdquo;,&ldquo;云计算&rdquo;]
-tags = [&ldquo;K8S&rdquo;, &ldquo;云计算&rdquo;]
-title = &ldquo;K8S学习笔记(03): Mac系统安装k8s集群&rdquo;<br />
-url = &ldquo;/2022/09/13/k8s-study-install-for-mac/&rdquo;</p>
-
-<p><del>+</del></p>
-
-<p><a id="org5615798"></a></p>
-
-<h1 id="版本介绍">版本介绍</h1>
-
-<p><a id="org85d7597"></a></p>
-
-<h2 id="mac系统版本">Mac系统版本</h2>
-
-<p><img src="http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/macos-version.png" alt="img" /></p>
-
-<p><a id="orgeeea430"></a></p>
-
-<h2 id="docker-desktop-版本">Docker Desktop 版本</h2>
-
-<p><img src="http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/docker-version.png" alt="img" /></p>
-
-<p><a id="org1c52dee"></a></p>
-
-<h2 id="k8s-版本">K8S 版本</h2>
-
-<p><img src="http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/k8s-version.png" alt="img" /></p>
-
-<p><a id="org4c76c0c"></a></p>
-
-<h1 id="安装">安装</h1>
-
-<p><a id="orgf70efc0"></a></p>
-
-<h2 id="docker安装">Docker安装</h2>
-
-<pre><code>brew install -cask docker
-</code></pre>
-
-<p><a id="orga85e73d"></a></p>
-
-<h2 id="开机自启动k8s">开机自启动K8S</h2>
-
-<p><img src="http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/docker-statup-k8s.png" alt="img" /></p>
-
-<p>重启成功后查看K8S集群。</p>
-
-    <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
-  <div style="float:right;margin-top:0px;">
-    <img src="/img/qrcode.jpg" width="129px" height="129px"/>
-    <div style="text-align:center;">微信扫一扫</div>
-  </div>
-  <div style="float:left;margin-top:0px;">
-    <img src="/img/rewardcode.jpg" width="129px" height="129px"/>
-  </div>
-  <div>
-    <p style="margin-top:0px;">作者：<a target="_blank" href="http://blog.mospan.cn/">mospan</a>
-      <br />微信关注：墨斯潘園
-      <br />本文出处：<a target="_blank" href="http://mospany.github.io/post/2022/2022-09-13-k8s-study-install-for-mac/">http://mospany.github.io/post/2022/2022-09-13-k8s-study-install-for-mac/</a>
-      <br />
-      文章版权归本人所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
-  </div>
-</div>
+        
+      <nav id="page-nav" class="clearfix">
+          
 
 
-	</div>
-  <footer class="article-footer clearfix">
-  
 
-  <div class="article-share" id="share">
-    <div data-url="http://mospany.github.io/post/2022/2022-09-13-k8s-study-install-for-mac/" data-title="" data-tsina="3833537679" class="share clearfix">
+      </nav>
     </div>
-  </div>
-</footer>
-
-	</article>
-  
-
-
-
-
-
-<div id="git-comments"></div>
-<link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
-<script src="https://billts.site/js/gitment.js"></script>
-<script>
-var gitment = new Gitment({
-  id: '<%= page.date %>',
-  owner: 'mospany',
-  repo: 'mospan-hugo-blog-gitment',
-  oauth: {
-    client_id: '0cafe299c964f0af2d1e',
-    client_secret: 'ec47ee9481210935a662298791c31da203694a8f',
-  },
-})
-gitment.render('git-comments')
-</script>    
-
-
-</div>
-
     <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
@@ -244,7 +93,7 @@ gitment.render('git-comments')
     
     <li><a href="http://mospany.github.io/categories/%e5%b7%a5%e5%85%b7%e4%bd%bf%e7%94%a8" title="工具使用">工具使用<sup>3</sup></a></li>
     
-    <li><a href="http://mospany.github.io/categories/%e6%8a%80%e6%9c%af%e6%96%87%e7%ab%a0" title="技术文章">技术文章<sup>28</sup></a></li>
+    <li><a href="http://mospany.github.io/categories/%e6%8a%80%e6%9c%af%e6%96%87%e7%ab%a0" title="技术文章">技术文章<sup>29</sup></a></li>
     
     <li><a href="http://mospany.github.io/categories/%e7%94%9f%e6%b4%bb%e8%ae%b0%e5%bd%95" title="生活记录">生活记录<sup>1</sup></a></li>
     
@@ -275,7 +124,7 @@ gitment.render('git-comments')
       
 			<li><a href="http://mospany.github.io/tags/ipv6" title="ipv6">ipv6<sup>2</sup></a></li>
       
-			<li><a href="http://mospany.github.io/tags/k8s" title="k8s">k8s<sup>1</sup></a></li>
+			<li><a href="http://mospany.github.io/tags/k8s" title="k8s">k8s<sup>2</sup></a></li>
       
 			<li><a href="http://mospany.github.io/tags/openresty" title="openresty">openresty<sup>1</sup></a></li>
       
@@ -292,6 +141,8 @@ gitment.render('git-comments')
 			<li><a href="http://mospany.github.io/tags/vue" title="vue">vue<sup>1</sup></a></li>
       
 			<li><a href="http://mospany.github.io/tags/xns" title="xns">xns<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e4%ba%91%e8%ae%a1%e7%ae%97" title="云计算">云计算<sup>1</sup></a></li>
       
 			<li><a href="http://mospany.github.io/tags/%e4%ba%92%e8%81%94%e7%bd%91" title="互联网">互联网<sup>1</sup></a></li>
       
@@ -389,7 +240,7 @@ gitment.render('git-comments')
       
       
       <li class="archive-list-item">
-        <a class="archive-list-link" href="http://mospany.github.io/post/#2022-09">2022年09月</a><span class="archive-list-count">8</span>
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2022-09">2022年09月</a><span class="archive-list-count">10</span>
       </li>
       
       
@@ -457,11 +308,6 @@ gitment.render('git-comments')
         <a class="archive-list-link" href="http://mospany.github.io/post/#2016-01">2016年01月</a><span class="archive-list-count">6</span>
       </li>
       
-      
-      <li class="archive-list-item">
-        <a class="archive-list-link" href="http://mospany.github.io/post/#0001-01">0001年01月</a><span class="archive-list-count">1</span>
-      </li>
-      
     </ul>
 
   </div>
@@ -502,6 +348,8 @@ gitment.render('git-comments')
     <a href="http://mospany.github.io/tags/vue" style="font-size: 12px;">vue</a>
     
     <a href="http://mospany.github.io/tags/xns" style="font-size: 12px;">xns</a>
+    
+    <a href="http://mospany.github.io/tags/%e4%ba%91%e8%ae%a1%e7%ae%97" style="font-size: 12px;">云计算</a>
     
     <a href="http://mospany.github.io/tags/%e4%ba%92%e8%81%94%e7%bd%91" style="font-size: 12px;">互联网</a>
     
@@ -641,38 +489,6 @@ $(document).ready(function(){
 
 <script type="text/javascript">
 $(document).ready(function(){
-  var ai = $('.article-content>iframe'),
-      ae = $('.article-content>embed'),
-      t  = $('#toc'),
-      h  = $('article h2')
-      ah = $('article h2'),
-      ta = $('#toc.toc-aside'),
-      o  = $('.openaside'),
-      c  = $('.closeaside');
-  if(ai.length>0){
-    ai.wrap('<div class="video-container" />');
-  };
-  if(ae.length>0){
-   ae.wrap('<div class="video-container" />');
-  };
-  if(ah.length==0){
-    t.css('display','none');
-  }else{
-    c.click(function(){
-      ta.css('display', 'block').addClass('fadeIn');
-    });
-    o.click(function(){
-      ta.css('display', 'none');
-    });
-    $(window).scroll(function(){
-      ta.css("top",Math.max(140,320-$(this).scrollTop()));
-    });
-  };
-});
-</script>
-
-<script type="text/javascript">
-$(document).ready(function(){
   var $this = $('.share'),
       url = $this.attr('data-url'),
       encodedUrl = encodeURIComponent(url),
@@ -699,27 +515,6 @@ $(document).ready(function(){
 });
 </script>
 
-
-<link rel="stylesheet" href="http://mospany.github.io/fancybox/jquery.fancybox.css" media="screen" type="text/css">
-<script src="http://mospany.github.io/fancybox/jquery.fancybox.pack.js"></script>
-<script type="text/javascript">
-$(document).ready(function(){
-  $('.article-content').each(function(i){
-    $(this).find('img').each(function(){
-      if ($(this).parent().hasClass('fancybox')) return;
-      var alt = this.alt;
-      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
-      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
-    });
-    $(this).find('.fancybox').each(function(){
-      $(this).attr('rel', 'article' + i);
-    });
-  });
-  if($.fancybox){
-    $('.fancybox').fancybox();
-  }
-});
-</script>
 
 
 

@@ -2,49 +2,60 @@
     
     <url>
         <loc>http://mospany.github.io/tags/</loc>
-        <lastmod>2022-09-10T16:13:51+08:00</lastmod>
+        <lastmod>2022-09-13T19:48:30+08:00</lastmod>
         <priority>0</priority>
     </url>
     
     <url>
         <loc>http://mospany.github.io/categories/</loc>
-        <lastmod>2022-09-10T16:13:51+08:00</lastmod>
+        <lastmod>2022-09-13T19:48:30+08:00</lastmod>
         <priority>0</priority>
     </url>
     
     <url>
         <loc>http://mospany.github.io/tags/k8s/</loc>
-        <lastmod>2022-09-10T16:13:51+08:00</lastmod>
+        <lastmod>2022-09-13T19:48:30+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/2022/09/13/k8s-study-install-for-mac/</loc>
+        <lastmod>2022-09-13T19:48:30+08:00</lastmod>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/post/</loc>
+        <lastmod>2022-09-13T19:48:30+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/</loc>
+        <lastmod>2022-09-13T19:48:30+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/%E4%BA%91%E8%AE%A1%E7%AE%97/</loc>
+        <lastmod>2022-09-13T19:48:30+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/</loc>
+        <lastmod>2022-09-13T19:48:30+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/</loc>
+        <lastmod>2022-09-13T19:48:30+08:00</lastmod>
         <priority>0</priority>
     </url>
     
     <url>
         <loc>http://mospany.github.io/2022/09/10/k8s-study-toc/</loc>
         <lastmod>2022-09-10T16:13:51+08:00</lastmod>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/post/</loc>
-        <lastmod>2022-09-10T16:13:51+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/</loc>
-        <lastmod>2022-09-10T16:13:51+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/</loc>
-        <lastmod>2022-09-10T16:13:51+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/</loc>
-        <lastmod>2022-09-10T16:13:51+08:00</lastmod>
-        <priority>0</priority>
     </url>
     
     <url>
@@ -97,13 +108,13 @@
     </url>
     
     <url>
-        <loc>http://mospany.github.io/categories/%E8%81%8C%E5%9C%BA%E4%BA%BA%E7%94%9F/</loc>
+        <loc>http://mospany.github.io/tags/%E8%81%8C%E5%9C%BA%E4%BA%BA%E7%94%9F/</loc>
         <lastmod>2019-10-14T14:17:41+08:00</lastmod>
         <priority>0</priority>
     </url>
     
     <url>
-        <loc>http://mospany.github.io/tags/%E8%81%8C%E5%9C%BA%E4%BA%BA%E7%94%9F/</loc>
+        <loc>http://mospany.github.io/categories/%E8%81%8C%E5%9C%BA%E4%BA%BA%E7%94%9F/</loc>
         <lastmod>2019-10-14T14:17:41+08:00</lastmod>
         <priority>0</priority>
     </url>
@@ -195,13 +206,13 @@
     </url>
     
     <url>
-        <loc>http://mospany.github.io/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</loc>
+        <loc>http://mospany.github.io/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</loc>
         <lastmod>2017-03-07T19:13:23+08:00</lastmod>
         <priority>0</priority>
     </url>
     
     <url>
-        <loc>http://mospany.github.io/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</loc>
+        <loc>http://mospany.github.io/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</loc>
         <lastmod>2017-03-07T19:13:23+08:00</lastmod>
         <priority>0</priority>
     </url>
@@ -355,13 +366,13 @@
     </url>
     
     <url>
-        <loc>http://mospany.github.io/categories/%E7%94%9F%E6%B4%BB%E8%AE%B0%E5%BD%95/</loc>
+        <loc>http://mospany.github.io/tags/%E7%94%9F%E6%B4%BB%E8%AE%B0%E5%BD%95/</loc>
         <lastmod>2016-01-26T08:28:37+08:00</lastmod>
         <priority>0</priority>
     </url>
     
     <url>
-        <loc>http://mospany.github.io/tags/%E7%94%9F%E6%B4%BB%E8%AE%B0%E5%BD%95/</loc>
+        <loc>http://mospany.github.io/categories/%E7%94%9F%E6%B4%BB%E8%AE%B0%E5%BD%95/</loc>
         <lastmod>2016-01-26T08:28:37+08:00</lastmod>
         <priority>0</priority>
     </url>
@@ -384,12 +395,6 @@
     <url>
         <loc>http://mospany.github.io/about/</loc>
         <lastmod>2016-01-01T08:55:31+08:00</lastmod>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/post/2022/2022-09-13-k8s-study-install-for-mac/</loc>
-        <lastmod>0001-01-01T00:00:00+00:00</lastmod>
-        <priority>0</priority>
     </url>
     
 </urlset>
