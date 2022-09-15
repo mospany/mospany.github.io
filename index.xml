@@ -15,50 +15,52 @@
             <guid>http://mospany.github.io/2022/09/13/k8s-study-install-for-mac/</guid>
             <description>
 
-&lt;p&gt;&lt;a id=&#34;org76d2f95&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org8f60214&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;版本介绍&#34;&gt;版本介绍&lt;/h1&gt;
 
-&lt;p&gt;&lt;a id=&#34;org2cadf8b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org252aa70&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;mac系统版本&#34;&gt;Mac系统版本&lt;/h2&gt;
 
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/macos-version.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgce88428&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org5d1a2f0&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;docker-desktop-版本&#34;&gt;Docker Desktop 版本&lt;/h2&gt;
 
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/docker-version.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org952879e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org154e588&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;k8s-版本&#34;&gt;K8S 版本&lt;/h2&gt;
 
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/k8s-version.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org41f8520&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orga7210c2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;安装&#34;&gt;安装&lt;/h1&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgf187588&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgd79577f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;docker安装&#34;&gt;Docker安装&lt;/h2&gt;
 
 &lt;pre&gt;&lt;code&gt;brew install -cask docker
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;a id=&#34;org9e9e3cc&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org2db044e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;开机自启动k8s&#34;&gt;开机自启动K8S&lt;/h2&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/docker-statup-k8s.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/docker-startup-k8s.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;重启成功后查看K8S集群。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org2e73075&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgae7ba35&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;安装kubernetes-dashboard&#34;&gt;安装Kubernetes Dashboard&lt;/h2&gt;
+
+&lt;p&gt;命令如下：&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.6.1/aio/deploy/recommended.yaml
 &lt;/code&gt;&lt;/pre&gt;
@@ -67,7 +69,7 @@
 
 &lt;p&gt;最新版本参考：&lt;a href=&#34;https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/&#34;&gt;https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/&lt;/a&gt;​&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org8b9d69f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org4ba64ff&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;创建sa登录token&#34;&gt;创建SA登录Token&lt;/h3&gt;
 
@@ -95,7 +97,7 @@ subjects:
 # kubectl create -f dashboard-adminuser.yaml
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;a id=&#34;org4037f31&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgd6050e3&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;绑定资源并获取登录token&#34;&gt;绑定资源并获取登录Token&lt;/h3&gt;
 
@@ -109,7 +111,7 @@ kubectl proxy
 
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/k8s-dashboard-rbac.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org6db0d5c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgf239e7e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;登录dashbaord&#34;&gt;登录dashbaord&lt;/h3&gt;
 
@@ -119,7 +121,7 @@ kubectl proxy
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;输入上面生成的token:&lt;br /&gt;
-&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/k8s-dashboard-loggin.png&#34; alt=&#34;img&#34; /&gt;&lt;br /&gt;
+&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/k8s-dashboard-login.png&#34; alt=&#34;img&#34; /&gt;&lt;br /&gt;
 登录成功界面如下：&lt;br /&gt;
 &lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/k8s-dashboard-main.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 </description>

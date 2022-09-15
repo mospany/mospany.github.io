@@ -17,7 +17,7 @@
       <pubDate>Tue, 13 Sep 2022 19:48:30 +0800</pubDate>
       
       <guid>http://mospany.github.io/2022/09/13/k8s-study-install-for-mac/</guid>
-      <description>版本介绍 Mac系统版本 Docker Desktop 版本 K8S 版本 安装 Docker安装 brew install -cask docker 开机自启动K8S 重启成功后查看K8S集群。 安装Kubernetes Dashboard kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.6.1/aio/deploy/recommended.yaml</description>
+      <description>版本介绍 Mac系统版本 Docker Desktop 版本 K8S 版本 安装 Docker安装 brew install -cask docker 开机自启动K8S 重启成功后查看K8S集群。 安装Kubernetes Dashboard 命令如下</description>
     </item>
     
   </channel>

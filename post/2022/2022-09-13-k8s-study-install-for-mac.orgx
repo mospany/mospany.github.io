@@ -27,11 +27,12 @@ url = "/2022/09/13/k8s-study-install-for-mac/"
    brew install -cask docker
    #+END_SRC
 ** 开机自启动K8S
-   [[http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/docker-statup-k8s.png]]
+   [[http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/docker-startup-k8s.png]]
 
    重启成功后查看K8S集群。
    
 ** 安装Kubernetes Dashboard
+   命令如下：
    #+BEGIN_SRC sh
    kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.6.1/aio/deploy/recommended.yaml
    #+END_SRC
@@ -83,7 +84,7 @@ url = "/2022/09/13/k8s-study-install-for-mac/"
     http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/configmap?namespace=default
     #+END_SRC
     输入上面生成的token:
-    [[http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/k8s-dashboard-loggin.png]]
+    [[http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/k8s-dashboard-login.png]]
     登录成功界面如下：
     [[http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/k8s-dashboard-main.png]]
     
