@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>vim on 墨斯潘園</title>
+    <link>http://mospany.github.io/tags/vim/</link>
+    <description>Recent content in vim on 墨斯潘園</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Thu, 17 Oct 2019 13:54:40 +0800</lastBuildDate>
+    
+	<atom:link href="http://mospany.github.io/tags/vim/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>编辑器终结者: vim与emacs双剑合璧</title>
+      <link>http://mospany.github.io/2019/10/17/vim-in-emacs/</link>
+      <pubDate>Thu, 17 Oct 2019 13:54:40 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2019/10/17/vim-in-emacs/</guid>
+      <description>神器传说 在猿的世界里，流传着两大神器的传说： 一个是神的编辑器Emacs，另一个是编辑器之神Vim。 追求独步天下的高手为了得到它驾驭它，在江湖</description>
+    </item>
+    
+  </channel>
+</rss>

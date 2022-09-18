@@ -1,0 +1,971 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <base href="http://mospany.github.io/">
+  <title>IPv6时代已来，您Get了多少？ - 墨斯潘園</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+  <meta name="keywords" content="IPv6,">
+  <meta name="description" content="为什么要用IPv6 如今互联网主要使用IPv4, 感觉已经蓬勃发展了够用了，那为什么还需要使用IPv6呢？主要有如下原因： IPv4地址匮乏 NAT">
+  <meta name="author" content="mospan">
+  <meta itemprop="name" content="IPv6时代已来，您Get了多少？ - 墨斯潘園">
+  <meta itemprop="description" content="为什么要用IPv6 如今互联网主要使用IPv4, 感觉已经蓬勃发展了够用了，那为什么还需要使用IPv6呢？主要有如下原因： IPv4地址匮乏 NAT">
+  <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@mospan" />
+  <meta name="twitter:title" content="IPv6时代已来，您Get了多少？ - 墨斯潘園" />
+  
+  <meta name="twitter:description" content="">
+  <link rel="shortcut icon" href="img/favicon.ico"/>
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png" />
+  <link rel="stylesheet" href="highlight/styles/github.css">
+  <script src="highlight/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <link rel="stylesheet" href="font/hack/css/hack.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <div>
+  
+  <div id="imglogo">
+    <a href="http://mospany.github.io/"><img src="http://mospany.github.io/img/logo.jpg" alt="墨斯潘園" title="墨斯潘園"/></a>
+  </div>
+  
+  <div id="textlogo">
+    <h1 class="site-name"><a href="http://mospany.github.io/" title="墨斯潘園">墨斯潘園</a></h1>
+    <h2 class="blog-motto">技术改变生活，学习成就未来</h2>
+  </div>
+  <div class="navbar"><a class="navbutton navmobile" href="#" title="menu"></a></div>
+  <nav class="animated">
+    <ul>
+      
+      <li><a href="/">首页</a></li> 
+      
+      <li><a href="/about">关于</a></li> 
+      
+      <li>
+        <form class="search" method="get" action="https://www.google.com/search">
+          <div>
+            <input type="text" id="search" name="q" placeholder="搜索">
+          </div>
+        </form>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+  </header>
+  <div id="container">
+    <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody">
+    <header class="article-info clearfix">
+  <h1 itemprop="name">
+      <a href="http://mospany.github.io/2019/08/09/ipv6-base/" title="IPv6时代已来，您Get了多少？" itemprop="url">IPv6时代已来，您Get了多少？</a>
+  </h1>
+  <p class="article-author">By 
+    
+      <a href="http://blog.mospan.cn" title="mospan">mospan</a>
+    
+  </p>
+  <p class="article-time">
+    <time datetime="2019-08-09 17:14:27 &#43;0800 CST" itemprop="datePublished">2019年08月09日</time>
+  </p>
+</header>
+
+	<div class="article-content">
+    
+    
+
+<p><img src="http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-main.png" alt="img" /></p>
+
+<p><a id="org64c0c7c"></a></p>
+
+<h1 id="为什么要用ipv6">为什么要用IPv6</h1>
+
+<p>如今互联网主要使用IPv4, 感觉已经蓬勃发展了够用了，那为什么还需要使用IPv6呢？主要有如下原因：</p>
+
+<ul>
+<li>IPv4地址匮乏</li>
+<li>NAT非根本解决办法，破坏了端到端模型</li>
+<li>新技术对IP协议催生了更多的需求</li>
+<li>政策驱动: 计划使用5-10年的时间建成全球最大的IPv6商用网络。</li>
+</ul>
+
+<p>随着5G、IOT万物互联的到来，IPv4已经不方便或不能承载如此大的需求了，更多的应用呼吁着IPv6尽快落地。</p>
+
+<p><a id="orgfda1432"></a></p>
+
+<h1 id="ipv6优势">IPv6优势</h1>
+
+<p>既然IPv4有以上不足，那IPv6有什么优势呢？主要如下：</p>
+
+<ul>
+<li>近乎无限的地址空间</li>
+<li>更简洁的报文头部</li>
+<li>内置的安全性</li>
+<li>更好的QoS支持</li>
+<li>更好的移动性</li>
+<li>编址层次等级</li>
+</ul>
+
+<p><a id="orgd14bab5"></a></p>
+
+<h1 id="ipv6技术">IPv6技术</h1>
+
+<p><a id="orgf199107"></a></p>
+
+<h2 id="标准-rfc">标准(RFC)</h2>
+
+<p>IPv6协议由很多RFC组成，IPv6协议族RFC如下， 其中<br />
+<img src="http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-rfc.png" alt="img" /><br />
+RFC5942 - IPv6子网模式：链路和子网前缀间的关系<br />
+RFC5569 - IPv4/IPv6过渡技术之—— 6rd<br />
+RFC3056 - IPv4/IPv6过渡技术之—— 6to4<br />
+RFC2473 - IPv6标准中的通用分组隧道化<br />
+RFC6333 - IPv4/IPv6过渡技术之——双栈精简版<br />
+RFC5214 - IPv4/IPv6过渡技术之——ISATAP<br />
+RFC4213 - IPv6主机和路由器的基本转换机制-双栈和隧<br />
+RFC3775 - IPv6中的移动性支持<br />
+RFC3053 - IPv4/IPv6过渡技术之——隧道代理<br />
+RFC6434 - 对IPv6节点的要求<br />
+RFC4294 - 对IPv6节点的要求<br />
+RFC4294 - IPv6的默认地址选择<br />
+RFC6071 - IP安全(IPsec)<br />
+RFC5340 - IPv6的动态路由协议OSPFv3<br />
+RFC3315 - DHCPv6</p>
+
+<p><a id="org2a08aaa"></a></p>
+
+<h2 id="报文格式">报文格式</h2>
+
+<p>IPv6报文格式与IPv4有一定相似，但比它简化和固定了好多，这样更容易解析与传输。<br />
+<img src="http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-header.png" alt="img" /></p>
+
+<p><a id="org8d4e87c"></a></p>
+
+<h2 id="地址">地址</h2>
+
+<p>巨大的地址空间, 相当于地球上每粒沙子都有自己的地址。</p>
+
+<p><strong>IPv4</strong><br />
+地址长度：32位<br />
+地址空间：2的32次方，约42亿(世界上平均3个人有2个IP地址)</p>
+
+<p><strong>IPv6</strong><br />
+地址长度：128位<br />
+地址空间：2的128次方，约3.4 x 10^38个(地球上的每一粒沙子都有IP地址)</p>
+
+<p><a id="orgdc9712e"></a></p>
+
+<h3 id="表示">表示</h3>
+
+<p>非压缩： 2001:0da8:0207:0000:0000:0000:8207<br />
+  压缩前导0：2001:0da8:0207:0:0:0:0:8207<br />
+  压缩: 2001:0d08:0207::8207     注：只能有一个::<br />
+  内嵌IPv4地址： ::192.168.1.1<br />
+<img src="http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-addr.png" alt="img" /></p>
+
+<p><a id="orgb488b46"></a></p>
+
+<h3 id="分类">分类</h3>
+
+<p>IPv6也分单播、组播，但没有了广播，增加了任播anycast，它允许同一个IP配置在多台服务器上，通过路由的方式自动访问离用户的最近的服务器上去。<br />
+<img src="http://blog.mospan.cn/post/img/2019/ipv6-base/addr-type.png" alt="img" /></p>
+
+<p><a id="org5489189"></a></p>
+
+<h3 id="手工配置">手工配置</h3>
+
+<ol>
+<li><p>添加IPv6地址</p>
+
+<pre><code>ip -6 addr add &lt;ipv6address&gt;/&lt;prefixlength&gt; dev &lt;interface&gt;
+
+ip -6 addr add 2001::1/64 dev eth0
+
+ifconfig &lt;interface&gt; inet6 add &lt;ipv6address&gt;/&lt;prefixlength&gt; 
+
+ifconfig eth0 inet6 add 2001::1/64
+</code></pre></li>
+
+<li><p>添加默认路由</p>
+
+<pre><code>ip -6 route add &lt;ipv6address&gt;/&lt;prefixlength&gt; via &lt;ipv6address&gt;
+
+ip -6 route add default via 2001::1 
+
+route -A inet6 add &lt;ipv6address&gt;/&lt;prefixlength&gt; gw
+
+route -A inet6 add default gw 2001::1 
+</code></pre></li>
+
+<li><p>查看路由</p>
+
+<pre><code>ip -6 route show
+
+route -6
+</code></pre></li>
+</ol>
+
+<p><a id="org956a030"></a></p>
+
+<h3 id="无状态配置">无状态配置</h3>
+
+<p>IPv6的无状态配置是比较吸引我的一个特点，只要路由器支持插上网线就自动分配到全球唯一的地址就能自动联网。<br />
+<img src="http://blog.mospan.cn/post/img/2019/ipv6-base/auto-1.png" alt="img" /></p>
+
+<p><img src="http://blog.mospan.cn/post/img/2019/ipv6-base/auto-2.png" alt="img" /></p>
+
+<p><a id="orge70663c"></a></p>
+
+<h2 id="常用命令">常用命令</h2>
+
+<p><a id="orgfd8171c"></a></p>
+
+<h3 id="查看ip">查看ip</h3>
+
+<pre><code>ip -6 addr 
+</code></pre>
+
+<p><a id="orga991404"></a></p>
+
+<h3 id="查看路由">查看路由</h3>
+
+<pre><code>ip -6 route
+</code></pre>
+
+<p><a id="orgf2c7e21"></a></p>
+
+<h3 id="查看多播地址">查看多播地址</h3>
+
+<pre><code>ip -6 maddr
+netstat -gn
+</code></pre>
+
+<p><a id="org04efb87"></a></p>
+
+<h3 id="查看dns-aaaa记录-走ipv4路线">查看dns AAAA记录(走IPv4路线)</h3>
+
+<pre><code>dig -t AAAA www.xxx.com
+nslookup -query=AAAA www.xxx.com
+</code></pre>
+
+<p><a id="orgbaf5477"></a></p>
+
+<h3 id="查看dns-aaaa记录-走ipv6路线">查看dns AAAA记录(走IPv6路线)</h3>
+
+<pre><code>dig @2001::1 -6 -t AAAA www.xxx.com
+nslookup -query=AAAA www.xxx.com 2001::1
+</code></pre>
+
+<p><a id="orgdb01478"></a></p>
+
+<h3 id="查看dns-aaaa记录-走ipv6路线-最完整-最靠谱的办法">查看dns AAAA记录(走IPv6路线, 最完整，最靠谱的办法)</h3>
+
+<pre><code>dig @2001::1 -6 -t AAAA www.xxx.com +trace
+</code></pre>
+
+<p><a id="orgb5ed7a7"></a></p>
+
+<h3 id="curl">curl</h3>
+
+<pre><code>curl -6 https://www.xxx.com
+</code></pre>
+
+<p><a id="orgd4f50fc"></a></p>
+
+<h3 id="ping">ping</h3>
+
+<pre><code>ping6 www.xxx.com
+</code></pre>
+
+<p><a id="orgfe8a668"></a></p>
+
+<h3 id="trace-route">trace route</h3>
+
+<pre><code>mtr -6 www.xxx.com
+traceroute6 www.xxx.com 
+tracert6 www.xxx.com 
+tracepath6 www.xxx.com 
+</code></pre>
+
+<p><a id="org5f9751c"></a></p>
+
+<h3 id="ping-1">ping</h3>
+
+<pre><code>ping6 www.xxx.com
+</code></pre>
+
+<p><a id="orgc80feba"></a></p>
+
+<h3 id="邻居地址解析-类似ipv4中的arping">邻居地址解析，类似IPv4中的arping</h3>
+
+<pre><code>ndisc6 -n 2001::1 eth0
+</code></pre>
+
+<p><a id="org631a50c"></a></p>
+
+<h3 id="iptables">iptables</h3>
+
+<pre><code>ip6tables-save
+</code></pre>
+
+<p><a id="orgfd17b8c"></a></p>
+
+<h3 id="tcpdump">tcpdump</h3>
+
+<pre><code>tcpdump -nnn -i eth0 ip6
+</code></pre>
+
+<p><a id="org46e39eb"></a></p>
+
+<h2 id="在线工具">在线工具</h2>
+
+<p><a id="org6ac0034"></a></p>
+
+<h3 id="公共dns列列表">公共dns列列表</h3>
+
+<p>地址: <a href="http://dns.icoa.cn/ipv6/">http://dns.icoa.cn/ipv6/</a></p>
+
+<p><a id="org49d22ec"></a></p>
+
+<h3 id="查询-网站是否提供ipv6">查询⽹网站是否提供IPv6</h3>
+
+<p>地址:<br />
+<a href="https://ready.chair6.net/">https://ready.chair6.net/</a><br />
+<a href="http://ip6tools.com/#checkWebServer">http://ip6tools.com/#checkWebServer</a></p>
+
+<p><a id="org91f5e2c"></a></p>
+
+<h3 id="查询我-自-己是否拥有公-网ipv6地址">查询我⾃自⼰己是否拥有公⽹网IPv6地址</h3>
+
+<p>地址：<br />
+<a href="http://www.test-ipv6.com">http://www.test-ipv6.com</a><br />
+<a href="http://ip6tools.com/#WhatisMyIPv6Address">http://ip6tools.com/#WhatisMyIPv6Address</a></p>
+
+<p><a id="org6e6f575"></a></p>
+
+<h2 id="协议栈">协议栈</h2>
+
+<p>IPv6与IPv4协议栈比较相似，经过精心设计后去掉了不少冗余或不合理部分，代码部分将近少了一半，使得更加简洁强大。<br />
+<img src="http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-stack.png" alt="img" /></p>
+
+<p><a id="org7b102ac"></a></p>
+
+<h1 id="现状">现状</h1>
+
+<p>IPv6目前用户覆盖率还不高，尤其是中国, 主要原因是钱，运营商通过维护或改造现有IPv4网络基本满足了目前大家的使用要求，在没有其他利益或政策驱动下很难主动自己贴钱去升级网络，再者需要大家都升级后才能完全使用，谁不愿意劳民伤财的去干这件事。但随着中国想努力引领世界，在政策与应用驱动下IPv6将大大加快。<br />
+<img src="http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-now.png" alt="img" /></p>
+
+<p><a id="orgc6aa769"></a></p>
+
+<h1 id="过渡技术">过渡技术</h1>
+
+<p><img src="http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-transit.png" alt="img" /><br />
+过渡技术主要解决IPv4和IPv6网络共存情况下的互联互通，主要由三种策略：</p>
+
+<ul>
+<li>双栈协议：设备升级到IPv6同时保留IPv4支持，应用程序可以选择使用IPv4或IPv6; 协议应用允许应用逐渐从IPv4过渡到IPv6。</li>
+<li>隧道封装：IPv6报文作为IPv4的载荷，或由MPLS承载在IPv4 internet海洋中连接多个IPv6孤岛</li>
+<li>协议转换：提供IPv4和IPv6的互通动作，如NAT-PT等提供IPv6与IPv4互相访问的技术，适用于IPv6 internet与IPv4 internet共存，而两者又需要互相通讯的需求。</li>
+</ul>
+
+<p><a id="orgecddc15"></a></p>
+
+<h2 id="双栈协议">双栈协议</h2>
+
+<p>设备升级到IPv6的同时保留IPv4支持，应用程序可以选择使用IPv6或IPv4协议。<br />
+所有的过渡技术都是基于双协议栈实现的。<br />
+优点：互通性好、易于理解、实现简单。<br />
+缺点：</p>
+
+<ul>
+<li>对每个IPv4节点都要升级，成本较大，没有解决IPv4地址紧缺的问题。</li>
+<li>部署复杂，所有设备都同时配置IPv4和IPv6；</li>
+<li>对设备性能要求高，既要运行IPv6，又要运行IPv4。</li>
+</ul>
+
+<p><a id="org011bb58"></a></p>
+
+<h2 id="隧道封装">隧道封装</h2>
+
+<ul>
+<li>IPv6 over IPv4 手动隧道(配置隧道)：隧道两端的边界路由器上通过静态指定隧道的源IPv4地址和目的IPv4地址而创建的隧道。</li>
+<li>IPv6 over IPv4 GRE隧道(GRE隧道)： 使用IPv4的GRE隧道上承载IPv6流而实现IPv6互通。</li>
+</ul>
+
+<p><a id="org5571ac2"></a></p>
+
+<h1 id="展望">展望</h1>
+
+<p>随着IPv6的普及与更多的应用落地， 使得人与人、物与物之间通信更加频繁，将催生出很多革命创新型应用或巨头公司，谁主沉浮，让我们拭目以待吧。<br />
+<img src="http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-preview.png" alt="img" /></p>
+
+    <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+  <div style="float:right;margin-top:0px;">
+    <img src="/img/qrcode.jpg" width="129px" height="129px"/>
+    <div style="text-align:center;">微信扫一扫</div>
+  </div>
+  <div style="float:left;margin-top:0px;">
+    <img src="/img/rewardcode.jpg" width="129px" height="129px"/>
+  </div>
+  <div>
+    <p style="margin-top:0px;">作者：<a target="_blank" href="http://blog.mospan.cn/">mospan</a>
+      <br />微信关注：墨斯潘園
+      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2019/08/09/ipv6-base/">http://mospany.github.io/2019/08/09/ipv6-base/</a>
+      <br />
+      文章版权归本人所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+  </div>
+</div>
+
+
+	</div>
+  <footer class="article-footer clearfix">
+  
+
+<div class="article-tags">
+  <span></span>
+  
+  <a href="/tags/ipv6">IPv6</a>
+  
+</div>
+
+
+
+<div class="article-categories">
+  <span></span>
+  
+  <a class="article-category-link" href="/categories/ipv6">IPv6</a>
+  
+</div>
+
+
+
+  <div class="article-share" id="share">
+    <div data-url="http://mospany.github.io/2019/08/09/ipv6-base/" data-title="IPv6时代已来，您Get了多少？" data-tsina="3833537679" class="share clearfix">
+    </div>
+  </div>
+</footer>
+
+	</article>
+  
+
+
+
+
+
+<div id="git-comments"></div>
+<link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
+<script src="https://billts.site/js/gitment.js"></script>
+<script>
+var gitment = new Gitment({
+  id: '<%= page.date %>',
+  owner: 'mospany',
+  repo: 'mospan-hugo-blog-gitment',
+  oauth: {
+    client_id: '0cafe299c964f0af2d1e',
+    client_secret: 'ec47ee9481210935a662298791c31da203694a8f',
+  },
+})
+gitment.render('git-comments')
+</script>    
+
+
+</div>
+
+    <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+  
+
+<div class="categorieslist">
+  <p class="asidetitle">分类</p>
+  <ul>
+    
+    <li><a href="http://mospany.github.io/categories/%e5%b7%a5%e5%85%b7%e4%bd%bf%e7%94%a8" title="工具使用">工具使用<sup>3</sup></a></li>
+    
+    <li><a href="http://mospany.github.io/categories/%e6%8a%80%e6%9c%af%e6%96%87%e7%ab%a0" title="技术文章">技术文章<sup>29</sup></a></li>
+    
+    <li><a href="http://mospany.github.io/categories/%e7%94%9f%e6%b4%bb%e8%ae%b0%e5%bd%95" title="生活记录">生活记录<sup>1</sup></a></li>
+    
+    <li><a href="http://mospany.github.io/categories/%e8%81%8c%e5%9c%ba%e4%ba%ba%e7%94%9f" title="职场人生">职场人生<sup>1</sup></a></li>
+    
+    <li><a href="http://mospany.github.io/categories/%e8%af%bb%e4%b9%a6%e7%ac%94%e8%ae%b0" title="读书笔记">读书笔记<sup>2</sup></a></li>
+    
+  </ul>
+</div>
+
+
+
+  
+
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+      
+			<li><a href="http://mospany.github.io/tags/" title=""><sup>4</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/dns" title="dns">dns<sup>2</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/dpdk" title="dpdk">dpdk<sup>2</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/emacs" title="emacs">emacs<sup>5</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/hugo" title="hugo">hugo<sup>3</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/ipv6" title="ipv6">ipv6<sup>2</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/k8s" title="k8s">k8s<sup>2</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/openresty" title="openresty">openresty<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/org-mode" title="org-mode">org-mode<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/pango" title="pango">pango<sup>2</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/redis" title="redis">redis<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/spacemacs" title="spacemacs">spacemacs<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/vim" title="vim">vim<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/vue" title="vue">vue<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/xns" title="xns">xns<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e4%ba%91%e8%ae%a1%e7%ae%97" title="云计算">云计算<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e4%ba%92%e8%81%94%e7%bd%91" title="互联网">互联网<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e5%89%8d%e7%ab%af" title="前端">前端<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e5%8d%9a%e5%ae%a2" title="博客">博客<sup>7</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e5%b7%a5%e5%85%b7" title="工具">工具<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e5%be%ae%e4%bf%a1" title="微信">微信<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e6%9e%b6%e6%9e%84" title="架构">架构<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e7%8b%ac%e7%ab%8b" title="独立">独立<sup>3</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e7%94%9f%e6%b4%bb%e8%ae%b0%e5%bd%95" title="生活记录">生活记录<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e8%81%8c%e5%9c%ba%e4%ba%ba%e7%94%9f" title="职场人生">职场人生<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e8%af%bb%e4%b9%a6%e7%ac%94%e8%ae%b0" title="读书笔记">读书笔记<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e9%82%ae%e7%ae%b1" title="邮箱">邮箱<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e9%9d%a2%e8%af%95" title="面试">面试<sup>1</sup></a></li>
+      
+		</ul>
+</div>
+
+
+
+    <div class="linkslist">
+  <p class="asidetitle">我的关注</p>
+    <ul>
+          <li>
+            	<a href="http://www.csdn.net/" target="_blank" title="中国软件开发网(CSDN)">中国软件开发网(CSDN)</a>
+          </li>
+          <li>
+            	<a href="http://www.golangtc.com/" target="_blank" title="Golang中国">Golang中国</a>
+          </li>
+          <li>
+            	<a href="http://blog.qiniu.com/" target="_blank" title="七牛团队博客">七牛团队博客</a>
+          </li>
+          <li>
+            	<a href="http://csrd.aliapp.com/" target="_blank" title="阿里核心系统团队博客">阿里核心系统团队博客</a>
+          </li>
+          <li>
+            	<a href="http://coolshell.cn/" target="_blank" title="酷壳－陈浩">酷壳－陈浩</a>
+          </li>
+          <li>
+            	<a href="http://www.ruanyifeng.com/blog/" target="_blank" title="阮一峰的网络日志">阮一峰的网络日志</a>
+          </li>
+          <li>
+            	<a href="https://blog.dandyweng.com/" target="_blank" title="homeschooler－翁天信的博客">homeschooler－翁天信的博客</a>
+          </li>
+          <li>
+            	<a href="http://www.jeffjade.com/" target="_blank" title="晚晴幽草轩">晚晴幽草轩</a>
+          </li>
+          <li>
+            	<a href="https://nicejade.github.io/index.html" target="_blank" title="天意人间舫">天意人间舫</a>
+          </li>
+    </ul>
+</div>
+
+    <div class="linkslist">
+  <p class="asidetitle">在线书籍</p>
+    <ul>
+          <li>
+            	<a href="https://docs.ruanjiadeng.com/gopl-zh/index.html" target="_blank" title="Go语言圣经（中文版）">Go语言圣经（中文版）</a>
+          </li>
+          <li>
+            	<a href="http://studygolang.com/pkgdoc" target="_blank" title="Go语言标准库">Go语言标准库</a>
+          </li>
+          <li>
+            	<a href="http://www.w3school.com.cn/" target="_blank" title="w3school 在线教程">w3school 在线教程</a>
+          </li>
+    </ul>
+</div>
+
+    <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+          <li>
+            	<a href="http://www.cloudxns.net/" target="_blank" title="CloudXNS官网">CloudXNS官网</a>
+          </li>
+          <li>
+            	<a href="http://www.chinatesters.com/" target="_blank" title="华夏评测师家园">华夏评测师家园</a>
+          </li>
+    </ul>
+</div>
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle">归档</p>
+    <ul class="archive-list">
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2022-09">2022年09月</a><span class="archive-list-count">10</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2019-11">2019年11月</a><span class="archive-list-count">3</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2019-10">2019年10月</a><span class="archive-list-count">8</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2019-08">2019年08月</a><span class="archive-list-count">4</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2019-02">2019年02月</a><span class="archive-list-count">3</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2018-02">2018年02月</a><span class="archive-list-count">3</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2017-08">2017年08月</a><span class="archive-list-count">4</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2017-07">2017年07月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2017-03">2017年03月</a><span class="archive-list-count">8</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-09">2016年09月</a><span class="archive-list-count">2</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-05">2016年05月</a><span class="archive-list-count">4</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-03">2016年03月</a><span class="archive-list-count">5</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-02">2016年02月</a><span class="archive-list-count">11</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-01">2016年01月</a><span class="archive-list-count">6</span>
+      </li>
+      
+    </ul>
+
+  </div>
+
+
+  
+
+<div class="tagcloudlist">
+  <p class="asidetitle">标签云</p>
+  <div class="tagcloudlist clearfix">
+    
+    <a href="http://mospany.github.io/tags/" style="font-size: 12px;"></a>
+    
+    <a href="http://mospany.github.io/tags/dns" style="font-size: 12px;">dns</a>
+    
+    <a href="http://mospany.github.io/tags/dpdk" style="font-size: 12px;">dpdk</a>
+    
+    <a href="http://mospany.github.io/tags/emacs" style="font-size: 12px;">emacs</a>
+    
+    <a href="http://mospany.github.io/tags/hugo" style="font-size: 12px;">hugo</a>
+    
+    <a href="http://mospany.github.io/tags/ipv6" style="font-size: 12px;">ipv6</a>
+    
+    <a href="http://mospany.github.io/tags/k8s" style="font-size: 12px;">k8s</a>
+    
+    <a href="http://mospany.github.io/tags/openresty" style="font-size: 12px;">openresty</a>
+    
+    <a href="http://mospany.github.io/tags/org-mode" style="font-size: 12px;">org-mode</a>
+    
+    <a href="http://mospany.github.io/tags/pango" style="font-size: 12px;">pango</a>
+    
+    <a href="http://mospany.github.io/tags/redis" style="font-size: 12px;">redis</a>
+    
+    <a href="http://mospany.github.io/tags/spacemacs" style="font-size: 12px;">spacemacs</a>
+    
+    <a href="http://mospany.github.io/tags/vim" style="font-size: 12px;">vim</a>
+    
+    <a href="http://mospany.github.io/tags/vue" style="font-size: 12px;">vue</a>
+    
+    <a href="http://mospany.github.io/tags/xns" style="font-size: 12px;">xns</a>
+    
+    <a href="http://mospany.github.io/tags/%e4%ba%91%e8%ae%a1%e7%ae%97" style="font-size: 12px;">云计算</a>
+    
+    <a href="http://mospany.github.io/tags/%e4%ba%92%e8%81%94%e7%bd%91" style="font-size: 12px;">互联网</a>
+    
+    <a href="http://mospany.github.io/tags/%e5%89%8d%e7%ab%af" style="font-size: 12px;">前端</a>
+    
+    <a href="http://mospany.github.io/tags/%e5%8d%9a%e5%ae%a2" style="font-size: 12px;">博客</a>
+    
+    <a href="http://mospany.github.io/tags/%e5%b7%a5%e5%85%b7" style="font-size: 12px;">工具</a>
+    
+    <a href="http://mospany.github.io/tags/%e5%be%ae%e4%bf%a1" style="font-size: 12px;">微信</a>
+    
+    <a href="http://mospany.github.io/tags/%e6%9e%b6%e6%9e%84" style="font-size: 12px;">架构</a>
+    
+    <a href="http://mospany.github.io/tags/%e7%8b%ac%e7%ab%8b" style="font-size: 12px;">独立</a>
+    
+    <a href="http://mospany.github.io/tags/%e7%94%9f%e6%b4%bb%e8%ae%b0%e5%bd%95" style="font-size: 12px;">生活记录</a>
+    
+    <a href="http://mospany.github.io/tags/%e8%81%8c%e5%9c%ba%e4%ba%ba%e7%94%9f" style="font-size: 12px;">职场人生</a>
+    
+    <a href="http://mospany.github.io/tags/%e8%af%bb%e4%b9%a6%e7%ac%94%e8%ae%b0" style="font-size: 12px;">读书笔记</a>
+    
+    <a href="http://mospany.github.io/tags/%e9%82%ae%e7%ae%b1" style="font-size: 12px;">邮箱</a>
+    
+    <a href="http://mospany.github.io/tags/%e9%9d%a2%e8%af%95" style="font-size: 12px;">面试</a>
+    
+  </div>
+</div>
+
+
+
+  
+</aside>
+</div>
+
+  </div>
+  <footer><div id="footer" >
+  
+  <div class="line">
+    <span></span>
+    <div style='background:no-repeat url("http://mospany.github.io/img/author.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  <div class="line">
+    <div style='background:no-repeat url("http://mospany.github.io/img/qiniu_logo.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  <div class="line">
+    <div style='background:no-repeat url("http://mospany.github.io/img/fastweb_logo.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  <div class="line">
+    <div style='background:no-repeat url("http://mospany.github.io/img/leadsec_logo.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  <div class="line">
+    <div style='background:no-repeat url("http://mospany.github.io/img/raisecom_logo.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  <div class="line">
+    <div style='background:no-repeat url("http://mospany.github.io/img/jbt_logo.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  
+  
+  <div class="social-font clearfix">
+    
+    <a href="http://weibo.com/mospan" target="_blank" title="weibo"></a>
+    
+    
+    <a href="https://twitter.com/mospan" target="_blank" title="twitter"></a>
+    
+    
+    <a href="https://github.com/mospany" target="_blank" title="github"></a>
+    
+    
+    <a href="https://www.facebook.com/mospan" target="_blank" title="facebook"></a>
+    
+    
+    <a href="https://www.linkedin.com/mospan" target="_blank" title="linkedin"></a>
+    
+  </div>
+  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/mospany/mospan-hugo-blog/tree/master/themes/hugo-panman-theme" target="_blank" title="hugo-panman-theme">hugo-panman-theme</a> © 2022
+    
+    <a href="http://mospany.github.io/" target="_blank" title="mospan">mospan</a>
+    
+  </p>
+</div>
+</footer>
+  <script src="http://mospany.github.io/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+done = false;
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  $('form.search').on('submit', function (event) {
+    if (false === done) {
+      event.preventDefault();
+      var orgVal = $(this).find('#search').val();
+      $(this).find('#search').val('site:http:\/\/mospany.github.io\/ ' + orgVal);
+      done = true;
+      $(this).submit();
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});
+</script>
+
+
+<link rel="stylesheet" href="http://mospany.github.io/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="http://mospany.github.io/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+
+</body>
+</html>

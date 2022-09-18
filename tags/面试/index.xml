@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>面试 on 墨斯潘園</title>
+    <link>http://mospany.github.io/tags/%E9%9D%A2%E8%AF%95/</link>
+    <description>Recent content in 面试 on 墨斯潘園</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 01 Mar 2017 19:27:08 +0800</lastBuildDate>
+    
+	<atom:link href="http://mospany.github.io/tags/%E9%9D%A2%E8%AF%95/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>个人常用面试题及其参考答案</title>
+      <link>http://mospany.github.io/2017/03/01/personal-interview-questions/</link>
+      <pubDate>Wed, 01 Mar 2017 19:27:08 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2017/03/01/personal-interview-questions/</guid>
+      <description>开篇 请您自我介绍一下你自己？ 回答提示：一般人回答这个问题过于平常，只说姓名、年龄、爱好、工作经验，这些在简历上都有。其实，企业最希望知道的是</description>
+    </item>
+    
+  </channel>
+</rss>
