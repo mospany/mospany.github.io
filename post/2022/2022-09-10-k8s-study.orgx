@@ -10,8 +10,9 @@ url = "/2022/09/10/k8s-study-toc/"
 
 +++
 
-* 描述
-K8S学习笔记目录
+* 目录 
+  01. [[http://blog.mospan.cn/2022/09/10/k8s-study-toc/][K8S学习笔记(01): 目录]]
+  02. [[http://blog.mospan.cn/2022/09/13/k8s-study-install-for-mac/][K8S学习笔记(03): Mac系统安装k8s集群]]
 
 
 * PPT内容

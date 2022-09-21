@@ -150,17 +150,20 @@ kubectl proxy
             <guid>http://mospany.github.io/2022/09/10/k8s-study-toc/</guid>
             <description>
 
-&lt;p&gt;&lt;a id=&#34;orge1989fc&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;描述&#34;&gt;描述&lt;/h1&gt;
-
-&lt;p&gt;K8S学习笔记目录&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org9b603ac&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org8a55351&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;目录&#34;&gt;目录&lt;/h1&gt;
 
-&lt;p&gt;&lt;center&gt;&lt;embed src=&#34;http://blog.mospan.cn//post/img/k8s/k8s-study-toc.pdf&#34; width=100% height=&#34;800&#34;&gt;&lt;/center&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.mospan.cn/2022/09/10/k8s-study-toc/&#34;&gt;K8S学习笔记(01): 目录&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.mospan.cn/2022/09/13/k8s-study-install-for-mac/&#34;&gt;K8S学习笔记(03): Mac系统安装k8s集群&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;a id=&#34;org3d4ba47&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;ppt内容&#34;&gt;PPT内容&lt;/h1&gt;
+
+&lt;p&gt;&lt;center&gt;&lt;embed src=&#34;&lt;http://blog.mospan.cn/post/img/k8s/k8s-study-toc.pdf&gt;&amp;rdquo; width=100% height=100%&amp;gt;&lt;/center&gt;&lt;/p&gt;
 </description>
         </item>
         
