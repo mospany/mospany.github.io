@@ -77,67 +77,42 @@
 
 	<div class="article-content">
     
-		<div class="toc-article">
-			<strong class="toc-title">文章目录</strong>
-      <nav id="TableOfContents">
-<ul>
-<li><a href="#版本介绍">版本介绍</a>
-<ul>
-<li><a href="#mac系统版本">Mac系统版本</a></li>
-<li><a href="#docker-desktop-版本">Docker Desktop 版本</a></li>
-<li><a href="#k8s-版本">K8S 版本</a></li>
-</ul></li>
-<li><a href="#安装">安装</a>
-<ul>
-<li><a href="#docker安装">Docker安装</a></li>
-<li><a href="#开机自启动k8s">开机自启动K8S</a></li>
-<li><a href="#安装kubernetes-dashboard">安装Kubernetes Dashboard</a>
-<ul>
-<li><a href="#创建sa登录token">创建SA登录Token</a></li>
-<li><a href="#绑定资源并获取登录token">绑定资源并获取登录Token</a></li>
-<li><a href="#登录dashbaord">登录dashbaord</a></li>
-</ul></li>
-</ul></li>
-</ul>
-</nav>
-		</div>
-    
     
 
-<p><a id="org8f60214"></a></p>
+<p><a id="orgb0236d4"></a></p>
 
 <h1 id="版本介绍">版本介绍</h1>
 
-<p><a id="org252aa70"></a></p>
+<p><a id="org7ecfcf5"></a></p>
 
 <h2 id="mac系统版本">Mac系统版本</h2>
 
 <p><img src="http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/macos-version.png" alt="img" /></p>
 
-<p><a id="org5d1a2f0"></a></p>
+<p><a id="orgb0bb981"></a></p>
 
 <h2 id="docker-desktop-版本">Docker Desktop 版本</h2>
 
 <p><img src="http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/docker-version.png" alt="img" /></p>
 
-<p><a id="org154e588"></a></p>
+<p><a id="orgf43c8cf"></a></p>
 
 <h2 id="k8s-版本">K8S 版本</h2>
 
 <p><img src="http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/k8s-version.png" alt="img" /></p>
 
-<p><a id="orga7210c2"></a></p>
+<p><a id="orgb771a76"></a></p>
 
 <h1 id="安装">安装</h1>
 
-<p><a id="orgd79577f"></a></p>
+<p><a id="orgfb2b00e"></a></p>
 
 <h2 id="docker安装">Docker安装</h2>
 
 <pre><code>brew install -cask docker
 </code></pre>
 
-<p><a id="org2db044e"></a></p>
+<p><a id="org3e9347f"></a></p>
 
 <h2 id="开机自启动k8s">开机自启动K8S</h2>
 
@@ -145,7 +120,7 @@
 
 <p>重启成功后查看K8S集群。</p>
 
-<p><a id="orgae7ba35"></a></p>
+<p><a id="org5cc15cc"></a></p>
 
 <h2 id="安装kubernetes-dashboard">安装Kubernetes Dashboard</h2>
 
@@ -158,7 +133,7 @@
 
 <p>最新版本参考：<a href="https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/">https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/</a>​</p>
 
-<p><a id="org4ba64ff"></a></p>
+<p><a id="orga6321e3"></a></p>
 
 <h3 id="创建sa登录token">创建SA登录Token</h3>
 
@@ -186,7 +161,7 @@ subjects:
 # kubectl create -f dashboard-adminuser.yaml
 </code></pre>
 
-<p><a id="orgd6050e3"></a></p>
+<p><a id="org6ab233c"></a></p>
 
 <h3 id="绑定资源并获取登录token">绑定资源并获取登录Token</h3>
 
@@ -200,7 +175,12 @@ kubectl proxy
 
 <p><img src="http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/k8s-dashboard-rbac.png" alt="img" /></p>
 
-<p><a id="orgf239e7e"></a></p>
+<p>1、先创建服务账号dashboard-admin<br />
+2、再把账号dashboard-admin绑定到集群角色cluster-admin上使其拥有集群的管理权限，cluster-admin 超级管理员，对集群所有权限,和linux下面root一样（在部署dashboard的时候，先创建sa，然后将sa绑定到角色cluster-admin，最后获取到token，这就使用了内置的cluster-admin ）。<br />
+3、最后再获取该账号的secrets里的token做为登录。观察serviceAccount的创建，并创建一个相应的Secret 来允许API访问。<br />
+4、使用kubectl proxy命令就可以使API server监听在本地的8001端口上，作用是建立一条通往API服务器的隧道，可以方便查看API服务器上的资源。</p>
+
+<p><a id="org7e8ef62"></a></p>
 
 <h3 id="登录dashbaord">登录dashbaord</h3>
 
@@ -209,10 +189,20 @@ kubectl proxy
 <pre><code>http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/configmap?namespace=default
 </code></pre>
 
+<p>注：上面URL的#号后面configmap为锚点，<a href="https:kubernetes-dashboard">https:kubernetes-dashboard</a>: 为普通字符串</p>
+
 <p>输入上面生成的token:<br />
 <img src="http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/k8s-dashboard-login.png" alt="img" /><br />
 登录成功界面如下：<br />
 <img src="http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/k8s-dashboard-main.png" alt="img" /></p>
+
+<ul>
+<li>参考资料<br />
+【01】 <a href="https://blog.csdn.net/a772304419/article/details/125482351">k8s 内置cluster role（集群角色） cluster-admin、admin、 edit、 view的作用范围及区别</a><br />
+【02】 <a href="https://blog.csdn.net/m0_45406092/article/details/119890156">kubectl proxy</a><br />
+【03】 <a href="https://blog.csdn.net/marvel__dead/article/details/78833921">URL中“#”号的作用</a><br />
+【04】 <a href="https://blog.csdn.net/afz8572/article/details/101745100/">mac上k8s学习踩坑</a></li>
+</ul>
 
     <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
   <div style="float:right;margin-top:0px;">
