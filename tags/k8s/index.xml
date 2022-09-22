@@ -6,10 +6,19 @@
     <description>Recent content in K8S on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Tue, 13 Sep 2022 19:48:30 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 21 Sep 2022 21:01:59 +0800</lastBuildDate>
     
 	<atom:link href="http://mospany.github.io/tags/k8s/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>K8S学习笔记(04): kubectl命令技巧大全</title>
+      <link>http://mospany.github.io/2022/09/21/k8s-kubectl-all-cmd/</link>
+      <pubDate>Wed, 21 Sep 2022 21:01:59 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2022/09/21/k8s-kubectl-all-cmd/</guid>
+      <description>kubectl 命令技巧大全 kubectl 命令是操作 Kubernetes 集群的最直接和最高效的途径，这个60多 MB 大小的二进制文件，到底有啥能耐呢？ Kubectl 自动补全 $ source &amp;lt;(kubectl completion bash) # setup autocomplete in bash, bash-completion package should be</description>
+    </item>
     
     <item>
       <title>K8S学习笔记(03): Mac系统安装k8s集群</title>
@@ -26,7 +35,7 @@
       <pubDate>Sat, 10 Sep 2022 16:13:51 +0800</pubDate>
       
       <guid>http://mospany.github.io/2022/09/10/k8s-study-toc/</guid>
-      <description>目录 K8S学习笔记(01): 目录 K8S学习笔记(03): Mac系统安装k8s集群 PPT内容</description>
+      <description>目录 K8S使用与原理 K8S学习笔记(01): 目录 K8S学习笔记(03): Mac系统安装k8s集群 PPT内容</description>
     </item>
     
   </channel>

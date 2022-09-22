@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <base href="http://mospany.github.io/">
-  <title>我的博客Hugo使用手册 - 墨斯潘園</title>
+  <title>K8S学习笔记(04): kubectl命令技巧大全 - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
-  <meta name="keywords" content="博客,Hugo,">
-  <meta name="description" content="Hugo Hugo是一个用Go语言编写的静态网站生成器，它使用起来非常简单，相对于Jekyll复杂的安装设置来说，Hugo仅需要一个二进制文件hug">
+  <meta name="keywords" content="K8S,云计算,">
+  <meta name="description" content="kubectl 命令技巧大全 kubectl 命令是操作 Kubernetes 集群的最直接和最高效的途径，这个60多 MB 大小的二进制文件，到底有啥能耐呢？ Kubectl 自动补全 $ source &lt;(kubectl completion bash) # setup autocomplete in bash, bash-completion package should be">
   <meta name="author" content="mospan">
-  <meta itemprop="name" content="我的博客Hugo使用手册 - 墨斯潘園">
-  <meta itemprop="description" content="Hugo Hugo是一个用Go语言编写的静态网站生成器，它使用起来非常简单，相对于Jekyll复杂的安装设置来说，Hugo仅需要一个二进制文件hug">
+  <meta itemprop="name" content="K8S学习笔记(04): kubectl命令技巧大全 - 墨斯潘園">
+  <meta itemprop="description" content="kubectl 命令技巧大全 kubectl 命令是操作 Kubernetes 集群的最直接和最高效的途径，这个60多 MB 大小的二进制文件，到底有啥能耐呢？ Kubectl 自动补全 $ source &lt;(kubectl completion bash) # setup autocomplete in bash, bash-completion package should be">
   <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
-  <meta name="twitter:title" content="我的博客Hugo使用手册 - 墨斯潘園" />
+  <meta name="twitter:title" content="K8S学习笔记(04): kubectl命令技巧大全 - 墨斯潘園" />
   
   <meta name="twitter:description" content="">
   <link rel="shortcut icon" href="img/favicon.ico"/>
@@ -63,7 +63,7 @@
 	<article itemprop="articleBody">
     <header class="article-info clearfix">
   <h1 itemprop="name">
-      <a href="http://mospany.github.io/2019/02/02/mospan-hugo-blog-manual/" title="我的博客Hugo使用手册" itemprop="url">我的博客Hugo使用手册</a>
+      <a href="http://mospany.github.io/2022/09/21/k8s-kubectl-all-cmd/" title="K8S学习笔记(04): kubectl命令技巧大全" itemprop="url">K8S学习笔记(04): kubectl命令技巧大全</a>
   </h1>
   <p class="article-author">By 
     
@@ -71,104 +71,584 @@
     
   </p>
   <p class="article-time">
-    <time datetime="2019-02-02 15:18:53 &#43;0800 CST" itemprop="datePublished">2019年02月02日</time>
+    <time datetime="2022-09-21 21:01:59 &#43;0800 CST" itemprop="datePublished">2022年09月21日</time>
   </p>
 </header>
 
 	<div class="article-content">
     
-		<div class="toc-article">
-			<strong class="toc-title">文章目录</strong>
-      
-		</div>
     
-    <h1 id="hugo">Hugo</h1>
 
-<p>Hugo是一个用Go语言编写的静态网站生成器，它使用起来非常简单，相对于Jekyll复杂的安装设置来说，Hugo仅需要一个二进制文件hugo(hugo.exe)即可轻松用于本地调试和生成静态页面。</p>
+<p><a id="org8c37926"></a></p>
 
-<p>Hugo生成静态页面的效率很高，我的多篇博客文章生成几乎是瞬间完成的，而用Jekyll需要等待10秒左右。</p>
+<h1 id="kubectl-命令技巧大全">kubectl 命令技巧大全</h1>
 
-<p>Hugo自带watch的调试模式，可以在我修改MarkDown文章之后切换到浏览器，页面会检测到更新并且自动刷新，呈现出最终效果，能极大的提高博客书写效率。再加上Hugo是使用Go语言编写，已经没有任何理由不使用Hugo来代替Jekyll作为我的个人博客站点生成器了。</p>
+<p>kubectl 命令是操作 Kubernetes 集群的最直接和最高效的途径，这个60多 MB 大小的二进制文件，到底有啥能耐呢？</p>
 
-<h1 id="usage">Usage</h1>
+<p><a id="org42fef24"></a></p>
 
-<p>Demo：
-<a href="http://blog.mospan.cn/" title="http://blog.mospan.cn/">http://blog.mospan.cn/</a></p>
+<h1 id="kubectl-自动补全">Kubectl 自动补全</h1>
 
-<p>界面参考 [http://cyrillschumacher.com/](http://cyrillschumacher.com/) 做了一些修改，并做了一个皮肤：panman。</p>
-
-<h2 id="源码">源码</h2>
-
-<p>下载源码到本地。</p>
-
-<pre><code class="language-sh">$ git clone git@github.com:mospany/mospan-hugo-blog.git
+<pre><code>$ source &lt;(kubectl completion bash) # setup autocomplete in bash, bash-completion package should be installed first.
+$ source &lt;(kubectl completion zsh)  # setup autocomplete in zsh
 </code></pre>
 
-<p>记得把我的个人信息修改成自己的就行。</p>
+<p><a id="org27c704f"></a></p>
 
-<h2 id="启动调试">启动调试</h2>
+<h1 id="kubectl-上下文和配置">Kubectl 上下文和配置</h1>
 
-<h3 id="本地调试">本地调试</h3>
+<p>设置 kubectl 命令交互的 kubernetes 集群并修改配置信息。参阅 使用 kubeconfig 文件进行跨集群验证 获取关于配置文件的详细信息。</p>
 
-<pre><code class="language-sh">$ cd mospan-hugo-blog
-$ ./debug.py
+<pre><code>$ kubectl config view # 显示合并后的 kubeconfig 配置
+
+# 同时使用多个 kubeconfig 文件并查看合并后的配置
+$ KUBECONFIG=~/.kube/config:~/.kube/kubconfig2 kubectl config view
+
+# 获取 e2e 用户的密码
+$ kubectl config view -o jsonpath='{.users[?(@.name == &quot;e2e&quot;)].user.password}'
+
+$ kubectl config current-context              # 显示当前的上下文
+$ kubectl config use-context my-cluster-name  # 设置默认上下文为 my-cluster-name
+
+# 向 kubeconf 中增加支持基本认证的新集群
+$ kubectl config set-credentials kubeuser/foo.kubernetes.com --username=kubeuser --password=kubepassword
+
+# 使用指定的用户名和 namespace 设置上下文
+$ kubectl config set-context gce --user=cluster-admin --namespace=foo \
+  &amp;&amp; kubectl config use-context gce
 </code></pre>
 
-<p>打开浏览器：http://localhost:1313</p>
+<p><a id="orgaa430dd"></a></p>
 
-<h3 id="远程调试">远程调试</h3>
+<h1 id="创建对象">创建对象</h1>
 
-<pre><code class="language-sh">$ cd mospan-hugo-blog
-$ ./debug.py AA.BB.CC.DD
+<p>Kubernetes 的清单文件可以使用 json 或 yaml 格式定义。可以以 .yaml、.yml、或者 .json 为扩展名。</p>
+
+<pre><code>$ kubectl create -f ./my-manifest.yaml           # 创建资源
+$ kubectl create -f ./my1.yaml -f ./my2.yaml     # 使用多个文件创建资源
+$ kubectl create -f ./dir                        # 使用目录下的所有清单文件来创建资源
+$ kubectl create -f https://git.io/vPieo         # 使用 url 来创建资源
+$ kubectl run nginx --image=nginx                # 启动一个 nginx 实例
+$ kubectl explain pods,svc                       # 获取 pod 和 svc 的文档
+
+# 从 stdin 输入中创建多个 YAML 对象
+$ cat &lt;&lt;EOF | kubectl create -f -
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox-sleep
+spec:
+  containers:
+  - name: busybox
+    image: busybox
+    args:
+    - sleep
+    - &quot;1000000&quot;
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox-sleep-less
+spec:
+  containers:
+  - name: busybox
+    image: busybox
+    args:
+    - sleep
+    - &quot;1000&quot;
+EOF
+
+# 创建包含几个 key 的 Secret
+$ cat &lt;&lt;EOF | kubectl create -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysecret
+type: Opaque
+data:
+  password: $(echo &quot;s33msi4&quot; | base64)
+  username: $(echo &quot;jane&quot; | base64)
+EOF
 </code></pre>
 
-<p>打开浏览器：http://AA.BB.CC.DD:1313
-其中： AA.BB.CC.DD 为本机可访问IP地址。</p>
+<p><a id="org62782f5"></a></p>
 
-<h2 id="创作">创作</h2>
+<h1 id="显示和查找资源">显示和查找资源</h1>
 
-<ul>
-现在的hugo可支持markdown与org-mode文件格式，分别对应create-md.py于create-org.py脚本。
-<li>执行create-md.py或create-org.py。</li>
-<li>输入文件标题，最后不要有空格。</li>
-<li>它将根据themes/hugo-panman-theme/archetypes/default.[md|org]模板生成以日期+标题的文件。</li>
-<li>打开新生成文件进行编辑，记得修改头部的categories、keywords、tags、title进行归类区分。</li>
-<li>修改好后，通过push.py进行保存到github文件中。</li>
-</ul>
+<pre><code># Get commands with basic output
+$ kubectl get services                          # 列出所有 namespace 中的所有 service
+$ kubectl get pods --all-namespaces             # 列出所有 namespace 中的所有 pod
+$ kubectl get pods -o wide                      # 列出所有 pod 并显示详细信息
+$ kubectl get deployment my-dep                 # 列出指定 deployment
 
-<h2 id="部署">部署</h2>
+# 使用详细输出来描述命令
+$ kubectl describe nodes my-node
+$ kubectl describe pods my-pod
 
-<p>如果是第一次部署，执行：</p>
+$ kubectl get services --sort-by=.metadata.name # List Services Sorted by Name
 
-<pre><code class="language-sh">$ ./deploy.py first
+# 根据重启次数排序列出 pod
+$ kubectl get pods --sort-by='.status.containerStatuses[0].restartCount'
+
+# 获取所有具有 app=cassandra 的 pod 中的 version 标签
+$ kubectl get pods --selector=app=cassandra rc -o \
+  jsonpath='{.items[*].metadata.labels.version}'
+
+# 获取所有节点的 ExternalIP
+$ kubectl get nodes -o jsonpath='{.items[*].status.addresses[?(@.type==&quot;ExternalIP&quot;)].address}'
+
+# 列出属于某个 PC 的 Pod 的名字
+# “jq”命令用于转换复杂的 jsonpath，参考 https://stedolan.github.io/jq/
+$ sel=${$(kubectl get rc my-rc --output=json | jq -j '.spec.selector | to_entries | .[] | &quot;\(.key)=\(.value),&quot;')%?}
+$ echo $(kubectl get pods --selector=$sel --output=jsonpath={.items..metadata.name})
+
+# 查看哪些节点已就绪
+$ JSONPATH='{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}' \
+ &amp;&amp; kubectl get nodes -o jsonpath=&quot;$JSONPATH&quot; | grep &quot;Ready=True&quot;
+
+# 列出当前 Pod 中使用的 Secret
+$ kubectl get pods -o json | jq '.items[].spec.containers[].env[]?.valueFrom.secretKeyRef.name' | grep -v null | sort | uniq
 </code></pre>
 
-<p>否则</p>
+<p><a id="orgc7a7c88"></a></p>
 
-<pre><code class="language-sh">$ ./deploy.py manual
+<h1 id="更新资源">更新资源</h1>
+
+<pre><code>$ kubectl rolling-update frontend-v1 -f frontend-v2.json           # 滚动更新 pod frontend-v1
+$ kubectl rolling-update frontend-v1 frontend-v2 --image=image:v2  # 更新资源名称并更新镜像
+$ kubectl rolling-update frontend --image=image:v2                 # 更新 frontend pod 中的镜像
+$ kubectl rolling-update frontend-v1 frontend-v2 --rollback        # 退出已存在的进行中的滚动更新
+$ cat pod.json | kubectl replace -f -                              # 基于 stdin 输入的 JSON 替换 pod
+
+# 强制替换，删除后重新创建资源。会导致服务中断。
+$ kubectl replace --force -f ./pod.json
+
+# 为 nginx RC 创建服务，启用本地 80 端口连接到容器上的 8000 端口
+$ kubectl expose rc nginx --port=80 --target-port=8000
+
+# 更新单容器 pod 的镜像版本（tag）到 v4
+$ kubectl get pod mypod -o yaml | sed 's/\(image: myimage\):.*$/\1:v4/' | kubectl replace -f -
+
+$ kubectl label pods my-pod new-label=awesome                      # 添加标签
+$ kubectl annotate pods my-pod icon-url=http://goo.gl/XXBTWq       # 添加注解
+$ kubectl autoscale deployment foo --min=2 --max=10                # 自动扩展 deployment “foo”
 </code></pre>
 
-<p>即可</p>
+<p><a id="orga04178c"></a></p>
 
-<h1 id="改进记录">改进记录</h1>
+<h1 id="修补资源">修补资源</h1>
 
-<h1 id="缺陷">缺陷</h1>
+<p>使用策略合并补丁并修补资源。</p>
 
-<ul>
-<li>Hugo对org-mode渲染没有markdown好。</li>
-<li>文章标题还需更加美化。</li>
-<li>右边的导航栏在某些浏览器下点击无效。</li>
-</ul>
+<pre><code>$ kubectl patch node k8s-node-1 -p '{&quot;spec&quot;:{&quot;unschedulable&quot;:true}}' # 部分更新节点
 
-<h1 id="参考资料">参考资料</h1>
+# 更新容器镜像； spec.containers[*].name 是必须的，因为这是合并的关键字
+$ kubectl patch pod valid-pod -p '{&quot;spec&quot;:{&quot;containers&quot;:[{&quot;name&quot;:&quot;kubernetes-serve-hostname&quot;,&quot;image&quot;:&quot;new image&quot;}]}}'
 
-<p>【01】 <a href="https://www.jianshu.com/p/57afa4844aaa" title="Gitment评论功能接入踩坑教程">Gitment评论功能接入踩坑教程</a></p>
+# 使用具有位置数组的 json 补丁更新容器镜像
+$ kubectl patch pod valid-pod --type='json' -p='[{&quot;op&quot;: &quot;replace&quot;, &quot;path&quot;: &quot;/spec/containers/0/image&quot;, &quot;value&quot;:&quot;new image&quot;}]'
 
-<p>【02】 <a href="https://www.qikqiak.com/post/hugo-integrated-gitment-plugin/" title="Hugo 集成 Gitment 评论插件">Hugo 集成 Gitment 评论插件</a></p>
+# 使用具有位置数组的 json 补丁禁用 deployment 的 livenessProbe
+$ kubectl patch deployment valid-deployment  --type json   -p='[{&quot;op&quot;: &quot;remove&quot;, &quot;path&quot;: &quot;/spec/template/spec/containers/0/livenessProbe&quot;}]'
+</code></pre>
 
-<p>【03】<a href="https://blog.csdn.net/wardseptember/article/details/82828391" title="解决gitment无法登陆评论问题（Object ProgressEvent）">解决gitment无法登陆评论问题（Object ProgressEvent）</a></p>
+<p><a id="org4b6db63"></a></p>
 
-<p>【04】<a href="https://www.xianmin.org/post/utterances-comment-system/" title="更好的基于 github issues 的评论系统——utterances">更好的基于 github issues 的评论系统——utterances</a></p>
+<h1 id="编辑资源">编辑资源</h1>
+
+<p>在编辑器中编辑任何 API 资源。</p>
+
+<pre><code>$ kubectl edit svc/docker-registry                      # 编辑名为 docker-registry 的 service
+$ KUBE_EDITOR=&quot;nano&quot; kubectl edit svc/docker-registry   # 使用其它编辑器
+</code></pre>
+
+<p><a id="org43c4654"></a></p>
+
+<h1 id="scale-资源">Scale 资源</h1>
+
+<pre><code>$ kubectl scale --replicas=3 rs/foo                                 # Scale a replicaset named 'foo' to 3
+$ kubectl scale --replicas=3 -f foo.yaml                            # Scale a resource specified in &quot;foo.yaml&quot; to 3
+$ kubectl scale --current-replicas=2 --replicas=3 deployment/mysql  # If the deployment named mysql's current size is 2, scale mysql to 3
+$ kubectl scale --replicas=5 rc/foo rc/bar rc/baz                   # Scale multiple replication controllers
+</code></pre>
+
+<p><a id="orgc4b94c3"></a></p>
+
+<h1 id="删除资源">删除资源</h1>
+
+<pre><code>$ kubectl delete -f ./pod.json                                              # 删除 pod.json 文件中定义的类型和名称的 pod
+$ kubectl delete pod,service baz foo                                        # 删除名为“baz”的 pod 和名为“foo”的 service
+$ kubectl delete pods,services -l name=myLabel                              # 删除具有 name=myLabel 标签的 pod 和 serivce
+$ kubectl delete pods,services -l name=myLabel --include-uninitialized      # 删除具有 name=myLabel 标签的 pod 和 service，包括尚未初始化的
+$ kubectl -n my-ns delete po,svc --all                                      # 删除 my-ns namespace 下的所有 pod 和 serivce，包括尚未初始化的
+</code></pre>
+
+<p><a id="org2dfd797"></a></p>
+
+<h1 id="与运行中的-pod-交互">与运行中的 Pod 交互</h1>
+
+<pre><code>$ kubectl logs my-pod                                 # dump 输出 pod 的日志（stdout）
+$ kubectl logs my-pod -c my-container                 # dump 输出 pod 中容器的日志（stdout，pod 中有多个容器的情况下使用）
+$ kubectl logs -f my-pod                              # 流式输出 pod 的日志（stdout）
+$ kubectl logs -f my-pod -c my-container              # 流式输出 pod 中容器的日志（stdout，pod 中有多个容器的情况下使用）
+$ kubectl run -i --tty busybox --image=busybox -- sh  # 交互式 shell 的方式运行 pod
+$ kubectl attach my-pod -i                            # 连接到运行中的容器
+$ kubectl port-forward my-pod 5000:6000               # 转发 pod 中的 6000 端口到本地的 5000 端口
+$ kubectl exec my-pod -- ls /                         # 在已存在的容器中执行命令（只有一个容器的情况下）
+$ kubectl exec my-pod -c my-container -- ls /         # 在已存在的容器中执行命令（pod 中有多个容器的情况下）
+$ kubectl top pod POD_NAME --containers               # 显示指定 pod 和容器的指标度量
+</code></pre>
+
+<p><a id="org293bbe3"></a></p>
+
+<h1 id="与节点和集群交互">与节点和集群交互</h1>
+
+<pre><code>$ kubectl cordon my-node                                                # 标记 my-node 不可调度
+$ kubectl drain my-node                                                 # 清空 my-node 以待维护
+$ kubectl uncordon my-node                                              # 标记 my-node 可调度
+$ kubectl top node my-node                                              # 显示 my-node 的指标度量
+$ kubectl cluster-info                                                  # 显示 master 和服务的地址
+$ kubectl cluster-info dump                                             # 将当前集群状态输出到 stdout                                    
+$ kubectl cluster-info dump --output-directory=/path/to/cluster-state   # 将当前集群状态输出到 /path/to/cluster-state
+
+# 如果该键和影响的污点（taint）已存在，则使用指定的值替换
+$ kubectl taint nodes foo dedicated=special-user:NoSchedule
+</code></pre>
+
+<p><a id="orgef08c6d"></a></p>
+
+<h1 id="资源类型">资源类型</h1>
+
+<p>下表列出的是 kubernetes 中所有支持的类型和缩写的别名。</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">资源类型</th>
+<th scope="col" class="org-left">缩写别名</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="org-left">clusters</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">componentstatuses</td>
+<td class="org-left">cs</td>
+</tr>
+
+
+<tr>
+<td class="org-left">configmaps</td>
+<td class="org-left">cm</td>
+</tr>
+
+
+<tr>
+<td class="org-left">daemonsets</td>
+<td class="org-left">ds</td>
+</tr>
+
+
+<tr>
+<td class="org-left">deployments</td>
+<td class="org-left">deploy</td>
+</tr>
+
+
+<tr>
+<td class="org-left">endpoints</td>
+<td class="org-left">ep</td>
+</tr>
+
+
+<tr>
+<td class="org-left">event</td>
+<td class="org-left">ev</td>
+</tr>
+
+
+<tr>
+<td class="org-left">horizontalpodautoscalers</td>
+<td class="org-left">hpa</td>
+</tr>
+
+
+<tr>
+<td class="org-left">ingresses</td>
+<td class="org-left">ing</td>
+</tr>
+
+
+<tr>
+<td class="org-left">jobs</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">limitranges</td>
+<td class="org-left">limits</td>
+</tr>
+
+
+<tr>
+<td class="org-left">namespaces</td>
+<td class="org-left">ns</td>
+</tr>
+
+
+<tr>
+<td class="org-left">networkpolicies</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">nodes</td>
+<td class="org-left">no</td>
+</tr>
+
+
+<tr>
+<td class="org-left">statefulsets</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">persistentvolumeclaims</td>
+<td class="org-left">pvc</td>
+</tr>
+
+
+<tr>
+<td class="org-left">persistentvolumes</td>
+<td class="org-left">pv</td>
+</tr>
+
+
+<tr>
+<td class="org-left">pods</td>
+<td class="org-left">po</td>
+</tr>
+
+
+<tr>
+<td class="org-left">podsecuritypolicies</td>
+<td class="org-left">psp</td>
+</tr>
+
+
+<tr>
+<td class="org-left">podtemplates</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">replicasets</td>
+<td class="org-left">rs</td>
+</tr>
+
+
+<tr>
+<td class="org-left">replicationcontrollers</td>
+<td class="org-left">rc</td>
+</tr>
+
+
+<tr>
+<td class="org-left">resourcequotas</td>
+<td class="org-left">quota</td>
+</tr>
+
+
+<tr>
+<td class="org-left">cronjob</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">secrets</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">serviceaccount</td>
+<td class="org-left">sa</td>
+</tr>
+
+
+<tr>
+<td class="org-left">services</td>
+<td class="org-left">svc</td>
+</tr>
+
+
+<tr>
+<td class="org-left">storageclasses</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">thirdpartyresources</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+
+<p><a id="orgb32a4c5"></a></p>
+
+<h1 id="格式化输出">格式化输出</h1>
+
+<p>要以特定的格式向终端窗口输出详细信息，可以在 kubectl 命令中添加 -o 或者 -output 标志。</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">输出格式</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="org-left">-o=json</td>
+<td class="org-left">输出 JSON 格式的 API 对象</td>
+</tr>
+
+
+<tr>
+<td class="org-left">-o=jsonpath=<template></td>
+<td class="org-left">打印 jsonpath 表达式中定义的字段</td>
+</tr>
+
+
+<tr>
+<td class="org-left">-o=jsonpath-file=<filename></td>
+<td class="org-left">打印由 文件中的 jsonpath 表达式定义的字段</td>
+</tr>
+
+
+<tr>
+<td class="org-left">-o=name</td>
+<td class="org-left">仅打印资源名称</td>
+</tr>
+
+
+<tr>
+<td class="org-left">-o=wide</td>
+<td class="org-left">以纯文本格式输出任何附加信息，对于 Pod ，包含节点名称</td>
+</tr>
+
+
+<tr>
+<td class="org-left">-o=yaml</td>
+<td class="org-left">输出 YAML 格式的 API 对象</td>
+</tr>
+</tbody>
+</table>
+
+<p><a id="org8e6aac4"></a></p>
+
+<h1 id="kubectl-详细输出和调试">Kubectl 详细输出和调试</h1>
+
+<p>使用 -v 或 &#x2013;v 标志跟着一个整数来指定日志级别。</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">详细等级</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="org-left">&#x2013;v=0</td>
+<td class="org-left">总是对操作人员可见。</td>
+</tr>
+
+
+<tr>
+<td class="org-left">&#x2013;v=1</td>
+<td class="org-left">合理的默认日志级别，如果您不需要详细输出。</td>
+</tr>
+
+
+<tr>
+<td class="org-left">&#x2013;v=2</td>
+<td class="org-left">可能与系统的重大变化相关的，有关稳定状态的信息和重要的日志信息。这是对大多数系统推荐的日志级别。</td>
+</tr>
+
+
+<tr>
+<td class="org-left">&#x2013;v=3</td>
+<td class="org-left">有关更改的扩展信息。</td>
+</tr>
+
+
+<tr>
+<td class="org-left">&#x2013;v=4</td>
+<td class="org-left">调试级别详细输出。</td>
+</tr>
+
+
+<tr>
+<td class="org-left">&#x2013;v=6</td>
+<td class="org-left">显示请求的资源。</td>
+</tr>
+
+
+<tr>
+<td class="org-left">&#x2013;v=7</td>
+<td class="org-left">显示HTTP请求的header。</td>
+</tr>
+
+
+<tr>
+<td class="org-left">&#x2013;v=8</td>
+<td class="org-left">显示HTTP请求的内容。</td>
+</tr>
+</tbody>
+</table>
+
+<p><a id="org0f9fe33"></a></p>
+
+<h1 id="参考">参考</h1>
+
+<p>【01】<a href="https://kubernetes.io/docs/reference/kubectl/">Kubectl 概览</a><br />
+【02】<a href="https://kubernetes.io/docs/reference/kubectl/jsonpath/">JsonPath 手册</a><br />
+【03】<a href="https://kubernetes.io/docs/reference/kubectl/cheatsheet/">Cheatsheet</a></p>
 
     <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
   <div style="float:right;margin-top:0px;">
@@ -181,7 +661,7 @@ $ ./debug.py AA.BB.CC.DD
   <div>
     <p style="margin-top:0px;">作者：<a target="_blank" href="http://blog.mospan.cn/">mospan</a>
       <br />微信关注：墨斯潘園
-      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2019/02/02/mospan-hugo-blog-manual/">http://mospany.github.io/2019/02/02/mospan-hugo-blog-manual/</a>
+      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2022/09/21/k8s-kubectl-all-cmd/">http://mospany.github.io/2022/09/21/k8s-kubectl-all-cmd/</a>
       <br />
       文章版权归本人所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
   </div>
@@ -195,9 +675,9 @@ $ ./debug.py AA.BB.CC.DD
 <div class="article-tags">
   <span></span>
   
-  <a href="/tags/%E5%8D%9A%E5%AE%A2">博客</a>
+  <a href="/tags/k8s">K8S</a>
   
-  <a href="/tags/hugo">Hugo</a>
+  <a href="/tags/%E4%BA%91%E8%AE%A1%E7%AE%97">云计算</a>
   
 </div>
 
@@ -206,16 +686,16 @@ $ ./debug.py AA.BB.CC.DD
 <div class="article-categories">
   <span></span>
   
-  <a class="article-category-link" href="/categories/%E5%8D%9A%E5%AE%A2">博客</a>
+  <a class="article-category-link" href="/categories/k8s">K8S</a>
   
-  <a class="article-category-link" href="/categories/hugo">Hugo</a>
+  <a class="article-category-link" href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97">云计算</a>
   
 </div>
 
 
 
   <div class="article-share" id="share">
-    <div data-url="http://mospany.github.io/2019/02/02/mospan-hugo-blog-manual/" data-title="我的博客Hugo使用手册" data-tsina="3833537679" class="share clearfix">
+    <div data-url="http://mospany.github.io/2022/09/21/k8s-kubectl-all-cmd/" data-title="K8S学习笔记(04): kubectl命令技巧大全" data-tsina="3833537679" class="share clearfix">
     </div>
   </div>
 </footer>

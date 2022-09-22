@@ -5,7 +5,588 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Tue, 13 Sep 2022 19:48:30 CST</updated>
+        <updated>Wed, 21 Sep 2022 21:01:59 CST</updated>
+        
+        <item>
+            <title>K8S学习笔记(04): kubectl命令技巧大全</title>
+            <link>http://mospany.github.io/2022/09/21/k8s-kubectl-all-cmd/</link>
+            <pubDate>Wed, 21 Sep 2022 21:01:59 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://mospany.github.io/2022/09/21/k8s-kubectl-all-cmd/</guid>
+            <description>
+
+&lt;p&gt;&lt;a id=&#34;org8c37926&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;kubectl-命令技巧大全&#34;&gt;kubectl 命令技巧大全&lt;/h1&gt;
+
+&lt;p&gt;kubectl 命令是操作 Kubernetes 集群的最直接和最高效的途径，这个60多 MB 大小的二进制文件，到底有啥能耐呢？&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org42fef24&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;kubectl-自动补全&#34;&gt;Kubectl 自动补全&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code&gt;$ source &amp;lt;(kubectl completion bash) # setup autocomplete in bash, bash-completion package should be installed first.
+$ source &amp;lt;(kubectl completion zsh)  # setup autocomplete in zsh
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org27c704f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;kubectl-上下文和配置&#34;&gt;Kubectl 上下文和配置&lt;/h1&gt;
+
+&lt;p&gt;设置 kubectl 命令交互的 kubernetes 集群并修改配置信息。参阅 使用 kubeconfig 文件进行跨集群验证 获取关于配置文件的详细信息。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ kubectl config view # 显示合并后的 kubeconfig 配置
+
+# 同时使用多个 kubeconfig 文件并查看合并后的配置
+$ KUBECONFIG=~/.kube/config:~/.kube/kubconfig2 kubectl config view
+
+# 获取 e2e 用户的密码
+$ kubectl config view -o jsonpath=&#39;{.users[?(@.name == &amp;quot;e2e&amp;quot;)].user.password}&#39;
+
+$ kubectl config current-context              # 显示当前的上下文
+$ kubectl config use-context my-cluster-name  # 设置默认上下文为 my-cluster-name
+
+# 向 kubeconf 中增加支持基本认证的新集群
+$ kubectl config set-credentials kubeuser/foo.kubernetes.com --username=kubeuser --password=kubepassword
+
+# 使用指定的用户名和 namespace 设置上下文
+$ kubectl config set-context gce --user=cluster-admin --namespace=foo \
+  &amp;amp;&amp;amp; kubectl config use-context gce
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgaa430dd&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;创建对象&#34;&gt;创建对象&lt;/h1&gt;
+
+&lt;p&gt;Kubernetes 的清单文件可以使用 json 或 yaml 格式定义。可以以 .yaml、.yml、或者 .json 为扩展名。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ kubectl create -f ./my-manifest.yaml           # 创建资源
+$ kubectl create -f ./my1.yaml -f ./my2.yaml     # 使用多个文件创建资源
+$ kubectl create -f ./dir                        # 使用目录下的所有清单文件来创建资源
+$ kubectl create -f https://git.io/vPieo         # 使用 url 来创建资源
+$ kubectl run nginx --image=nginx                # 启动一个 nginx 实例
+$ kubectl explain pods,svc                       # 获取 pod 和 svc 的文档
+
+# 从 stdin 输入中创建多个 YAML 对象
+$ cat &amp;lt;&amp;lt;EOF | kubectl create -f -
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox-sleep
+spec:
+  containers:
+  - name: busybox
+    image: busybox
+    args:
+    - sleep
+    - &amp;quot;1000000&amp;quot;
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox-sleep-less
+spec:
+  containers:
+  - name: busybox
+    image: busybox
+    args:
+    - sleep
+    - &amp;quot;1000&amp;quot;
+EOF
+
+# 创建包含几个 key 的 Secret
+$ cat &amp;lt;&amp;lt;EOF | kubectl create -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysecret
+type: Opaque
+data:
+  password: $(echo &amp;quot;s33msi4&amp;quot; | base64)
+  username: $(echo &amp;quot;jane&amp;quot; | base64)
+EOF
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org62782f5&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;显示和查找资源&#34;&gt;显示和查找资源&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code&gt;# Get commands with basic output
+$ kubectl get services                          # 列出所有 namespace 中的所有 service
+$ kubectl get pods --all-namespaces             # 列出所有 namespace 中的所有 pod
+$ kubectl get pods -o wide                      # 列出所有 pod 并显示详细信息
+$ kubectl get deployment my-dep                 # 列出指定 deployment
+
+# 使用详细输出来描述命令
+$ kubectl describe nodes my-node
+$ kubectl describe pods my-pod
+
+$ kubectl get services --sort-by=.metadata.name # List Services Sorted by Name
+
+# 根据重启次数排序列出 pod
+$ kubectl get pods --sort-by=&#39;.status.containerStatuses[0].restartCount&#39;
+
+# 获取所有具有 app=cassandra 的 pod 中的 version 标签
+$ kubectl get pods --selector=app=cassandra rc -o \
+  jsonpath=&#39;{.items[*].metadata.labels.version}&#39;
+
+# 获取所有节点的 ExternalIP
+$ kubectl get nodes -o jsonpath=&#39;{.items[*].status.addresses[?(@.type==&amp;quot;ExternalIP&amp;quot;)].address}&#39;
+
+# 列出属于某个 PC 的 Pod 的名字
+# “jq”命令用于转换复杂的 jsonpath，参考 https://stedolan.github.io/jq/
+$ sel=${$(kubectl get rc my-rc --output=json | jq -j &#39;.spec.selector | to_entries | .[] | &amp;quot;\(.key)=\(.value),&amp;quot;&#39;)%?}
+$ echo $(kubectl get pods --selector=$sel --output=jsonpath={.items..metadata.name})
+
+# 查看哪些节点已就绪
+$ JSONPATH=&#39;{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}&#39; \
+ &amp;amp;&amp;amp; kubectl get nodes -o jsonpath=&amp;quot;$JSONPATH&amp;quot; | grep &amp;quot;Ready=True&amp;quot;
+
+# 列出当前 Pod 中使用的 Secret
+$ kubectl get pods -o json | jq &#39;.items[].spec.containers[].env[]?.valueFrom.secretKeyRef.name&#39; | grep -v null | sort | uniq
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgc7a7c88&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;更新资源&#34;&gt;更新资源&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code&gt;$ kubectl rolling-update frontend-v1 -f frontend-v2.json           # 滚动更新 pod frontend-v1
+$ kubectl rolling-update frontend-v1 frontend-v2 --image=image:v2  # 更新资源名称并更新镜像
+$ kubectl rolling-update frontend --image=image:v2                 # 更新 frontend pod 中的镜像
+$ kubectl rolling-update frontend-v1 frontend-v2 --rollback        # 退出已存在的进行中的滚动更新
+$ cat pod.json | kubectl replace -f -                              # 基于 stdin 输入的 JSON 替换 pod
+
+# 强制替换，删除后重新创建资源。会导致服务中断。
+$ kubectl replace --force -f ./pod.json
+
+# 为 nginx RC 创建服务，启用本地 80 端口连接到容器上的 8000 端口
+$ kubectl expose rc nginx --port=80 --target-port=8000
+
+# 更新单容器 pod 的镜像版本（tag）到 v4
+$ kubectl get pod mypod -o yaml | sed &#39;s/\(image: myimage\):.*$/\1:v4/&#39; | kubectl replace -f -
+
+$ kubectl label pods my-pod new-label=awesome                      # 添加标签
+$ kubectl annotate pods my-pod icon-url=http://goo.gl/XXBTWq       # 添加注解
+$ kubectl autoscale deployment foo --min=2 --max=10                # 自动扩展 deployment “foo”
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;orga04178c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;修补资源&#34;&gt;修补资源&lt;/h1&gt;
+
+&lt;p&gt;使用策略合并补丁并修补资源。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ kubectl patch node k8s-node-1 -p &#39;{&amp;quot;spec&amp;quot;:{&amp;quot;unschedulable&amp;quot;:true}}&#39; # 部分更新节点
+
+# 更新容器镜像； spec.containers[*].name 是必须的，因为这是合并的关键字
+$ kubectl patch pod valid-pod -p &#39;{&amp;quot;spec&amp;quot;:{&amp;quot;containers&amp;quot;:[{&amp;quot;name&amp;quot;:&amp;quot;kubernetes-serve-hostname&amp;quot;,&amp;quot;image&amp;quot;:&amp;quot;new image&amp;quot;}]}}&#39;
+
+# 使用具有位置数组的 json 补丁更新容器镜像
+$ kubectl patch pod valid-pod --type=&#39;json&#39; -p=&#39;[{&amp;quot;op&amp;quot;: &amp;quot;replace&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/spec/containers/0/image&amp;quot;, &amp;quot;value&amp;quot;:&amp;quot;new image&amp;quot;}]&#39;
+
+# 使用具有位置数组的 json 补丁禁用 deployment 的 livenessProbe
+$ kubectl patch deployment valid-deployment  --type json   -p=&#39;[{&amp;quot;op&amp;quot;: &amp;quot;remove&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/spec/template/spec/containers/0/livenessProbe&amp;quot;}]&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org4b6db63&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;编辑资源&#34;&gt;编辑资源&lt;/h1&gt;
+
+&lt;p&gt;在编辑器中编辑任何 API 资源。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ kubectl edit svc/docker-registry                      # 编辑名为 docker-registry 的 service
+$ KUBE_EDITOR=&amp;quot;nano&amp;quot; kubectl edit svc/docker-registry   # 使用其它编辑器
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org43c4654&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;scale-资源&#34;&gt;Scale 资源&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code&gt;$ kubectl scale --replicas=3 rs/foo                                 # Scale a replicaset named &#39;foo&#39; to 3
+$ kubectl scale --replicas=3 -f foo.yaml                            # Scale a resource specified in &amp;quot;foo.yaml&amp;quot; to 3
+$ kubectl scale --current-replicas=2 --replicas=3 deployment/mysql  # If the deployment named mysql&#39;s current size is 2, scale mysql to 3
+$ kubectl scale --replicas=5 rc/foo rc/bar rc/baz                   # Scale multiple replication controllers
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgc4b94c3&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;删除资源&#34;&gt;删除资源&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code&gt;$ kubectl delete -f ./pod.json                                              # 删除 pod.json 文件中定义的类型和名称的 pod
+$ kubectl delete pod,service baz foo                                        # 删除名为“baz”的 pod 和名为“foo”的 service
+$ kubectl delete pods,services -l name=myLabel                              # 删除具有 name=myLabel 标签的 pod 和 serivce
+$ kubectl delete pods,services -l name=myLabel --include-uninitialized      # 删除具有 name=myLabel 标签的 pod 和 service，包括尚未初始化的
+$ kubectl -n my-ns delete po,svc --all                                      # 删除 my-ns namespace 下的所有 pod 和 serivce，包括尚未初始化的
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org2dfd797&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;与运行中的-pod-交互&#34;&gt;与运行中的 Pod 交互&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code&gt;$ kubectl logs my-pod                                 # dump 输出 pod 的日志（stdout）
+$ kubectl logs my-pod -c my-container                 # dump 输出 pod 中容器的日志（stdout，pod 中有多个容器的情况下使用）
+$ kubectl logs -f my-pod                              # 流式输出 pod 的日志（stdout）
+$ kubectl logs -f my-pod -c my-container              # 流式输出 pod 中容器的日志（stdout，pod 中有多个容器的情况下使用）
+$ kubectl run -i --tty busybox --image=busybox -- sh  # 交互式 shell 的方式运行 pod
+$ kubectl attach my-pod -i                            # 连接到运行中的容器
+$ kubectl port-forward my-pod 5000:6000               # 转发 pod 中的 6000 端口到本地的 5000 端口
+$ kubectl exec my-pod -- ls /                         # 在已存在的容器中执行命令（只有一个容器的情况下）
+$ kubectl exec my-pod -c my-container -- ls /         # 在已存在的容器中执行命令（pod 中有多个容器的情况下）
+$ kubectl top pod POD_NAME --containers               # 显示指定 pod 和容器的指标度量
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org293bbe3&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;与节点和集群交互&#34;&gt;与节点和集群交互&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code&gt;$ kubectl cordon my-node                                                # 标记 my-node 不可调度
+$ kubectl drain my-node                                                 # 清空 my-node 以待维护
+$ kubectl uncordon my-node                                              # 标记 my-node 可调度
+$ kubectl top node my-node                                              # 显示 my-node 的指标度量
+$ kubectl cluster-info                                                  # 显示 master 和服务的地址
+$ kubectl cluster-info dump                                             # 将当前集群状态输出到 stdout                                    
+$ kubectl cluster-info dump --output-directory=/path/to/cluster-state   # 将当前集群状态输出到 /path/to/cluster-state
+
+# 如果该键和影响的污点（taint）已存在，则使用指定的值替换
+$ kubectl taint nodes foo dedicated=special-user:NoSchedule
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgef08c6d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;资源类型&#34;&gt;资源类型&lt;/h1&gt;
+
+&lt;p&gt;下表列出的是 kubernetes 中所有支持的类型和缩写的别名。&lt;/p&gt;
+
+&lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
+
+
+&lt;colgroup&gt;
+&lt;col  class=&#34;org-left&#34; /&gt;
+
+&lt;col  class=&#34;org-left&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;资源类型&lt;/th&gt;
+&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;缩写别名&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;clusters&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;&amp;#xa0;&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;componentstatuses&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;cs&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;configmaps&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;cm&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;daemonsets&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;ds&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;deployments&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;deploy&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;endpoints&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;ep&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;event&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;ev&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;horizontalpodautoscalers&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;hpa&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;ingresses&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;ing&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;jobs&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;&amp;#xa0;&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;limitranges&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;limits&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;namespaces&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;ns&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;networkpolicies&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;&amp;#xa0;&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;nodes&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;no&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;statefulsets&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;&amp;#xa0;&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;persistentvolumeclaims&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;pvc&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;persistentvolumes&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;pv&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;pods&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;po&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;podsecuritypolicies&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;psp&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;podtemplates&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;&amp;#xa0;&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;replicasets&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;rs&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;replicationcontrollers&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;rc&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;resourcequotas&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;quota&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;cronjob&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;&amp;#xa0;&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;secrets&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;&amp;#xa0;&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;serviceaccount&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;sa&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;services&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;svc&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;storageclasses&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;&amp;#xa0;&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;thirdpartyresources&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;&amp;#xa0;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgb32a4c5&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;格式化输出&#34;&gt;格式化输出&lt;/h1&gt;
+
+&lt;p&gt;要以特定的格式向终端窗口输出详细信息，可以在 kubectl 命令中添加 -o 或者 -output 标志。&lt;/p&gt;
+
+&lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
+
+
+&lt;colgroup&gt;
+&lt;col  class=&#34;org-left&#34; /&gt;
+
+&lt;col  class=&#34;org-left&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;输出格式&lt;/th&gt;
+&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;描述&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;-o=json&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;输出 JSON 格式的 API 对象&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;-o=jsonpath=&lt;template&gt;&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;打印 jsonpath 表达式中定义的字段&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;-o=jsonpath-file=&lt;filename&gt;&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;打印由 文件中的 jsonpath 表达式定义的字段&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;-o=name&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;仅打印资源名称&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;-o=wide&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;以纯文本格式输出任何附加信息，对于 Pod ，包含节点名称&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;-o=yaml&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;输出 YAML 格式的 API 对象&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;a id=&#34;org8e6aac4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;kubectl-详细输出和调试&#34;&gt;Kubectl 详细输出和调试&lt;/h1&gt;
+
+&lt;p&gt;使用 -v 或 &amp;#x2013;v 标志跟着一个整数来指定日志级别。&lt;/p&gt;
+
+&lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
+
+
+&lt;colgroup&gt;
+&lt;col  class=&#34;org-left&#34; /&gt;
+
+&lt;col  class=&#34;org-left&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;详细等级&lt;/th&gt;
+&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;描述&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;&amp;#x2013;v=0&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;总是对操作人员可见。&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;&amp;#x2013;v=1&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;合理的默认日志级别，如果您不需要详细输出。&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;&amp;#x2013;v=2&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;可能与系统的重大变化相关的，有关稳定状态的信息和重要的日志信息。这是对大多数系统推荐的日志级别。&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;&amp;#x2013;v=3&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;有关更改的扩展信息。&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;&amp;#x2013;v=4&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;调试级别详细输出。&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;&amp;#x2013;v=6&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;显示请求的资源。&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;&amp;#x2013;v=7&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;显示HTTP请求的header。&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;&amp;#x2013;v=8&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;显示HTTP请求的内容。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;a id=&#34;org0f9fe33&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;参考&#34;&gt;参考&lt;/h1&gt;
+
+&lt;p&gt;【01】&lt;a href=&#34;https://kubernetes.io/docs/reference/kubectl/&#34;&gt;Kubectl 概览&lt;/a&gt;&lt;br /&gt;
+【02】&lt;a href=&#34;https://kubernetes.io/docs/reference/kubectl/jsonpath/&#34;&gt;JsonPath 手册&lt;/a&gt;&lt;br /&gt;
+【03】&lt;a href=&#34;https://kubernetes.io/docs/reference/kubectl/cheatsheet/&#34;&gt;Cheatsheet&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
         
         <item>
             <title>K8S学习笔记(03): Mac系统安装k8s集群</title>
@@ -150,16 +731,20 @@ kubectl proxy
             <guid>http://mospany.github.io/2022/09/10/k8s-study-toc/</guid>
             <description>
 
-&lt;p&gt;&lt;a id=&#34;org8a55351&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org221fff9&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;目录&#34;&gt;目录&lt;/h1&gt;
+
+&lt;p&gt;&lt;a id=&#34;org5ebc74d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;k8s使用与原理&#34;&gt;K8S使用与原理&lt;/h2&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;a href=&#34;http://blog.mospan.cn/2022/09/10/k8s-study-toc/&#34;&gt;K8S学习笔记(01): 目录&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://blog.mospan.cn/2022/09/13/k8s-study-install-for-mac/&#34;&gt;K8S学习笔记(03): Mac系统安装k8s集群&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;&lt;a id=&#34;org3d4ba47&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org80b1ba4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;ppt内容&#34;&gt;PPT内容&lt;/h1&gt;
 
@@ -2612,288 +3197,6 @@ sudo apt-get install stardict
 &lt;tr&gt;
 &lt;td class=&#34;org-left&#34;&gt;o&lt;/td&gt;
 &lt;td class=&#34;org-left&#34;&gt;另一个窗口中，打开文件或目录&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-</description>
-        </item>
-        
-        <item>
-            <title>spacemacs使用初探</title>
-            <link>http://mospany.github.io/2017/08/25/spacemacs-use-exploration/</link>
-            <pubDate>Thu, 24 Aug 2017 17:08:26 CST</pubDate>
-            <author>Mospan</author>
-            <guid>http://mospany.github.io/2017/08/25/spacemacs-use-exploration/</guid>
-            <description>
-
-&lt;h1 id=&#34;概述-a-id-sec-1-name-sec-1-a&#34;&gt;概述&lt;a id=&#34;sec-1&#34; name=&#34;sec-1&#34;&gt;&lt;/a&gt;&lt;/h1&gt;
-
-&lt;p&gt;我自从2011年开始使用自己折腾的emacs到现在， 用着它写golang时发现函数列表与补全功能不太好使，一直知道spacemacs的名声，今天想尝试下其效果如果如何，有啥奇妙之处。
-我一般用它来写Golang、C、Lua、Shell、GTD和Blog，看看spacemacs是否满足我所需和习惯。&lt;/p&gt;
-
-&lt;h1 id=&#34;安装-a-id-sec-2-name-sec-2-a&#34;&gt;安装&lt;a id=&#34;sec-2&#34; name=&#34;sec-2&#34;&gt;&lt;/a&gt;&lt;/h1&gt;
-
-&lt;p&gt;Spacemacs的Github地址为：&lt;a href=&#34;https://github.com/syl20bnr/spacemacs&#34;&gt;https://github.com/syl20bnr/spacemacs&lt;/a&gt;, 如果你的系统已装有Emacs，请先备份Emacs配置文件。因为Spacemacs的配置会覆盖掉原Emacs的配置文件。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;cd ~ 
-mv .emacs.d .emacs.d.bak 
-mv .emacs .emacs.bak
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;如果你的系统没有安装Emacs，需要先安装Emacs，请注意Emacs版本至少为24.4。&lt;/p&gt;
-
-&lt;h2 id=&#34;安装spacemacs-a-id-sec-2-1-name-sec-2-1-a&#34;&gt;安装spacemacs&lt;a id=&#34;sec-2-1&#34; name=&#34;sec-2-1&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code&gt;git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;启动spacemacs-a-id-sec-2-2-name-sec-2-2-a&#34;&gt;启动spacemacs&lt;a id=&#34;sec-2-2&#34; name=&#34;sec-2-2&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code&gt;emacs -mm
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;初次启动Spacemacs会进行初始化配置（启动时会询问使用简、全哪套配置方案），安装依赖有可能需要一段时间。
-在通过命令行启动Spacemacs后，可能会发现状态栏乱码了。这是因为字体不支持的原因，需要安装Source Code Pro字体。 同时，还可能需要安装Powerline字体补丁。&lt;/p&gt;
-
-&lt;h1 id=&#34;配置-a-id-sec-3-name-sec-3-a&#34;&gt;配置&lt;a id=&#34;sec-3&#34; name=&#34;sec-3&#34;&gt;&lt;/a&gt;&lt;/h1&gt;
-
-&lt;h2 id=&#34;增加启动layers-a-id-sec-3-1-name-sec-3-1-a&#34;&gt;增加启动layers&lt;a id=&#34;sec-3-1&#34; name=&#34;sec-3-1&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;由于我主要写Golang、C、Lua、Shell、GTD和Blog，增加相应的启动layers即可。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;dotspacemacs-configuration-layers
-&#39;(
-  c-c++
-  go
-  lua
-  html
-  ;; ----------------------------------------------------------------
-  ;; Example of useful layers you may want to use right away.
-  ;; Uncomment some layer names and press &amp;lt;SPC f e R&amp;gt; (Vim style) or
-  ;; &amp;lt;M-m f e R&amp;gt; (Emacs style) to install them.
-  ;; ----------------------------------------------------------------
-  helm
-  auto-completion
-  ;; better-defaults
-  emacs-lisp
-  git
-  markdown
-  org
-  ;; (shell :variables
-  ;;        shell-default-height 30
-  ;;        shell-default-position &#39;bottom)
-  ;; spell-checking
-  ;; syntax-checking
-  ;; version-control
-  )
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h1 id=&#34;使用-a-id-sec-4-name-sec-4-a&#34;&gt;使用&lt;a id=&#34;sec-4&#34; name=&#34;sec-4&#34;&gt;&lt;/a&gt;&lt;/h1&gt;
-
-&lt;h2 id=&#34;working-with-go-a-id-sec-4-1-name-sec-4-1-a&#34;&gt;Working with Go&lt;a id=&#34;sec-4-1&#34; name=&#34;sec-4-1&#34;&gt;&lt;/a&gt;&lt;/h2&gt;
-
-&lt;h3 id=&#34;go-commands-start-with-m-a-id-sec-4-1-1-name-sec-4-1-1-a&#34;&gt;Go commands (start with &lt;code&gt;m&lt;/code&gt;):&lt;a id=&#34;sec-4-1-1&#34; name=&#34;sec-4-1-1&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
-
-&lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
-
-
-&lt;colgroup&gt;
-&lt;col  class=&#34;left&#34; /&gt;
-
-&lt;col  class=&#34;left&#34; /&gt;
-&lt;/colgroup&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th scope=&#34;col&#34; class=&#34;left&#34;&gt;Key Binding&lt;/th&gt;
-&lt;th scope=&#34;col&#34; class=&#34;left&#34;&gt;Description&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td class=&#34;left&#34;&gt;`SPC m h h`&lt;/td&gt;
-&lt;td class=&#34;left&#34;&gt;godoc at point&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;left&#34;&gt;`SPC m i g`&lt;/td&gt;
-&lt;td class=&#34;left&#34;&gt;goto imports&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;left&#34;&gt;`SPC m i a`&lt;/td&gt;
-&lt;td class=&#34;left&#34;&gt;add import&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;left&#34;&gt;`SPC m i r`&lt;/td&gt;
-&lt;td class=&#34;left&#34;&gt;remove unused import&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;left&#34;&gt;`SPC m e b`&lt;/td&gt;
-&lt;td class=&#34;left&#34;&gt;go-play buffer&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;left&#34;&gt;`SPC m e r`&lt;/td&gt;
-&lt;td class=&#34;left&#34;&gt;go-play region&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;left&#34;&gt;`SPC m e d`&lt;/td&gt;
-&lt;td class=&#34;left&#34;&gt;download go-play snippet&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;left&#34;&gt;`SPC m x x`&lt;/td&gt;
-&lt;td class=&#34;left&#34;&gt;run &#34;go run&#34; for the current &#39;main&#39; package&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;left&#34;&gt;`SPC m g a`&lt;/td&gt;
-&lt;td class=&#34;left&#34;&gt;jump to matching test file or back from test to code file&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;left&#34;&gt;`SPC m g c`&lt;/td&gt;
-&lt;td class=&#34;left&#34;&gt;open a clone of the current buffer with a coverage info (`go tool cover -h` for help)&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;left&#34;&gt;`SPC m g g`&lt;/td&gt;
-&lt;td class=&#34;left&#34;&gt;go jump to definition&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;left&#34;&gt;`SPC m r n`&lt;/td&gt;
-&lt;td class=&#34;left&#34;&gt;go rename&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;left&#34;&gt;`SPC m t p`&lt;/td&gt;
-&lt;td class=&#34;left&#34;&gt;run &#34;go test&#34; for the current package&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;left&#34;&gt;`SPC m t P`&lt;/td&gt;
-&lt;td class=&#34;left&#34;&gt;run &#34;go test&#34; for the current package and all packages under it&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;left&#34;&gt;`SPC m t t`&lt;/td&gt;
-&lt;td class=&#34;left&#34;&gt;run &#34;go test&#34; for the function you&#39;re currently in (while you&#39;re in a \_.test.go file)&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;left&#34;&gt;`SPC m t s`&lt;/td&gt;
-&lt;td class=&#34;left&#34;&gt;run &#34;go test&#34; for the suite you&#39;re currently in (requires gocheck)&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;h3 id=&#34;go-guru-a-id-sec-4-1-2-name-sec-4-1-2-a&#34;&gt;Go Guru&lt;a id=&#34;sec-4-1-2&#34; name=&#34;sec-4-1-2&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
-
-&lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
-
-
-&lt;colgroup&gt;
-&lt;col  class=&#34;left&#34; /&gt;
-
-&lt;col  class=&#34;left&#34; /&gt;
-&lt;/colgroup&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th scope=&#34;col&#34; class=&#34;left&#34;&gt;Key Binding&lt;/th&gt;
-&lt;th scope=&#34;col&#34; class=&#34;left&#34;&gt;Description&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td class=&#34;left&#34;&gt;`SPC m f d`&lt;/td&gt;
-&lt;td class=&#34;left&#34;&gt;go-guru describe symbol at point&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;left&#34;&gt;`SPC m f f`&lt;/td&gt;
-&lt;td class=&#34;left&#34;&gt;go-guru show free variables&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;left&#34;&gt;`SPC m f i`&lt;/td&gt;
-&lt;td class=&#34;left&#34;&gt;go-guru show implements relation&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;left&#34;&gt;`SPC m f c`&lt;/td&gt;
-&lt;td class=&#34;left&#34;&gt;go-guru show channel sends/receives&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;left&#34;&gt;`SPC m f r`&lt;/td&gt;
-&lt;td class=&#34;left&#34;&gt;go-guru show referrers&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;left&#34;&gt;`SPC m f j`&lt;/td&gt;
-&lt;td class=&#34;left&#34;&gt;go-guru jump to symbol definition&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;left&#34;&gt;`SPC m f p`&lt;/td&gt;
-&lt;td class=&#34;left&#34;&gt;go-guru show what the select expression points to&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;left&#34;&gt;`SPC m f s`&lt;/td&gt;
-&lt;td class=&#34;left&#34;&gt;go-guru show callstack&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;left&#34;&gt;`SPC m f e`&lt;/td&gt;
-&lt;td class=&#34;left&#34;&gt;go-guru show possible contants/types for error value&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;left&#34;&gt;`SPC m f &lt;`&lt;/td&gt;
-&lt;td class=&#34;left&#34;&gt;go-guru show possible callers&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;left&#34;&gt;`SPC m f &gt;`&lt;/td&gt;
-&lt;td class=&#34;left&#34;&gt;go-guru show call targets&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;left&#34;&gt;`SPC m f o`&lt;/td&gt;
-&lt;td class=&#34;left&#34;&gt;go-guru set analysis scope&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
