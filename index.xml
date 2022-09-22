@@ -477,13 +477,13 @@ $ kubectl taint nodes foo dedicated=special-user:NoSchedule
 
 
 &lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;-o=jsonpath=&lt;template&gt;&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;-o=jsonpath=template&lt;/td&gt;
 &lt;td class=&#34;org-left&#34;&gt;打印 jsonpath 表达式中定义的字段&lt;/td&gt;
 &lt;/tr&gt;
 
 
 &lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;-o=jsonpath-file=&lt;filename&gt;&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;-o=jsonpath-file=filename&lt;/td&gt;
 &lt;td class=&#34;org-left&#34;&gt;打印由 文件中的 jsonpath 表达式定义的字段&lt;/td&gt;
 &lt;/tr&gt;
 
