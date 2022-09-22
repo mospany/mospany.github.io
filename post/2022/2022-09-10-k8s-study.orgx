@@ -14,6 +14,7 @@ url = "/2022/09/10/k8s-study-toc/"
 ** K8S使用与原理
   01. [[http://blog.mospan.cn/2022/09/10/k8s-study-toc/][K8S学习笔记(01): 目录]]
   02. [[http://blog.mospan.cn/2022/09/13/k8s-study-install-for-mac/][K8S学习笔记(03): Mac系统安装k8s集群]]
+  03. [[http://blog.mospan.cn/2022/09/21/k8s-kubectl-all-cmd/][K8S学习笔记(04): kubectl命令技巧大全]]
 
 
 * PPT内容

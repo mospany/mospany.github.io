@@ -731,20 +731,21 @@ kubectl proxy
             <guid>http://mospany.github.io/2022/09/10/k8s-study-toc/</guid>
             <description>
 
-&lt;p&gt;&lt;a id=&#34;org221fff9&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org184128e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;目录&#34;&gt;目录&lt;/h1&gt;
 
-&lt;p&gt;&lt;a id=&#34;org5ebc74d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org8d20da4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;k8s使用与原理&#34;&gt;K8S使用与原理&lt;/h2&gt;
 
 &lt;ol&gt;
 &lt;li&gt;&lt;a href=&#34;http://blog.mospan.cn/2022/09/10/k8s-study-toc/&#34;&gt;K8S学习笔记(01): 目录&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://blog.mospan.cn/2022/09/13/k8s-study-install-for-mac/&#34;&gt;K8S学习笔记(03): Mac系统安装k8s集群&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.mospan.cn/2022/09/21/k8s-kubectl-all-cmd/&#34;&gt;K8S学习笔记(04): kubectl命令技巧大全&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;&lt;a id=&#34;org80b1ba4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgd60bd20&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;ppt内容&#34;&gt;PPT内容&lt;/h1&gt;
 
