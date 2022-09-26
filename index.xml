@@ -732,7 +732,7 @@ kubectl proxy
             <guid>http://mospany.github.io/2022/09/12/k8s-arch/</guid>
             <description>
 
-&lt;p&gt;&lt;a id=&#34;org3b04d52&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org50c6008&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;简介&#34;&gt;简介&lt;/h1&gt;
 
@@ -742,20 +742,20 @@ kubectl proxy
 
 &lt;p&gt;Kubernetes 最初源于谷歌内部的 Borg，提供了面向应用的容器集群部署和管理系统。Kubernetes 的目标旨在消除编排物理 / 虚拟计算，网络和存储基础设施的负担，并使应用程序运营商和开发人员完全将重点放在以容器为中心的原语上进行自助运营。Kubernetes 也提供稳定、兼容的基础（平台），用于构建定制化的 workflows 和更高级的自动化任务。 Kubernetes 具备完善的集群管理能力，包括多层次的安全防护和准入机制、多租户应用支撑能力、透明的服务注册和服务发现机制、内建负载均衡器、故障发现和自我修复能力、服务滚动升级和在线扩容、可扩展的资源自动调度机制、多粒度的资源配额管理能力。Kubernetes 还提供完善的管理工具，涵盖开发、部署测试、运维监控等各个环节。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org4f46df5&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgddfeca5&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;时光回溯&#34;&gt;时光回溯&lt;/h1&gt;
 
 &lt;p&gt;让我们回顾一下为什么 Kubernetes 如此有用。&lt;br /&gt;
 &lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-arch/k8s-develop.svg&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org32c9e93&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orga2ca42e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;传统部署时代&#34;&gt;传统部署时代&lt;/h2&gt;
 
 &lt;p&gt;早期，各个组织机构在物理服务器上运行应用程序。无法为物理服务器中的应用程序定义资源边界，这会导致资源分配问题。 例如，如果在物理服务器上运行多个应用程序，则可能会出现一个应用程序占用大部分资源的情况， 结果可能导致其他应用程序的性能下降。 一种解决方案是在不同的物理服务器上运行每个应用程序，但是由于资源利用不足而无法扩展， 并且维护许多物理服务器的成本很高。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgf01f8d4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org24cdd7b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;虚拟化部署时代&#34;&gt;虚拟化部署时代&lt;/h2&gt;
 
@@ -765,7 +765,7 @@ kubectl proxy
 
 &lt;p&gt;每个 VM 是一台完整的计算机，在虚拟化硬件之上运行所有组件，包括其自己的操作系统。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgda03445&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org100c186&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;容器部署时代&#34;&gt;容器部署时代&lt;/h2&gt;
 
@@ -786,7 +786,7 @@ kubectl proxy
 &lt;li&gt;资源利用：高效率和高密度。&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a id=&#34;org42b74dd&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgc1899e7&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;为什么需要-kubernetes-它能做什么&#34;&gt;为什么需要 Kubernetes，它能做什么?&lt;/h1&gt;
 
@@ -832,7 +832,7 @@ kubectl proxy
 
 &lt;p&gt;Kubernetes 允许你存储和管理敏感信息，例如密码、OAuth 令牌和 ssh 密钥。 你可以在不重建容器镜像的情况下部署和更新密钥和应用程序配置，也无需在堆栈配置中暴露密钥。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org82be187&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org6a780e8&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;kubernetes-不是什么&#34;&gt;Kubernetes 不是什么&lt;/h1&gt;
 
@@ -856,7 +856,7 @@ kubectl proxy
 
 &lt;p&gt;此外，Kubernetes 不仅仅是一个编排系统，实际上它消除了编排的需要。 编排的技术定义是执行已定义的工作流程：首先执行 A，然后执行 B，再执行 C。 相比之下，Kubernetes 包含一组独立的、可组合的控制过程， 这些过程连续地将当前状态驱动到所提供的所需状态。 如何从 A 到 C 的方式无关紧要，也不需要集中控制，这使得系统更易于使用 且功能更强大、系统更健壮、更为弹性和可扩展。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org2325363&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org326d4cc&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;k8s架构原理&#34;&gt;K8S架构原理&lt;/h1&gt;
 
@@ -864,7 +864,7 @@ kubectl proxy
 
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-arch/k8s-arch.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgdb70e59&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgd9e5c62&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;master节点&#34;&gt;Master节点&lt;/h2&gt;
 
@@ -909,7 +909,7 @@ kubectl proxy
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;&lt;a id=&#34;org4026924&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgda33f0e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;worker节点&#34;&gt;Worker节点&lt;/h2&gt;
 
@@ -948,11 +948,20 @@ kubectl proxy
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;&lt;a id=&#34;org880a612&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgff3b4e3&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;组件通信&#34;&gt;组件通信&lt;/h2&gt;
 
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-arch/k8s-component-arch.jpg&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org2543d3b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;参考资料&#34;&gt;参考资料&lt;/h1&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;https://jimmysong.io/kubernetes-handbook/concepts/&#34;&gt;Kubernetes 架构&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/0voice/k8s_awesome_document/blob/main/%25E6%2596%2587%25E7%25AB%25A0%25E7%25B2%25BE%25E9%2580%2589/%25E4%25B8%2580%25E6%2596%2587%25E4%25BA%2586%25E8%25A7%25A3%2520Kubernetes.md&#34;&gt;一文了解 Kubernetes.md&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
 </description>
         </item>
         

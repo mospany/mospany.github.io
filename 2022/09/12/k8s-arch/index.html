@@ -79,7 +79,7 @@
     
     
 
-<p><a id="org3b04d52"></a></p>
+<p><a id="org50c6008"></a></p>
 
 <h1 id="简介">简介</h1>
 
@@ -89,20 +89,20 @@
 
 <p>Kubernetes 最初源于谷歌内部的 Borg，提供了面向应用的容器集群部署和管理系统。Kubernetes 的目标旨在消除编排物理 / 虚拟计算，网络和存储基础设施的负担，并使应用程序运营商和开发人员完全将重点放在以容器为中心的原语上进行自助运营。Kubernetes 也提供稳定、兼容的基础（平台），用于构建定制化的 workflows 和更高级的自动化任务。 Kubernetes 具备完善的集群管理能力，包括多层次的安全防护和准入机制、多租户应用支撑能力、透明的服务注册和服务发现机制、内建负载均衡器、故障发现和自我修复能力、服务滚动升级和在线扩容、可扩展的资源自动调度机制、多粒度的资源配额管理能力。Kubernetes 还提供完善的管理工具，涵盖开发、部署测试、运维监控等各个环节。</p>
 
-<p><a id="org4f46df5"></a></p>
+<p><a id="orgddfeca5"></a></p>
 
 <h1 id="时光回溯">时光回溯</h1>
 
 <p>让我们回顾一下为什么 Kubernetes 如此有用。<br />
 <img src="http://blog.mospan.cn/post/img/k8s/k8s-arch/k8s-develop.svg" alt="img" /></p>
 
-<p><a id="org32c9e93"></a></p>
+<p><a id="orga2ca42e"></a></p>
 
 <h2 id="传统部署时代">传统部署时代</h2>
 
 <p>早期，各个组织机构在物理服务器上运行应用程序。无法为物理服务器中的应用程序定义资源边界，这会导致资源分配问题。 例如，如果在物理服务器上运行多个应用程序，则可能会出现一个应用程序占用大部分资源的情况， 结果可能导致其他应用程序的性能下降。 一种解决方案是在不同的物理服务器上运行每个应用程序，但是由于资源利用不足而无法扩展， 并且维护许多物理服务器的成本很高。</p>
 
-<p><a id="orgf01f8d4"></a></p>
+<p><a id="org24cdd7b"></a></p>
 
 <h2 id="虚拟化部署时代">虚拟化部署时代</h2>
 
@@ -112,7 +112,7 @@
 
 <p>每个 VM 是一台完整的计算机，在虚拟化硬件之上运行所有组件，包括其自己的操作系统。</p>
 
-<p><a id="orgda03445"></a></p>
+<p><a id="org100c186"></a></p>
 
 <h2 id="容器部署时代">容器部署时代</h2>
 
@@ -133,7 +133,7 @@
 <li>资源利用：高效率和高密度。</li>
 </ul>
 
-<p><a id="org42b74dd"></a></p>
+<p><a id="orgc1899e7"></a></p>
 
 <h1 id="为什么需要-kubernetes-它能做什么">为什么需要 Kubernetes，它能做什么?</h1>
 
@@ -179,7 +179,7 @@
 
 <p>Kubernetes 允许你存储和管理敏感信息，例如密码、OAuth 令牌和 ssh 密钥。 你可以在不重建容器镜像的情况下部署和更新密钥和应用程序配置，也无需在堆栈配置中暴露密钥。</p>
 
-<p><a id="org82be187"></a></p>
+<p><a id="org6a780e8"></a></p>
 
 <h1 id="kubernetes-不是什么">Kubernetes 不是什么</h1>
 
@@ -203,7 +203,7 @@
 
 <p>此外，Kubernetes 不仅仅是一个编排系统，实际上它消除了编排的需要。 编排的技术定义是执行已定义的工作流程：首先执行 A，然后执行 B，再执行 C。 相比之下，Kubernetes 包含一组独立的、可组合的控制过程， 这些过程连续地将当前状态驱动到所提供的所需状态。 如何从 A 到 C 的方式无关紧要，也不需要集中控制，这使得系统更易于使用 且功能更强大、系统更健壮、更为弹性和可扩展。</p>
 
-<p><a id="org2325363"></a></p>
+<p><a id="org326d4cc"></a></p>
 
 <h1 id="k8s架构原理">K8S架构原理</h1>
 
@@ -211,7 +211,7 @@
 
 <p><img src="http://blog.mospan.cn/post/img/k8s/k8s-arch/k8s-arch.png" alt="img" /></p>
 
-<p><a id="orgdb70e59"></a></p>
+<p><a id="orgd9e5c62"></a></p>
 
 <h2 id="master节点">Master节点</h2>
 
@@ -256,7 +256,7 @@
 </tbody>
 </table>
 
-<p><a id="org4026924"></a></p>
+<p><a id="orgda33f0e"></a></p>
 
 <h2 id="worker节点">Worker节点</h2>
 
@@ -295,11 +295,20 @@
 </tbody>
 </table>
 
-<p><a id="org880a612"></a></p>
+<p><a id="orgff3b4e3"></a></p>
 
 <h2 id="组件通信">组件通信</h2>
 
 <p><img src="http://blog.mospan.cn/post/img/k8s/k8s-arch/k8s-component-arch.jpg" alt="img" /></p>
+
+<p><a id="org2543d3b"></a></p>
+
+<h1 id="参考资料">参考资料</h1>
+
+<ol>
+<li><a href="https://jimmysong.io/kubernetes-handbook/concepts/">Kubernetes 架构</a></li>
+<li><a href="https://github.com/0voice/k8s_awesome_document/blob/main/%25E6%2596%2587%25E7%25AB%25A0%25E7%25B2%25BE%25E9%2580%2589/%25E4%25B8%2580%25E6%2596%2587%25E4%25BA%2586%25E8%25A7%25A3%2520Kubernetes.md">一文了解 Kubernetes.md</a></li>
+</ol>
 
     <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
   <div style="float:right;margin-top:0px;">
