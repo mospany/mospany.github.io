@@ -6,7 +6,7 @@ description = ""
 keywords = ["K8S","云计算"]
 tags = ["K8S","云计算"]
 title = "K8S学习笔记(02): 架构"
-url = "/2022/09/26/k8s-arch/"
+url = "/2022/09/12/k8s-arch/"
 
 +++
 

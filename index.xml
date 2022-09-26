@@ -726,10 +726,10 @@ kubectl proxy
         
         <item>
             <title>K8S学习笔记(02): 架构</title>
-            <link>http://mospany.github.io/2022/09/26/k8s-arch/</link>
+            <link>http://mospany.github.io/2022/09/12/k8s-arch/</link>
             <pubDate>Mon, 12 Sep 2022 19:34:12 CST</pubDate>
             <author>Mospan</author>
-            <guid>http://mospany.github.io/2022/09/26/k8s-arch/</guid>
+            <guid>http://mospany.github.io/2022/09/12/k8s-arch/</guid>
             <description>
 
 &lt;p&gt;&lt;a id=&#34;org3b04d52&#34;&gt;&lt;/a&gt;&lt;/p&gt;
