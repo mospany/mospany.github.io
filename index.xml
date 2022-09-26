@@ -747,7 +747,7 @@ kubectl proxy
 &lt;h1 id=&#34;时光回溯&#34;&gt;时光回溯&lt;/h1&gt;
 
 &lt;p&gt;让我们回顾一下为什么 Kubernetes 如此有用。&lt;br /&gt;
-&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-develop/k8s-develop.svg&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-arch/k8s-develop.svg&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;a id=&#34;org32c9e93&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
@@ -862,7 +862,7 @@ kubectl proxy
 
 &lt;p&gt;概括来说 K8s 架构就是一个 Master 对应一群 Node 节点。 高可用时Master一般为3个。&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-develop/k8s-arch.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-arch/k8s-arch.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;a id=&#34;orgdb70e59&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
@@ -952,7 +952,7 @@ kubectl proxy
 
 &lt;h2 id=&#34;组件通信&#34;&gt;组件通信&lt;/h2&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-develop/k8s-component-arch.jpg&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-arch/k8s-component-arch.jpg&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 </description>
         </item>
         
