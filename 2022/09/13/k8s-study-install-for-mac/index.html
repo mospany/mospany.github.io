@@ -79,40 +79,40 @@
     
     
 
-<p><a id="orgb0236d4"></a></p>
+<p><a id="orgba0078b"></a></p>
 
 <h1 id="版本介绍">版本介绍</h1>
 
-<p><a id="org7ecfcf5"></a></p>
+<p><a id="org21778c4"></a></p>
 
 <h2 id="mac系统版本">Mac系统版本</h2>
 
 <p><img src="http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/macos-version.png" alt="img" /></p>
 
-<p><a id="orgb0bb981"></a></p>
+<p><a id="orgfd3ff14"></a></p>
 
 <h2 id="docker-desktop-版本">Docker Desktop 版本</h2>
 
 <p><img src="http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/docker-version.png" alt="img" /></p>
 
-<p><a id="orgf43c8cf"></a></p>
+<p><a id="org75f453a"></a></p>
 
 <h2 id="k8s-版本">K8S 版本</h2>
 
 <p><img src="http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/k8s-version.png" alt="img" /></p>
 
-<p><a id="orgb771a76"></a></p>
+<p><a id="org5708814"></a></p>
 
 <h1 id="安装">安装</h1>
 
-<p><a id="orgfb2b00e"></a></p>
+<p><a id="orge5e2699"></a></p>
 
 <h2 id="docker安装">Docker安装</h2>
 
 <pre><code>brew install -cask docker
 </code></pre>
 
-<p><a id="org3e9347f"></a></p>
+<p><a id="org42bc861"></a></p>
 
 <h2 id="开机自启动k8s">开机自启动K8S</h2>
 
@@ -120,7 +120,7 @@
 
 <p>重启成功后查看K8S集群。</p>
 
-<p><a id="org5cc15cc"></a></p>
+<p><a id="orgd262c8d"></a></p>
 
 <h2 id="安装kubernetes-dashboard">安装Kubernetes Dashboard</h2>
 
@@ -133,7 +133,7 @@
 
 <p>最新版本参考：<a href="https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/">https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/</a>​</p>
 
-<p><a id="orga6321e3"></a></p>
+<p><a id="orgb628b73"></a></p>
 
 <h3 id="创建sa登录token">创建SA登录Token</h3>
 
@@ -161,7 +161,7 @@ subjects:
 # kubectl create -f dashboard-adminuser.yaml
 </code></pre>
 
-<p><a id="org6ab233c"></a></p>
+<p><a id="orgca914fe"></a></p>
 
 <h3 id="绑定资源并获取登录token">绑定资源并获取登录Token</h3>
 
@@ -180,7 +180,7 @@ kubectl proxy
 3、最后再获取该账号的secrets里的token做为登录。观察serviceAccount的创建，并创建一个相应的Secret 来允许API访问。<br />
 4、使用kubectl proxy命令就可以使API server监听在本地的8001端口上，作用是建立一条通往API服务器的隧道，可以方便查看API服务器上的资源。</p>
 
-<p><a id="org7e8ef62"></a></p>
+<p><a id="org498919d"></a></p>
 
 <h3 id="登录dashbaord">登录dashbaord</h3>
 
@@ -201,7 +201,8 @@ kubectl proxy
 【01】 <a href="https://blog.csdn.net/a772304419/article/details/125482351">k8s 内置cluster role（集群角色） cluster-admin、admin、 edit、 view的作用范围及区别</a><br />
 【02】 <a href="https://blog.csdn.net/m0_45406092/article/details/119890156">kubectl proxy</a><br />
 【03】 <a href="https://blog.csdn.net/marvel__dead/article/details/78833921">URL中“#”号的作用</a><br />
-【04】 <a href="https://blog.csdn.net/afz8572/article/details/101745100/">mac上k8s学习踩坑</a></li>
+【04】 <a href="https://blog.csdn.net/afz8572/article/details/101745100/">mac上k8s学习踩坑</a><br />
+【05】 <a href="https://javajgs.com/archives/8386">mac下安装kubeneters及zsh下配置自动补全</a></li>
 </ul>
 
     <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
@@ -292,7 +293,7 @@ gitment.render('git-comments')
     
     <li><a href="http://mospany.github.io/categories/%e5%b7%a5%e5%85%b7%e4%bd%bf%e7%94%a8" title="工具使用">工具使用<sup>3</sup></a></li>
     
-    <li><a href="http://mospany.github.io/categories/%e6%8a%80%e6%9c%af%e6%96%87%e7%ab%a0" title="技术文章">技术文章<sup>30</sup></a></li>
+    <li><a href="http://mospany.github.io/categories/%e6%8a%80%e6%9c%af%e6%96%87%e7%ab%a0" title="技术文章">技术文章<sup>31</sup></a></li>
     
     <li><a href="http://mospany.github.io/categories/%e7%94%9f%e6%b4%bb%e8%ae%b0%e5%bd%95" title="生活记录">生活记录<sup>1</sup></a></li>
     
@@ -323,7 +324,7 @@ gitment.render('git-comments')
       
 			<li><a href="http://mospany.github.io/tags/ipv6" title="ipv6">ipv6<sup>2</sup></a></li>
       
-			<li><a href="http://mospany.github.io/tags/k8s" title="k8s">k8s<sup>3</sup></a></li>
+			<li><a href="http://mospany.github.io/tags/k8s" title="k8s">k8s<sup>4</sup></a></li>
       
 			<li><a href="http://mospany.github.io/tags/openresty" title="openresty">openresty<sup>1</sup></a></li>
       
@@ -341,7 +342,7 @@ gitment.render('git-comments')
       
 			<li><a href="http://mospany.github.io/tags/xns" title="xns">xns<sup>1</sup></a></li>
       
-			<li><a href="http://mospany.github.io/tags/%e4%ba%91%e8%ae%a1%e7%ae%97" title="云计算">云计算<sup>2</sup></a></li>
+			<li><a href="http://mospany.github.io/tags/%e4%ba%91%e8%ae%a1%e7%ae%97" title="云计算">云计算<sup>3</sup></a></li>
       
 			<li><a href="http://mospany.github.io/tags/%e4%ba%92%e8%81%94%e7%bd%91" title="互联网">互联网<sup>1</sup></a></li>
       
@@ -439,7 +440,7 @@ gitment.render('git-comments')
       
       
       <li class="archive-list-item">
-        <a class="archive-list-link" href="http://mospany.github.io/post/#2022-09">2022年09月</a><span class="archive-list-count">11</span>
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2022-09">2022年09月</a><span class="archive-list-count">12</span>
       </li>
       
       

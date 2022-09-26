@@ -596,40 +596,40 @@ $ kubectl taint nodes foo dedicated=special-user:NoSchedule
             <guid>http://mospany.github.io/2022/09/13/k8s-study-install-for-mac/</guid>
             <description>
 
-&lt;p&gt;&lt;a id=&#34;orgb0236d4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgba0078b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;版本介绍&#34;&gt;版本介绍&lt;/h1&gt;
 
-&lt;p&gt;&lt;a id=&#34;org7ecfcf5&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org21778c4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;mac系统版本&#34;&gt;Mac系统版本&lt;/h2&gt;
 
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/macos-version.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgb0bb981&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgfd3ff14&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;docker-desktop-版本&#34;&gt;Docker Desktop 版本&lt;/h2&gt;
 
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/docker-version.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgf43c8cf&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org75f453a&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;k8s-版本&#34;&gt;K8S 版本&lt;/h2&gt;
 
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/k8s-version.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgb771a76&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org5708814&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;安装&#34;&gt;安装&lt;/h1&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgfb2b00e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orge5e2699&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;docker安装&#34;&gt;Docker安装&lt;/h2&gt;
 
 &lt;pre&gt;&lt;code&gt;brew install -cask docker
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;a id=&#34;org3e9347f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org42bc861&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;开机自启动k8s&#34;&gt;开机自启动K8S&lt;/h2&gt;
 
@@ -637,7 +637,7 @@ $ kubectl taint nodes foo dedicated=special-user:NoSchedule
 
 &lt;p&gt;重启成功后查看K8S集群。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org5cc15cc&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgd262c8d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;安装kubernetes-dashboard&#34;&gt;安装Kubernetes Dashboard&lt;/h2&gt;
 
@@ -650,7 +650,7 @@ $ kubectl taint nodes foo dedicated=special-user:NoSchedule
 
 &lt;p&gt;最新版本参考：&lt;a href=&#34;https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/&#34;&gt;https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/&lt;/a&gt;​&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orga6321e3&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgb628b73&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;创建sa登录token&#34;&gt;创建SA登录Token&lt;/h3&gt;
 
@@ -678,7 +678,7 @@ subjects:
 # kubectl create -f dashboard-adminuser.yaml
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;a id=&#34;org6ab233c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgca914fe&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;绑定资源并获取登录token&#34;&gt;绑定资源并获取登录Token&lt;/h3&gt;
 
@@ -697,7 +697,7 @@ kubectl proxy
 3、最后再获取该账号的secrets里的token做为登录。观察serviceAccount的创建，并创建一个相应的Secret 来允许API访问。&lt;br /&gt;
 4、使用kubectl proxy命令就可以使API server监听在本地的8001端口上，作用是建立一条通往API服务器的隧道，可以方便查看API服务器上的资源。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org7e8ef62&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org498919d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;登录dashbaord&#34;&gt;登录dashbaord&lt;/h3&gt;
 
@@ -718,8 +718,241 @@ kubectl proxy
 【01】 &lt;a href=&#34;https://blog.csdn.net/a772304419/article/details/125482351&#34;&gt;k8s 内置cluster role（集群角色） cluster-admin、admin、 edit、 view的作用范围及区别&lt;/a&gt;&lt;br /&gt;
 【02】 &lt;a href=&#34;https://blog.csdn.net/m0_45406092/article/details/119890156&#34;&gt;kubectl proxy&lt;/a&gt;&lt;br /&gt;
 【03】 &lt;a href=&#34;https://blog.csdn.net/marvel__dead/article/details/78833921&#34;&gt;URL中“#”号的作用&lt;/a&gt;&lt;br /&gt;
-【04】 &lt;a href=&#34;https://blog.csdn.net/afz8572/article/details/101745100/&#34;&gt;mac上k8s学习踩坑&lt;/a&gt;&lt;/li&gt;
+【04】 &lt;a href=&#34;https://blog.csdn.net/afz8572/article/details/101745100/&#34;&gt;mac上k8s学习踩坑&lt;/a&gt;&lt;br /&gt;
+【05】 &lt;a href=&#34;https://javajgs.com/archives/8386&#34;&gt;mac下安装kubeneters及zsh下配置自动补全&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
+</description>
+        </item>
+        
+        <item>
+            <title>K8S学习笔记(02): 架构</title>
+            <link>http://mospany.github.io/2022/09/26/k8s-arch/</link>
+            <pubDate>Mon, 12 Sep 2022 19:34:12 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://mospany.github.io/2022/09/26/k8s-arch/</guid>
+            <description>
+
+&lt;p&gt;&lt;a id=&#34;org3b04d52&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;简介&#34;&gt;简介&lt;/h1&gt;
+
+&lt;p&gt;Kubernetes 是一个可移植的、可扩展的开源平台，用于管理容器化的工作负载和服务，可促进声明式配置和自动化。 Kubernetes 拥有一个庞大且快速增长的生态系统。Kubernetes 的服务、支持和工具广泛可用。&lt;/p&gt;
+
+&lt;p&gt;Kubernetes 这个名字源于希腊语，意为“舵手”或“飞行员”。k8s 这个缩写是因为 k 和 s 之间有八个字符的关系。 Google 在 2014 年开源了 Kubernetes 项目。Kubernetes 建立在 Google 在大规模运行生产工作负载方面拥有十几年的经验 的基础上，结合了社区中最好的想法和实践。&lt;/p&gt;
+
+&lt;p&gt;Kubernetes 最初源于谷歌内部的 Borg，提供了面向应用的容器集群部署和管理系统。Kubernetes 的目标旨在消除编排物理 / 虚拟计算，网络和存储基础设施的负担，并使应用程序运营商和开发人员完全将重点放在以容器为中心的原语上进行自助运营。Kubernetes 也提供稳定、兼容的基础（平台），用于构建定制化的 workflows 和更高级的自动化任务。 Kubernetes 具备完善的集群管理能力，包括多层次的安全防护和准入机制、多租户应用支撑能力、透明的服务注册和服务发现机制、内建负载均衡器、故障发现和自我修复能力、服务滚动升级和在线扩容、可扩展的资源自动调度机制、多粒度的资源配额管理能力。Kubernetes 还提供完善的管理工具，涵盖开发、部署测试、运维监控等各个环节。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org4f46df5&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;时光回溯&#34;&gt;时光回溯&lt;/h1&gt;
+
+&lt;p&gt;让我们回顾一下为什么 Kubernetes 如此有用。&lt;br /&gt;
+&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-develop/k8s-develop.svg&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org32c9e93&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;传统部署时代&#34;&gt;传统部署时代&lt;/h2&gt;
+
+&lt;p&gt;早期，各个组织机构在物理服务器上运行应用程序。无法为物理服务器中的应用程序定义资源边界，这会导致资源分配问题。 例如，如果在物理服务器上运行多个应用程序，则可能会出现一个应用程序占用大部分资源的情况， 结果可能导致其他应用程序的性能下降。 一种解决方案是在不同的物理服务器上运行每个应用程序，但是由于资源利用不足而无法扩展， 并且维护许多物理服务器的成本很高。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgf01f8d4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;虚拟化部署时代&#34;&gt;虚拟化部署时代&lt;/h2&gt;
+
+&lt;p&gt;作为解决方案，引入了虚拟化。虚拟化技术允许你在单个物理服务器的 CPU 上运行多个虚拟机（VM）。 虚拟化允许应用程序在 VM 之间隔离，并提供一定程度的安全，因为一个应用程序的信息 不能被另一应用程序随意访问。&lt;/p&gt;
+
+&lt;p&gt;虚拟化技术能够更好地利用物理服务器上的资源，并且因为可轻松地添加或更新应用程序 而可以实现更好的可伸缩性，降低硬件成本等等。&lt;/p&gt;
+
+&lt;p&gt;每个 VM 是一台完整的计算机，在虚拟化硬件之上运行所有组件，包括其自己的操作系统。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgda03445&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;容器部署时代&#34;&gt;容器部署时代&lt;/h2&gt;
+
+&lt;p&gt;容器类似于 VM，但是它们具有被放宽的隔离属性，可以在应用程序之间共享操作系统（OS）。 因此，容器被认为是轻量级的。容器与 VM 类似，具有自己的文件系统、CPU、内存、进程空间等。 由于它们与基础架构分离，因此可以跨云和 OS 发行版本进行移植。&lt;/p&gt;
+
+&lt;p&gt;容器因具有许多优势而变得流行起来。下面列出的是容器的一些好处：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;敏捷应用程序的创建和部署：与使用 VM 镜像相比，提高了容器镜像创建的简便性和效率。&lt;/li&gt;
+&lt;li&gt;持续开发、集成和部署：通过快速简单的回滚（由于镜像不可变性），支持可靠且频繁的 容器镜像构建和部署。&lt;/li&gt;
+&lt;li&gt;关注开发与运维的分离：在构建/发布时而不是在部署时创建应用程序容器镜像， 从而将应用程序与基础架构分离。&lt;/li&gt;
+&lt;li&gt;可观察性：不仅可以显示操作系统级别的信息和指标，还可以显示应用程序的运行状况和其他指标信号。&lt;/li&gt;
+&lt;li&gt;跨开发、测试和生产的环境一致性：在便携式计算机上与在云中相同地运行。&lt;/li&gt;
+&lt;li&gt;跨云和操作系统发行版本的可移植性：可在 Ubuntu、RHEL、CoreOS、本地、 Google Kubernetes Engine 和其他任何地方运行。&lt;/li&gt;
+&lt;li&gt;以应用程序为中心的管理：提高抽象级别，从在虚拟硬件上运行 OS 到使用逻辑资源在 OS 上运行应用程序。&lt;/li&gt;
+&lt;li&gt;松散耦合、分布式、弹性、解放的微服务：应用程序被分解成较小的独立部分， 并且可以动态部署和管理 - 而不是在一台大型单机上整体运行。&lt;/li&gt;
+&lt;li&gt;资源隔离：可预测的应用程序性能。&lt;/li&gt;
+&lt;li&gt;资源利用：高效率和高密度。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a id=&#34;org42b74dd&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;为什么需要-kubernetes-它能做什么&#34;&gt;为什么需要 Kubernetes，它能做什么?&lt;/h1&gt;
+
+&lt;p&gt;容器是打包和运行应用程序的好方式。在生产环境中，你需要管理运行应用程序的容器，并确保不会停机。 例如，如果一个容器发生故障，则需要启动另一个容器。如果系统处理此行为，会不会更容易？&lt;/p&gt;
+
+&lt;p&gt;这就是 Kubernetes 来解决这些问题的方法！ Kubernetes 为你提供了一个可弹性运行分布式系统的框架。 Kubernetes 会满足你的扩展要求、故障转移、部署模式等。 例如，Kubernetes 可以轻松管理系统的 Canary 部署。&lt;/p&gt;
+
+&lt;p&gt;Kubernetes 为你提供：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;服务发现和负载均衡&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Kubernetes 可以使用 DNS 名称或自己的 IP 地址公开容器，如果进入容器的流量很大， Kubernetes 可以负载均衡并分配网络流量，从而使部署稳定。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;存储编排&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Kubernetes 允许你自动挂载你选择的存储系统，例如本地存储、公共云提供商等。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;自动部署和回滚&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;你可以使用 Kubernetes 描述已部署容器的所需状态，它可以以受控的速率将实际状态 更改为期望状态。例如，你可以自动化 Kubernetes 来为你的部署创建新容器， 删除现有容器并将它们的所有资源用于新容器。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;自动完成装箱计算&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Kubernetes 允许你指定每个容器所需 CPU 和内存（RAM）。 当容器指定了资源请求时，Kubernetes 可以做出更好的决策来管理容器的资源。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;自我修复&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Kubernetes 重新启动失败的容器、替换容器、杀死不响应用户定义的 运行状况检查的容器，并且在准备好服务之前不将其通告给客户端。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;密钥与配置管理&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Kubernetes 允许你存储和管理敏感信息，例如密码、OAuth 令牌和 ssh 密钥。 你可以在不重建容器镜像的情况下部署和更新密钥和应用程序配置，也无需在堆栈配置中暴露密钥。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org82be187&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;kubernetes-不是什么&#34;&gt;Kubernetes 不是什么&lt;/h1&gt;
+
+&lt;p&gt;Kubernetes 不是传统的、包罗万象的 PaaS（平台即服务）系统。 由于 Kubernetes 在容器级别而不是在硬件级别运行，它提供了 PaaS 产品共有的一些普遍适用的功能， 例如部署、扩展、负载均衡、日志记录和监视。 但是，Kubernetes 不是单体系统，默认解决方案都是可选和可插拔的。 Kubernetes 提供了构建开发人员平台的基础，但是在重要的地方保留了用户的选择和灵活性。&lt;/p&gt;
+
+&lt;p&gt;Kubernetes：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;不限制支持的应用程序类型。 Kubernetes 旨在支持极其多种多样的工作负载，包括无状态、有状态和数据处理工作负载。 如果应用程序可以在容器中运行，那么它应该可以在 Kubernetes 上很好地运行。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;不部署源代码，也不构建你的应用程序。 持续集成(CI)、交付和部署（CI/CD）工作流取决于组织的文化和偏好以及技术要求。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;不提供应用程序级别的服务作为内置服务，例如中间件（例如，消息中间件）、 数据处理框架（例如，Spark）、数据库（例如，mysql）、缓存、集群存储系统 （例如，Ceph）。这样的组件可以在 Kubernetes 上运行，并且/或者可以由运行在 Kubernetes 上的应用程序通过可移植机制（例如， 开放服务代理）来访问。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;不要求日志记录、监视或警报解决方案。 它提供了一些集成作为概念证明，并提供了收集和导出指标的机制。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;不提供或不要求配置语言/系统（例如 jsonnet），它提供了声明性 API， 该声明性 API 可以由任意形式的声明性规范所构成。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;不提供也不采用任何全面的机器配置、维护、管理或自我修复系统。&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;此外，Kubernetes 不仅仅是一个编排系统，实际上它消除了编排的需要。 编排的技术定义是执行已定义的工作流程：首先执行 A，然后执行 B，再执行 C。 相比之下，Kubernetes 包含一组独立的、可组合的控制过程， 这些过程连续地将当前状态驱动到所提供的所需状态。 如何从 A 到 C 的方式无关紧要，也不需要集中控制，这使得系统更易于使用 且功能更强大、系统更健壮、更为弹性和可扩展。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org2325363&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;k8s架构原理&#34;&gt;K8S架构原理&lt;/h1&gt;
+
+&lt;p&gt;概括来说 K8s 架构就是一个 Master 对应一群 Node 节点。 高可用时Master一般为3个。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-develop/k8s-arch.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgdb70e59&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;master节点&#34;&gt;Master节点&lt;/h2&gt;
+
+&lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
+
+
+&lt;colgroup&gt;
+&lt;col  class=&#34;org-left&#34; /&gt;
+
+&lt;col  class=&#34;org-left&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;组件&lt;/th&gt;
+&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;描述&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;kube-apiserver&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;K8s 网关，所有的指令请求都必须要经过 apiserver&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;kube-scheduler&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;调度器，使用调度算法，把请求资源调度到某一个 node 节点；&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;kube-controller-manager&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;维护 K8s 资源对象&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;etcd&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;存储资源对象&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;a id=&#34;org4026924&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;worker节点&#34;&gt;Worker节点&lt;/h2&gt;
+
+&lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
+
+
+&lt;colgroup&gt;
+&lt;col  class=&#34;org-left&#34; /&gt;
+
+&lt;col  class=&#34;org-left&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;组件&lt;/th&gt;
+&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;描述&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;kubelet&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;在每一个 node 节点都存在一份，在 node 节点上的资源操作指令由 kubelet 来执行&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;kube-proxy&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;代理服务，处理服务间负载均衡；&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;pod&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;k8s 管理的基本单元（最小单元），pod 内部是容器，k8s 不直接管理容器，而是管理pod；&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;a id=&#34;org880a612&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;组件通信&#34;&gt;组件通信&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-develop/k8s-component-arch.jpg&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 </description>
         </item>
         
@@ -2260,947 +2493,6 @@ fec-builder build -e production
 &lt;h1 id=&#34;ppt内容&#34;&gt;PPT内容&lt;/h1&gt;
 
 &lt;p&gt;&lt;center&gt;&lt;embed src=&#34;http://blog.mospan.cn/post/img/Emacs-introduction.pdf&#34; width=100% height=&#34;800&#34;&gt;&lt;/center&gt;&lt;/p&gt;
-</description>
-        </item>
-        
-        <item>
-            <title>emacs.mospan使用指南</title>
-            <link>http://mospany.github.io/2017/08/25/emacs-mospan-tutorial/</link>
-            <pubDate>Sun, 27 Aug 2017 17:08:26 CST</pubDate>
-            <author>Mospan</author>
-            <guid>http://mospany.github.io/2017/08/25/emacs-mospan-tutorial/</guid>
-            <description>
-
-&lt;p&gt;&lt;a id=&#34;orgbd01d25&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;概述&#34;&gt;概述&lt;/h1&gt;
-
-&lt;p&gt;我自从2011年开始使用自己折腾的emacs到现在，参考或实现了不少功能使其满足我工作与学习所需，虽然它依然有一些瑕疵，但尝试了其他配置或IDE之后依然觉得它是最符合我习惯的，
-我一般用它来写Golang、C、Lua、Shell、GTD和Blog，基本已满足我所需和习惯。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org1543e0f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;安装&#34;&gt;安装&lt;/h1&gt;
-
-&lt;p&gt;emacs.mospan的Github地址为：&lt;a href=&#34;https://github.com/mospany/emacs.d&#34;&gt;https://github.com/mospany/emacs.d&lt;/a&gt;, 如果你的系统已装有Emacs，请先备份Emacs配置文件。因为Spacemacs的配置会覆盖掉原Emacs的配置文件。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;cd ~ 
-mv .emacs.d .emacs.d.bak 
-mv .emacs .emacs.bak
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;如果你的系统没有安装Emacs，需要先安装Emacs，请注意Emacs版本至少为24.4。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org1db6571&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;安装emacs-mospan&#34;&gt;安装emacs.mospan&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code&gt;git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org0367a5e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;安装依赖工具&#34;&gt;安装依赖工具&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;Linux&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;sudo apt-get install pyflakes
-sudo apt-get install cscope
-sudo apt-get install w3m
-sudo apt-get install &amp;quot;graphviz*&amp;quot; 
-sudo apt-get install mew
-sudo apt-get install ipython
-sudo apt-get install stardict
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Mac&lt;/p&gt;
-
-&lt;p&gt;把上面的apt-get换成brew即可。&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;a id=&#34;org1bfd30b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;启动emacs-mospan&#34;&gt;启动emacs.mospan&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code&gt;emacs -mm 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;初次启动emacs.mospan会进行初始化配置（启动时会询问使用简、全哪套配置方案），安装依赖有可能需要一段时间。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org4edf2b3&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;使用&#34;&gt;使用&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgad4aa7d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;显示&#34;&gt;显示&lt;/h2&gt;
-
-&lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
-
-
-&lt;colgroup&gt;
-&lt;col  class=&#34;org-left&#34; /&gt;
-
-&lt;col  class=&#34;org-left&#34; /&gt;
-&lt;/colgroup&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;快捷键&lt;/th&gt;
-&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;描述&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-x C-=&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;放大字体&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-x C-–&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;缩小字体&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-x C-0&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;重置字体&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-c M-h&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;highlight-symbol-at-point&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-c M-r&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;highlight-symbol-remove-all&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-c M-n&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;highlight-symbol-next&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-c M-p&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;highlight-symbol-prev&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-x C-q&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;解除“buffer is read-only”&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;&lt;a id=&#34;org2721feb&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;功能键&#34;&gt;功能键&lt;/h2&gt;
-
-&lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
-
-
-&lt;colgroup&gt;
-&lt;col  class=&#34;org-left&#34; /&gt;
-
-&lt;col  class=&#34;org-left&#34; /&gt;
-&lt;/colgroup&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;快捷键&lt;/th&gt;
-&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;描述&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;f3&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;open-eshell-other-buffer&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;f4&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;eshell&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;f12&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;svn-status&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-f9&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;ecb-activate&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;S-f9&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;ecb-deactivate&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-f10&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;imenu-list-smart-toggle&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-f10&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;sr-speedbar-toggle&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-f11&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;ediff&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;S-f11&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;ediff-directories&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-f12&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;man&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;f5&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;compile&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;f6&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;scope-find-functions-calling-this-function&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;f7&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;scope-pop-mark&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;f8&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;scope-find-global-definition-no-prompting&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-f6&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;gud-go&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-f7&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;gud-step&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-f8&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;gud-next&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;&lt;a id=&#34;org088cc36&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;编辑&#34;&gt;编辑&lt;/h2&gt;
-
-&lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
-
-
-&lt;colgroup&gt;
-&lt;col  class=&#34;org-left&#34; /&gt;
-
-&lt;col  class=&#34;org-left&#34; /&gt;
-&lt;/colgroup&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;快捷键&lt;/th&gt;
-&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;描述&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-t&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;交换两个字符位置&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;M-t&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;交换两个单词位置&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-o&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;新建下一行&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-x C-t&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;交换两个文本行的位置&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;M-c&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;把单词的首字母改为大写&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;M-u&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;把单词的全部字母改为大写&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;M-l&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;把单词的全部字母改为小写&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-/&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;undo&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-.&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;redo&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-x j&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;跳到某一行&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-M-\\&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;格式化对齐(需先选中)&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-S n&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;向下移动5行&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-S p&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;向上移动5行&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-S f&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;向前移动5列&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-S b&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;向后移动5列&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-c d ?&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;查找当前鼠标点下的符号的文档&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-c d r&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;重新扫描tags文件&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-c d f&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;为函数插入Doxygen注释&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-c d i&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;为文件插入Doxygen注释&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-c d ;&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;为当前成员插入Doxygen注释&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-c d m&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;插入多行注释&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-c d s&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;插入单行注释&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-c d @&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;插入环绕当前区域的注释&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgf7d420e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;编程&#34;&gt;编程&lt;/h2&gt;
-
-&lt;p&gt;&lt;a id=&#34;org5361956&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;c&#34;&gt;C&lt;/h3&gt;
-
-&lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
-
-
-&lt;colgroup&gt;
-&lt;col  class=&#34;org-left&#34; /&gt;
-
-&lt;col  class=&#34;org-left&#34; /&gt;
-&lt;/colgroup&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;快捷键&lt;/th&gt;
-&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;描述&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-M-a&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;c-beginning-of-defun&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-M-e&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;c-end-of-defun&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-M-h&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;c-mark-function&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;M-a&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;c-beginning-of-statement&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;M-e&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;c-end-of-statement&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;M-l&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;eassist-list-methods&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;M-m&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;semantic-ia-complete-symbol-menu&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;M-o&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;eassist-switch-h-cpp&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-c 0&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;semantic-tag-folding-fold-all&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-c 1&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;semantic-tag-folding-show-all&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-c 2&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;semantic-tag-folding-fold-block&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-c 3&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;semantic-tag-folding-show-block&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-c 4&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;hs-hide-block&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-c 5&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;hs-show-block&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-c 6&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;hide-ifdef-block&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-c 7&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;show-ifdef-block&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgafb3e60&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;golang&#34;&gt;Golang&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;阅读代码&lt;/p&gt;
-
-&lt;p&gt;&lt;span style=&#34;color:red&#34;&gt;注: 一定记得先加代码工程到GOPATH中，否则godef不能跨包或文件夹跳转, 可以通过go build是否成功来验证配置正确性&lt;/span&gt;&lt;/p&gt;
-
-&lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
-    
-    
-&lt;colgroup&gt;
-&lt;col  class=&#34;org-left&#34; /&gt;
-    
-&lt;col  class=&#34;org-left&#34; /&gt;
-&lt;/colgroup&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;快捷键&lt;/th&gt;
-&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;描述&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-    
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;f8&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;godef-jump&lt;/td&gt;
-&lt;/tr&gt;
-    
-    
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;f7&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;gocscope-pop-mark&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;go-add-tags&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;在evil-mode下使用v命令选择结构体区域&lt;/li&gt;
-&lt;li&gt;按下M-x输入go-add-tags&lt;/li&gt;
-&lt;li&gt;显示tags:后，输入json或输入其他自定义标签名,两个标签名之间使用逗号分开。&lt;/li&gt;
-&lt;/ol&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;gotests&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;在evil-mode下使用v命令选择某些函数区域&lt;/li&gt;
-&lt;li&gt;按下M-x输入gotests-region生成这些函数的gotest模板或直接输入gotests将生成本文件的所有函数测试模板。&lt;/li&gt;
-&lt;li&gt;将在该目录下生成同名_test.go的测试文件。&lt;/li&gt;
-&lt;/ol&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;gocode自动补全&lt;/p&gt;
-
-&lt;p&gt;正常安装gocode后，出现自动补全不了时，一般都是GOPATH没有包含到和没有进行go install的问题。&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;标准库代码无法自动补全&lt;/p&gt;
-
-&lt;p&gt;原因是由于没有把标准库路径加入到GOPATH中，例如：把/usr/local/go加入到GOPATH&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;  ### go develop ###
-  export GOROOT=/usr/local/go
-  export GOARCH=amd64
-  #export GOOS=linux
-  export GOOS=darwin
-  # export GOBIN=$GOROOT/bin/  一定不要设置GOBIN
-  export GOTOOLS=$GOROOT/pkg/tool/
-  export PATH=$PATH:$GOROOT/bin:$GOTOOLS
-
-  ### mospan golang env setting ##
-  export GOPATH=~/goget:$GOROOT
-  GO111MODULE=auto
-  gocode -s &amp;amp;
-  gocode set propose-builtins true &amp;amp;
-  gocode set autobuild true &amp;amp;
-  #+BEGIN_SRC 
-
-- 保留关键字无法自动补全
-
-         gocode补全很强大，但是一些关键字import, package等不会补全。但可以通过修改auto-complete-settings.el中进行实现, 要补全的关键字在auto-complete/dict/go-mode中。
-  #+BEGIN_SRC elisp
-  (defun ac-settings-4-php ()
-    (setq ac-sources
-          &#39;(ac-source-yasnippet
-            ac-source-abbrev
-            ac-source-words-in-buffer
-            ac-source-words-in-same-mode-buffers
-            ac-source-files-in-current-dir
-            ac-source-filename)))
-
-  (am-add-hooks
-   `(lisp-mode-hook emacs-lisp-mode-hook lisp-interaction-mode-hook
-                    svn-log-edit-mode-hook change-log-mode-hook)
-   &#39;ac-settings-4-lisp)
-
-  (apply-args-list-to-fun
-   (lambda (hook fun)
-     (am-add-hooks hook fun))
-   `((&#39;java-mode-hook   &#39;ac-settings-4-java)
-     (&#39;c-mode-hook      &#39;ac-settings-4-c)
-     (&#39;c++-mode-hook    &#39;ac-settings-4-cpp)
-     (&#39;text-mode-hook   &#39;ac-settings-4-text)
-     (&#39;eshell-mode-hook &#39;ac-settings-4-eshell)
-     (&#39;ruby-mode-hook   &#39;ac-settings-4-ruby)
-     (&#39;html-mode-hook   &#39;ac-settings-4-html)
-     (&#39;awk-mode-hook    &#39;ac-settings-4-awk)
-     (&#39;go-mode-hook    &#39;ac-settings-4-go)
-     (&#39;lua-mode-hook    &#39;ac-settings-4-lua) ;;lua关键字补全还不好使，20190429 by mosp
-     (&#39;sh-mode-hook    &#39;ac-settings-4-sh)
-     (&#39;py-mode-hook    &#39;ac-settings-4-python)
-     (&#39;php-mode-hook    &#39;ac-settings-4-php) ;;php关键字补全还不好使，20190429 by mosp
-     (&#39;tcl-mode-hook    &#39;ac-settings-4-tcl)))
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;用户库代码无法自动补全
-原因：gocode查找的是libXX.a库而不是源代码文本，需要go install后就找到了。
-一定不要设置GOBIN环境变量，否则go install将把二进制安装到GOBIN下而不是本工程目录下了。
-  &lt;a href=&#34;https://www.cnblogs.com/Open_Source/p/8159098.html&#34;&gt;Emacs golang用户代码无法补全问题&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;a id=&#34;org08adc25&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;gtd&#34;&gt;GTD&lt;/h2&gt;
-
-&lt;p&gt;&lt;a id=&#34;org985fc62&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;全局&#34;&gt;全局&lt;/h3&gt;
-
-&lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
-
-
-&lt;colgroup&gt;
-&lt;col  class=&#34;org-left&#34; /&gt;
-
-&lt;col  class=&#34;org-left&#34; /&gt;
-&lt;/colgroup&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;快捷键&lt;/th&gt;
-&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;描述&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-c v&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;打开org-mode agenda视图&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-c v a&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;进入agenda视图，agenda view提供四种视图，分别是日(d)，周（w），月(v m)，年(v y)，括号里是切换这四种视图的快捷键。&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-c C-q&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;打标签&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-c C-r&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;打开org-remember进行备忘记录&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgc9aa3a5&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;在todo行上&#34;&gt;在TODO行上&lt;/h3&gt;
-
-&lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
-
-
-&lt;colgroup&gt;
-&lt;col  class=&#34;org-left&#34; /&gt;
-
-&lt;col  class=&#34;org-left&#34; /&gt;
-&lt;/colgroup&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;快捷键&lt;/th&gt;
-&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;描述&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-c C-t&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;切换TODO状态，循环选择&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-u C-c C-t&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;切换TODO状态，手工选择&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-c C-c&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;添加Tag&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-c C-s&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;添加Schedule&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-c C-d&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;添加Deadline&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-c .&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;添加时间戳&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-u C-c .&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;添加准确时间的时间戳&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-c C-w&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;移动到不同父节点&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgc9a8804&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;日历&#34;&gt;日历&lt;/h3&gt;
-
-&lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
-
-
-&lt;colgroup&gt;
-&lt;col  class=&#34;org-left&#34; /&gt;
-
-&lt;col  class=&#34;org-left&#34; /&gt;
-&lt;/colgroup&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;快捷键&lt;/th&gt;
-&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;描述&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-f 或者 左方向键&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;后一日&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-b 或者 右方向键&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;前一日&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-n 或者 下方向键&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;后一周&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;c-p 或者 上方向键&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;前一周&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;M-}&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;后一月&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;M-{&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;前一月&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-x ]&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;后一年&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-x [&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;前一年&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-a&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;移动到一周的开始&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;C-e&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;移动到一周的末尾&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;M-a&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;移动到一月的开始&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;M-e&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;移动到一月的末尾&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;M-&lt;&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;移动到一年的开始&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;M-&gt;&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;移动到一年的末尾&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;&lt;a id=&#34;org53e1655&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;dired&#34;&gt;dired&lt;/h2&gt;
-
-&lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
-
-
-&lt;colgroup&gt;
-&lt;col  class=&#34;org-left&#34; /&gt;
-
-&lt;col  class=&#34;org-left&#34; /&gt;
-&lt;/colgroup&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;快捷键&lt;/th&gt;
-&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;描述&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;M-x d&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;打开dired模式&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;v&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;以只读方式查看文件&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;q&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;q for View-quit, 退出查看, 目录生效，文件中可能不生效，可以使用M-x V-q 或 Q 代替&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;Q&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;Q for View-quit-all, 退出所有查看&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;o&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;另一个窗口中，打开文件或目录&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
 </description>
         </item>
         

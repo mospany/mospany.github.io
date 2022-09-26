@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <base href="http://mospany.github.io/">
-  <title>spacemacs使用初探 - 墨斯潘園</title>
+  <title>技术文章 - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
-  <meta name="keywords" content="emacs,spacemacs,">
-  <meta name="description" content="概述 我自从2011年开始使用自己折腾的emacs到现在， 用着它写golang时发现函数列表与补全功能不太好使，一直知道spacemacs的名">
+  
+  <meta name="description" content="技术文章">
   <meta name="author" content="mospan">
-  <meta itemprop="name" content="spacemacs使用初探 - 墨斯潘園">
-  <meta itemprop="description" content="概述 我自从2011年开始使用自己折腾的emacs到现在， 用着它写golang时发现函数列表与补全功能不太好使，一直知道spacemacs的名">
+  <meta itemprop="name" content="技术文章 - 墨斯潘園">
+  <meta itemprop="description" content="技术文章">
   <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
-  <meta name="twitter:title" content="spacemacs使用初探 - 墨斯潘園" />
+  <meta name="twitter:title" content="技术文章 - 墨斯潘園" />
   
   <meta name="twitter:description" content="">
   <link rel="shortcut icon" href="img/favicon.ico"/>
@@ -59,400 +59,109 @@
 
   </header>
   <div id="container">
-    <div id="main" class="post" itemscope itemprop="blogPost">
-	<article itemprop="articleBody">
-    <header class="article-info clearfix">
-  <h1 itemprop="name">
-      <a href="http://mospany.github.io/2017/08/25/spacemacs-use-exploration/" title="spacemacs使用初探" itemprop="url">spacemacs使用初探</a>
-  </h1>
-  <p class="article-author">By 
-    
-      <a href="http://blog.mospan.cn" title="mospan">mospan</a>
-    
-  </p>
-  <p class="article-time">
-    <time datetime="2017-08-24 17:08:26 &#43;0800 CST" itemprop="datePublished">2017年08月24日</time>
-  </p>
-</header>
-
-	<div class="article-content">
-    
-		<div class="toc-article">
-			<strong class="toc-title">文章目录</strong>
-      <nav id="TableOfContents">
-<ul>
-<li><a href="#概述-a-id-sec-1-name-sec-1-a">概述<a id="sec-1" name="sec-1"></a></a></li>
-<li><a href="#安装-a-id-sec-2-name-sec-2-a">安装<a id="sec-2" name="sec-2"></a></a>
-<ul>
-<li><a href="#安装spacemacs-a-id-sec-2-1-name-sec-2-1-a">安装spacemacs<a id="sec-2-1" name="sec-2-1"></a></a></li>
-<li><a href="#启动spacemacs-a-id-sec-2-2-name-sec-2-2-a">启动spacemacs<a id="sec-2-2" name="sec-2-2"></a></a></li>
-</ul></li>
-<li><a href="#配置-a-id-sec-3-name-sec-3-a">配置<a id="sec-3" name="sec-3"></a></a>
-<ul>
-<li><a href="#增加启动layers-a-id-sec-3-1-name-sec-3-1-a">增加启动layers<a id="sec-3-1" name="sec-3-1"></a></a></li>
-</ul></li>
-<li><a href="#使用-a-id-sec-4-name-sec-4-a">使用<a id="sec-4" name="sec-4"></a></a>
-<ul>
-<li><a href="#working-with-go-a-id-sec-4-1-name-sec-4-1-a">Working with Go<a id="sec-4-1" name="sec-4-1"></a></a>
-<ul>
-<li><a href="#go-commands-start-with-m-a-id-sec-4-1-1-name-sec-4-1-1-a">Go commands (start with <code>m</code>):<a id="sec-4-1-1" name="sec-4-1-1"></a></a></li>
-<li><a href="#go-guru-a-id-sec-4-1-2-name-sec-4-1-2-a">Go Guru<a id="sec-4-1-2" name="sec-4-1-2"></a></a></li>
-</ul></li>
-</ul></li>
-</ul>
-</nav>
-		</div>
-    
-    
-
-<h1 id="概述-a-id-sec-1-name-sec-1-a">概述<a id="sec-1" name="sec-1"></a></h1>
-
-<p>我自从2011年开始使用自己折腾的emacs到现在， 用着它写golang时发现函数列表与补全功能不太好使，一直知道spacemacs的名声，今天想尝试下其效果如果如何，有啥奇妙之处。
-我一般用它来写Golang、C、Lua、Shell、GTD和Blog，看看spacemacs是否满足我所需和习惯。</p>
-
-<h1 id="安装-a-id-sec-2-name-sec-2-a">安装<a id="sec-2" name="sec-2"></a></h1>
-
-<p>Spacemacs的Github地址为：<a href="https://github.com/syl20bnr/spacemacs">https://github.com/syl20bnr/spacemacs</a>, 如果你的系统已装有Emacs，请先备份Emacs配置文件。因为Spacemacs的配置会覆盖掉原Emacs的配置文件。</p>
-
-<pre><code>cd ~ 
-mv .emacs.d .emacs.d.bak 
-mv .emacs .emacs.bak
-</code></pre>
-
-<p>如果你的系统没有安装Emacs，需要先安装Emacs，请注意Emacs版本至少为24.4。</p>
-
-<h2 id="安装spacemacs-a-id-sec-2-1-name-sec-2-1-a">安装spacemacs<a id="sec-2-1" name="sec-2-1"></a></h2>
-
-<pre><code>git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
-</code></pre>
-
-<h2 id="启动spacemacs-a-id-sec-2-2-name-sec-2-2-a">启动spacemacs<a id="sec-2-2" name="sec-2-2"></a></h2>
-
-<pre><code>emacs -mm
-</code></pre>
-
-<p>初次启动Spacemacs会进行初始化配置（启动时会询问使用简、全哪套配置方案），安装依赖有可能需要一段时间。
-在通过命令行启动Spacemacs后，可能会发现状态栏乱码了。这是因为字体不支持的原因，需要安装Source Code Pro字体。 同时，还可能需要安装Powerline字体补丁。</p>
-
-<h1 id="配置-a-id-sec-3-name-sec-3-a">配置<a id="sec-3" name="sec-3"></a></h1>
-
-<h2 id="增加启动layers-a-id-sec-3-1-name-sec-3-1-a">增加启动layers<a id="sec-3-1" name="sec-3-1"></a></h2>
-
-<p>由于我主要写Golang、C、Lua、Shell、GTD和Blog，增加相应的启动layers即可。</p>
-
-<pre><code>dotspacemacs-configuration-layers
-'(
-  c-c++
-  go
-  lua
-  html
-  ;; ----------------------------------------------------------------
-  ;; Example of useful layers you may want to use right away.
-  ;; Uncomment some layer names and press &lt;SPC f e R&gt; (Vim style) or
-  ;; &lt;M-m f e R&gt; (Emacs style) to install them.
-  ;; ----------------------------------------------------------------
-  helm
-  auto-completion
-  ;; better-defaults
-  emacs-lisp
-  git
-  markdown
-  org
-  ;; (shell :variables
-  ;;        shell-default-height 30
-  ;;        shell-default-position 'bottom)
-  ;; spell-checking
-  ;; syntax-checking
-  ;; version-control
-  )
-</code></pre>
-
-<h1 id="使用-a-id-sec-4-name-sec-4-a">使用<a id="sec-4" name="sec-4"></a></h1>
-
-<h2 id="working-with-go-a-id-sec-4-1-name-sec-4-1-a">Working with Go<a id="sec-4-1" name="sec-4-1"></a></h2>
-
-<h3 id="go-commands-start-with-m-a-id-sec-4-1-1-name-sec-4-1-1-a">Go commands (start with <code>m</code>):<a id="sec-4-1-1" name="sec-4-1-1"></a></h3>
-
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
-
-<colgroup>
-<col  class="left" />
-
-<col  class="left" />
-</colgroup>
-<thead>
-<tr>
-<th scope="col" class="left">Key Binding</th>
-<th scope="col" class="left">Description</th>
-</tr>
-</thead>
-
-<tbody>
-<tr>
-<td class="left">`SPC m h h`</td>
-<td class="left">godoc at point</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m i g`</td>
-<td class="left">goto imports</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m i a`</td>
-<td class="left">add import</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m i r`</td>
-<td class="left">remove unused import</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m e b`</td>
-<td class="left">go-play buffer</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m e r`</td>
-<td class="left">go-play region</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m e d`</td>
-<td class="left">download go-play snippet</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m x x`</td>
-<td class="left">run "go run" for the current 'main' package</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m g a`</td>
-<td class="left">jump to matching test file or back from test to code file</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m g c`</td>
-<td class="left">open a clone of the current buffer with a coverage info (`go tool cover -h` for help)</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m g g`</td>
-<td class="left">go jump to definition</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m r n`</td>
-<td class="left">go rename</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m t p`</td>
-<td class="left">run "go test" for the current package</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m t P`</td>
-<td class="left">run "go test" for the current package and all packages under it</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m t t`</td>
-<td class="left">run "go test" for the function you're currently in (while you're in a \_.test.go file)</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m t s`</td>
-<td class="left">run "go test" for the suite you're currently in (requires gocheck)</td>
-</tr>
-</tbody>
-</table>
-
-<h3 id="go-guru-a-id-sec-4-1-2-name-sec-4-1-2-a">Go Guru<a id="sec-4-1-2" name="sec-4-1-2"></a></h3>
-
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
-
-<colgroup>
-<col  class="left" />
-
-<col  class="left" />
-</colgroup>
-<thead>
-<tr>
-<th scope="col" class="left">Key Binding</th>
-<th scope="col" class="left">Description</th>
-</tr>
-</thead>
-
-<tbody>
-<tr>
-<td class="left">`SPC m f d`</td>
-<td class="left">go-guru describe symbol at point</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m f f`</td>
-<td class="left">go-guru show free variables</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m f i`</td>
-<td class="left">go-guru show implements relation</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m f c`</td>
-<td class="left">go-guru show channel sends/receives</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m f r`</td>
-<td class="left">go-guru show referrers</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m f j`</td>
-<td class="left">go-guru jump to symbol definition</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m f p`</td>
-<td class="left">go-guru show what the select expression points to</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m f s`</td>
-<td class="left">go-guru show callstack</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m f e`</td>
-<td class="left">go-guru show possible contants/types for error value</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m f <`</td>
-<td class="left">go-guru show possible callers</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m f >`</td>
-<td class="left">go-guru show call targets</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m f o`</td>
-<td class="left">go-guru set analysis scope</td>
-</tr>
-</tbody>
-</table>
-
-    <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
-  <div style="float:right;margin-top:0px;">
-    <img src="/img/qrcode.jpg" width="129px" height="129px"/>
-    <div style="text-align:center;">微信扫一扫</div>
-  </div>
-  <div style="float:left;margin-top:0px;">
-    <img src="/img/rewardcode.jpg" width="129px" height="129px"/>
-  </div>
-  <div>
-    <p style="margin-top:0px;">作者：<a target="_blank" href="http://blog.mospan.cn/">mospan</a>
-      <br />微信关注：墨斯潘園
-      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2017/08/25/spacemacs-use-exploration/">http://mospany.github.io/2017/08/25/spacemacs-use-exploration/</a>
-      <br />
-      文章版权归本人所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
-  </div>
-</div>
-
-
-	</div>
-  <footer class="article-footer clearfix">
-  
-
-<div class="article-tags">
-  <span></span>
-  
-  <a href="/tags/emacs">emacs</a>
-  
-  <a href="/tags/spacemacs">spacemacs</a>
-  
-</div>
-
-
-
-<div class="article-categories">
-  <span></span>
-  
-  <a class="article-category-link" href="/categories/emacs">emacs</a>
-  
-  <a class="article-category-link" href="/categories/spacemacs">spacemacs</a>
-  
-</div>
-
-
-
-  <div class="article-share" id="share">
-    <div data-url="http://mospany.github.io/2017/08/25/spacemacs-use-exploration/" data-title="spacemacs使用初探" data-tsina="3833537679" class="share clearfix">
+    <div id="main">
+      
+      
+      <h2 id="2022-09">2022-09</h2>
+      
+       
+       
+       
+        
+      <h2 id="2019-11">2019-11</h2>
+      
+        
+      <h2 id="2019-10">2019-10</h2>
+      
+       
+       
+        
+      <h2 id="2019-08">2019-08</h2>
+      
+       
+       
+        
+      <h2 id="2019-02">2019-02</h2>
+      
+        
+      <h2 id="2018-02">2018-02</h2>
+      
+        
+      <h2 id="2017-08">2017-08</h2>
+      
+       
+       
+        
+      <h2 id="2017-07">2017-07</h2>
+      
+        
+      <h2 id="2017-03">2017-03</h2>
+      
+       
+        
+      <h2 id="2016-09">2016-09</h2>
+      
+        
+      <h2 id="2016-05">2016-05</h2>
+      
+       
+        
+      <h2 id="2016-03">2016-03</h2>
+      
+       
+        
+      <h2 id="2016-02">2016-02</h2>
+      
+       
+       
+       
+       
+        
+      <h2 id="2016-01">2016-01</h2>
+      
+       
+        
+      <nav id="page-nav" class="clearfix">
+          
+
+
+<a aria-label="First" href="http://mospany.github.io//categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/">
+  <span aria-hidden="true">««</span>
+</a>
+
+<a aria-label="Previous" href="http://mospany.github.io//categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/page/3/">
+  <span aria-hidden="true">«</span>
+</a>
+
+
+<a href="http://mospany.github.io//categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/">
+  1
+</a>
+
+<a href="http://mospany.github.io//categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/page/2/">
+  2
+</a>
+
+<a href="http://mospany.github.io//categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/page/3/">
+  3
+</a>
+
+<a class="active" href="http://mospany.github.io//categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/page/4/">
+  4
+</a>
+
+
+<a class="disabled" aria-label="Next" href="#">
+  <span aria-hidden="true">»</span>
+</a>
+
+<a aria-label="Last" href="http://mospany.github.io//categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/page/4/">
+  <span aria-hidden="true">»»</span>
+</a>
+
+
+      </nav>
     </div>
-  </div>
-</footer>
-
-	</article>
-  
-
-
-
-
-
-<div id="git-comments"></div>
-<link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
-<script src="https://billts.site/js/gitment.js"></script>
-<script>
-var gitment = new Gitment({
-  id: '<%= page.date %>',
-  owner: 'mospany',
-  repo: 'mospan-hugo-blog-gitment',
-  oauth: {
-    client_id: '0cafe299c964f0af2d1e',
-    client_secret: 'ec47ee9481210935a662298791c31da203694a8f',
-  },
-})
-gitment.render('git-comments')
-</script>    
-
-
-</div>
-
     <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
@@ -861,38 +570,6 @@ $(document).ready(function(){
 
 <script type="text/javascript">
 $(document).ready(function(){
-  var ai = $('.article-content>iframe'),
-      ae = $('.article-content>embed'),
-      t  = $('#toc'),
-      h  = $('article h2')
-      ah = $('article h2'),
-      ta = $('#toc.toc-aside'),
-      o  = $('.openaside'),
-      c  = $('.closeaside');
-  if(ai.length>0){
-    ai.wrap('<div class="video-container" />');
-  };
-  if(ae.length>0){
-   ae.wrap('<div class="video-container" />');
-  };
-  if(ah.length==0){
-    t.css('display','none');
-  }else{
-    c.click(function(){
-      ta.css('display', 'block').addClass('fadeIn');
-    });
-    o.click(function(){
-      ta.css('display', 'none');
-    });
-    $(window).scroll(function(){
-      ta.css("top",Math.max(140,320-$(this).scrollTop()));
-    });
-  };
-});
-</script>
-
-<script type="text/javascript">
-$(document).ready(function(){
   var $this = $('.share'),
       url = $this.attr('data-url'),
       encodedUrl = encodeURIComponent(url),
@@ -919,27 +596,6 @@ $(document).ready(function(){
 });
 </script>
 
-
-<link rel="stylesheet" href="http://mospany.github.io/fancybox/jquery.fancybox.css" media="screen" type="text/css">
-<script src="http://mospany.github.io/fancybox/jquery.fancybox.pack.js"></script>
-<script type="text/javascript">
-$(document).ready(function(){
-  $('.article-content').each(function(i){
-    $(this).find('img').each(function(){
-      if ($(this).parent().hasClass('fancybox')) return;
-      var alt = this.alt;
-      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
-      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
-    });
-    $(this).find('.fancybox').each(function(){
-      $(this).attr('rel', 'article' + i);
-    });
-  });
-  if($.fancybox){
-    $('.fancybox').fancybox();
-  }
-});
-</script>
 
 
 

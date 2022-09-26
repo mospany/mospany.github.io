@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <base href="http://mospany.github.io/">
-  <title>spacemacs使用初探 - 墨斯潘園</title>
+  <title>K8S学习笔记(02): 架构 - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
-  <meta name="keywords" content="emacs,spacemacs,">
-  <meta name="description" content="概述 我自从2011年开始使用自己折腾的emacs到现在， 用着它写golang时发现函数列表与补全功能不太好使，一直知道spacemacs的名">
+  <meta name="keywords" content="K8S,云计算,">
+  <meta name="description" content="简介 Kubernetes 是一个可移植的、可扩展的开源平台，用于管理容器化的工作负载和服务，可促进声明式配置和自动化。 Kubernetes 拥有一个庞大且快速增长的生态系统。Kub">
   <meta name="author" content="mospan">
-  <meta itemprop="name" content="spacemacs使用初探 - 墨斯潘園">
-  <meta itemprop="description" content="概述 我自从2011年开始使用自己折腾的emacs到现在， 用着它写golang时发现函数列表与补全功能不太好使，一直知道spacemacs的名">
+  <meta itemprop="name" content="K8S学习笔记(02): 架构 - 墨斯潘園">
+  <meta itemprop="description" content="简介 Kubernetes 是一个可移植的、可扩展的开源平台，用于管理容器化的工作负载和服务，可促进声明式配置和自动化。 Kubernetes 拥有一个庞大且快速增长的生态系统。Kub">
   <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
-  <meta name="twitter:title" content="spacemacs使用初探 - 墨斯潘園" />
+  <meta name="twitter:title" content="K8S学习笔记(02): 架构 - 墨斯潘園" />
   
   <meta name="twitter:description" content="">
   <link rel="shortcut icon" href="img/favicon.ico"/>
@@ -63,7 +63,7 @@
 	<article itemprop="articleBody">
     <header class="article-info clearfix">
   <h1 itemprop="name">
-      <a href="http://mospany.github.io/2017/08/25/spacemacs-use-exploration/" title="spacemacs使用初探" itemprop="url">spacemacs使用初探</a>
+      <a href="http://mospany.github.io/2022/09/26/k8s-arch/" title="K8S学习笔记(02): 架构" itemprop="url">K8S学习笔记(02): 架构</a>
   </h1>
   <p class="article-author">By 
     
@@ -71,311 +71,235 @@
     
   </p>
   <p class="article-time">
-    <time datetime="2017-08-24 17:08:26 &#43;0800 CST" itemprop="datePublished">2017年08月24日</time>
+    <time datetime="2022-09-12 19:34:12 &#43;0800 CST" itemprop="datePublished">2022年09月12日</time>
   </p>
 </header>
 
 	<div class="article-content">
     
-		<div class="toc-article">
-			<strong class="toc-title">文章目录</strong>
-      <nav id="TableOfContents">
+    
+
+<p><a id="org3b04d52"></a></p>
+
+<h1 id="简介">简介</h1>
+
+<p>Kubernetes 是一个可移植的、可扩展的开源平台，用于管理容器化的工作负载和服务，可促进声明式配置和自动化。 Kubernetes 拥有一个庞大且快速增长的生态系统。Kubernetes 的服务、支持和工具广泛可用。</p>
+
+<p>Kubernetes 这个名字源于希腊语，意为“舵手”或“飞行员”。k8s 这个缩写是因为 k 和 s 之间有八个字符的关系。 Google 在 2014 年开源了 Kubernetes 项目。Kubernetes 建立在 Google 在大规模运行生产工作负载方面拥有十几年的经验 的基础上，结合了社区中最好的想法和实践。</p>
+
+<p>Kubernetes 最初源于谷歌内部的 Borg，提供了面向应用的容器集群部署和管理系统。Kubernetes 的目标旨在消除编排物理 / 虚拟计算，网络和存储基础设施的负担，并使应用程序运营商和开发人员完全将重点放在以容器为中心的原语上进行自助运营。Kubernetes 也提供稳定、兼容的基础（平台），用于构建定制化的 workflows 和更高级的自动化任务。 Kubernetes 具备完善的集群管理能力，包括多层次的安全防护和准入机制、多租户应用支撑能力、透明的服务注册和服务发现机制、内建负载均衡器、故障发现和自我修复能力、服务滚动升级和在线扩容、可扩展的资源自动调度机制、多粒度的资源配额管理能力。Kubernetes 还提供完善的管理工具，涵盖开发、部署测试、运维监控等各个环节。</p>
+
+<p><a id="org4f46df5"></a></p>
+
+<h1 id="时光回溯">时光回溯</h1>
+
+<p>让我们回顾一下为什么 Kubernetes 如此有用。<br />
+<img src="http://blog.mospan.cn/post/img/k8s/k8s-develop/k8s-develop.svg" alt="img" /></p>
+
+<p><a id="org32c9e93"></a></p>
+
+<h2 id="传统部署时代">传统部署时代</h2>
+
+<p>早期，各个组织机构在物理服务器上运行应用程序。无法为物理服务器中的应用程序定义资源边界，这会导致资源分配问题。 例如，如果在物理服务器上运行多个应用程序，则可能会出现一个应用程序占用大部分资源的情况， 结果可能导致其他应用程序的性能下降。 一种解决方案是在不同的物理服务器上运行每个应用程序，但是由于资源利用不足而无法扩展， 并且维护许多物理服务器的成本很高。</p>
+
+<p><a id="orgf01f8d4"></a></p>
+
+<h2 id="虚拟化部署时代">虚拟化部署时代</h2>
+
+<p>作为解决方案，引入了虚拟化。虚拟化技术允许你在单个物理服务器的 CPU 上运行多个虚拟机（VM）。 虚拟化允许应用程序在 VM 之间隔离，并提供一定程度的安全，因为一个应用程序的信息 不能被另一应用程序随意访问。</p>
+
+<p>虚拟化技术能够更好地利用物理服务器上的资源，并且因为可轻松地添加或更新应用程序 而可以实现更好的可伸缩性，降低硬件成本等等。</p>
+
+<p>每个 VM 是一台完整的计算机，在虚拟化硬件之上运行所有组件，包括其自己的操作系统。</p>
+
+<p><a id="orgda03445"></a></p>
+
+<h2 id="容器部署时代">容器部署时代</h2>
+
+<p>容器类似于 VM，但是它们具有被放宽的隔离属性，可以在应用程序之间共享操作系统（OS）。 因此，容器被认为是轻量级的。容器与 VM 类似，具有自己的文件系统、CPU、内存、进程空间等。 由于它们与基础架构分离，因此可以跨云和 OS 发行版本进行移植。</p>
+
+<p>容器因具有许多优势而变得流行起来。下面列出的是容器的一些好处：</p>
+
 <ul>
-<li><a href="#概述-a-id-sec-1-name-sec-1-a">概述<a id="sec-1" name="sec-1"></a></a></li>
-<li><a href="#安装-a-id-sec-2-name-sec-2-a">安装<a id="sec-2" name="sec-2"></a></a>
-<ul>
-<li><a href="#安装spacemacs-a-id-sec-2-1-name-sec-2-1-a">安装spacemacs<a id="sec-2-1" name="sec-2-1"></a></a></li>
-<li><a href="#启动spacemacs-a-id-sec-2-2-name-sec-2-2-a">启动spacemacs<a id="sec-2-2" name="sec-2-2"></a></a></li>
-</ul></li>
-<li><a href="#配置-a-id-sec-3-name-sec-3-a">配置<a id="sec-3" name="sec-3"></a></a>
-<ul>
-<li><a href="#增加启动layers-a-id-sec-3-1-name-sec-3-1-a">增加启动layers<a id="sec-3-1" name="sec-3-1"></a></a></li>
-</ul></li>
-<li><a href="#使用-a-id-sec-4-name-sec-4-a">使用<a id="sec-4" name="sec-4"></a></a>
-<ul>
-<li><a href="#working-with-go-a-id-sec-4-1-name-sec-4-1-a">Working with Go<a id="sec-4-1" name="sec-4-1"></a></a>
-<ul>
-<li><a href="#go-commands-start-with-m-a-id-sec-4-1-1-name-sec-4-1-1-a">Go commands (start with <code>m</code>):<a id="sec-4-1-1" name="sec-4-1-1"></a></a></li>
-<li><a href="#go-guru-a-id-sec-4-1-2-name-sec-4-1-2-a">Go Guru<a id="sec-4-1-2" name="sec-4-1-2"></a></a></li>
-</ul></li>
-</ul></li>
+<li>敏捷应用程序的创建和部署：与使用 VM 镜像相比，提高了容器镜像创建的简便性和效率。</li>
+<li>持续开发、集成和部署：通过快速简单的回滚（由于镜像不可变性），支持可靠且频繁的 容器镜像构建和部署。</li>
+<li>关注开发与运维的分离：在构建/发布时而不是在部署时创建应用程序容器镜像， 从而将应用程序与基础架构分离。</li>
+<li>可观察性：不仅可以显示操作系统级别的信息和指标，还可以显示应用程序的运行状况和其他指标信号。</li>
+<li>跨开发、测试和生产的环境一致性：在便携式计算机上与在云中相同地运行。</li>
+<li>跨云和操作系统发行版本的可移植性：可在 Ubuntu、RHEL、CoreOS、本地、 Google Kubernetes Engine 和其他任何地方运行。</li>
+<li>以应用程序为中心的管理：提高抽象级别，从在虚拟硬件上运行 OS 到使用逻辑资源在 OS 上运行应用程序。</li>
+<li>松散耦合、分布式、弹性、解放的微服务：应用程序被分解成较小的独立部分， 并且可以动态部署和管理 - 而不是在一台大型单机上整体运行。</li>
+<li>资源隔离：可预测的应用程序性能。</li>
+<li>资源利用：高效率和高密度。</li>
 </ul>
-</nav>
-		</div>
-    
-    
 
-<h1 id="概述-a-id-sec-1-name-sec-1-a">概述<a id="sec-1" name="sec-1"></a></h1>
+<p><a id="org42b74dd"></a></p>
 
-<p>我自从2011年开始使用自己折腾的emacs到现在， 用着它写golang时发现函数列表与补全功能不太好使，一直知道spacemacs的名声，今天想尝试下其效果如果如何，有啥奇妙之处。
-我一般用它来写Golang、C、Lua、Shell、GTD和Blog，看看spacemacs是否满足我所需和习惯。</p>
+<h1 id="为什么需要-kubernetes-它能做什么">为什么需要 Kubernetes，它能做什么?</h1>
 
-<h1 id="安装-a-id-sec-2-name-sec-2-a">安装<a id="sec-2" name="sec-2"></a></h1>
+<p>容器是打包和运行应用程序的好方式。在生产环境中，你需要管理运行应用程序的容器，并确保不会停机。 例如，如果一个容器发生故障，则需要启动另一个容器。如果系统处理此行为，会不会更容易？</p>
 
-<p>Spacemacs的Github地址为：<a href="https://github.com/syl20bnr/spacemacs">https://github.com/syl20bnr/spacemacs</a>, 如果你的系统已装有Emacs，请先备份Emacs配置文件。因为Spacemacs的配置会覆盖掉原Emacs的配置文件。</p>
+<p>这就是 Kubernetes 来解决这些问题的方法！ Kubernetes 为你提供了一个可弹性运行分布式系统的框架。 Kubernetes 会满足你的扩展要求、故障转移、部署模式等。 例如，Kubernetes 可以轻松管理系统的 Canary 部署。</p>
 
-<pre><code>cd ~ 
-mv .emacs.d .emacs.d.bak 
-mv .emacs .emacs.bak
-</code></pre>
+<p>Kubernetes 为你提供：</p>
 
-<p>如果你的系统没有安装Emacs，需要先安装Emacs，请注意Emacs版本至少为24.4。</p>
+<ul>
+<li>服务发现和负载均衡</li>
+</ul>
 
-<h2 id="安装spacemacs-a-id-sec-2-1-name-sec-2-1-a">安装spacemacs<a id="sec-2-1" name="sec-2-1"></a></h2>
+<p>Kubernetes 可以使用 DNS 名称或自己的 IP 地址公开容器，如果进入容器的流量很大， Kubernetes 可以负载均衡并分配网络流量，从而使部署稳定。</p>
 
-<pre><code>git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
-</code></pre>
+<ul>
+<li>存储编排</li>
+</ul>
 
-<h2 id="启动spacemacs-a-id-sec-2-2-name-sec-2-2-a">启动spacemacs<a id="sec-2-2" name="sec-2-2"></a></h2>
+<p>Kubernetes 允许你自动挂载你选择的存储系统，例如本地存储、公共云提供商等。</p>
 
-<pre><code>emacs -mm
-</code></pre>
+<ul>
+<li>自动部署和回滚</li>
+</ul>
 
-<p>初次启动Spacemacs会进行初始化配置（启动时会询问使用简、全哪套配置方案），安装依赖有可能需要一段时间。
-在通过命令行启动Spacemacs后，可能会发现状态栏乱码了。这是因为字体不支持的原因，需要安装Source Code Pro字体。 同时，还可能需要安装Powerline字体补丁。</p>
+<p>你可以使用 Kubernetes 描述已部署容器的所需状态，它可以以受控的速率将实际状态 更改为期望状态。例如，你可以自动化 Kubernetes 来为你的部署创建新容器， 删除现有容器并将它们的所有资源用于新容器。</p>
 
-<h1 id="配置-a-id-sec-3-name-sec-3-a">配置<a id="sec-3" name="sec-3"></a></h1>
+<ul>
+<li>自动完成装箱计算</li>
+</ul>
 
-<h2 id="增加启动layers-a-id-sec-3-1-name-sec-3-1-a">增加启动layers<a id="sec-3-1" name="sec-3-1"></a></h2>
+<p>Kubernetes 允许你指定每个容器所需 CPU 和内存（RAM）。 当容器指定了资源请求时，Kubernetes 可以做出更好的决策来管理容器的资源。</p>
 
-<p>由于我主要写Golang、C、Lua、Shell、GTD和Blog，增加相应的启动layers即可。</p>
+<ul>
+<li>自我修复</li>
+</ul>
 
-<pre><code>dotspacemacs-configuration-layers
-'(
-  c-c++
-  go
-  lua
-  html
-  ;; ----------------------------------------------------------------
-  ;; Example of useful layers you may want to use right away.
-  ;; Uncomment some layer names and press &lt;SPC f e R&gt; (Vim style) or
-  ;; &lt;M-m f e R&gt; (Emacs style) to install them.
-  ;; ----------------------------------------------------------------
-  helm
-  auto-completion
-  ;; better-defaults
-  emacs-lisp
-  git
-  markdown
-  org
-  ;; (shell :variables
-  ;;        shell-default-height 30
-  ;;        shell-default-position 'bottom)
-  ;; spell-checking
-  ;; syntax-checking
-  ;; version-control
-  )
-</code></pre>
+<p>Kubernetes 重新启动失败的容器、替换容器、杀死不响应用户定义的 运行状况检查的容器，并且在准备好服务之前不将其通告给客户端。</p>
 
-<h1 id="使用-a-id-sec-4-name-sec-4-a">使用<a id="sec-4" name="sec-4"></a></h1>
+<ul>
+<li>密钥与配置管理</li>
+</ul>
 
-<h2 id="working-with-go-a-id-sec-4-1-name-sec-4-1-a">Working with Go<a id="sec-4-1" name="sec-4-1"></a></h2>
+<p>Kubernetes 允许你存储和管理敏感信息，例如密码、OAuth 令牌和 ssh 密钥。 你可以在不重建容器镜像的情况下部署和更新密钥和应用程序配置，也无需在堆栈配置中暴露密钥。</p>
 
-<h3 id="go-commands-start-with-m-a-id-sec-4-1-1-name-sec-4-1-1-a">Go commands (start with <code>m</code>):<a id="sec-4-1-1" name="sec-4-1-1"></a></h3>
+<p><a id="org82be187"></a></p>
 
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<h1 id="kubernetes-不是什么">Kubernetes 不是什么</h1>
 
+<p>Kubernetes 不是传统的、包罗万象的 PaaS（平台即服务）系统。 由于 Kubernetes 在容器级别而不是在硬件级别运行，它提供了 PaaS 产品共有的一些普遍适用的功能， 例如部署、扩展、负载均衡、日志记录和监视。 但是，Kubernetes 不是单体系统，默认解决方案都是可选和可插拔的。 Kubernetes 提供了构建开发人员平台的基础，但是在重要的地方保留了用户的选择和灵活性。</p>
 
-<colgroup>
-<col  class="left" />
+<p>Kubernetes：</p>
 
-<col  class="left" />
-</colgroup>
-<thead>
-<tr>
-<th scope="col" class="left">Key Binding</th>
-<th scope="col" class="left">Description</th>
-</tr>
-</thead>
+<ul>
+<li><p>不限制支持的应用程序类型。 Kubernetes 旨在支持极其多种多样的工作负载，包括无状态、有状态和数据处理工作负载。 如果应用程序可以在容器中运行，那么它应该可以在 Kubernetes 上很好地运行。</p></li>
 
-<tbody>
-<tr>
-<td class="left">`SPC m h h`</td>
-<td class="left">godoc at point</td>
-</tr>
+<li><p>不部署源代码，也不构建你的应用程序。 持续集成(CI)、交付和部署（CI/CD）工作流取决于组织的文化和偏好以及技术要求。</p></li>
 
+<li><p>不提供应用程序级别的服务作为内置服务，例如中间件（例如，消息中间件）、 数据处理框架（例如，Spark）、数据库（例如，mysql）、缓存、集群存储系统 （例如，Ceph）。这样的组件可以在 Kubernetes 上运行，并且/或者可以由运行在 Kubernetes 上的应用程序通过可移植机制（例如， 开放服务代理）来访问。</p></li>
 
-<tr>
-<td class="left">`SPC m i g`</td>
-<td class="left">goto imports</td>
-</tr>
+<li><p>不要求日志记录、监视或警报解决方案。 它提供了一些集成作为概念证明，并提供了收集和导出指标的机制。</p></li>
 
+<li><p>不提供或不要求配置语言/系统（例如 jsonnet），它提供了声明性 API， 该声明性 API 可以由任意形式的声明性规范所构成。</p></li>
 
-<tr>
-<td class="left">`SPC m i a`</td>
-<td class="left">add import</td>
-</tr>
+<li><p>不提供也不采用任何全面的机器配置、维护、管理或自我修复系统。</p></li>
+</ul>
 
+<p>此外，Kubernetes 不仅仅是一个编排系统，实际上它消除了编排的需要。 编排的技术定义是执行已定义的工作流程：首先执行 A，然后执行 B，再执行 C。 相比之下，Kubernetes 包含一组独立的、可组合的控制过程， 这些过程连续地将当前状态驱动到所提供的所需状态。 如何从 A 到 C 的方式无关紧要，也不需要集中控制，这使得系统更易于使用 且功能更强大、系统更健壮、更为弹性和可扩展。</p>
 
-<tr>
-<td class="left">`SPC m i r`</td>
-<td class="left">remove unused import</td>
-</tr>
+<p><a id="org2325363"></a></p>
 
+<h1 id="k8s架构原理">K8S架构原理</h1>
 
-<tr>
-<td class="left">`SPC m e b`</td>
-<td class="left">go-play buffer</td>
-</tr>
+<p>概括来说 K8s 架构就是一个 Master 对应一群 Node 节点。 高可用时Master一般为3个。</p>
 
+<p><img src="http://blog.mospan.cn/post/img/k8s/k8s-develop/k8s-arch.png" alt="img" /></p>
 
-<tr>
-<td class="left">`SPC m e r`</td>
-<td class="left">go-play region</td>
-</tr>
+<p><a id="orgdb70e59"></a></p>
 
-
-<tr>
-<td class="left">`SPC m e d`</td>
-<td class="left">download go-play snippet</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m x x`</td>
-<td class="left">run "go run" for the current 'main' package</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m g a`</td>
-<td class="left">jump to matching test file or back from test to code file</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m g c`</td>
-<td class="left">open a clone of the current buffer with a coverage info (`go tool cover -h` for help)</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m g g`</td>
-<td class="left">go jump to definition</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m r n`</td>
-<td class="left">go rename</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m t p`</td>
-<td class="left">run "go test" for the current package</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m t P`</td>
-<td class="left">run "go test" for the current package and all packages under it</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m t t`</td>
-<td class="left">run "go test" for the function you're currently in (while you're in a \_.test.go file)</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m t s`</td>
-<td class="left">run "go test" for the suite you're currently in (requires gocheck)</td>
-</tr>
-</tbody>
-</table>
-
-<h3 id="go-guru-a-id-sec-4-1-2-name-sec-4-1-2-a">Go Guru<a id="sec-4-1-2" name="sec-4-1-2"></a></h3>
+<h2 id="master节点">Master节点</h2>
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
-<col  class="left" />
+<col  class="org-left" />
 
-<col  class="left" />
+<col  class="org-left" />
 </colgroup>
 <thead>
 <tr>
-<th scope="col" class="left">Key Binding</th>
-<th scope="col" class="left">Description</th>
+<th scope="col" class="org-left">组件</th>
+<th scope="col" class="org-left">描述</th>
 </tr>
 </thead>
 
 <tbody>
 <tr>
-<td class="left">`SPC m f d`</td>
-<td class="left">go-guru describe symbol at point</td>
+<td class="org-left">kube-apiserver</td>
+<td class="org-left">K8s 网关，所有的指令请求都必须要经过 apiserver</td>
 </tr>
 
 
 <tr>
-<td class="left">`SPC m f f`</td>
-<td class="left">go-guru show free variables</td>
+<td class="org-left">kube-scheduler</td>
+<td class="org-left">调度器，使用调度算法，把请求资源调度到某一个 node 节点；</td>
 </tr>
 
 
 <tr>
-<td class="left">`SPC m f i`</td>
-<td class="left">go-guru show implements relation</td>
+<td class="org-left">kube-controller-manager</td>
+<td class="org-left">维护 K8s 资源对象</td>
 </tr>
 
 
 <tr>
-<td class="left">`SPC m f c`</td>
-<td class="left">go-guru show channel sends/receives</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m f r`</td>
-<td class="left">go-guru show referrers</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m f j`</td>
-<td class="left">go-guru jump to symbol definition</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m f p`</td>
-<td class="left">go-guru show what the select expression points to</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m f s`</td>
-<td class="left">go-guru show callstack</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m f e`</td>
-<td class="left">go-guru show possible contants/types for error value</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m f <`</td>
-<td class="left">go-guru show possible callers</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m f >`</td>
-<td class="left">go-guru show call targets</td>
-</tr>
-
-
-<tr>
-<td class="left">`SPC m f o`</td>
-<td class="left">go-guru set analysis scope</td>
+<td class="org-left">etcd</td>
+<td class="org-left">存储资源对象</td>
 </tr>
 </tbody>
 </table>
+
+<p><a id="org4026924"></a></p>
+
+<h2 id="worker节点">Worker节点</h2>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">组件</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="org-left">kubelet</td>
+<td class="org-left">在每一个 node 节点都存在一份，在 node 节点上的资源操作指令由 kubelet 来执行</td>
+</tr>
+
+
+<tr>
+<td class="org-left">kube-proxy</td>
+<td class="org-left">代理服务，处理服务间负载均衡；</td>
+</tr>
+
+
+<tr>
+<td class="org-left">pod</td>
+<td class="org-left">k8s 管理的基本单元（最小单元），pod 内部是容器，k8s 不直接管理容器，而是管理pod；</td>
+</tr>
+</tbody>
+</table>
+
+<p><a id="org880a612"></a></p>
+
+<h2 id="组件通信">组件通信</h2>
+
+<p><img src="http://blog.mospan.cn/post/img/k8s/k8s-develop/k8s-component-arch.jpg" alt="img" /></p>
 
     <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
   <div style="float:right;margin-top:0px;">
@@ -388,7 +312,7 @@ mv .emacs .emacs.bak
   <div>
     <p style="margin-top:0px;">作者：<a target="_blank" href="http://blog.mospan.cn/">mospan</a>
       <br />微信关注：墨斯潘園
-      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2017/08/25/spacemacs-use-exploration/">http://mospany.github.io/2017/08/25/spacemacs-use-exploration/</a>
+      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2022/09/26/k8s-arch/">http://mospany.github.io/2022/09/26/k8s-arch/</a>
       <br />
       文章版权归本人所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
   </div>
@@ -402,9 +326,9 @@ mv .emacs .emacs.bak
 <div class="article-tags">
   <span></span>
   
-  <a href="/tags/emacs">emacs</a>
+  <a href="/tags/k8s">K8S</a>
   
-  <a href="/tags/spacemacs">spacemacs</a>
+  <a href="/tags/%E4%BA%91%E8%AE%A1%E7%AE%97">云计算</a>
   
 </div>
 
@@ -413,16 +337,16 @@ mv .emacs .emacs.bak
 <div class="article-categories">
   <span></span>
   
-  <a class="article-category-link" href="/categories/emacs">emacs</a>
+  <a class="article-category-link" href="/categories/k8s">K8S</a>
   
-  <a class="article-category-link" href="/categories/spacemacs">spacemacs</a>
+  <a class="article-category-link" href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97">云计算</a>
   
 </div>
 
 
 
   <div class="article-share" id="share">
-    <div data-url="http://mospany.github.io/2017/08/25/spacemacs-use-exploration/" data-title="spacemacs使用初探" data-tsina="3833537679" class="share clearfix">
+    <div data-url="http://mospany.github.io/2022/09/26/k8s-arch/" data-title="K8S学习笔记(02): 架构" data-tsina="3833537679" class="share clearfix">
     </div>
   </div>
 </footer>
