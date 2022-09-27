@@ -5,7 +5,7 @@ date = "2022-09-27T19:58:47+08:00"
 description = ""
 keywords = ["K8S","YAML"]
 tags = ["K8S","YAML"]
-title = "K8S学习笔记(05): yaml语法格式"
+title = "K8S学习笔记(05): yaml语法"
 url = "/2022/09/27/k8s-yaml/"
 
 +++
