@@ -79,7 +79,7 @@
     
     
 
-<p><a id="org50c6008"></a></p>
+<p><a id="org2f48c43"></a></p>
 
 <h1 id="简介">简介</h1>
 
@@ -89,20 +89,20 @@
 
 <p>Kubernetes 最初源于谷歌内部的 Borg，提供了面向应用的容器集群部署和管理系统。Kubernetes 的目标旨在消除编排物理 / 虚拟计算，网络和存储基础设施的负担，并使应用程序运营商和开发人员完全将重点放在以容器为中心的原语上进行自助运营。Kubernetes 也提供稳定、兼容的基础（平台），用于构建定制化的 workflows 和更高级的自动化任务。 Kubernetes 具备完善的集群管理能力，包括多层次的安全防护和准入机制、多租户应用支撑能力、透明的服务注册和服务发现机制、内建负载均衡器、故障发现和自我修复能力、服务滚动升级和在线扩容、可扩展的资源自动调度机制、多粒度的资源配额管理能力。Kubernetes 还提供完善的管理工具，涵盖开发、部署测试、运维监控等各个环节。</p>
 
-<p><a id="orgddfeca5"></a></p>
+<p><a id="org895d7b5"></a></p>
 
 <h1 id="时光回溯">时光回溯</h1>
 
 <p>让我们回顾一下为什么 Kubernetes 如此有用。<br />
 <img src="http://blog.mospan.cn/post/img/k8s/k8s-arch/k8s-develop.svg" alt="img" /></p>
 
-<p><a id="orga2ca42e"></a></p>
+<p><a id="org54684e8"></a></p>
 
 <h2 id="传统部署时代">传统部署时代</h2>
 
 <p>早期，各个组织机构在物理服务器上运行应用程序。无法为物理服务器中的应用程序定义资源边界，这会导致资源分配问题。 例如，如果在物理服务器上运行多个应用程序，则可能会出现一个应用程序占用大部分资源的情况， 结果可能导致其他应用程序的性能下降。 一种解决方案是在不同的物理服务器上运行每个应用程序，但是由于资源利用不足而无法扩展， 并且维护许多物理服务器的成本很高。</p>
 
-<p><a id="org24cdd7b"></a></p>
+<p><a id="orga38329f"></a></p>
 
 <h2 id="虚拟化部署时代">虚拟化部署时代</h2>
 
@@ -112,7 +112,7 @@
 
 <p>每个 VM 是一台完整的计算机，在虚拟化硬件之上运行所有组件，包括其自己的操作系统。</p>
 
-<p><a id="org100c186"></a></p>
+<p><a id="orgb581bb2"></a></p>
 
 <h2 id="容器部署时代">容器部署时代</h2>
 
@@ -133,7 +133,7 @@
 <li>资源利用：高效率和高密度。</li>
 </ul>
 
-<p><a id="orgc1899e7"></a></p>
+<p><a id="org8a82c78"></a></p>
 
 <h1 id="为什么需要-kubernetes-它能做什么">为什么需要 Kubernetes，它能做什么?</h1>
 
@@ -179,7 +179,7 @@
 
 <p>Kubernetes 允许你存储和管理敏感信息，例如密码、OAuth 令牌和 ssh 密钥。 你可以在不重建容器镜像的情况下部署和更新密钥和应用程序配置，也无需在堆栈配置中暴露密钥。</p>
 
-<p><a id="org6a780e8"></a></p>
+<p><a id="org5423f7d"></a></p>
 
 <h1 id="kubernetes-不是什么">Kubernetes 不是什么</h1>
 
@@ -203,7 +203,7 @@
 
 <p>此外，Kubernetes 不仅仅是一个编排系统，实际上它消除了编排的需要。 编排的技术定义是执行已定义的工作流程：首先执行 A，然后执行 B，再执行 C。 相比之下，Kubernetes 包含一组独立的、可组合的控制过程， 这些过程连续地将当前状态驱动到所提供的所需状态。 如何从 A 到 C 的方式无关紧要，也不需要集中控制，这使得系统更易于使用 且功能更强大、系统更健壮、更为弹性和可扩展。</p>
 
-<p><a id="org326d4cc"></a></p>
+<p><a id="org76d4217"></a></p>
 
 <h1 id="k8s架构原理">K8S架构原理</h1>
 
@@ -211,97 +211,57 @@
 
 <p><img src="http://blog.mospan.cn/post/img/k8s/k8s-arch/k8s-arch.png" alt="img" /></p>
 
-<p><a id="orgd9e5c62"></a></p>
+<p><a id="org33f9855"></a></p>
 
 <h2 id="master节点">Master节点</h2>
 
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<p><a id="org817c289"></a></p>
 
+<h3 id="kube-apiserver">kube-apiserver</h3>
 
-<colgroup>
-<col  class="org-left" />
+<p>K8s 网关，所有的指令请求都必须要经过 apiserver, 对外暴露K8S的api接口，是外界进行资源操作的唯一入口，并提供认证、授权、访问控制、API注册和发现等机制</p>
 
-<col  class="org-left" />
-</colgroup>
-<thead>
-<tr>
-<th scope="col" class="org-left">组件</th>
-<th scope="col" class="org-left">描述</th>
-</tr>
-</thead>
+<p><a id="org51afc21"></a></p>
 
-<tbody>
-<tr>
-<td class="org-left">kube-apiserver</td>
-<td class="org-left">K8s 网关，所有的指令请求都必须要经过 apiserver</td>
-</tr>
+<h3 id="kube-scheduler">kube-scheduler</h3>
 
+<p>调度器，使用调度算法，把请求资源调度到某一个 node 节点；负责资源的调度，按照预定的调度策略将Pod调度到相应的机器上；就是监视新创建的 Pod，如果没有分配节点，就选择一个节点供他们运行，这就是pod的调度。</p>
 
-<tr>
-<td class="org-left">kube-scheduler</td>
-<td class="org-left">调度器，使用调度算法，把请求资源调度到某一个 node 节点；</td>
-</tr>
+<p><a id="orgdf97f22"></a></p>
 
+<h3 id="kube-controller-manager">kube-controller-manager</h3>
 
-<tr>
-<td class="org-left">kube-controller-manager</td>
-<td class="org-left">维护 K8s 资源对象</td>
-</tr>
+<p>维护 K8s 资源对象, 负责维护集群的状态，比如故障检测、自动扩展、滚动更新等，它们是处理集群中常规任务的后台线程。</p>
 
+<p><a id="orgf648933"></a></p>
 
-<tr>
-<td class="org-left">etcd</td>
-<td class="org-left">存储资源对象</td>
-</tr>
-</tbody>
-</table>
+<h3 id="etcd">etcd</h3>
 
-<p><a id="orgda33f0e"></a></p>
+<p>存储资源对象, 一个可信赖的分布式键值存储服务，能够为整个分布式集群存储一些关键数据，协助分布式集群运转。储存K8S集群所有重要信息（持久化）。v2版本时基于内存的存储，v3开始才是序列化到介质。新版本K8S（v1.11以上）已经改用v3版本etcd。</p>
+
+<p><a id="org7931198"></a></p>
 
 <h2 id="worker节点">Worker节点</h2>
 
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<p><a id="org72f8096"></a></p>
 
+<h3 id="kubelet">kubelet</h3>
 
-<colgroup>
-<col  class="org-left" />
+<p>在每一个 node 节点都存在一份，在 node 节点上的资源操作指令由 kubelet 来执行, 直接跟容器引擎交互实现容器的生命周期管理。</p>
 
-<col  class="org-left" />
-</colgroup>
-<thead>
-<tr>
-<th scope="col" class="org-left">组件</th>
-<th scope="col" class="org-left">描述</th>
-</tr>
-</thead>
+<p><a id="org2c78346"></a></p>
 
-<tbody>
-<tr>
-<td class="org-left">kubelet</td>
-<td class="org-left">在每一个 node 节点都存在一份，在 node 节点上的资源操作指令由 kubelet 来执行</td>
-</tr>
+<h3 id="kube-proxy">kube-proxy</h3>
 
+<p>代理服务，处理服务间负载均衡；负责写入规则至 IPTABLES、IPVS 实现服务映射访问的。</p>
 
-<tr>
-<td class="org-left">kube-proxy</td>
-<td class="org-left">代理服务，处理服务间负载均衡；</td>
-</tr>
-
-
-<tr>
-<td class="org-left">pod</td>
-<td class="org-left">k8s 管理的基本单元（最小单元），pod 内部是容器，k8s 不直接管理容器，而是管理pod；</td>
-</tr>
-</tbody>
-</table>
-
-<p><a id="orgff3b4e3"></a></p>
+<p><a id="org1a12d32"></a></p>
 
 <h2 id="组件通信">组件通信</h2>
 
 <p><img src="http://blog.mospan.cn/post/img/k8s/k8s-arch/k8s-component-arch.jpg" alt="img" /></p>
 
-<p><a id="org2543d3b"></a></p>
+<p><a id="org028c0e9"></a></p>
 
 <h1 id="参考资料">参考资料</h1>
 
@@ -398,7 +358,7 @@ gitment.render('git-comments')
     
     <li><a href="http://mospany.github.io/categories/%e5%b7%a5%e5%85%b7%e4%bd%bf%e7%94%a8" title="工具使用">工具使用<sup>3</sup></a></li>
     
-    <li><a href="http://mospany.github.io/categories/%e6%8a%80%e6%9c%af%e6%96%87%e7%ab%a0" title="技术文章">技术文章<sup>31</sup></a></li>
+    <li><a href="http://mospany.github.io/categories/%e6%8a%80%e6%9c%af%e6%96%87%e7%ab%a0" title="技术文章">技术文章<sup>32</sup></a></li>
     
     <li><a href="http://mospany.github.io/categories/%e7%94%9f%e6%b4%bb%e8%ae%b0%e5%bd%95" title="生活记录">生活记录<sup>1</sup></a></li>
     
@@ -429,7 +389,7 @@ gitment.render('git-comments')
       
 			<li><a href="http://mospany.github.io/tags/ipv6" title="ipv6">ipv6<sup>2</sup></a></li>
       
-			<li><a href="http://mospany.github.io/tags/k8s" title="k8s">k8s<sup>4</sup></a></li>
+			<li><a href="http://mospany.github.io/tags/k8s" title="k8s">k8s<sup>5</sup></a></li>
       
 			<li><a href="http://mospany.github.io/tags/openresty" title="openresty">openresty<sup>1</sup></a></li>
       
@@ -446,6 +406,8 @@ gitment.render('git-comments')
 			<li><a href="http://mospany.github.io/tags/vue" title="vue">vue<sup>1</sup></a></li>
       
 			<li><a href="http://mospany.github.io/tags/xns" title="xns">xns<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/yaml" title="yaml">yaml<sup>1</sup></a></li>
       
 			<li><a href="http://mospany.github.io/tags/%e4%ba%91%e8%ae%a1%e7%ae%97" title="云计算">云计算<sup>3</sup></a></li>
       
@@ -545,7 +507,7 @@ gitment.render('git-comments')
       
       
       <li class="archive-list-item">
-        <a class="archive-list-link" href="http://mospany.github.io/post/#2022-09">2022年09月</a><span class="archive-list-count">12</span>
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2022-09">2022年09月</a><span class="archive-list-count">14</span>
       </li>
       
       
@@ -653,6 +615,8 @@ gitment.render('git-comments')
     <a href="http://mospany.github.io/tags/vue" style="font-size: 12px;">vue</a>
     
     <a href="http://mospany.github.io/tags/xns" style="font-size: 12px;">xns</a>
+    
+    <a href="http://mospany.github.io/tags/yaml" style="font-size: 12px;">yaml</a>
     
     <a href="http://mospany.github.io/tags/%e4%ba%91%e8%ae%a1%e7%ae%97" style="font-size: 12px;">云计算</a>
     

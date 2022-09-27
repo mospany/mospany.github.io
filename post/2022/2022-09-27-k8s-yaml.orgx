@@ -1,0 +1,115 @@
++++
+#+OPTIONS: \n:t
+categories = ["技术文章"]
+date = "2022-09-27T19:58:47+08:00"
+description = ""
+keywords = ["K8S","YAML"]
+tags = ["K8S","YAML"]
+title = "K8S学习笔记(05): yaml语法格式"
+url = "/2022/09/27/k8s-yaml/"
+
++++
+
+* k8s支持的文件格式
+  Kubernetes支持YAML和JSON格式管理资源对象
+  - JSON格式：主要用于api接口之间消息的传递
+  - YAML格式：用于配置和管理，YAML是一种简洁的非标记性语言，内容格式人性化，较易读
+
+* YAML语言格式
+  ● 大小写敏感
+  ● 使用缩进表示层级关系
+  ● 不支持Tab键制表符缩进，只使用空格缩进
+  ● 缩进的空格数目不重要，只要相同层级的元素左侧对齐即可，通常开头缩进两个空格
+  ● 符号字符后缩进一个空格，如冒号，逗号，短横杠（-）等
+  ● “---”表示YAML格式，一个文件的开始，用于分隔文件
+  ● “#”表示注释
+
+* 编写资源配置清单
+  [root@master test]# vim nginx-test.yaml
+  #+BEGIN_SRC yaml
+  #指定api版本标签
+  apiVersion: apps/v1
+  #定义资源的类型/角色，deployment为副本控制器
+  #此处资源类型可以是Deployment、Job、Ingress、Service等
+  kind: Deployment
+  #定义资源的元数据信息，比如资源的名称、namespace、标签等信息
+  metadata:
+    #定义资源的名称，在同一个namespace空间中必须是唯一的
+    name: nginx-test
+    lables:
+      app: nginx
+  #定义deployment资源需要的参数属性，诸如是否在容器失败时重新启动容器的属性
+  spec:
+    #定义副本数量
+    replicas: 3
+    #定义标签选择器
+    selector:
+      #定义匹配标签
+      matchLabels:
+        #需与后面的.spec.template.metadata.labels定义的标签保持一致
+        app: nginx
+    #定义业务模板，如果有多个副本，所有副本的属性会按照模板的相关配置进行匹配
+    template:
+      metadata:
+        #定义Pod副本将使用的标签，需与前面的.spec.selector.matchLabels定义的标签保持一致
+        labels:
+          app: nginx
+      spec:
+        #定义容器属性
+        containers:
+        #定义一个容器名，一个-name:定义一个容器
+        - name: nginx
+          #定义容器使用的镜像以及版本
+          image: nginx:1.15.4
+          ports:
+          #定义容器对外的端口
+          - containerPort: 80
+    
+    #+END_SRC
+
+* 创建service服务对外提供访问并测试
+   [root@master test]# vim nginx-svc-test.yaml
+   #+BEGIN_SRC yaml
+   apiVersion: v1
+   kind: Service
+   metadata:
+     name: nginx-svc
+     labels:
+       app: nginx
+   spec:
+     type: NodePort
+     ports:
+     - port: 80
+       targetPort: 80
+     selector:
+       #此处定义的selector要与deployment所定义的selector相同
+       #service依靠标签选择器来检索提供服务的nodes
+       app: nginx
+   
+   #+END_SRC
+
+* 详解k8s中的port
+  port是k8s集群内部访问service的端口，即通过clusterIP:port可以从Pod所在的Node上访问到service
+  - nodePort
+    nodePort是外部访问k8s集群中service的端口，通过nodeIP:nodePort可以从外部访问到某个service
+  - targetPort
+    targetPort是Pod的端口，从port或nodePort来的流量经过kube-proxy反向代理负载均衡转发到后端Pod的targetPort上，最后进入容器。
+  - containerPort
+   containerPort是Pod内部容器的端口，targetPort映射到containerPort。
+
+* 获取资源配置清单的总结
+  - 没有相关资源，使用run命令--dry-run选项
+    #+BEGIN_SRC sh
+    $ kubectl run dryrun-test --image=nginx --port=80 --replicas=3 --dry-run -o yaml > dryrun-test.yaml
+    #+END_SRC
+  - 已有相关资源，使用get命令--export选项
+    #+BEGIN_SRC sh
+    $ kubectl get deploy dryrun-test --export -o yaml > export-test.yaml
+    #+END_SRC
+
+  *注* ：
+  - 现在不推荐使用“ export”（从1.14版本开始，通常应该在1.18版本中消失（在changelog中找不到））
+  - --dry-run is deprecated and can be replaced with --dry-run=client.
+
+* 参考资料
+  1. [[https://www.escapelife.site/posts/8032061c.html][Kubernetes之YAML语法]]

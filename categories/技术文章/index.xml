@@ -6,10 +6,19 @@
     <description>Recent content in 技术文章 on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Wed, 21 Sep 2022 21:01:59 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 27 Sep 2022 19:58:47 +0800</lastBuildDate>
     
 	<atom:link href="http://mospany.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>K8S学习笔记(05): yaml语法格式</title>
+      <link>http://mospany.github.io/2022/09/27/k8s-yaml/</link>
+      <pubDate>Tue, 27 Sep 2022 19:58:47 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2022/09/27/k8s-yaml/</guid>
+      <description>k8s支持的文件格式 Kubernetes支持YAML和JSON格式管理资源对象 JSON格式：主要用于api接口之间消息的传递 YAML格式：用</description>
+    </item>
     
     <item>
       <title>K8S学习笔记(04): kubectl命令技巧大全</title>

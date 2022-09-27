@@ -5,7 +5,154 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Wed, 21 Sep 2022 21:01:59 CST</updated>
+        <updated>Tue, 27 Sep 2022 19:58:47 CST</updated>
+        
+        <item>
+            <title>K8S学习笔记(05): yaml语法格式</title>
+            <link>http://mospany.github.io/2022/09/27/k8s-yaml/</link>
+            <pubDate>Tue, 27 Sep 2022 19:58:47 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://mospany.github.io/2022/09/27/k8s-yaml/</guid>
+            <description>
+
+&lt;p&gt;&lt;a id=&#34;orgfba5ff2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;k8s支持的文件格式&#34;&gt;k8s支持的文件格式&lt;/h1&gt;
+
+&lt;p&gt;Kubernetes支持YAML和JSON格式管理资源对象&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;JSON格式：主要用于api接口之间消息的传递&lt;/li&gt;
+&lt;li&gt;YAML格式：用于配置和管理，YAML是一种简洁的非标记性语言，内容格式人性化，较易读&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a id=&#34;org3c21164&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;yaml语言格式&#34;&gt;YAML语言格式&lt;/h1&gt;
+
+&lt;p&gt;● 大小写敏感&lt;br /&gt;
+● 使用缩进表示层级关系&lt;br /&gt;
+● 不支持Tab键制表符缩进，只使用空格缩进&lt;br /&gt;
+● 缩进的空格数目不重要，只要相同层级的元素左侧对齐即可，通常开头缩进两个空格&lt;br /&gt;
+● 符号字符后缩进一个空格，如冒号，逗号，短横杠（-）等&lt;br /&gt;
+● “&amp;#x2014;”表示YAML格式，一个文件的开始，用于分隔文件&lt;br /&gt;
+● “#”表示注释&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgd843414&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;编写资源配置清单&#34;&gt;编写资源配置清单&lt;/h1&gt;
+
+&lt;p&gt;[root@master test]# vim nginx-test.yaml&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#指定api版本标签
+apiVersion: apps/v1
+#定义资源的类型/角色，deployment为副本控制器
+#此处资源类型可以是Deployment、Job、Ingress、Service等
+kind: Deployment
+#定义资源的元数据信息，比如资源的名称、namespace、标签等信息
+metadata:
+  #定义资源的名称，在同一个namespace空间中必须是唯一的
+  name: nginx-test
+  lables:
+    app: nginx
+#定义deployment资源需要的参数属性，诸如是否在容器失败时重新启动容器的属性
+spec:
+  #定义副本数量
+  replicas: 3
+  #定义标签选择器
+  selector:
+    #定义匹配标签
+    matchLabels:
+      #需与后面的.spec.template.metadata.labels定义的标签保持一致
+      app: nginx
+  #定义业务模板，如果有多个副本，所有副本的属性会按照模板的相关配置进行匹配
+  template:
+    metadata:
+      #定义Pod副本将使用的标签，需与前面的.spec.selector.matchLabels定义的标签保持一致
+      labels:
+        app: nginx
+    spec:
+      #定义容器属性
+      containers:
+      #定义一个容器名，一个-name:定义一个容器
+      - name: nginx
+        #定义容器使用的镜像以及版本
+        image: nginx:1.15.4
+        ports:
+        #定义容器对外的端口
+        - containerPort: 80
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org32111ee&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;创建service服务对外提供访问并测试&#34;&gt;创建service服务对外提供访问并测试&lt;/h1&gt;
+
+&lt;p&gt;[root@master test]# vim nginx-svc-test.yaml&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-svc
+  labels:
+    app: nginx
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    #此处定义的selector要与deployment所定义的selector相同
+    #service依靠标签选择器来检索提供服务的nodes
+    app: nginx
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org7f24d32&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;详解k8s中的port&#34;&gt;详解k8s中的port&lt;/h1&gt;
+
+&lt;p&gt;port是k8s集群内部访问service的端口，即通过clusterIP:port可以从Pod所在的Node上访问到service&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;nodePort&lt;br /&gt;
+nodePort是外部访问k8s集群中service的端口，通过nodeIP:nodePort可以从外部访问到某个service&lt;/li&gt;
+&lt;li&gt;targetPort&lt;br /&gt;
+targetPort是Pod的端口，从port或nodePort来的流量经过kube-proxy反向代理负载均衡转发到后端Pod的targetPort上，最后进入容器。&lt;/li&gt;
+&lt;li&gt;containerPort&lt;br /&gt;
+containerPort是Pod内部容器的端口，targetPort映射到containerPort。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgbae1b9d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;获取资源配置清单的总结&#34;&gt;获取资源配置清单的总结&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;没有相关资源，使用run命令&amp;#x2013;dry-run选项&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ kubectl run dryrun-test --image=nginx --port=80 --replicas=3 --dry-run -o yaml &amp;gt; dryrun-test.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;已有相关资源，使用get命令&amp;#x2013;export选项&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ kubectl get deploy dryrun-test --export -o yaml &amp;gt; export-test.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;注&lt;/strong&gt; ：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;现在不推荐使用“ export”（从1.14版本开始，通常应该在1.18版本中消失（在changelog中找不到））&lt;/li&gt;
+&lt;li&gt;&amp;#x2013;dry-run is deprecated and can be replaced with &amp;#x2013;dry-run=client.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a id=&#34;org86e8206&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;参考资料&#34;&gt;参考资料&lt;/h1&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.escapelife.site/posts/8032061c.html&#34;&gt;Kubernetes之YAML语法&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+        </item>
         
         <item>
             <title>K8S学习笔记(04): kubectl命令技巧大全</title>
@@ -732,7 +879,7 @@ kubectl proxy
             <guid>http://mospany.github.io/2022/09/12/k8s-arch/</guid>
             <description>
 
-&lt;p&gt;&lt;a id=&#34;org50c6008&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org2f48c43&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;简介&#34;&gt;简介&lt;/h1&gt;
 
@@ -742,20 +889,20 @@ kubectl proxy
 
 &lt;p&gt;Kubernetes 最初源于谷歌内部的 Borg，提供了面向应用的容器集群部署和管理系统。Kubernetes 的目标旨在消除编排物理 / 虚拟计算，网络和存储基础设施的负担，并使应用程序运营商和开发人员完全将重点放在以容器为中心的原语上进行自助运营。Kubernetes 也提供稳定、兼容的基础（平台），用于构建定制化的 workflows 和更高级的自动化任务。 Kubernetes 具备完善的集群管理能力，包括多层次的安全防护和准入机制、多租户应用支撑能力、透明的服务注册和服务发现机制、内建负载均衡器、故障发现和自我修复能力、服务滚动升级和在线扩容、可扩展的资源自动调度机制、多粒度的资源配额管理能力。Kubernetes 还提供完善的管理工具，涵盖开发、部署测试、运维监控等各个环节。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgddfeca5&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org895d7b5&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;时光回溯&#34;&gt;时光回溯&lt;/h1&gt;
 
 &lt;p&gt;让我们回顾一下为什么 Kubernetes 如此有用。&lt;br /&gt;
 &lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-arch/k8s-develop.svg&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orga2ca42e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org54684e8&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;传统部署时代&#34;&gt;传统部署时代&lt;/h2&gt;
 
 &lt;p&gt;早期，各个组织机构在物理服务器上运行应用程序。无法为物理服务器中的应用程序定义资源边界，这会导致资源分配问题。 例如，如果在物理服务器上运行多个应用程序，则可能会出现一个应用程序占用大部分资源的情况， 结果可能导致其他应用程序的性能下降。 一种解决方案是在不同的物理服务器上运行每个应用程序，但是由于资源利用不足而无法扩展， 并且维护许多物理服务器的成本很高。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org24cdd7b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orga38329f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;虚拟化部署时代&#34;&gt;虚拟化部署时代&lt;/h2&gt;
 
@@ -765,7 +912,7 @@ kubectl proxy
 
 &lt;p&gt;每个 VM 是一台完整的计算机，在虚拟化硬件之上运行所有组件，包括其自己的操作系统。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org100c186&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgb581bb2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;容器部署时代&#34;&gt;容器部署时代&lt;/h2&gt;
 
@@ -786,7 +933,7 @@ kubectl proxy
 &lt;li&gt;资源利用：高效率和高密度。&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgc1899e7&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org8a82c78&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;为什么需要-kubernetes-它能做什么&#34;&gt;为什么需要 Kubernetes，它能做什么?&lt;/h1&gt;
 
@@ -832,7 +979,7 @@ kubectl proxy
 
 &lt;p&gt;Kubernetes 允许你存储和管理敏感信息，例如密码、OAuth 令牌和 ssh 密钥。 你可以在不重建容器镜像的情况下部署和更新密钥和应用程序配置，也无需在堆栈配置中暴露密钥。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org6a780e8&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org5423f7d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;kubernetes-不是什么&#34;&gt;Kubernetes 不是什么&lt;/h1&gt;
 
@@ -856,7 +1003,7 @@ kubectl proxy
 
 &lt;p&gt;此外，Kubernetes 不仅仅是一个编排系统，实际上它消除了编排的需要。 编排的技术定义是执行已定义的工作流程：首先执行 A，然后执行 B，再执行 C。 相比之下，Kubernetes 包含一组独立的、可组合的控制过程， 这些过程连续地将当前状态驱动到所提供的所需状态。 如何从 A 到 C 的方式无关紧要，也不需要集中控制，这使得系统更易于使用 且功能更强大、系统更健壮、更为弹性和可扩展。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org326d4cc&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org76d4217&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;k8s架构原理&#34;&gt;K8S架构原理&lt;/h1&gt;
 
@@ -864,97 +1011,57 @@ kubectl proxy
 
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-arch/k8s-arch.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgd9e5c62&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org33f9855&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;master节点&#34;&gt;Master节点&lt;/h2&gt;
 
-&lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
+&lt;p&gt;&lt;a id=&#34;org817c289&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
+&lt;h3 id=&#34;kube-apiserver&#34;&gt;kube-apiserver&lt;/h3&gt;
 
-&lt;colgroup&gt;
-&lt;col  class=&#34;org-left&#34; /&gt;
+&lt;p&gt;K8s 网关，所有的指令请求都必须要经过 apiserver, 对外暴露K8S的api接口，是外界进行资源操作的唯一入口，并提供认证、授权、访问控制、API注册和发现等机制&lt;/p&gt;
 
-&lt;col  class=&#34;org-left&#34; /&gt;
-&lt;/colgroup&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;组件&lt;/th&gt;
-&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;描述&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
+&lt;p&gt;&lt;a id=&#34;org51afc21&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;kube-apiserver&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;K8s 网关，所有的指令请求都必须要经过 apiserver&lt;/td&gt;
-&lt;/tr&gt;
+&lt;h3 id=&#34;kube-scheduler&#34;&gt;kube-scheduler&lt;/h3&gt;
 
+&lt;p&gt;调度器，使用调度算法，把请求资源调度到某一个 node 节点；负责资源的调度，按照预定的调度策略将Pod调度到相应的机器上；就是监视新创建的 Pod，如果没有分配节点，就选择一个节点供他们运行，这就是pod的调度。&lt;/p&gt;
 
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;kube-scheduler&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;调度器，使用调度算法，把请求资源调度到某一个 node 节点；&lt;/td&gt;
-&lt;/tr&gt;
+&lt;p&gt;&lt;a id=&#34;orgdf97f22&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
+&lt;h3 id=&#34;kube-controller-manager&#34;&gt;kube-controller-manager&lt;/h3&gt;
 
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;kube-controller-manager&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;维护 K8s 资源对象&lt;/td&gt;
-&lt;/tr&gt;
+&lt;p&gt;维护 K8s 资源对象, 负责维护集群的状态，比如故障检测、自动扩展、滚动更新等，它们是处理集群中常规任务的后台线程。&lt;/p&gt;
 
+&lt;p&gt;&lt;a id=&#34;orgf648933&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;etcd&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;存储资源对象&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
+&lt;h3 id=&#34;etcd&#34;&gt;etcd&lt;/h3&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgda33f0e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;存储资源对象, 一个可信赖的分布式键值存储服务，能够为整个分布式集群存储一些关键数据，协助分布式集群运转。储存K8S集群所有重要信息（持久化）。v2版本时基于内存的存储，v3开始才是序列化到介质。新版本K8S（v1.11以上）已经改用v3版本etcd。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org7931198&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;worker节点&#34;&gt;Worker节点&lt;/h2&gt;
 
-&lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
+&lt;p&gt;&lt;a id=&#34;org72f8096&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
+&lt;h3 id=&#34;kubelet&#34;&gt;kubelet&lt;/h3&gt;
 
-&lt;colgroup&gt;
-&lt;col  class=&#34;org-left&#34; /&gt;
+&lt;p&gt;在每一个 node 节点都存在一份，在 node 节点上的资源操作指令由 kubelet 来执行, 直接跟容器引擎交互实现容器的生命周期管理。&lt;/p&gt;
 
-&lt;col  class=&#34;org-left&#34; /&gt;
-&lt;/colgroup&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;组件&lt;/th&gt;
-&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;描述&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
+&lt;p&gt;&lt;a id=&#34;org2c78346&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;kubelet&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;在每一个 node 节点都存在一份，在 node 节点上的资源操作指令由 kubelet 来执行&lt;/td&gt;
-&lt;/tr&gt;
+&lt;h3 id=&#34;kube-proxy&#34;&gt;kube-proxy&lt;/h3&gt;
 
+&lt;p&gt;代理服务，处理服务间负载均衡；负责写入规则至 IPTABLES、IPVS 实现服务映射访问的。&lt;/p&gt;
 
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;kube-proxy&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;代理服务，处理服务间负载均衡；&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;pod&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;k8s 管理的基本单元（最小单元），pod 内部是容器，k8s 不直接管理容器，而是管理pod；&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgff3b4e3&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org1a12d32&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;组件通信&#34;&gt;组件通信&lt;/h2&gt;
 
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-arch/k8s-component-arch.jpg&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org2543d3b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org028c0e9&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;参考资料&#34;&gt;参考资料&lt;/h1&gt;
 
@@ -2484,24 +2591,6 @@ fec-builder build -e production
 &lt;h3 id=&#34;调试-a-id-sec-4-name-sec-4-a&#34;&gt;调试&lt;a id=&#34;sec-4&#34; name=&#34;sec-4&#34;&gt;&lt;/a&gt;&lt;/h3&gt;
 
 &lt;p&gt;使用chrome开发者工具进行调试，详见：&lt;a href=&#34;https://www.jianshu.com/p/cf36d48652f4&#34;&gt;Chrome 开发者工具中文指南&lt;/a&gt;&lt;/p&gt;
-</description>
-        </item>
-        
-        <item>
-            <title>emacs整体介绍</title>
-            <link>http://mospany.github.io/2017/08/28/emacs-introduction/</link>
-            <pubDate>Mon, 28 Aug 2017 07:39:07 CST</pubDate>
-            <author>Mospan</author>
-            <guid>http://mospany.github.io/2017/08/28/emacs-introduction/</guid>
-            <description>
-
-&lt;h1 id=&#34;描述&#34;&gt;描述&lt;/h1&gt;
-
-&lt;p&gt;此PPT上描述的大部分功能是我折腾玩过的，现在整理分享出来以便有兴趣的读者对强大几乎无所不能的emacs有个大致的了解，让更多的人加入emacs大阵营中来。&lt;/p&gt;
-
-&lt;h1 id=&#34;ppt内容&#34;&gt;PPT内容&lt;/h1&gt;
-
-&lt;p&gt;&lt;center&gt;&lt;embed src=&#34;http://blog.mospan.cn/post/img/Emacs-introduction.pdf&#34; width=100% height=&#34;800&#34;&gt;&lt;/center&gt;&lt;/p&gt;
 </description>
         </item>
         

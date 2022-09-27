@@ -6,7 +6,7 @@
     <description>Recent content in Tags on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Wed, 21 Sep 2022 21:01:59 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 27 Sep 2022 19:58:47 +0800</lastBuildDate>
     
 	<atom:link href="http://mospany.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +14,7 @@
     <item>
       <title></title>
       <link>http://mospany.github.io/tags/</link>
-      <pubDate>Wed, 21 Sep 2022 21:01:59 +0800</pubDate>
+      <pubDate>Tue, 27 Sep 2022 19:58:47 +0800</pubDate>
       
       <guid>http://mospany.github.io/tags/</guid>
       <description></description>
@@ -23,9 +23,18 @@
     <item>
       <title>K8S</title>
       <link>http://mospany.github.io/tags/k8s/</link>
-      <pubDate>Wed, 21 Sep 2022 21:01:59 +0800</pubDate>
+      <pubDate>Tue, 27 Sep 2022 19:58:47 +0800</pubDate>
       
       <guid>http://mospany.github.io/tags/k8s/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>YAML</title>
+      <link>http://mospany.github.io/tags/yaml/</link>
+      <pubDate>Tue, 27 Sep 2022 19:58:47 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/tags/yaml/</guid>
       <description></description>
     </item>
     

@@ -1,20 +1,19 @@
 <!DOCTYPE HTML>
 <html lang="zh-CN">
 <head>
-	<meta name="generator" content="Hugo 0.55.6" />
   <meta charset="UTF-8">
   <base href="http://mospany.github.io/">
-  <title>墨斯潘園</title>
+  <title>K8S学习笔记(05): yaml语法格式 - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
-  <meta name="keywords" content="">
-  <meta name="description" content="墨斯潘園">
+  <meta name="keywords" content="K8S,YAML,">
+  <meta name="description" content="k8s支持的文件格式 Kubernetes支持YAML和JSON格式管理资源对象 JSON格式：主要用于api接口之间消息的传递 YAML格式：用">
   <meta name="author" content="mospan">
-  <meta itemprop="name" content="墨斯潘園">
-  <meta itemprop="description" content="墨斯潘園">
+  <meta itemprop="name" content="K8S学习笔记(05): yaml语法格式 - 墨斯潘園">
+  <meta itemprop="description" content="k8s支持的文件格式 Kubernetes支持YAML和JSON格式管理资源对象 JSON格式：主要用于api接口之间消息的传递 YAML格式：用">
   <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
-  <meta name="twitter:title" content="墨斯潘園" />
+  <meta name="twitter:title" content="K8S学习笔记(05): yaml语法格式 - 墨斯潘園" />
   
   <meta name="twitter:description" content="">
   <link rel="shortcut icon" href="img/favicon.ico"/>
@@ -60,179 +59,239 @@
 
   </header>
   <div id="container">
-      
-    <div id="main">
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="http://mospany.github.io/2017/03/02/openresty&#43;redis-practices/" title="openresty&#43;redis实践记录" itemprop="url">
-    <h1 itemprop="name">openresty&#43;redis实践记录</h1>
-    <p itemprop="description">安装 openresty安装 详见 openresty安装 redis安装 执行如下命令： sudo apt-get update sudo apt-get install redis-server 详见 Ubuntu安装配置Redis redis启</p>
-    <time datetime="2017-03-02 11:14:08 &#43;0800 CST" itemprop="datePublished">2017年03月02日</time>
-  </a>
-</section>
+    <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody">
+    <header class="article-info clearfix">
+  <h1 itemprop="name">
+      <a href="http://mospany.github.io/2022/09/27/k8s-yaml/" title="K8S学习笔记(05): yaml语法格式" itemprop="url">K8S学习笔记(05): yaml语法格式</a>
+  </h1>
+  <p class="article-author">By 
+    
+      <a href="http://blog.mospan.cn" title="mospan">mospan</a>
+    
+  </p>
+  <p class="article-time">
+    <time datetime="2022-09-27 19:58:47 &#43;0800 CST" itemprop="datePublished">2022年09月27日</time>
+  </p>
+</header>
 
-      
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="http://mospany.github.io/2017/03/01/personal-interview-questions/" title="个人常用面试题及其参考答案" itemprop="url">
-    <h1 itemprop="name">个人常用面试题及其参考答案</h1>
-    <p itemprop="description">开篇 请您自我介绍一下你自己？ 回答提示：一般人回答这个问题过于平常，只说姓名、年龄、爱好、工作经验，这些在简历上都有。其实，企业最希望知道的是</p>
-    <time datetime="2017-03-01 19:27:08 &#43;0800 CST" itemprop="datePublished">2017年03月01日</time>
-  </a>
-</section>
+	<div class="article-content">
+    
+    
 
-      
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="http://mospany.github.io/2016/09/06/dpdk-develop-notes/" title="DPDK开发随记" itemprop="url">
-    <h1 itemprop="name">DPDK开发随记</h1>
-    <p itemprop="description">性能调优 rte_rand() 现象：使用top perf -g查看时发现__drand48_iterate()所占比例达到40%以上。 分析：跟踪__drand48_ite</p>
-    <time datetime="2016-09-06 19:37:20 &#43;0800 CST" itemprop="datePublished">2016年09月06日</time>
-  </a>
-</section>
+<p><a id="orgfba5ff2"></a></p>
 
-      
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="http://mospany.github.io/2016/05/29/org-manual/" title="org-mode使用手册" itemprop="url">
-    <h1 itemprop="name">org-mode使用手册</h1>
-    <p itemprop="description">总介 摘要 : org大概能够做什么的摘要 Org是一种通过纯文本方式来快速而有效地记录笔记,处理待办列表,做项目计划的mode. Org通过一些NO</p>
-    <time datetime="2016-05-29 09:33:53 &#43;0800 CST" itemprop="datePublished">2016年05月29日</time>
-  </a>
-</section>
+<h1 id="k8s支持的文件格式">k8s支持的文件格式</h1>
 
-      
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="http://mospany.github.io/2016/05/08/my-blog-add-pagination/" title="我的博客演进之路(06)--添加文章列表分页显示" itemprop="url">
-    <h1 itemprop="name">我的博客演进之路(06)--添加文章列表分页显示</h1>
-    <p itemprop="description">背景 由于原来的主页显示是完全平铺，当文章数量较多时， 下拉进度条太长不方便阅读。因此，通过添加文章列表分页显示功能 可以更好的显示与阅读， 每页设</p>
-    <time datetime="2016-05-08 11:24:43 &#43;0800 CST" itemprop="datePublished">2016年05月08日</time>
-  </a>
-</section>
+<p>Kubernetes支持YAML和JSON格式管理资源对象</p>
 
-      
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="http://mospany.github.io/2016/03/31/independent-mailbox/" title="怎样才能拥有个人独立域名邮箱？" itemprop="url">
-    <h1 itemprop="name">怎样才能拥有个人独立域名邮箱？</h1>
-    <p itemprop="description">背景 在创建开源项目或小团队创业初期，由于没有精力或财力自己搭建内部邮件服务器，为了使大家沟通更顺畅更一致，也为了与客户沟通显得更加专业一些，</p>
-    <time datetime="2016-03-31 21:11:24 &#43;0800 CST" itemprop="datePublished">2016年03月31日</time>
-  </a>
-</section>
+<ul>
+<li>JSON格式：主要用于api接口之间消息的传递</li>
+<li>YAML格式：用于配置和管理，YAML是一种简洁的非标记性语言，内容格式人性化，较易读</li>
+</ul>
 
-      
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="http://mospany.github.io/2016/03/14/xns-on-dpdk/" title="基于DPDK开发高性能DNS服务器实践总结" itemprop="url">
-    <h1 itemprop="name">基于DPDK开发高性能DNS服务器实践总结</h1>
-    <p itemprop="description">简述 有幸全程参与了基于DPDK1下一代高性能CloudXNS2服务器开发，从未知到慢慢熟悉，其中也走了些弯路也 踩过一些坑，一路走来有些感受与</p>
-    <time datetime="2016-03-14 22:02:57 &#43;0800 CST" itemprop="datePublished">2016年03月14日</time>
-  </a>
-</section>
+<p><a id="org3c21164"></a></p>
 
-      
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="http://mospany.github.io/2016/02/21/my-blog-add-visit-counter/" title="我的博客演进之路(05)--添加访问统计" itemprop="url">
-    <h1 itemprop="name">我的博客演进之路(05)--添加访问统计</h1>
-    <p itemprop="description">申请 注册 登陆到amazingcounters进行账号注册。 申请 大致原理为通过注册把自己的域名与统计网站关联后，生成一段html代码拷贝到自己</p>
-    <time datetime="2016-02-21 09:52:16 &#43;0800 CST" itemprop="datePublished">2016年02月21日</time>
-  </a>
-</section>
+<h1 id="yaml语言格式">YAML语言格式</h1>
 
-      
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="http://mospany.github.io/2016/02/20/my-blog-modify-container-size/" title="我的博客演进之路(04)--调整文章版面显示大小" itemprop="url">
-    <h1 itemprop="name">我的博客演进之路(04)--调整文章版面显示大小</h1>
-    <p itemprop="description">由于原来的版面显示有点过小，在现在的宽屏面前有些浪费。于是为了更好的进行阅读显示，特做了如下修改： 打开文件./themes/rapid/st</p>
-    <time datetime="2016-02-20 10:56:35 &#43;0800 CST" itemprop="datePublished">2016年02月20日</time>
-  </a>
-</section>
+<p>● 大小写敏感<br />
+● 使用缩进表示层级关系<br />
+● 不支持Tab键制表符缩进，只使用空格缩进<br />
+● 缩进的空格数目不重要，只要相同层级的元素左侧对齐即可，通常开头缩进两个空格<br />
+● 符号字符后缩进一个空格，如冒号，逗号，短横杠（-）等<br />
+● “&#x2014;”表示YAML格式，一个文件的开始，用于分隔文件<br />
+● “#”表示注释</p>
 
-      
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="http://mospany.github.io/2016/02/14/pango-development-quick-start/" title="pango设计与实现(02)--快速开始" itemprop="url">
-    <h1 itemprop="name">pango设计与实现(02)--快速开始</h1>
-    <p itemprop="description">安装 安装前准备 确保你的本地环境已经安装好如下软件： git. Go 1.4+ 源码安装 下载源码到本地 git clone https://github.com/mospany/pango.git 设置好环境变量 cd pango export GOPATH=`pwd` 编译 make 如果编译成功，将在当前目录下</p>
-    <time datetime="2016-02-14 16:57:25 &#43;0800 CST" itemprop="datePublished">2016年02月14日</time>
-  </a>
-</section>
+<p><a id="orgd843414"></a></p>
 
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      <nav id="page-nav" class="clearfix">
-          
+<h1 id="编写资源配置清单">编写资源配置清单</h1>
+
+<p>[root@master test]# vim nginx-test.yaml</p>
+
+<pre><code>#指定api版本标签
+apiVersion: apps/v1
+#定义资源的类型/角色，deployment为副本控制器
+#此处资源类型可以是Deployment、Job、Ingress、Service等
+kind: Deployment
+#定义资源的元数据信息，比如资源的名称、namespace、标签等信息
+metadata:
+  #定义资源的名称，在同一个namespace空间中必须是唯一的
+  name: nginx-test
+  lables:
+    app: nginx
+#定义deployment资源需要的参数属性，诸如是否在容器失败时重新启动容器的属性
+spec:
+  #定义副本数量
+  replicas: 3
+  #定义标签选择器
+  selector:
+    #定义匹配标签
+    matchLabels:
+      #需与后面的.spec.template.metadata.labels定义的标签保持一致
+      app: nginx
+  #定义业务模板，如果有多个副本，所有副本的属性会按照模板的相关配置进行匹配
+  template:
+    metadata:
+      #定义Pod副本将使用的标签，需与前面的.spec.selector.matchLabels定义的标签保持一致
+      labels:
+        app: nginx
+    spec:
+      #定义容器属性
+      containers:
+      #定义一个容器名，一个-name:定义一个容器
+      - name: nginx
+        #定义容器使用的镜像以及版本
+        image: nginx:1.15.4
+        ports:
+        #定义容器对外的端口
+        - containerPort: 80
+</code></pre>
+
+<p><a id="org32111ee"></a></p>
+
+<h1 id="创建service服务对外提供访问并测试">创建service服务对外提供访问并测试</h1>
+
+<p>[root@master test]# vim nginx-svc-test.yaml</p>
+
+<pre><code>apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-svc
+  labels:
+    app: nginx
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    #此处定义的selector要与deployment所定义的selector相同
+    #service依靠标签选择器来检索提供服务的nodes
+    app: nginx
+</code></pre>
+
+<p><a id="org7f24d32"></a></p>
+
+<h1 id="详解k8s中的port">详解k8s中的port</h1>
+
+<p>port是k8s集群内部访问service的端口，即通过clusterIP:port可以从Pod所在的Node上访问到service</p>
+
+<ul>
+<li>nodePort<br />
+nodePort是外部访问k8s集群中service的端口，通过nodeIP:nodePort可以从外部访问到某个service</li>
+<li>targetPort<br />
+targetPort是Pod的端口，从port或nodePort来的流量经过kube-proxy反向代理负载均衡转发到后端Pod的targetPort上，最后进入容器。</li>
+<li>containerPort<br />
+containerPort是Pod内部容器的端口，targetPort映射到containerPort。</li>
+</ul>
+
+<p><a id="orgbae1b9d"></a></p>
+
+<h1 id="获取资源配置清单的总结">获取资源配置清单的总结</h1>
+
+<ul>
+<li><p>没有相关资源，使用run命令&#x2013;dry-run选项</p>
+
+<pre><code>$ kubectl run dryrun-test --image=nginx --port=80 --replicas=3 --dry-run -o yaml &gt; dryrun-test.yaml
+</code></pre></li>
+
+<li><p>已有相关资源，使用get命令&#x2013;export选项</p>
+
+<pre><code>$ kubectl get deploy dryrun-test --export -o yaml &gt; export-test.yaml
+</code></pre></li>
+</ul>
+
+<p><strong>注</strong> ：</p>
+
+<ul>
+<li>现在不推荐使用“ export”（从1.14版本开始，通常应该在1.18版本中消失（在changelog中找不到））</li>
+<li>&#x2013;dry-run is deprecated and can be replaced with &#x2013;dry-run=client.</li>
+</ul>
+
+<p><a id="org86e8206"></a></p>
+
+<h1 id="参考资料">参考资料</h1>
+
+<ol>
+<li><a href="https://www.escapelife.site/posts/8032061c.html">Kubernetes之YAML语法</a></li>
+</ol>
+
+    <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+  <div style="float:right;margin-top:0px;">
+    <img src="/img/qrcode.jpg" width="129px" height="129px"/>
+    <div style="text-align:center;">微信扫一扫</div>
+  </div>
+  <div style="float:left;margin-top:0px;">
+    <img src="/img/rewardcode.jpg" width="129px" height="129px"/>
+  </div>
+  <div>
+    <p style="margin-top:0px;">作者：<a target="_blank" href="http://blog.mospan.cn/">mospan</a>
+      <br />微信关注：墨斯潘園
+      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2022/09/27/k8s-yaml/">http://mospany.github.io/2022/09/27/k8s-yaml/</a>
+      <br />
+      文章版权归本人所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+  </div>
+</div>
 
 
-<a aria-label="First" href="http://mospany.github.io//">
-  <span aria-hidden="true">««</span>
-</a>
+	</div>
+  <footer class="article-footer clearfix">
+  
 
-<a aria-label="Previous" href="http://mospany.github.io//page/2/">
-  <span aria-hidden="true">«</span>
-</a>
-
-
-<a href="http://mospany.github.io//">
-  1
-</a>
-
-<a href="http://mospany.github.io//page/2/">
-  2
-</a>
-
-<a class="active" href="http://mospany.github.io//page/3/">
-  3
-</a>
-
-<a href="http://mospany.github.io//page/4/">
-  4
-</a>
+<div class="article-tags">
+  <span></span>
+  
+  <a href="/tags/k8s">K8S</a>
+  
+  <a href="/tags/yaml">YAML</a>
+  
+</div>
 
 
-<a aria-label="Next" href="http://mospany.github.io//page/4/">
-  <span aria-hidden="true">»</span>
-</a>
 
-<a aria-label="Last" href="http://mospany.github.io//page/4/">
-  <span aria-hidden="true">»»</span>
-</a>
+<div class="article-categories">
+  <span></span>
+  
+  <a class="article-category-link" href="/categories/k8s">K8S</a>
+  
+  <a class="article-category-link" href="/categories/yaml">YAML</a>
+  
+</div>
 
 
-      </nav>
+
+  <div class="article-share" id="share">
+    <div data-url="http://mospany.github.io/2022/09/27/k8s-yaml/" data-title="K8S学习笔记(05): yaml语法格式" data-tsina="3833537679" class="share clearfix">
     </div>
+  </div>
+</footer>
+
+	</article>
+  
+
+
+
+
+
+<div id="git-comments"></div>
+<link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
+<script src="https://billts.site/js/gitment.js"></script>
+<script>
+var gitment = new Gitment({
+  id: '<%= page.date %>',
+  owner: 'mospany',
+  repo: 'mospan-hugo-blog-gitment',
+  oauth: {
+    client_id: '0cafe299c964f0af2d1e',
+    client_secret: 'ec47ee9481210935a662298791c31da203694a8f',
+  },
+})
+gitment.render('git-comments')
+</script>    
+
+
+</div>
+
     <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
@@ -645,6 +704,38 @@ $(document).ready(function(){
 
 <script type="text/javascript">
 $(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
   var $this = $('.share'),
       url = $this.attr('data-url'),
       encodedUrl = encodeURIComponent(url),
@@ -671,6 +762,27 @@ $(document).ready(function(){
 });
 </script>
 
+
+<link rel="stylesheet" href="http://mospany.github.io/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="http://mospany.github.io/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
 
 
 

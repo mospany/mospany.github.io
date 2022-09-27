@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>YAML on 墨斯潘園</title>
+    <link>http://mospany.github.io/tags/yaml/</link>
+    <description>Recent content in YAML on 墨斯潘園</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 27 Sep 2022 19:58:47 +0800</lastBuildDate>
+    
+	<atom:link href="http://mospany.github.io/tags/yaml/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>K8S学习笔记(05): yaml语法格式</title>
+      <link>http://mospany.github.io/2022/09/27/k8s-yaml/</link>
+      <pubDate>Tue, 27 Sep 2022 19:58:47 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2022/09/27/k8s-yaml/</guid>
+      <description>k8s支持的文件格式 Kubernetes支持YAML和JSON格式管理资源对象 JSON格式：主要用于api接口之间消息的传递 YAML格式：用</description>
+    </item>
+    
+  </channel>
+</rss>
