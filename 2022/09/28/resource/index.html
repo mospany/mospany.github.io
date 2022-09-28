@@ -1,0 +1,833 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <base href="http://mospany.github.io/">
+  <title>K8S学习笔记(06): 资源 - 墨斯潘園</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+  <meta name="keywords" content="K8S,技术文章,">
+  <meta name="description" content="简介 k8s中所有的内容都抽象为资源， 资源实例化之后，叫做对象。 资源类型介绍 工作负载型资源对象（workload）：Pod，ReplicaSe">
+  <meta name="author" content="mospan">
+  <meta itemprop="name" content="K8S学习笔记(06): 资源 - 墨斯潘園">
+  <meta itemprop="description" content="简介 k8s中所有的内容都抽象为资源， 资源实例化之后，叫做对象。 资源类型介绍 工作负载型资源对象（workload）：Pod，ReplicaSe">
+  <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@mospan" />
+  <meta name="twitter:title" content="K8S学习笔记(06): 资源 - 墨斯潘園" />
+  
+  <meta name="twitter:description" content="">
+  <link rel="shortcut icon" href="img/favicon.ico"/>
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png" />
+  <link rel="stylesheet" href="highlight/styles/github.css">
+  <script src="highlight/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <link rel="stylesheet" href="font/hack/css/hack.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <div>
+  
+  <div id="imglogo">
+    <a href="http://mospany.github.io/"><img src="http://mospany.github.io/img/logo.jpg" alt="墨斯潘園" title="墨斯潘園"/></a>
+  </div>
+  
+  <div id="textlogo">
+    <h1 class="site-name"><a href="http://mospany.github.io/" title="墨斯潘園">墨斯潘園</a></h1>
+    <h2 class="blog-motto">技术改变生活，学习成就未来</h2>
+  </div>
+  <div class="navbar"><a class="navbutton navmobile" href="#" title="menu"></a></div>
+  <nav class="animated">
+    <ul>
+      
+      <li><a href="/">首页</a></li> 
+      
+      <li><a href="/about">关于</a></li> 
+      
+      <li>
+        <form class="search" method="get" action="https://www.google.com/search">
+          <div>
+            <input type="text" id="search" name="q" placeholder="搜索">
+          </div>
+        </form>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+  </header>
+  <div id="container">
+    <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody">
+    <header class="article-info clearfix">
+  <h1 itemprop="name">
+      <a href="http://mospany.github.io/2022/09/28/resource/" title="K8S学习笔记(06): 资源" itemprop="url">K8S学习笔记(06): 资源</a>
+  </h1>
+  <p class="article-author">By 
+    
+      <a href="http://blog.mospan.cn" title="mospan">mospan</a>
+    
+  </p>
+  <p class="article-time">
+    <time datetime="2022-09-28 20:10:36 &#43;0800 CST" itemprop="datePublished">2022年09月28日</time>
+  </p>
+</header>
+
+	<div class="article-content">
+    
+    
+
+<p><a id="org660c89a"></a></p>
+
+<h1 id="简介">简介</h1>
+
+<p>k8s中所有的内容都抽象为资源， 资源实例化之后，叫做对象。</p>
+
+<p><a id="org85b310d"></a></p>
+
+<h1 id="资源类型介绍">资源类型介绍</h1>
+
+<ul>
+<li>工作负载型资源对象（workload）：Pod，ReplicaSet，Deployment，StatefulSet，DaemonSet，Job，Cronjob &#x2026;</li>
+<li>服务发现及均衡资源对象：Service，Ingress &#x2026;</li>
+<li>配置与存储资源对象：Volume(存储卷)，CSI(容器存储接口,可以扩展各种各样的第三方存储卷)，ConfigMap，Secret，DownwardAPI</li>
+<li>集群级资源：Namespace，Node，Role，ClusterRole，RoleBinding，ClusterRoleBinding</li>
+<li>元数据型资源：HPA，PodTemplate，LimitRange</li>
+</ul>
+
+<p><a id="org6bacf92"></a></p>
+
+<h1 id="工作负载资源">工作负载资源</h1>
+
+<p><a id="org82a2012"></a></p>
+
+<h2 id="deployment">Deployment</h2>
+
+<p>为了更好地解决服务编排的问题，k8s在V1.2版本开始，引入了deployment控制器，值得一提的是，这种控制器并不直接管理pod，<br />
+而是通过管理replicaset来间接管理pod，即：deployment管理replicaset，replicaset管理pod。所以deployment比replicaset的功能更强大。</p>
+
+<p><img src="http://blog.mospan.cn/post/img/k8s/resource/resource.png" alt="img" /></p>
+
+<p>deployment的主要功能有下面几个：</p>
+
+<ul>
+<li>支持replicaset的所有功能</li>
+<li>支持发布的停止、继续</li>
+<li>支持版本的滚动更新和版本回退</li>
+</ul>
+
+<p><a id="org53fb6bd"></a></p>
+
+<h3 id="编写资源清单">编写资源清单</h3>
+
+<pre><code>$ cat test-deploy.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-deployment
+  namespace: dev
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+     app: nginx-pod
+  template:
+    metadata:
+      labels:
+        app: nginx-pod
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.17.1
+</code></pre>
+
+<p><a id="org97f8964"></a></p>
+
+<h3 id="运行清单">运行清单</h3>
+
+<pre><code>$ k apply -f test-deploy.yaml
+deployment.apps/test-deployment created 
+</code></pre>
+
+<p><a id="org947b655"></a></p>
+
+<h3 id="查看效果">查看效果</h3>
+
+<pre><code>$ k get deploy -A
+  NAMESPACE              NAME                           READY   UP-TO-DATE   AVAILABLE   AGE
+  dev                    test-deployment                3/3     3            3           94s
+  guestbook-system       guestbook-controller-manager   1/1     1            1           59d
+  kube-system            coredns                        2/2     2            2           63d
+  kubernetes-dashboard   dashboard-metrics-scraper      1/1     1            1           14d
+  kubernetes-dashboard   kubernetes-dashboard           1/1     1            1           14d
+</code></pre>
+
+<p>可以看出deploy已经运行成功，3副本已处于READY状态。</p>
+
+<p>再查看它运行中的清单:</p>
+
+<pre><code>$ k get deploy -n dev test-deployment -o yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: &quot;1&quot;
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {&quot;apiVersion&quot;:&quot;apps/v1&quot;,&quot;kind&quot;:&quot;Deployment&quot;,&quot;metadata&quot;:{&quot;annotations&quot;:{},&quot;name&quot;:&quot;test-deployment&quot;,&quot;namespace&quot;:&quot;dev&quot;},&quot;spec&quot;:{&quot;replicas&quot;:3,&quot;selector&quot;:{&quot;matchLabels&quot;:{&quot;app&quot;:&quot;nginx-pod&quot;}},&quot;template&quot;:{&quot;metadata&quot;:{&quot;labels&quot;:{&quot;app&quot;:&quot;nginx-pod&quot;}},&quot;spec&quot;:{&quot;containers&quot;:[{&quot;image&quot;:&quot;nginx:1.17.1&quot;,&quot;name&quot;:&quot;nginx&quot;}]}}}}
+  creationTimestamp: &quot;2022-09-28T12:35:22Z&quot;
+  generation: 1
+  name: test-deployment
+  namespace: dev
+  resourceVersion: &quot;5045809&quot;
+  uid: 40feb568-1343-4046-8708-7e1bf5e5c384
+spec:
+  #spec.progressDeadlineSeconds 是可选配置项，用来指定在系统报告Deployment的failed progressing一一表现为resource的状态中 type=Progressing 、 Status=False 、 Reason=ProgressDeadlineExceeded 前可以等待的Deployment进行的秒数。Deployment controller会继续重试该Deployment。未来，在实现了自动回滚后， deployment controller在观察到这种状态时就会自动回滚。
+  progressDeadlineSeconds: 600
+  #.spec.replicas 是可以选字段，指定期望的pod数量，默认是1。
+  replicas: 3
+  revisionHistoryLimit: 10
+  #.spec.selector是可选字段，用来指定 label selector ，圈定Deployment管理的pod范围。如果被指定， .spec.selector 必须匹配 .spec.template.metadata.labels，否则它将被API拒绝。如果.spec.selector 没有被指定， .spec.selector.matchLabels 默认是.spec.template.metadata.labels。在Pod的template跟.spec.template不同或者数量超过了.spec.replicas规定的数量的情况下，Deployment会杀掉label跟selector不同的Pod。
+  selector:
+    matchLabels:
+      app: nginx-pod
+  #.spec.strategy 指定新的Pod替换旧的Pod的策略。 .spec.strategy.type 可以是&quot;Recreate&quot;或者是&quot;RollingUpdate&quot;。&quot;RollingUpdate&quot;是默认值。
+  strategy:
+    rollingUpdate:
+      #spec.strategy.rollingUpdate.maxSurge 是可选配置项，用来指定可以超过期望的Pod数量的最大个数。该值可以是一个绝对值（例如5）或者是期望的Pod数量的百分比（例如10%）。当 MaxUnavailable 为0时该值不可以为0。通过百分比计算的绝对值向上取整。默认值是1。
+      maxSurge: 25%
+      #.spec.strategy.rollingUpdate.maxUnavailable 是可选配置项，用来指定在升级过程中不可用Pod的最大数量。该值可以是一个绝对值（例如5），也可以是期望Pod数量的百分比（例如10%）。通过计算百分比的绝对值向下取整。 如 果 .spec.strategy.rollingUpdate.maxSurge 为0时，这个值不可以为0。默认值是1。例如，该值设置成30%，启动rolling update后旧的ReplicatSet将会立即缩容到期望的Pod数量的70%。新的Pod ready后，随着新的ReplicaSet的扩容，旧的ReplicaSet会进一步缩容确保在升级的所有时刻可以用的Pod数量至少是期望Pod数量的70%。
+      maxUnavailable: 25%
+    #滚动更新，简单定义 更新期间pod最多有几个等。可以指定 maxUnavailable 和 maxSurge 来控制 rolling update 进程。
+    type: RollingUpdate
+  #.spec.template 是 .spec中唯一要求的字段。.spec.template 是 pod template. 它跟 Pod有一模一样的schema，除了它是嵌套的并且不需要apiVersion 和 kind字段。另外为了划分Pod的范围，Deployment中的pod template必须指定适当的label（不要跟其他controller重复了，参考selector）和适当的重启策略。.spec.template.spec.restartPolicy 可以设置为 Always , 如果不指定的话这就是默认配置。
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: nginx-pod
+    spec:
+      containers:
+      - image: nginx:1.17.1
+        imagePullPolicy: IfNotPresent
+        name: nginx
+        resources: {}
+        #terminationMessagePath 表示容器的异常终止消息的路径，默认在 /dev/termination-log 下。当容器退出时，可以通过容器的状态看到退出信息。
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      #“ClusterFirst“:如果DNS查询与配置好的默认集群域名前缀不匹配，则将查询请求转发到从节点继承而来，作为查询的上游服务器。
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      #spec:schedulername参数指定调度器的名字，可以为 pod 选择某个调度器进行调度
+      schedulerName: default-scheduler
+      #安全上下文（Security Context）定义 Pod 或 Container 的特权与访问控制设置。
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 3
+  conditions:
+  - lastTransitionTime: &quot;2022-09-28T12:35:25Z&quot;
+    lastUpdateTime: &quot;2022-09-28T12:35:25Z&quot;
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: &quot;True&quot;
+    type: Available
+  - lastTransitionTime: &quot;2022-09-28T12:35:22Z&quot;
+    lastUpdateTime: &quot;2022-09-28T12:35:25Z&quot;
+    message: ReplicaSet &quot;test-deployment-5d9c9b97bb&quot; has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: &quot;True&quot;
+    type: Progressing
+  observedGeneration: 1
+  readyReplicas: 3
+  replicas: 3
+  updatedReplicas: 3
+</code></pre>
+
+<p><a id="org9fc5244"></a></p>
+
+<h1 id="参考资料">参考资料</h1>
+
+<p>1.<a href="https://blog.51cto.com/u_15155091/2723613">k8s之terminationMessagePath</a><br />
+2.<a href="https://blog.csdn.net/dkfajsldfsdfsd/article/details/81209150">Kubernetes之DNS</a><br />
+3.<a href="https://www.jianshu.com/p/1f64a4694ace">Kubernetes——调度器Scheduler</a><br />
+4.<a href="https://cloud.tencent.com/developer/article/1748675">k8s之securityContext</a></p>
+
+    <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+  <div style="float:right;margin-top:0px;">
+    <img src="/img/qrcode.jpg" width="129px" height="129px"/>
+    <div style="text-align:center;">微信扫一扫</div>
+  </div>
+  <div style="float:left;margin-top:0px;">
+    <img src="/img/rewardcode.jpg" width="129px" height="129px"/>
+  </div>
+  <div>
+    <p style="margin-top:0px;">作者：<a target="_blank" href="http://blog.mospan.cn/">mospan</a>
+      <br />微信关注：墨斯潘園
+      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2022/09/28/resource/">http://mospany.github.io/2022/09/28/resource/</a>
+      <br />
+      文章版权归本人所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+  </div>
+</div>
+
+
+	</div>
+  <footer class="article-footer clearfix">
+  
+
+<div class="article-tags">
+  <span></span>
+  
+  <a href="/tags/k8s">K8S</a>
+  
+  <a href="/tags/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0">技术文章</a>
+  
+</div>
+
+
+
+<div class="article-categories">
+  <span></span>
+  
+  <a class="article-category-link" href="/categories/k8s">K8S</a>
+  
+  <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0">技术文章</a>
+  
+</div>
+
+
+
+  <div class="article-share" id="share">
+    <div data-url="http://mospany.github.io/2022/09/28/resource/" data-title="K8S学习笔记(06): 资源" data-tsina="3833537679" class="share clearfix">
+    </div>
+  </div>
+</footer>
+
+	</article>
+  
+
+
+
+
+
+<div id="git-comments"></div>
+<link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
+<script src="https://billts.site/js/gitment.js"></script>
+<script>
+var gitment = new Gitment({
+  id: '<%= page.date %>',
+  owner: 'mospany',
+  repo: 'mospan-hugo-blog-gitment',
+  oauth: {
+    client_id: '0cafe299c964f0af2d1e',
+    client_secret: 'ec47ee9481210935a662298791c31da203694a8f',
+  },
+})
+gitment.render('git-comments')
+</script>    
+
+
+</div>
+
+    <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+  
+
+<div class="categorieslist">
+  <p class="asidetitle">分类</p>
+  <ul>
+    
+    <li><a href="http://mospany.github.io/categories/%e5%b7%a5%e5%85%b7%e4%bd%bf%e7%94%a8" title="工具使用">工具使用<sup>3</sup></a></li>
+    
+    <li><a href="http://mospany.github.io/categories/%e6%8a%80%e6%9c%af%e6%96%87%e7%ab%a0" title="技术文章">技术文章<sup>33</sup></a></li>
+    
+    <li><a href="http://mospany.github.io/categories/%e7%94%9f%e6%b4%bb%e8%ae%b0%e5%bd%95" title="生活记录">生活记录<sup>1</sup></a></li>
+    
+    <li><a href="http://mospany.github.io/categories/%e8%81%8c%e5%9c%ba%e4%ba%ba%e7%94%9f" title="职场人生">职场人生<sup>1</sup></a></li>
+    
+    <li><a href="http://mospany.github.io/categories/%e8%af%bb%e4%b9%a6%e7%ac%94%e8%ae%b0" title="读书笔记">读书笔记<sup>2</sup></a></li>
+    
+  </ul>
+</div>
+
+
+
+  
+
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+      
+			<li><a href="http://mospany.github.io/tags/" title=""><sup>4</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/dns" title="dns">dns<sup>2</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/dpdk" title="dpdk">dpdk<sup>2</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/emacs" title="emacs">emacs<sup>5</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/hugo" title="hugo">hugo<sup>3</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/ipv6" title="ipv6">ipv6<sup>2</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/k8s" title="k8s">k8s<sup>6</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/openresty" title="openresty">openresty<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/org-mode" title="org-mode">org-mode<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/pango" title="pango">pango<sup>2</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/redis" title="redis">redis<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/spacemacs" title="spacemacs">spacemacs<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/vim" title="vim">vim<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/vue" title="vue">vue<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/xns" title="xns">xns<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/yaml" title="yaml">yaml<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e4%ba%91%e8%ae%a1%e7%ae%97" title="云计算">云计算<sup>3</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e4%ba%92%e8%81%94%e7%bd%91" title="互联网">互联网<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e5%89%8d%e7%ab%af" title="前端">前端<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e5%8d%9a%e5%ae%a2" title="博客">博客<sup>7</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e5%b7%a5%e5%85%b7" title="工具">工具<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e5%be%ae%e4%bf%a1" title="微信">微信<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e6%8a%80%e6%9c%af%e6%96%87%e7%ab%a0" title="技术文章">技术文章<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e6%9e%b6%e6%9e%84" title="架构">架构<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e7%8b%ac%e7%ab%8b" title="独立">独立<sup>3</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e7%94%9f%e6%b4%bb%e8%ae%b0%e5%bd%95" title="生活记录">生活记录<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e8%81%8c%e5%9c%ba%e4%ba%ba%e7%94%9f" title="职场人生">职场人生<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e8%af%bb%e4%b9%a6%e7%ac%94%e8%ae%b0" title="读书笔记">读书笔记<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e9%82%ae%e7%ae%b1" title="邮箱">邮箱<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e9%9d%a2%e8%af%95" title="面试">面试<sup>1</sup></a></li>
+      
+		</ul>
+</div>
+
+
+
+    <div class="linkslist">
+  <p class="asidetitle">我的关注</p>
+    <ul>
+          <li>
+            	<a href="http://www.csdn.net/" target="_blank" title="中国软件开发网(CSDN)">中国软件开发网(CSDN)</a>
+          </li>
+          <li>
+            	<a href="http://www.golangtc.com/" target="_blank" title="Golang中国">Golang中国</a>
+          </li>
+          <li>
+            	<a href="http://blog.qiniu.com/" target="_blank" title="七牛团队博客">七牛团队博客</a>
+          </li>
+          <li>
+            	<a href="http://csrd.aliapp.com/" target="_blank" title="阿里核心系统团队博客">阿里核心系统团队博客</a>
+          </li>
+          <li>
+            	<a href="http://coolshell.cn/" target="_blank" title="酷壳－陈浩">酷壳－陈浩</a>
+          </li>
+          <li>
+            	<a href="http://www.ruanyifeng.com/blog/" target="_blank" title="阮一峰的网络日志">阮一峰的网络日志</a>
+          </li>
+          <li>
+            	<a href="https://blog.dandyweng.com/" target="_blank" title="homeschooler－翁天信的博客">homeschooler－翁天信的博客</a>
+          </li>
+          <li>
+            	<a href="http://www.jeffjade.com/" target="_blank" title="晚晴幽草轩">晚晴幽草轩</a>
+          </li>
+          <li>
+            	<a href="https://nicejade.github.io/index.html" target="_blank" title="天意人间舫">天意人间舫</a>
+          </li>
+    </ul>
+</div>
+
+    <div class="linkslist">
+  <p class="asidetitle">在线书籍</p>
+    <ul>
+          <li>
+            	<a href="https://docs.ruanjiadeng.com/gopl-zh/index.html" target="_blank" title="Go语言圣经（中文版）">Go语言圣经（中文版）</a>
+          </li>
+          <li>
+            	<a href="http://studygolang.com/pkgdoc" target="_blank" title="Go语言标准库">Go语言标准库</a>
+          </li>
+          <li>
+            	<a href="http://www.w3school.com.cn/" target="_blank" title="w3school 在线教程">w3school 在线教程</a>
+          </li>
+    </ul>
+</div>
+
+    <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+          <li>
+            	<a href="http://www.cloudxns.net/" target="_blank" title="CloudXNS官网">CloudXNS官网</a>
+          </li>
+          <li>
+            	<a href="http://www.chinatesters.com/" target="_blank" title="华夏评测师家园">华夏评测师家园</a>
+          </li>
+    </ul>
+</div>
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle">归档</p>
+    <ul class="archive-list">
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2022-09">2022年09月</a><span class="archive-list-count">16</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2019-11">2019年11月</a><span class="archive-list-count">3</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2019-10">2019年10月</a><span class="archive-list-count">8</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2019-08">2019年08月</a><span class="archive-list-count">4</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2019-02">2019年02月</a><span class="archive-list-count">3</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2018-02">2018年02月</a><span class="archive-list-count">3</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2017-08">2017年08月</a><span class="archive-list-count">4</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2017-07">2017年07月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2017-03">2017年03月</a><span class="archive-list-count">8</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-09">2016年09月</a><span class="archive-list-count">2</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-05">2016年05月</a><span class="archive-list-count">4</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-03">2016年03月</a><span class="archive-list-count">5</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-02">2016年02月</a><span class="archive-list-count">11</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-01">2016年01月</a><span class="archive-list-count">6</span>
+      </li>
+      
+    </ul>
+
+  </div>
+
+
+  
+
+<div class="tagcloudlist">
+  <p class="asidetitle">标签云</p>
+  <div class="tagcloudlist clearfix">
+    
+    <a href="http://mospany.github.io/tags/" style="font-size: 12px;"></a>
+    
+    <a href="http://mospany.github.io/tags/dns" style="font-size: 12px;">dns</a>
+    
+    <a href="http://mospany.github.io/tags/dpdk" style="font-size: 12px;">dpdk</a>
+    
+    <a href="http://mospany.github.io/tags/emacs" style="font-size: 12px;">emacs</a>
+    
+    <a href="http://mospany.github.io/tags/hugo" style="font-size: 12px;">hugo</a>
+    
+    <a href="http://mospany.github.io/tags/ipv6" style="font-size: 12px;">ipv6</a>
+    
+    <a href="http://mospany.github.io/tags/k8s" style="font-size: 12px;">k8s</a>
+    
+    <a href="http://mospany.github.io/tags/openresty" style="font-size: 12px;">openresty</a>
+    
+    <a href="http://mospany.github.io/tags/org-mode" style="font-size: 12px;">org-mode</a>
+    
+    <a href="http://mospany.github.io/tags/pango" style="font-size: 12px;">pango</a>
+    
+    <a href="http://mospany.github.io/tags/redis" style="font-size: 12px;">redis</a>
+    
+    <a href="http://mospany.github.io/tags/spacemacs" style="font-size: 12px;">spacemacs</a>
+    
+    <a href="http://mospany.github.io/tags/vim" style="font-size: 12px;">vim</a>
+    
+    <a href="http://mospany.github.io/tags/vue" style="font-size: 12px;">vue</a>
+    
+    <a href="http://mospany.github.io/tags/xns" style="font-size: 12px;">xns</a>
+    
+    <a href="http://mospany.github.io/tags/yaml" style="font-size: 12px;">yaml</a>
+    
+    <a href="http://mospany.github.io/tags/%e4%ba%91%e8%ae%a1%e7%ae%97" style="font-size: 12px;">云计算</a>
+    
+    <a href="http://mospany.github.io/tags/%e4%ba%92%e8%81%94%e7%bd%91" style="font-size: 12px;">互联网</a>
+    
+    <a href="http://mospany.github.io/tags/%e5%89%8d%e7%ab%af" style="font-size: 12px;">前端</a>
+    
+    <a href="http://mospany.github.io/tags/%e5%8d%9a%e5%ae%a2" style="font-size: 12px;">博客</a>
+    
+    <a href="http://mospany.github.io/tags/%e5%b7%a5%e5%85%b7" style="font-size: 12px;">工具</a>
+    
+    <a href="http://mospany.github.io/tags/%e5%be%ae%e4%bf%a1" style="font-size: 12px;">微信</a>
+    
+    <a href="http://mospany.github.io/tags/%e6%8a%80%e6%9c%af%e6%96%87%e7%ab%a0" style="font-size: 12px;">技术文章</a>
+    
+    <a href="http://mospany.github.io/tags/%e6%9e%b6%e6%9e%84" style="font-size: 12px;">架构</a>
+    
+    <a href="http://mospany.github.io/tags/%e7%8b%ac%e7%ab%8b" style="font-size: 12px;">独立</a>
+    
+    <a href="http://mospany.github.io/tags/%e7%94%9f%e6%b4%bb%e8%ae%b0%e5%bd%95" style="font-size: 12px;">生活记录</a>
+    
+    <a href="http://mospany.github.io/tags/%e8%81%8c%e5%9c%ba%e4%ba%ba%e7%94%9f" style="font-size: 12px;">职场人生</a>
+    
+    <a href="http://mospany.github.io/tags/%e8%af%bb%e4%b9%a6%e7%ac%94%e8%ae%b0" style="font-size: 12px;">读书笔记</a>
+    
+    <a href="http://mospany.github.io/tags/%e9%82%ae%e7%ae%b1" style="font-size: 12px;">邮箱</a>
+    
+    <a href="http://mospany.github.io/tags/%e9%9d%a2%e8%af%95" style="font-size: 12px;">面试</a>
+    
+  </div>
+</div>
+
+
+
+  
+</aside>
+</div>
+
+  </div>
+  <footer><div id="footer" >
+  
+  <div class="line">
+    <span></span>
+    <div style='background:no-repeat url("http://mospany.github.io/img/author.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  <div class="line">
+    <div style='background:no-repeat url("http://mospany.github.io/img/qiniu_logo.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  <div class="line">
+    <div style='background:no-repeat url("http://mospany.github.io/img/fastweb_logo.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  <div class="line">
+    <div style='background:no-repeat url("http://mospany.github.io/img/leadsec_logo.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  <div class="line">
+    <div style='background:no-repeat url("http://mospany.github.io/img/raisecom_logo.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  <div class="line">
+    <div style='background:no-repeat url("http://mospany.github.io/img/jbt_logo.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  
+  
+  <div class="social-font clearfix">
+    
+    <a href="http://weibo.com/mospan" target="_blank" title="weibo"></a>
+    
+    
+    <a href="https://twitter.com/mospan" target="_blank" title="twitter"></a>
+    
+    
+    <a href="https://github.com/mospany" target="_blank" title="github"></a>
+    
+    
+    <a href="https://www.facebook.com/mospan" target="_blank" title="facebook"></a>
+    
+    
+    <a href="https://www.linkedin.com/mospan" target="_blank" title="linkedin"></a>
+    
+  </div>
+  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/mospany/mospan-hugo-blog/tree/master/themes/hugo-panman-theme" target="_blank" title="hugo-panman-theme">hugo-panman-theme</a> © 2022
+    
+    <a href="http://mospany.github.io/" target="_blank" title="mospan">mospan</a>
+    
+  </p>
+</div>
+</footer>
+  <script src="http://mospany.github.io/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+done = false;
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  $('form.search').on('submit', function (event) {
+    if (false === done) {
+      event.preventDefault();
+      var orgVal = $(this).find('#search').val();
+      $(this).find('#search').val('site:http:\/\/mospany.github.io\/ ' + orgVal);
+      done = true;
+      $(this).submit();
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});
+</script>
+
+
+<link rel="stylesheet" href="http://mospany.github.io/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="http://mospany.github.io/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+
+</body>
+</html>

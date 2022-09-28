@@ -1,0 +1,162 @@
++++
+#+OPTIONS: \n:t
+categories = ["技术文章"]
+date = "2022-09-28T20:10:36+08:00"
+description = ""
+keywords = ["K8S","技术文章"]
+tags = ["K8S","技术文章"]
+title = "K8S学习笔记(06): 资源"
+url = "/2022/09/28/resource/"
+
++++
+
+* 简介
+  k8s中所有的内容都抽象为资源， 资源实例化之后，叫做对象。
+  
+* 资源类型介绍
+  - 工作负载型资源对象（workload）：Pod，ReplicaSet，Deployment，StatefulSet，DaemonSet，Job，Cronjob ...
+  - 服务发现及均衡资源对象：Service，Ingress ...
+  - 配置与存储资源对象：Volume(存储卷)，CSI(容器存储接口,可以扩展各种各样的第三方存储卷)，ConfigMap，Secret，DownwardAPI
+  - 集群级资源：Namespace，Node，Role，ClusterRole，RoleBinding，ClusterRoleBinding
+  - 元数据型资源：HPA，PodTemplate，LimitRange
+
+* 工作负载资源
+** Deployment
+      为了更好地解决服务编排的问题，k8s在V1.2版本开始，引入了deployment控制器，值得一提的是，这种控制器并不直接管理pod，
+   而是通过管理replicaset来间接管理pod，即：deployment管理replicaset，replicaset管理pod。所以deployment比replicaset的功能更强大。
+
+  [[http://blog.mospan.cn/post/img/k8s/resource/resource.png]]
+
+   deployment的主要功能有下面几个：
+   - 支持replicaset的所有功能
+   - 支持发布的停止、继续
+   - 支持版本的滚动更新和版本回退
+
+*** 编写资源清单
+   #+BEGIN_SRC yaml
+   $ cat test-deploy.yaml
+   apiVersion: apps/v1
+   kind: Deployment
+   metadata:
+     name: test-deployment
+     namespace: dev
+   spec:
+     replicas: 3
+     selector:
+       matchLabels:
+        app: nginx-pod
+     template:
+       metadata:
+         labels:
+           app: nginx-pod
+       spec:
+         containers:
+         - name: nginx
+           image: nginx:1.17.1
+   
+   #+END_SRC
+
+*** 运行清单
+    #+BEGIN_SRC sh
+     $ k apply -f test-deploy.yaml
+     deployment.apps/test-deployment created 
+    #+END_SRC
+
+*** 查看效果
+    #+BEGIN_SRC sh
+    $ k get deploy -A
+      NAMESPACE              NAME                           READY   UP-TO-DATE   AVAILABLE   AGE
+      dev                    test-deployment                3/3     3            3           94s
+      guestbook-system       guestbook-controller-manager   1/1     1            1           59d
+      kube-system            coredns                        2/2     2            2           63d
+      kubernetes-dashboard   dashboard-metrics-scraper      1/1     1            1           14d
+      kubernetes-dashboard   kubernetes-dashboard           1/1     1            1           14d
+    #+END_SRC
+    可以看出deploy已经运行成功，3副本已处于READY状态。
+    
+    再查看它运行中的清单:
+    #+BEGIN_SRC yaml
+    $ k get deploy -n dev test-deployment -o yaml
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      annotations:
+        deployment.kubernetes.io/revision: "1"
+        kubectl.kubernetes.io/last-applied-configuration: |
+          {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"test-deployment","namespace":"dev"},"spec":{"replicas":3,"selector":{"matchLabels":{"app":"nginx-pod"}},"template":{"metadata":{"labels":{"app":"nginx-pod"}},"spec":{"containers":[{"image":"nginx:1.17.1","name":"nginx"}]}}}}
+      creationTimestamp: "2022-09-28T12:35:22Z"
+      generation: 1
+      name: test-deployment
+      namespace: dev
+      resourceVersion: "5045809"
+      uid: 40feb568-1343-4046-8708-7e1bf5e5c384
+    spec:
+      #spec.progressDeadlineSeconds 是可选配置项，用来指定在系统报告Deployment的failed progressing一一表现为resource的状态中 type=Progressing 、 Status=False 、 Reason=ProgressDeadlineExceeded 前可以等待的Deployment进行的秒数。Deployment controller会继续重试该Deployment。未来，在实现了自动回滚后， deployment controller在观察到这种状态时就会自动回滚。
+      progressDeadlineSeconds: 600
+      #.spec.replicas 是可以选字段，指定期望的pod数量，默认是1。
+      replicas: 3
+      revisionHistoryLimit: 10
+      #.spec.selector是可选字段，用来指定 label selector ，圈定Deployment管理的pod范围。如果被指定， .spec.selector 必须匹配 .spec.template.metadata.labels，否则它将被API拒绝。如果.spec.selector 没有被指定， .spec.selector.matchLabels 默认是.spec.template.metadata.labels。在Pod的template跟.spec.template不同或者数量超过了.spec.replicas规定的数量的情况下，Deployment会杀掉label跟selector不同的Pod。
+      selector:
+        matchLabels:
+          app: nginx-pod
+      #.spec.strategy 指定新的Pod替换旧的Pod的策略。 .spec.strategy.type 可以是"Recreate"或者是"RollingUpdate"。"RollingUpdate"是默认值。
+      strategy:
+        rollingUpdate:
+          #spec.strategy.rollingUpdate.maxSurge 是可选配置项，用来指定可以超过期望的Pod数量的最大个数。该值可以是一个绝对值（例如5）或者是期望的Pod数量的百分比（例如10%）。当 MaxUnavailable 为0时该值不可以为0。通过百分比计算的绝对值向上取整。默认值是1。
+          maxSurge: 25%
+          #.spec.strategy.rollingUpdate.maxUnavailable 是可选配置项，用来指定在升级过程中不可用Pod的最大数量。该值可以是一个绝对值（例如5），也可以是期望Pod数量的百分比（例如10%）。通过计算百分比的绝对值向下取整。 如 果 .spec.strategy.rollingUpdate.maxSurge 为0时，这个值不可以为0。默认值是1。例如，该值设置成30%，启动rolling update后旧的ReplicatSet将会立即缩容到期望的Pod数量的70%。新的Pod ready后，随着新的ReplicaSet的扩容，旧的ReplicaSet会进一步缩容确保在升级的所有时刻可以用的Pod数量至少是期望Pod数量的70%。
+          maxUnavailable: 25%
+        #滚动更新，简单定义 更新期间pod最多有几个等。可以指定 maxUnavailable 和 maxSurge 来控制 rolling update 进程。
+        type: RollingUpdate
+      #.spec.template 是 .spec中唯一要求的字段。.spec.template 是 pod template. 它跟 Pod有一模一样的schema，除了它是嵌套的并且不需要apiVersion 和 kind字段。另外为了划分Pod的范围，Deployment中的pod template必须指定适当的label（不要跟其他controller重复了，参考selector）和适当的重启策略。.spec.template.spec.restartPolicy 可以设置为 Always , 如果不指定的话这就是默认配置。
+      template:
+        metadata:
+          creationTimestamp: null
+          labels:
+            app: nginx-pod
+        spec:
+          containers:
+          - image: nginx:1.17.1
+            imagePullPolicy: IfNotPresent
+            name: nginx
+            resources: {}
+            #terminationMessagePath 表示容器的异常终止消息的路径，默认在 /dev/termination-log 下。当容器退出时，可以通过容器的状态看到退出信息。
+            terminationMessagePath: /dev/termination-log
+            terminationMessagePolicy: File
+          #“ClusterFirst“:如果DNS查询与配置好的默认集群域名前缀不匹配，则将查询请求转发到从节点继承而来，作为查询的上游服务器。
+          dnsPolicy: ClusterFirst
+          restartPolicy: Always
+          #spec:schedulername参数指定调度器的名字，可以为 pod 选择某个调度器进行调度
+          schedulerName: default-scheduler
+          #安全上下文（Security Context）定义 Pod 或 Container 的特权与访问控制设置。
+          securityContext: {}
+          terminationGracePeriodSeconds: 30
+    status:
+      availableReplicas: 3
+      conditions:
+      - lastTransitionTime: "2022-09-28T12:35:25Z"
+        lastUpdateTime: "2022-09-28T12:35:25Z"
+        message: Deployment has minimum availability.
+        reason: MinimumReplicasAvailable
+        status: "True"
+        type: Available
+      - lastTransitionTime: "2022-09-28T12:35:22Z"
+        lastUpdateTime: "2022-09-28T12:35:25Z"
+        message: ReplicaSet "test-deployment-5d9c9b97bb" has successfully progressed.
+        reason: NewReplicaSetAvailable
+        status: "True"
+        type: Progressing
+      observedGeneration: 1
+      readyReplicas: 3
+      replicas: 3
+      updatedReplicas: 3
+    
+    #+END_SRC
+
+
+* 参考资料
+  1.[[https://blog.51cto.com/u_15155091/2723613][k8s之terminationMessagePath]]
+  2.[[https://blog.csdn.net/dkfajsldfsdfsd/article/details/81209150][Kubernetes之DNS]]
+  3.[[https://www.jianshu.com/p/1f64a4694ace][Kubernetes——调度器Scheduler]]
+  4.[[https://cloud.tencent.com/developer/article/1748675][k8s之securityContext]]
