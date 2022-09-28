@@ -25,7 +25,7 @@ url = "/2022/09/28/resource/"
       为了更好地解决服务编排的问题，k8s在V1.2版本开始，引入了deployment控制器，值得一提的是，这种控制器并不直接管理pod，
    而是通过管理replicaset来间接管理pod，即：deployment管理replicaset，replicaset管理pod。所以deployment比replicaset的功能更强大。
 
-  [[http://blog.mospan.cn/post/img/k8s/resource/resource.png]]
+  [[http://blog.mospan.cn/post/img/k8s/resource/deploy.png]]
 
    deployment的主要功能有下面几个：
    - 支持replicaset的所有功能
