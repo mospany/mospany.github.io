@@ -79,13 +79,13 @@
     
     
 
-<p><a id="org660c89a"></a></p>
+<p><a id="orgd35b99a"></a></p>
 
 <h1 id="简介">简介</h1>
 
 <p>k8s中所有的内容都抽象为资源， 资源实例化之后，叫做对象。</p>
 
-<p><a id="org85b310d"></a></p>
+<p><a id="org2557e2e"></a></p>
 
 <h1 id="资源类型介绍">资源类型介绍</h1>
 
@@ -97,11 +97,11 @@
 <li>元数据型资源：HPA，PodTemplate，LimitRange</li>
 </ul>
 
-<p><a id="org6bacf92"></a></p>
+<p><a id="orgd6fb1c0"></a></p>
 
 <h1 id="工作负载资源">工作负载资源</h1>
 
-<p><a id="org82a2012"></a></p>
+<p><a id="org6fafaa7"></a></p>
 
 <h2 id="deployment">Deployment</h2>
 
@@ -118,7 +118,7 @@
 <li>支持版本的滚动更新和版本回退</li>
 </ul>
 
-<p><a id="org53fb6bd"></a></p>
+<p><a id="orgdc2aa32"></a></p>
 
 <h3 id="编写资源清单">编写资源清单</h3>
 
@@ -143,7 +143,7 @@ spec:
         image: nginx:1.17.1
 </code></pre>
 
-<p><a id="org97f8964"></a></p>
+<p><a id="orga80c21f"></a></p>
 
 <h3 id="运行清单">运行清单</h3>
 
@@ -151,7 +151,7 @@ spec:
 deployment.apps/test-deployment created 
 </code></pre>
 
-<p><a id="org947b655"></a></p>
+<p><a id="org80fc6cc"></a></p>
 
 <h3 id="查看效果">查看效果</h3>
 
@@ -245,14 +245,237 @@ status:
   updatedReplicas: 3
 </code></pre>
 
-<p><a id="org9fc5244"></a></p>
+<p><a id="org03b63c2"></a></p>
+
+<h2 id="replicaset">ReplicaSet</h2>
+
+<p>ReplicaSet是kubernetes中的一种副本控制器，主要作用是控制由其管理的pod，使pod副本的数量始终维持在预设的个数。</p>
+
+<p>kubernetes官方推荐不要直接使用ReplicaSet，用Deployments取而代之，Deployments是比ReplicaSet更高级的概念，它会管理ReplicaSet并提供很多其它有用的特性，最重要的是Deployments支持声明式更新，声明式更好相比于命令式更新的好处是不会丢失历史变更。总结起来就是：不要再直接使用ReplicaSet。</p>
+
+<p><a id="orgd98e66a"></a></p>
+
+<h3 id="查看效果-1">查看效果</h3>
+
+<pre><code>$ k get rs -A
+NAMESPACE              NAME                                      DESIRED   CURRENT   READY   AGE
+dev                    test-deployment-5d9c9b97bb                3         3         3       23h
+guestbook-system       guestbook-controller-manager-84cd65964f   1         1         1       60d
+kube-system            coredns-78fcd69978                        2         2         2       64d
+kubernetes-dashboard   dashboard-metrics-scraper-7c857855d9      1         1         1       15d
+kubernetes-dashboard   kubernetes-dashboard-6b79449649           1         1         1       15d
+</code></pre>
+
+<p>查看清单：</p>
+
+<pre><code>$ k get rs -n dev test-deployment-5d9c9b97bb -o yaml
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  annotations:
+    deployment.kubernetes.io/desired-replicas: &quot;3&quot;
+    deployment.kubernetes.io/max-replicas: &quot;4&quot;
+    deployment.kubernetes.io/revision: &quot;1&quot;
+  creationTimestamp: &quot;2022-09-28T12:35:22Z&quot;
+  generation: 1
+  labels:
+    app: nginx-pod
+    pod-template-hash: 5d9c9b97bb
+  name: test-deployment-5d9c9b97bb
+  namespace: dev
+  ownerReferences:
+  - apiVersion: apps/v1
+    #控制特定的从属对象是否可以阻止垃圾收集删除其所有者对象
+    blockOwnerDeletion: true
+    controller: true
+    kind: Deployment
+    name: test-deployment
+    uid: 40feb568-1343-4046-8708-7e1bf5e5c384
+  resourceVersion: &quot;5045808&quot;
+  uid: 1dc27f38-b2db-48a1-b76a-ad044e3da2d7
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx-pod
+      pod-template-hash: 5d9c9b97bb
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: nginx-pod
+        pod-template-hash: 5d9c9b97bb
+    spec:
+      containers:
+      - image: nginx:1.17.1
+        imagePullPolicy: IfNotPresent
+        name: nginx
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 3
+  fullyLabeledReplicas: 3
+  observedGeneration: 1
+  readyReplicas: 3
+  replicas: 3
+</code></pre>
+
+<p><a id="org1e1edfb"></a></p>
+
+<h2 id="pod">Pod</h2>
+
+<p>Pod是kubernetes中最小的资源管理组件，Pod也是最小化运行容器化应用的资源对象。一个Pod代表着集群中运行的一个进程。</p>
+
+<pre><code>$ k get pod -A
+NAMESPACE              NAME                                            READY   STATUS    RESTARTS         AGE
+dev                    test-deployment-5d9c9b97bb-7hmqb                1/1     Running   0                23h
+dev                    test-deployment-5d9c9b97bb-bdwhq                1/1     Running   0                23h
+dev                    test-deployment-5d9c9b97bb-l9fj2                1/1     Running   0                23h
+guestbook-system       guestbook-controller-manager-84cd65964f-c2z8x   2/2     Running   184 (34h ago)    60d
+kube-system            coredns-78fcd69978-s52td                        1/1     Running   7 (11d ago)      64d
+kube-system            coredns-78fcd69978-z5fvx                        1/1     Running   7 (11d ago)      64d
+kube-system            etcd-docker-desktop                             1/1     Running   7 (11d ago)      64d
+kube-system            kube-apiserver-docker-desktop                   1/1     Running   7 (11d ago)      64d
+kube-system            kube-controller-manager-docker-desktop          1/1     Running   7 (11d ago)      64d
+kube-system            kube-proxy-b5954                                1/1     Running   7 (11d ago)      64d
+kube-system            kube-scheduler-docker-desktop                   1/1     Running   146 (34h ago)    64d
+kube-system            storage-provisioner                             1/1     Running   229 (34h ago)    64d
+kube-system            vpnkit-controller                               1/1     Running   4395 (17m ago)   64d
+kubernetes-dashboard   dashboard-metrics-scraper-7c857855d9-g4slf      1/1     Running   1 (11d ago)      15d
+kubernetes-dashboard   kubernetes-dashboard-6b79449649-lrnz8           1/1     Running   10 (3d10h ago)   15d
+</code></pre>
+
+<p>查看清单：</p>
+
+<pre><code>$ k get pod -n dev test-deployment-5d9c9b97bb-7hmqb -o yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: &quot;2022-09-28T12:35:22Z&quot;
+  generateName: test-deployment-5d9c9b97bb-
+  labels:
+    app: nginx-pod
+    pod-template-hash: 5d9c9b97bb
+  name: test-deployment-5d9c9b97bb-7hmqb
+  namespace: dev
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: ReplicaSet
+    name: test-deployment-5d9c9b97bb
+    uid: 1dc27f38-b2db-48a1-b76a-ad044e3da2d7
+  resourceVersion: &quot;5045804&quot;
+  uid: 06aeda67-ccaa-4715-ab1a-992ae409cd12
+spec:
+  containers:
+  - image: nginx:1.17.1
+    imagePullPolicy: IfNotPresent
+    name: nginx
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-sgghr
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  nodeName: docker-desktop
+  #优先级在普通的 pod 执行优先级的剔除是没什么问题的，但是在 job 控制器来运行的 pod 上就是一个灾难，如果 job 控制器运行的任务计划 pod 正在执行任务，此时因为集群节点的资源不够用导致 job 的 pod 被剔除集群节点，从而导致指定运行的任务被搁置，为了解决这个问题，可以在 PriorityClass 中设置属性 preemptionPolicy ，当它的值为 preemptionLowerPriorty（默认）时，则正常执行抢占策略（表示优先级低会被剔除）。如果将值设置为 Never 时则为默认不抢占，不会被剔除而是等待调度机会。
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: default
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - name: kube-api-access-sgghr
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 3607
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: &quot;2022-09-28T12:35:22Z&quot;
+    status: &quot;True&quot;
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: &quot;2022-09-28T12:35:25Z&quot;
+    status: &quot;True&quot;
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: &quot;2022-09-28T12:35:25Z&quot;
+    status: &quot;True&quot;
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: &quot;2022-09-28T12:35:22Z&quot;
+    status: &quot;True&quot;
+    type: PodScheduled
+  containerStatuses:
+  - containerID: docker://1453a8ace21fbf107edd376e3357e7c9880afe6c67b2fdde535092bb8c654ddf
+    image: nginx:1.17.1
+    imageID: docker-pullable://nginx@sha256:b4b9b3eee194703fc2fa8afa5b7510c77ae70cfba567af1376a573a967c03dbb
+    lastState: {}
+    name: nginx
+    ready: true
+    restartCount: 0
+    started: true
+    state:
+      running:
+        startedAt: &quot;2022-09-28T12:35:24Z&quot;
+  hostIP: 192.168.65.4
+  phase: Running
+  podIP: 10.1.0.57
+  podIPs:
+  - ip: 10.1.0.57
+  qosClass: BestEffort
+  startTime: &quot;2022-09-28T12:35:22Z&quot; 
+</code></pre>
+
+<p><a id="org8018e12"></a></p>
 
 <h1 id="参考资料">参考资料</h1>
 
 <p>1.<a href="https://blog.51cto.com/u_15155091/2723613">k8s之terminationMessagePath</a><br />
 2.<a href="https://blog.csdn.net/dkfajsldfsdfsd/article/details/81209150">Kubernetes之DNS</a><br />
 3.<a href="https://www.jianshu.com/p/1f64a4694ace">Kubernetes——调度器Scheduler</a><br />
-4.<a href="https://cloud.tencent.com/developer/article/1748675">k8s之securityContext</a></p>
+4.<a href="https://cloud.tencent.com/developer/article/1748675">k8s之securityContext</a><br />
+5.<a href="https://www.jianshu.com/p/229ef1daf986">Kubernetes的所有者和依赖</a><br />
+6.<a href="https://blog.csdn.net/qq_44079072/article/details/121144611">k8s之pod详解</a><br />
+7.<a href="https://blog.csdn.net/weixin_45710286/article/details/125474671">kubernetes 之 pod 调度策略（一）</a><br />
+8.<a href="https://www.jianshu.com/p/ebb8f0ba67f6">污点（taints）和容忍度（tolerations）</a></p>
 
     <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
   <div style="float:right;margin-top:0px;">
