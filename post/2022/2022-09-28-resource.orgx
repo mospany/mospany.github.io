@@ -33,7 +33,7 @@ url = "/2022/09/28/resource/"
    - 支持版本的滚动更新和版本回退
 
 *** 编写资源清单
-   #+BEGIN_SRC yaml
+   #+BEGIN_SRC yaml -n -r
    $ cat test-deploy.yaml
    apiVersion: apps/v1
    kind: Deployment
@@ -366,6 +366,323 @@ url = "/2022/09/28/resource/"
    
    #+END_SRC
 
+** Statefulset
+*** 应用场景
+    - 稳定的不共享持久化存储：即每个pod的存储资源是不共享的，且pod重新调度后还是能访问到相同的持久化数据，基于pvc实现。
+    - 稳定的网络标志：即pod重新调度后其PodName和HostName不变，且PodName和HostName是相同的，基于Headless Service来实现的。
+    - 有序部署，有序扩展：即pod是有顺序的，在部署或者扩展的时候是根据定义的顺序依次依序部署的（即从0到N-1,在下一个Pod运行之前所有之前的pod必都是Running状态或者Ready状态），是基于init containers来实现的。
+    - 有序收缩：在pod删除时是从最后一个依次往前删除，即从N-1到0.
+
+    基于上面的特性，可以发现statefulset由以下几个部分组成：
+    - 用于定义网络标志（DNS domain）的headless service
+    - 用于**创建pvc的volumeClaimTemplates**
+    - 具体的statefulSet应用
+
+*** 创建yaml文件示例
+    #+BEGIN_SRC yaml
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: nginx
+      labels:
+        app: nginx
+    spec:
+      ports:
+      - port: 80
+        name: web
+      clusterIP: None                                 # 要点1，可以不用指定clusterIP
+      selector:
+        app: nginx
+    ---
+    apiVersion: apps/v1
+    kind: StatefulSet
+    metadata:
+      name: web
+    spec:
+      serviceName: "nginx"                           # 要点2，指定serviceName名称
+      replicas: 2
+      selector:
+        matchLabels:
+          app: nginx
+      template:
+        metadata:
+          labels:
+            app: nginx
+        spec:
+          containers:
+          - name: nginx
+            image: nginx:alpine
+            ports:
+            - containerPort: 80
+              name: web
+        
+        #+END_SRC
+*** 查看效果
+    #+BEGIN_SRC sh
+    # mosp @ mospdeMacBook-Pro in ~/study/myblog/mospan-hugo-blog on git:master x [17:35:39]
+    $ k get sts -A
+    NAMESPACE   NAME   READY   AGE
+    default     web    3/3     24h
+
+    # 可以看出StatefulSet不走ReplicalSet
+    $ k get rs -A
+    NAMESPACE              NAME                                      DESIRED   CURRENT   READY   AGE
+    guestbook-system       guestbook-controller-manager-84cd65964f   1         1         1       63d
+    kube-system            coredns-78fcd69978                        2         2         2       67d
+    kubernetes-dashboard   dashboard-metrics-scraper-7c857855d9      1         1         1       19d
+    kubernetes-dashboard   kubernetes-dashboard-6b79449649           1         1         1       19d
+    
+    # mosp @ mospdeMacBook-Pro in ~/study/myblog/mospan-hugo-blog on git:master x [11:11:00]
+    $ k get svc -A
+    NAMESPACE              NAME                                           TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                  AGE
+    default                kubernetes                                     ClusterIP   10.96.0.1       <none>        443/TCP                  67d
+    default                nginx                                          ClusterIP   None            <none>        80/TCP                   24h
+    guestbook-system       guestbook-controller-manager-metrics-service   ClusterIP   10.107.190.68   <none>        8443/TCP                 63d
+    kube-system            kube-dns                                       ClusterIP   10.96.0.10      <none>        53/UDP,53/TCP,9153/TCP   67d
+    kubernetes-dashboard   dashboard-metrics-scraper                      ClusterIP   10.96.38.104    <none>        8000/TCP                 19d
+    kubernetes-dashboard   kubernetes-dashboard                           ClusterIP   10.102.50.227   <none>        443/TCP                  19d
+    
+    # mosp @ mospdeMacBook-Pro in ~/study/myblog/mospan-hugo-blog on git:master x [11:11:13]
+    $ k get pod -A
+    NAMESPACE              NAME                                            READY   STATUS    RESTARTS         AGE
+    default                web-0                                           1/1     Running   0                24h
+    default                web-1                                           1/1     Running   0                24h
+    default                web-2                                           1/1     Running   0                24h
+    
+    #+END_SRC
+
+*** 查看清单
+**** 查看service
+     #+BEGIN_SRC yaml
+     $ k get svc nginx -n -o yaml
+     apiVersion: v1
+     kind: Service
+     metadata:
+       annotations:
+         kubectl.kubernetes.io/last-applied-configuration: |
+           {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"app":"nginx"},"name":"nginx","namespace":"default"},"spec":{"clusterIP":"None","ports":[{"name":"web","port":80}],"selector":{"app":"nginx"}}}
+       creationTimestamp: "2022-10-02T03:06:17Z"
+       labels:
+         app: nginx
+       name: nginx
+       namespace: default
+       resourceVersion: "5343708"
+       uid: ff6a9fb8-4abd-4fda-af08-6ecdf7695b5a
+     spec:
+       clusterIP: None
+       clusterIPs:
+       - None
+       #kube-proxy 基于 spec.internalTrafficPolicy 的设置来过滤路由的目标服务端点。当它的值设为 Local 时，只选择节点本地的服务端点。当它的值设为 Cluster 或缺省时，则选择所有的服务端点。
+       internalTrafficPolicy: Cluster
+       ipFamilies:
+       - IPv4
+       #用spec.ipFamilyPolicy字段配置的，可设置为以下选项之一：
+       #SingleStack
+       #PreferDualStack
+       #RequireDualStack
+       #要使用双堆栈支持，你需要设置.spec.ipFamilyPolicy为PreferredDualStack或RequiredDualStack。此功能在Kubernetes中默认启用，还包括通过IPv4和IPv6地址的脱离集群出口路由。
+       ipFamilyPolicy: SingleStack
+       ports:
+       - name: web
+         port: 80
+         protocol: TCP
+         targetPort: 80
+       selector:
+         app: nginx
+       #使用svc.spec.sessionAffinity设置会话亲和性，默认是None。指定为ClientIP会使来自同一个Client IP的请求转发到同一个Pod上。
+       sessionAffinity: None
+       type: ClusterIP
+     status:
+       loadBalancer: {}
+     
+     #+END_SRC
+
+**** 查看StatefulSet
+     #+BEGIN_SRC yaml -n -r
+     $ k get sts web -o yaml
+     apiVersion: apps/v1
+     kind: StatefulSet
+     metadata:
+       annotations:
+         kubectl.kubernetes.io/last-applied-configuration: |
+           {"apiVersion":"apps/v1","kind":"StatefulSet","metadata":{"annotations":{},"name":"web","namespace":"default"},"spec":{"replicas":3,"selector":{"matchLabels":{"app":"nginx"}},"serviceName":"nginx","template":{"metadata":{"labels":{"app":"nginx"}},"spec":{"containers":[{"image":"nginx:alpine","name":"nginx","ports":[{"containerPort":80,"name":"web"}]}]}}}}
+       creationTimestamp: "2022-10-02T03:06:17Z"
+       generation: 1
+       name: web
+       namespace: default
+       resourceVersion: "5343757"
+       uid: b68fa0b0-ce5e-428c-b39e-b41956ddcc12
+     spec:
+       #pod管理策略,v1.7+可以通过.spec.podManagementPolicy设置pod的管理策略，支持以下俩中方式
+       #OrderedReady:默认方式，按照pod的次序依次创建每个pod并等待ready之后才创建后面的pod。
+       #Parallel：并行创建或删除pod，和deployment类型的pod一样。（不等待前面的pod ready就开始创建所有的pod）。
+       podManagementPolicy: OrderedReady
+       replicas: 3
+       revisionHistoryLimit: 10
+       selector:
+         matchLabels:
+           app: nginx
+       serviceName: nginx
+       template:
+         metadata:
+           creationTimestamp: null
+           labels:
+             app: nginx
+         spec:
+           containers:
+           - image: nginx:alpine
+             imagePullPolicy: IfNotPresent
+             name: nginx
+             ports:
+             - containerPort: 80
+               name: web
+               protocol: TCP
+             resources: {}
+             terminationMessagePath: /dev/termination-log
+             terminationMessagePolicy: File
+           dnsPolicy: ClusterFirst
+           restartPolicy: Always
+           schedulerName: default-scheduler
+           securityContext: {}
+           terminationGracePeriodSeconds: 30
+       updateStrategy:
+         rollingUpdate:
+           partition: 0
+         type: RollingUpdate
+     status:
+       availableReplicas: 3
+       collisionCount: 0
+       currentReplicas: 3
+       currentRevision: web-6d796b6548
+       observedGeneration: 1
+       readyReplicas: 3
+       replicas: 3
+       updateRevision: web-6d796b6548
+       updatedReplicas: 3
+     
+     #+END_SRC
+
+**** 查看Pod清单
+     #+BEGIN_SRC yaml
+     $ k get pod web-0 -o yaml
+     apiVersion: v1
+     kind: Pod
+     metadata:
+       creationTimestamp: "2022-10-02T03:06:17Z"
+       generateName: web-
+       labels:
+         app: nginx
+         controller-revision-hash: web-6d796b6548
+         statefulset.kubernetes.io/pod-name: web-0
+       name: web-0
+       namespace: default
+       ownerReferences:
+       - apiVersion: apps/v1
+         blockOwnerDeletion: true
+         controller: true
+         kind: StatefulSet
+         name: web
+         uid: b68fa0b0-ce5e-428c-b39e-b41956ddcc12
+       resourceVersion: "5343727"
+       uid: 04b8e1f1-eed1-493e-a9b3-3b0791eca087
+     spec:
+       containers:
+       - image: nginx:alpine
+         imagePullPolicy: IfNotPresent
+         name: nginx
+         ports:
+         - containerPort: 80
+           name: web
+           protocol: TCP
+         resources: {}
+         terminationMessagePath: /dev/termination-log
+         terminationMessagePolicy: File
+         volumeMounts:
+         - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+           name: kube-api-access-v2xb5
+           readOnly: true
+       dnsPolicy: ClusterFirst
+       enableServiceLinks: true
+       hostname: web-0
+       nodeName: docker-desktop
+       preemptionPolicy: PreemptLowerPriority
+       priority: 0
+       restartPolicy: Always
+       schedulerName: default-scheduler
+       securityContext: {}
+       serviceAccount: default
+       serviceAccountName: default
+       subdomain: nginx
+       terminationGracePeriodSeconds: 30
+       tolerations:
+       - effect: NoExecute
+         key: node.kubernetes.io/not-ready
+         operator: Exists
+         tolerationSeconds: 300
+       - effect: NoExecute
+         key: node.kubernetes.io/unreachable
+         operator: Exists
+         tolerationSeconds: 300
+       volumes:
+       - name: kube-api-access-v2xb5
+         projected:
+           defaultMode: 420
+           sources:
+           - serviceAccountToken:
+               expirationSeconds: 3607
+               path: token
+           - configMap:
+               items:
+               - key: ca.crt
+                 path: ca.crt
+               name: kube-root-ca.crt
+           - downwardAPI:
+               items:
+               - fieldRef:
+                   apiVersion: v1
+                   fieldPath: metadata.namespace
+                 path: namespace
+     status:
+       conditions:
+       - lastProbeTime: null
+         lastTransitionTime: "2022-10-02T03:06:17Z"
+         status: "True"
+         type: Initialized
+       - lastProbeTime: null
+         lastTransitionTime: "2022-10-02T03:06:18Z"
+         status: "True"
+         type: Ready
+       - lastProbeTime: null
+         lastTransitionTime: "2022-10-02T03:06:18Z"
+         status: "True"
+         type: ContainersReady
+       - lastProbeTime: null
+         lastTransitionTime: "2022-10-02T03:06:17Z"
+         status: "True"
+         type: PodScheduled
+       containerStatuses:
+       - containerID: docker://bd6e1b11a24457b4892fd83fb306ec2bac9adca1a280b079b9502a0672a9d521
+         image: nginx:alpine
+         imageID: docker-pullable://nginx@sha256:082f8c10bd47b6acc8ef15ae61ae45dd8fde0e9f389a8b5cb23c37408642bf5d
+         lastState: {}
+         name: nginx
+         ready: true
+         restartCount: 0
+         started: true
+         state:
+           running:
+             startedAt: "2022-10-02T03:06:18Z"
+       hostIP: 192.168.65.4
+       phase: Running
+       podIP: 10.1.0.72
+       podIPs:
+       - ip: 10.1.0.72
+       qosClass: BestEffort
+       startTime: "2022-10-02T03:06:17Z"
+     
+     #+END_SRC
+    
+   
 
 * 参考资料
   1.[[https://blog.51cto.com/u_15155091/2723613][k8s之terminationMessagePath]]
@@ -376,4 +693,6 @@ url = "/2022/09/28/resource/"
   6.[[https://blog.csdn.net/qq_44079072/article/details/121144611][k8s之pod详解]]
   7.[[https://blog.csdn.net/weixin_45710286/article/details/125474671][kubernetes 之 pod 调度策略（一）]]
   8.[[https://www.jianshu.com/p/ebb8f0ba67f6][污点（taints）和容忍度（tolerations）]]
+  9.[[https://www.oomspot.com//post/k8swangluomoxingfuwuneibuliuliangcelue][k8s网络模型-服务内部流量策略]]
+  10.[[https://www.jianshu.com/p/cedf8c9d18f1][k8s中statefulset资源类型的深入理解]]
 
