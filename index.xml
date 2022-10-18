@@ -15,13 +15,13 @@
             <guid>http://mospany.github.io/2022/09/28/resource/</guid>
             <description>
 
-&lt;p&gt;&lt;a id=&#34;orgd984af0&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orge0656ad&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;简介&#34;&gt;简介&lt;/h1&gt;
 
 &lt;p&gt;k8s中所有的内容都抽象为资源， 资源实例化之后，叫做对象。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org2ed66d0&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org32d4fb4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;资源类型介绍&#34;&gt;资源类型介绍&lt;/h1&gt;
 
@@ -33,11 +33,11 @@
 &lt;li&gt;元数据型资源：HPA，PodTemplate，LimitRange&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a id=&#34;org07bc6c6&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orga7470a7&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;工作负载资源&#34;&gt;工作负载资源&lt;/h1&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgc982b3b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org78d773a&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;deployment&#34;&gt;Deployment&lt;/h2&gt;
 
@@ -54,7 +54,7 @@
 &lt;li&gt;支持版本的滚动更新和版本回退&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a id=&#34;org4f07d2b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org3b6bbe8&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;编写资源清单&#34;&gt;编写资源清单&lt;/h3&gt;
 
@@ -80,7 +80,7 @@
 20  
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;a id=&#34;org68734c2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org33be6c7&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;运行清单&#34;&gt;运行清单&lt;/h3&gt;
 
@@ -88,7 +88,7 @@
 deployment.apps/test-deployment created 
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;a id=&#34;org39fa1b5&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org1474d63&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;查看效果&#34;&gt;查看效果&lt;/h3&gt;
 
@@ -182,7 +182,7 @@ status:
   updatedReplicas: 3
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;a id=&#34;org5c6ab88&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org3fa900a&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;replicaset&#34;&gt;ReplicaSet&lt;/h2&gt;
 
@@ -190,7 +190,7 @@ status:
 
 &lt;p&gt;kubernetes官方推荐不要直接使用ReplicaSet，用Deployments取而代之，Deployments是比ReplicaSet更高级的概念，它会管理ReplicaSet并提供很多其它有用的特性，最重要的是Deployments支持声明式更新，声明式更好相比于命令式更新的好处是不会丢失历史变更。总结起来就是：不要再直接使用ReplicaSet。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org5fba86b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgfdcdb41&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;查看效果-1&#34;&gt;查看效果&lt;/h3&gt;
 
@@ -263,7 +263,7 @@ status:
   replicas: 3
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;a id=&#34;org1687357&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org1c8a1ca&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;pod&#34;&gt;Pod&lt;/h2&gt;
 
@@ -401,11 +401,11 @@ status:
   startTime: &amp;quot;2022-09-28T12:35:22Z&amp;quot; 
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;a id=&#34;org77ddc22&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org4ffc8cc&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;statefulset&#34;&gt;Statefulset&lt;/h2&gt;
 
-&lt;p&gt;&lt;a id=&#34;orge4f7934&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgc4ecdec&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;应用场景&#34;&gt;应用场景&lt;/h3&gt;
 
@@ -424,7 +424,7 @@ status:
 &lt;li&gt;具体的statefulSet应用&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a id=&#34;org1f5edd0&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org75c4d8e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;创建yaml文件示例&#34;&gt;创建yaml文件示例&lt;/h3&gt;
 
@@ -465,7 +465,7 @@ spec:
           name: web
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgfe9fff2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org9af1bda&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;查看效果-2&#34;&gt;查看效果&lt;/h3&gt;
 
@@ -500,7 +500,7 @@ default                web-1                                           1/1     R
 default                web-2                                           1/1     Running   0                24h
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgf7b2928&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgad33d68&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;查看清单&#34;&gt;查看清单&lt;/h3&gt;
 
@@ -734,7 +734,232 @@ status:
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;&lt;a id=&#34;org4d1225e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orga9c50ad&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;daemonset&#34;&gt;DaemonSet&lt;/h2&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgface580&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;作用及概念&#34;&gt;作用及概念&lt;/h3&gt;
+
+&lt;p&gt;DaemonSet确保集群中每个（部分）node运行一份po副本，当node加入集群时创建pod，当node离开集群时回收pod。&lt;/p&gt;
+
+&lt;p&gt;如果删除DaemonSet，其创建的所有pod也被删除， DaemonSet中的pod覆盖整个集群。&lt;/p&gt;
+
+&lt;p&gt;当需要在集群内每个node运行同一个pod，使用 DaemonSet是有价值的，以下是典型使用场景：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;运行集群存储守护进程，如 glusterd、ceph&lt;/li&gt;
+&lt;li&gt;运行集群日志收集守护进程，如 fluent、 logstash&lt;/li&gt;
+&lt;li&gt;运行节点监控守护进程，如 Prometheus Node Exporter， collectd， Datadog agent，&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a id=&#34;org9260917&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;配置清单&#34;&gt;配置清单&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cat daemonset-demo.yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: deamonset-demo
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+     app: nginx-ds
+  template:
+    metadata:
+      labels:
+        app: nginx-ds
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.17.1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org89256ec&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;查看效果-3&#34;&gt;查看效果&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;# mosp @ mospdeMacBook-Pro in ~/study/k8s/resource/daemonset [18:51:51]
+$ k get ds -A
+NAMESPACE     NAME             DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR            AGE
+default       deamonset-demo   1         1         1       1            1           &amp;lt;none&amp;gt;                   10m
+kube-system   kube-proxy       1         1         1       1            1           kubernetes.io/os=linux   68d
+
+# mosp @ mospdeMacBook-Pro in ~/study/k8s/resource/daemonset [18:53:22]
+$ k get rs -A
+NAMESPACE              NAME                                      DESIRED   CURRENT   READY   AGE
+guestbook-system       guestbook-controller-manager-84cd65964f   1         1         1       63d
+kube-system            coredns-78fcd69978                        2         2         2       68d
+kubernetes-dashboard   dashboard-metrics-scraper-7c857855d9      1         1         1       19d
+kubernetes-dashboard   kubernetes-dashboard-6b79449649           1         1         1       19d
+
+# mosp @ mospdeMacBook-Pro in ~/study/k8s/resource/daemonset [18:53:28]
+$ k get pod -A
+NAMESPACE              NAME                                            READY   STATUS    RESTARTS          AGE
+default                deamonset-demo-lbmmq                            1/1     Running   0                 10m
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org7a1d726&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;job&#34;&gt;Job&lt;/h2&gt;
+
+&lt;p&gt;&lt;a id=&#34;org1def512&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;作用及概念-1&#34;&gt;作用及概念&lt;/h3&gt;
+
+&lt;p&gt;详见：&lt;a href=&#34;https://blog.csdn.net/u012124304/article/details/107729972&#34;&gt;k8s Job详解&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org59a91b0&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;配置清单-1&#34;&gt;配置清单&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cat job-demo.yaml
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: echo-time
+spec:
+  completions: 10 #任务个数
+  parallelism: 5 #并行数
+  backoffLimit: 2 #失败最多执行几次
+  template:
+    spec:
+      containers:
+      - name: echo-time
+        image: centos:latest
+        imagePullPolicy: IfNotPresent
+        command:
+        - /bin/bash
+        - &amp;quot;-c&amp;quot;
+        - &amp;quot;for i in `seq 1 100`;do echo $i: `date` &amp;amp;&amp;amp; sleep 1;done&amp;quot;
+      restartPolicy: OnFailure
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org2f3a615&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;查看效果-4&#34;&gt;查看效果&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;# mosp @ mospdeMacBook-Pro in ~/study/k8s/resource/job [20:17:06]
+$ k get job -A
+NAMESPACE   NAME        COMPLETIONS   DURATION   AGE
+default     echo-time   10/10         3m28s      5m40s
+
+# mosp @ mospdeMacBook-Pro in ~/study/k8s/resource/job [20:20:49]
+$ k get pod -A
+NAMESPACE              NAME                                            READY   STATUS      RESTARTS         AGE
+default                deamonset-demo-lbmmq                            1/1     Running     1 (9h ago)       5d1h
+default                echo-time--1-24lfm                              0/1     Completed   0                4m7s
+default                echo-time--1-5drjv                              0/1     Completed   0                4m9s
+default                echo-time--1-869rd                              0/1     Completed   0                4m7s
+default                echo-time--1-8fd7m                              0/1     Completed   0                4m9s
+default                echo-time--1-cqfjs                              0/1     Completed   0                5m52s
+default                echo-time--1-f276r                              0/1     Completed   0                5m52s
+default                echo-time--1-h4v9l                              0/1     Completed   0                5m52s
+default                echo-time--1-lx4ww                              0/1     Completed   0                5m52s
+default                echo-time--1-qd4kc                              0/1     Completed   0                4m8s
+default                echo-time--1-zfchg                              0/1     Completed   0                5m52s
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;每个Pod日志都能从1输出到100。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org6491cbd&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;cronjob&#34;&gt;cronJob&lt;/h2&gt;
+
+&lt;p&gt;&lt;a id=&#34;org6cd6fcb&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;作用及概念-2&#34;&gt;作用及概念&lt;/h3&gt;
+
+&lt;p&gt;CronJobs 对于创建周期性的、反复重复的任务很有用，例如执行数据备份或者发送邮件。 CronJobs 也可以用来计划在指定时间来执行的独立任务，例如计划当集群看起来很空闲时 执行某个 Job。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org63ce1b0&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;配置清单-2&#34;&gt;配置清单&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cat cronjob-demo.yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: cronjob-demo
+spec:
+  schedule: &amp;quot;*/1 * * * *&amp;quot;
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: cronjob-demo
+            image: busybox
+            imagePullPolicy: IfNotPresent
+            command:
+            - /bin/sh
+            - -c
+            - date; echo Hello from the Kubernetes cluster
+          restartPolicy: OnFailure
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org2e52734&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;查看效果-5&#34;&gt;查看效果&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;# mosp @ mospdeMacBook-Pro in ~/study/k8s/resource [20:27:32]
+$ k get cronjobs.batch -A
+NAMESPACE   NAME           SCHEDULE      SUSPEND   ACTIVE   LAST SCHEDULE   AGE
+default     cronjob-demo   */1 * * * *   False     0        40s             7m53s
+
+# mosp @ mospdeMacBook-Pro in ~/study/k8s/resource [20:27:40]
+$ k get pod -A
+NAMESPACE              NAME                                            READY   STATUS      RESTARTS         AGE
+default                cronjob-demo-27761065--1-bjdj7                  0/1     Completed   0                2m47s
+default                cronjob-demo-27761066--1-z9ttq                  0/1     Completed   0                107s
+default                cronjob-demo-27761067--1-9x5fn                  0/1     Completed   0                47s
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;通过观察发现，它只保留最新的3个pod，其他的将被删除掉免得占用资源。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org546b0d0&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;hpa&#34;&gt;HPA&lt;/h2&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgba6b263&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;作用及概念-3&#34;&gt;作用及概念&lt;/h3&gt;
+
+&lt;p&gt;&lt;a id=&#34;org278c786&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;label-annotation-selector&#34;&gt;Label&amp;amp;Annotation&amp;amp;Selector&lt;/h2&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgacecd12&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;label&#34;&gt;Label&lt;/h3&gt;
+
+&lt;p&gt;详见：&lt;a href=&#34;https://www.cnblogs.com/chuanzhang053/p/16351442.html&#34;&gt;k8s中label和label selector的基本概念及使用方法&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org1cb2230&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;annotation&#34;&gt;Annotation&lt;/h3&gt;
+
+&lt;p&gt;详见：&lt;a href=&#34;https://www.jianshu.com/p/21275c1c701c&#34;&gt;K8s Annotation（注解）&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org33a8552&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;selector&#34;&gt;Selector&lt;/h3&gt;
+
+&lt;p&gt;Label selector的使用场景:&lt;/p&gt;
+
+&lt;p&gt;1.kube-controller进程通过资源对象RC上定义的Label Selector来筛选要监控的Pod副本的数量，从而实现Pod副本的数量始终符合预期设定的全自动控制流程&lt;/p&gt;
+
+&lt;p&gt;2.kupe-proxy进程通过Service的Label Selector来选择对应的Pod，自动建立器每个Service到对应Pod的请求转发路由表，从而实现Service的智能负载均衡机制&lt;/p&gt;
+
+&lt;p&gt;3.通过对某些Node定义特定的Label,并且在Pod定义文件中使用NodeSelector这种标签调度策略，Kube-scheduler进程可以实现Pod定向调度的特性&lt;/p&gt;
+
+&lt;p&gt;详见: &lt;a href=&#34;https://blog.csdn.net/weixin_35673021/article/details/112946553&#34;&gt;k8s selector_k8s之Label与Selector&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org14788c6&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;参考资料&#34;&gt;参考资料&lt;/h1&gt;
 
@@ -747,7 +972,9 @@ status:
 7.&lt;a href=&#34;https://blog.csdn.net/weixin_45710286/article/details/125474671&#34;&gt;kubernetes 之 pod 调度策略（一）&lt;/a&gt;&lt;br /&gt;
 8.&lt;a href=&#34;https://www.jianshu.com/p/ebb8f0ba67f6&#34;&gt;污点（taints）和容忍度（tolerations）&lt;/a&gt;&lt;br /&gt;
 9.&lt;a href=&#34;https://www.oomspot.com//post/k8swangluomoxingfuwuneibuliuliangcelue&#34;&gt;k8s网络模型-服务内部流量策略&lt;/a&gt;&lt;br /&gt;
-10.&lt;a href=&#34;https://www.jianshu.com/p/cedf8c9d18f1&#34;&gt;k8s中statefulset资源类型的深入理解&lt;/a&gt;&lt;/p&gt;
+10.&lt;a href=&#34;https://www.jianshu.com/p/cedf8c9d18f1&#34;&gt;k8s中statefulset资源类型的深入理解&lt;/a&gt;&lt;br /&gt;
+11.&lt;a href=&#34;https://copyfuture.com/blogs-details/202006012253389106o9ttg1qo5by175&#34;&gt;k8s job简介和访问&lt;/a&gt;&lt;br /&gt;
+12.&lt;a href=&#34;https://blog.csdn.net/m0_47288926/article/details/122819880&#34;&gt;k8s-HPA&lt;/a&gt;&lt;/p&gt;
 </description>
         </item>
         

@@ -681,7 +681,188 @@ url = "/2022/09/28/resource/"
        startTime: "2022-10-02T03:06:17Z"
      
      #+END_SRC
+
+** DaemonSet    
+*** 作用及概念
+    DaemonSet确保集群中每个（部分）node运行一份po副本，当node加入集群时创建pod，当node离开集群时回收pod。
+
+   如果删除DaemonSet，其创建的所有pod也被删除， DaemonSet中的pod覆盖整个集群。
+   
+   当需要在集群内每个node运行同一个pod，使用 DaemonSet是有价值的，以下是典型使用场景：
+   
+   - 运行集群存储守护进程，如 glusterd、ceph
+   - 运行集群日志收集守护进程，如 fluent、 logstash
+   - 运行节点监控守护进程，如 Prometheus Node Exporter， collectd， Datadog agent，
+
+*** 配置清单
+    #+BEGIN_SRC yaml
+    $ cat daemonset-demo.yaml
+    apiVersion: apps/v1
+    kind: DaemonSet
+    metadata:
+      name: deamonset-demo
+      namespace: default
+    spec:
+      selector:
+        matchLabels:
+         app: nginx-ds
+      template:
+        metadata:
+          labels:
+            app: nginx-ds
+        spec:
+          containers:
+          - name: nginx
+            image: nginx:1.17.1
     
+    #+END_SRC
+   
+*** 查看效果
+    #+BEGIN_SRC sh
+    # mosp @ mospdeMacBook-Pro in ~/study/k8s/resource/daemonset [18:51:51]
+    $ k get ds -A
+    NAMESPACE     NAME             DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR            AGE
+    default       deamonset-demo   1         1         1       1            1           <none>                   10m
+    kube-system   kube-proxy       1         1         1       1            1           kubernetes.io/os=linux   68d
+    
+    # mosp @ mospdeMacBook-Pro in ~/study/k8s/resource/daemonset [18:53:22]
+    $ k get rs -A
+    NAMESPACE              NAME                                      DESIRED   CURRENT   READY   AGE
+    guestbook-system       guestbook-controller-manager-84cd65964f   1         1         1       63d
+    kube-system            coredns-78fcd69978                        2         2         2       68d
+    kubernetes-dashboard   dashboard-metrics-scraper-7c857855d9      1         1         1       19d
+    kubernetes-dashboard   kubernetes-dashboard-6b79449649           1         1         1       19d
+    
+    # mosp @ mospdeMacBook-Pro in ~/study/k8s/resource/daemonset [18:53:28]
+    $ k get pod -A
+    NAMESPACE              NAME                                            READY   STATUS    RESTARTS          AGE
+    default                deamonset-demo-lbmmq                            1/1     Running   0                 10m
+        
+    #+END_SRC 
+
+** Job 
+*** 作用及概念
+    详见：[[https://blog.csdn.net/u012124304/article/details/107729972][k8s Job详解]]
+
+
+*** 配置清单
+    #+BEGIN_SRC yaml
+    $ cat job-demo.yaml
+
+    apiVersion: batch/v1
+    kind: Job
+    metadata:
+      name: echo-time
+    spec:
+      completions: 10 #任务个数
+      parallelism: 5 #并行数
+      backoffLimit: 2 #失败最多执行几次
+      template:
+        spec:
+          containers:
+          - name: echo-time
+            image: centos:latest
+            imagePullPolicy: IfNotPresent
+            command:
+            - /bin/bash
+            - "-c"
+            - "for i in `seq 1 100`;do echo $i: `date` && sleep 1;done"
+          restartPolicy: OnFailure
+    
+    #+END_SRC
+
+*** 查看效果
+    #+BEGIN_SRC sh
+    # mosp @ mospdeMacBook-Pro in ~/study/k8s/resource/job [20:17:06]
+    $ k get job -A
+    NAMESPACE   NAME        COMPLETIONS   DURATION   AGE
+    default     echo-time   10/10         3m28s      5m40s
+    
+    # mosp @ mospdeMacBook-Pro in ~/study/k8s/resource/job [20:20:49]
+    $ k get pod -A
+    NAMESPACE              NAME                                            READY   STATUS      RESTARTS         AGE
+    default                deamonset-demo-lbmmq                            1/1     Running     1 (9h ago)       5d1h
+    default                echo-time--1-24lfm                              0/1     Completed   0                4m7s
+    default                echo-time--1-5drjv                              0/1     Completed   0                4m9s
+    default                echo-time--1-869rd                              0/1     Completed   0                4m7s
+    default                echo-time--1-8fd7m                              0/1     Completed   0                4m9s
+    default                echo-time--1-cqfjs                              0/1     Completed   0                5m52s
+    default                echo-time--1-f276r                              0/1     Completed   0                5m52s
+    default                echo-time--1-h4v9l                              0/1     Completed   0                5m52s
+    default                echo-time--1-lx4ww                              0/1     Completed   0                5m52s
+    default                echo-time--1-qd4kc                              0/1     Completed   0                4m8s
+    default                echo-time--1-zfchg                              0/1     Completed   0                5m52s
+    
+    #+END_SRC
+    每个Pod日志都能从1输出到100。
+
+    
+** cronJob
+*** 作用及概念
+    CronJobs 对于创建周期性的、反复重复的任务很有用，例如执行数据备份或者发送邮件。 CronJobs 也可以用来计划在指定时间来执行的独立任务，例如计划当集群看起来很空闲时 执行某个 Job。
+
+*** 配置清单
+    #+BEGIN_SRC yaml
+    $ cat cronjob-demo.yaml
+    apiVersion: batch/v1
+    kind: CronJob
+    metadata:
+      name: cronjob-demo
+    spec:
+      schedule: "*/1 * * * *"
+      jobTemplate:
+        spec:
+          template:
+            spec:
+              containers:
+              - name: cronjob-demo
+                image: busybox
+                imagePullPolicy: IfNotPresent
+                command:
+                - /bin/sh
+                - -c
+                - date; echo Hello from the Kubernetes cluster
+              restartPolicy: OnFailure
+    #+END_SRC
+
+*** 查看效果
+    #+BEGIN_SRC bash
+    # mosp @ mospdeMacBook-Pro in ~/study/k8s/resource [20:27:32]
+    $ k get cronjobs.batch -A
+    NAMESPACE   NAME           SCHEDULE      SUSPEND   ACTIVE   LAST SCHEDULE   AGE
+    default     cronjob-demo   */1 * * * *   False     0        40s             7m53s
+    
+    # mosp @ mospdeMacBook-Pro in ~/study/k8s/resource [20:27:40]
+    $ k get pod -A
+    NAMESPACE              NAME                                            READY   STATUS      RESTARTS         AGE
+    default                cronjob-demo-27761065--1-bjdj7                  0/1     Completed   0                2m47s
+    default                cronjob-demo-27761066--1-z9ttq                  0/1     Completed   0                107s
+    default                cronjob-demo-27761067--1-9x5fn                  0/1     Completed   0                47s
+    
+    #+END_SRC
+    通过观察发现，它只保留最新的3个pod，其他的将被删除掉免得占用资源。
+
+** HPA
+*** 作用及概念
+
+ 
+** Label&Annotation&Selector
+*** Label
+    详见：[[https://www.cnblogs.com/chuanzhang053/p/16351442.html][k8s中label和label selector的基本概念及使用方法]]
+*** Annotation
+    详见：[[https://www.jianshu.com/p/21275c1c701c][K8s Annotation（注解）]]
+*** Selector
+    Label selector的使用场景:
+
+    1.kube-controller进程通过资源对象RC上定义的Label Selector来筛选要监控的Pod副本的数量，从而实现Pod副本的数量始终符合预期设定的全自动控制流程
+
+    2.kupe-proxy进程通过Service的Label Selector来选择对应的Pod，自动建立器每个Service到对应Pod的请求转发路由表，从而实现Service的智能负载均衡机制
+
+    3.通过对某些Node定义特定的Label,并且在Pod定义文件中使用NodeSelector这种标签调度策略，Kube-scheduler进程可以实现Pod定向调度的特性
+
+    详见: [[https://blog.csdn.net/weixin_35673021/article/details/112946553][k8s selector_k8s之Label与Selector]]
+
+
    
 
 * 参考资料
@@ -695,4 +876,6 @@ url = "/2022/09/28/resource/"
   8.[[https://www.jianshu.com/p/ebb8f0ba67f6][污点（taints）和容忍度（tolerations）]]
   9.[[https://www.oomspot.com//post/k8swangluomoxingfuwuneibuliuliangcelue][k8s网络模型-服务内部流量策略]]
   10.[[https://www.jianshu.com/p/cedf8c9d18f1][k8s中statefulset资源类型的深入理解]]
+  11.[[https://copyfuture.com/blogs-details/202006012253389106o9ttg1qo5by175][k8s job简介和访问]]
+  12.[[https://blog.csdn.net/m0_47288926/article/details/122819880][k8s-HPA]]
 

@@ -79,13 +79,13 @@
     
     
 
-<p><a id="orgd984af0"></a></p>
+<p><a id="orge0656ad"></a></p>
 
 <h1 id="简介">简介</h1>
 
 <p>k8s中所有的内容都抽象为资源， 资源实例化之后，叫做对象。</p>
 
-<p><a id="org2ed66d0"></a></p>
+<p><a id="org32d4fb4"></a></p>
 
 <h1 id="资源类型介绍">资源类型介绍</h1>
 
@@ -97,11 +97,11 @@
 <li>元数据型资源：HPA，PodTemplate，LimitRange</li>
 </ul>
 
-<p><a id="org07bc6c6"></a></p>
+<p><a id="orga7470a7"></a></p>
 
 <h1 id="工作负载资源">工作负载资源</h1>
 
-<p><a id="orgc982b3b"></a></p>
+<p><a id="org78d773a"></a></p>
 
 <h2 id="deployment">Deployment</h2>
 
@@ -118,7 +118,7 @@
 <li>支持版本的滚动更新和版本回退</li>
 </ul>
 
-<p><a id="org4f07d2b"></a></p>
+<p><a id="org3b6bbe8"></a></p>
 
 <h3 id="编写资源清单">编写资源清单</h3>
 
@@ -144,7 +144,7 @@
 20  
 </code></pre>
 
-<p><a id="org68734c2"></a></p>
+<p><a id="org33be6c7"></a></p>
 
 <h3 id="运行清单">运行清单</h3>
 
@@ -152,7 +152,7 @@
 deployment.apps/test-deployment created 
 </code></pre>
 
-<p><a id="org39fa1b5"></a></p>
+<p><a id="org1474d63"></a></p>
 
 <h3 id="查看效果">查看效果</h3>
 
@@ -246,7 +246,7 @@ status:
   updatedReplicas: 3
 </code></pre>
 
-<p><a id="org5c6ab88"></a></p>
+<p><a id="org3fa900a"></a></p>
 
 <h2 id="replicaset">ReplicaSet</h2>
 
@@ -254,7 +254,7 @@ status:
 
 <p>kubernetes官方推荐不要直接使用ReplicaSet，用Deployments取而代之，Deployments是比ReplicaSet更高级的概念，它会管理ReplicaSet并提供很多其它有用的特性，最重要的是Deployments支持声明式更新，声明式更好相比于命令式更新的好处是不会丢失历史变更。总结起来就是：不要再直接使用ReplicaSet。</p>
 
-<p><a id="org5fba86b"></a></p>
+<p><a id="orgfdcdb41"></a></p>
 
 <h3 id="查看效果-1">查看效果</h3>
 
@@ -327,7 +327,7 @@ status:
   replicas: 3
 </code></pre>
 
-<p><a id="org1687357"></a></p>
+<p><a id="org1c8a1ca"></a></p>
 
 <h2 id="pod">Pod</h2>
 
@@ -465,11 +465,11 @@ status:
   startTime: &quot;2022-09-28T12:35:22Z&quot; 
 </code></pre>
 
-<p><a id="org77ddc22"></a></p>
+<p><a id="org4ffc8cc"></a></p>
 
 <h2 id="statefulset">Statefulset</h2>
 
-<p><a id="orge4f7934"></a></p>
+<p><a id="orgc4ecdec"></a></p>
 
 <h3 id="应用场景">应用场景</h3>
 
@@ -488,7 +488,7 @@ status:
 <li>具体的statefulSet应用</li>
 </ul>
 
-<p><a id="org1f5edd0"></a></p>
+<p><a id="org75c4d8e"></a></p>
 
 <h3 id="创建yaml文件示例">创建yaml文件示例</h3>
 
@@ -529,7 +529,7 @@ spec:
           name: web
 </code></pre>
 
-<p><a id="orgfe9fff2"></a></p>
+<p><a id="org9af1bda"></a></p>
 
 <h3 id="查看效果-2">查看效果</h3>
 
@@ -564,7 +564,7 @@ default                web-1                                           1/1     R
 default                web-2                                           1/1     Running   0                24h
 </code></pre>
 
-<p><a id="orgf7b2928"></a></p>
+<p><a id="orgad33d68"></a></p>
 
 <h3 id="查看清单">查看清单</h3>
 
@@ -798,7 +798,232 @@ status:
 </code></pre></li>
 </ol>
 
-<p><a id="org4d1225e"></a></p>
+<p><a id="orga9c50ad"></a></p>
+
+<h2 id="daemonset">DaemonSet</h2>
+
+<p><a id="orgface580"></a></p>
+
+<h3 id="作用及概念">作用及概念</h3>
+
+<p>DaemonSet确保集群中每个（部分）node运行一份po副本，当node加入集群时创建pod，当node离开集群时回收pod。</p>
+
+<p>如果删除DaemonSet，其创建的所有pod也被删除， DaemonSet中的pod覆盖整个集群。</p>
+
+<p>当需要在集群内每个node运行同一个pod，使用 DaemonSet是有价值的，以下是典型使用场景：</p>
+
+<ul>
+<li>运行集群存储守护进程，如 glusterd、ceph</li>
+<li>运行集群日志收集守护进程，如 fluent、 logstash</li>
+<li>运行节点监控守护进程，如 Prometheus Node Exporter， collectd， Datadog agent，</li>
+</ul>
+
+<p><a id="org9260917"></a></p>
+
+<h3 id="配置清单">配置清单</h3>
+
+<pre><code>$ cat daemonset-demo.yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: deamonset-demo
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+     app: nginx-ds
+  template:
+    metadata:
+      labels:
+        app: nginx-ds
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.17.1
+</code></pre>
+
+<p><a id="org89256ec"></a></p>
+
+<h3 id="查看效果-3">查看效果</h3>
+
+<pre><code># mosp @ mospdeMacBook-Pro in ~/study/k8s/resource/daemonset [18:51:51]
+$ k get ds -A
+NAMESPACE     NAME             DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR            AGE
+default       deamonset-demo   1         1         1       1            1           &lt;none&gt;                   10m
+kube-system   kube-proxy       1         1         1       1            1           kubernetes.io/os=linux   68d
+
+# mosp @ mospdeMacBook-Pro in ~/study/k8s/resource/daemonset [18:53:22]
+$ k get rs -A
+NAMESPACE              NAME                                      DESIRED   CURRENT   READY   AGE
+guestbook-system       guestbook-controller-manager-84cd65964f   1         1         1       63d
+kube-system            coredns-78fcd69978                        2         2         2       68d
+kubernetes-dashboard   dashboard-metrics-scraper-7c857855d9      1         1         1       19d
+kubernetes-dashboard   kubernetes-dashboard-6b79449649           1         1         1       19d
+
+# mosp @ mospdeMacBook-Pro in ~/study/k8s/resource/daemonset [18:53:28]
+$ k get pod -A
+NAMESPACE              NAME                                            READY   STATUS    RESTARTS          AGE
+default                deamonset-demo-lbmmq                            1/1     Running   0                 10m
+</code></pre>
+
+<p><a id="org7a1d726"></a></p>
+
+<h2 id="job">Job</h2>
+
+<p><a id="org1def512"></a></p>
+
+<h3 id="作用及概念-1">作用及概念</h3>
+
+<p>详见：<a href="https://blog.csdn.net/u012124304/article/details/107729972">k8s Job详解</a></p>
+
+<p><a id="org59a91b0"></a></p>
+
+<h3 id="配置清单-1">配置清单</h3>
+
+<pre><code>$ cat job-demo.yaml
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: echo-time
+spec:
+  completions: 10 #任务个数
+  parallelism: 5 #并行数
+  backoffLimit: 2 #失败最多执行几次
+  template:
+    spec:
+      containers:
+      - name: echo-time
+        image: centos:latest
+        imagePullPolicy: IfNotPresent
+        command:
+        - /bin/bash
+        - &quot;-c&quot;
+        - &quot;for i in `seq 1 100`;do echo $i: `date` &amp;&amp; sleep 1;done&quot;
+      restartPolicy: OnFailure
+</code></pre>
+
+<p><a id="org2f3a615"></a></p>
+
+<h3 id="查看效果-4">查看效果</h3>
+
+<pre><code># mosp @ mospdeMacBook-Pro in ~/study/k8s/resource/job [20:17:06]
+$ k get job -A
+NAMESPACE   NAME        COMPLETIONS   DURATION   AGE
+default     echo-time   10/10         3m28s      5m40s
+
+# mosp @ mospdeMacBook-Pro in ~/study/k8s/resource/job [20:20:49]
+$ k get pod -A
+NAMESPACE              NAME                                            READY   STATUS      RESTARTS         AGE
+default                deamonset-demo-lbmmq                            1/1     Running     1 (9h ago)       5d1h
+default                echo-time--1-24lfm                              0/1     Completed   0                4m7s
+default                echo-time--1-5drjv                              0/1     Completed   0                4m9s
+default                echo-time--1-869rd                              0/1     Completed   0                4m7s
+default                echo-time--1-8fd7m                              0/1     Completed   0                4m9s
+default                echo-time--1-cqfjs                              0/1     Completed   0                5m52s
+default                echo-time--1-f276r                              0/1     Completed   0                5m52s
+default                echo-time--1-h4v9l                              0/1     Completed   0                5m52s
+default                echo-time--1-lx4ww                              0/1     Completed   0                5m52s
+default                echo-time--1-qd4kc                              0/1     Completed   0                4m8s
+default                echo-time--1-zfchg                              0/1     Completed   0                5m52s
+</code></pre>
+
+<p>每个Pod日志都能从1输出到100。</p>
+
+<p><a id="org6491cbd"></a></p>
+
+<h2 id="cronjob">cronJob</h2>
+
+<p><a id="org6cd6fcb"></a></p>
+
+<h3 id="作用及概念-2">作用及概念</h3>
+
+<p>CronJobs 对于创建周期性的、反复重复的任务很有用，例如执行数据备份或者发送邮件。 CronJobs 也可以用来计划在指定时间来执行的独立任务，例如计划当集群看起来很空闲时 执行某个 Job。</p>
+
+<p><a id="org63ce1b0"></a></p>
+
+<h3 id="配置清单-2">配置清单</h3>
+
+<pre><code>$ cat cronjob-demo.yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: cronjob-demo
+spec:
+  schedule: &quot;*/1 * * * *&quot;
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: cronjob-demo
+            image: busybox
+            imagePullPolicy: IfNotPresent
+            command:
+            - /bin/sh
+            - -c
+            - date; echo Hello from the Kubernetes cluster
+          restartPolicy: OnFailure
+</code></pre>
+
+<p><a id="org2e52734"></a></p>
+
+<h3 id="查看效果-5">查看效果</h3>
+
+<pre><code># mosp @ mospdeMacBook-Pro in ~/study/k8s/resource [20:27:32]
+$ k get cronjobs.batch -A
+NAMESPACE   NAME           SCHEDULE      SUSPEND   ACTIVE   LAST SCHEDULE   AGE
+default     cronjob-demo   */1 * * * *   False     0        40s             7m53s
+
+# mosp @ mospdeMacBook-Pro in ~/study/k8s/resource [20:27:40]
+$ k get pod -A
+NAMESPACE              NAME                                            READY   STATUS      RESTARTS         AGE
+default                cronjob-demo-27761065--1-bjdj7                  0/1     Completed   0                2m47s
+default                cronjob-demo-27761066--1-z9ttq                  0/1     Completed   0                107s
+default                cronjob-demo-27761067--1-9x5fn                  0/1     Completed   0                47s
+</code></pre>
+
+<p>通过观察发现，它只保留最新的3个pod，其他的将被删除掉免得占用资源。</p>
+
+<p><a id="org546b0d0"></a></p>
+
+<h2 id="hpa">HPA</h2>
+
+<p><a id="orgba6b263"></a></p>
+
+<h3 id="作用及概念-3">作用及概念</h3>
+
+<p><a id="org278c786"></a></p>
+
+<h2 id="label-annotation-selector">Label&amp;Annotation&amp;Selector</h2>
+
+<p><a id="orgacecd12"></a></p>
+
+<h3 id="label">Label</h3>
+
+<p>详见：<a href="https://www.cnblogs.com/chuanzhang053/p/16351442.html">k8s中label和label selector的基本概念及使用方法</a></p>
+
+<p><a id="org1cb2230"></a></p>
+
+<h3 id="annotation">Annotation</h3>
+
+<p>详见：<a href="https://www.jianshu.com/p/21275c1c701c">K8s Annotation（注解）</a></p>
+
+<p><a id="org33a8552"></a></p>
+
+<h3 id="selector">Selector</h3>
+
+<p>Label selector的使用场景:</p>
+
+<p>1.kube-controller进程通过资源对象RC上定义的Label Selector来筛选要监控的Pod副本的数量，从而实现Pod副本的数量始终符合预期设定的全自动控制流程</p>
+
+<p>2.kupe-proxy进程通过Service的Label Selector来选择对应的Pod，自动建立器每个Service到对应Pod的请求转发路由表，从而实现Service的智能负载均衡机制</p>
+
+<p>3.通过对某些Node定义特定的Label,并且在Pod定义文件中使用NodeSelector这种标签调度策略，Kube-scheduler进程可以实现Pod定向调度的特性</p>
+
+<p>详见: <a href="https://blog.csdn.net/weixin_35673021/article/details/112946553">k8s selector_k8s之Label与Selector</a></p>
+
+<p><a id="org14788c6"></a></p>
 
 <h1 id="参考资料">参考资料</h1>
 
@@ -811,7 +1036,9 @@ status:
 7.<a href="https://blog.csdn.net/weixin_45710286/article/details/125474671">kubernetes 之 pod 调度策略（一）</a><br />
 8.<a href="https://www.jianshu.com/p/ebb8f0ba67f6">污点（taints）和容忍度（tolerations）</a><br />
 9.<a href="https://www.oomspot.com//post/k8swangluomoxingfuwuneibuliuliangcelue">k8s网络模型-服务内部流量策略</a><br />
-10.<a href="https://www.jianshu.com/p/cedf8c9d18f1">k8s中statefulset资源类型的深入理解</a></p>
+10.<a href="https://www.jianshu.com/p/cedf8c9d18f1">k8s中statefulset资源类型的深入理解</a><br />
+11.<a href="https://copyfuture.com/blogs-details/202006012253389106o9ttg1qo5by175">k8s job简介和访问</a><br />
+12.<a href="https://blog.csdn.net/m0_47288926/article/details/122819880">k8s-HPA</a></p>
 
     <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
   <div style="float:right;margin-top:0px;">
