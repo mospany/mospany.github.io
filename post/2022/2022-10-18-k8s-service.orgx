@@ -1,0 +1,19 @@
++++
+#+OPTIONS: \n:t
+categories = ["技术文章"]
+date = "2022-10-18T22:06:22+08:00"
+description = ""
+keywords = ["K8S","技术文章"]
+tags = ["K8S","技术文章"]
+title = "K8S学习笔记(07): 服务发现"
+url = "/2022/10/18/k8s-service/"
+
++++
+
+* service
+
+
+
+* 参考资料
+  01.[[https://baijiahao.baidu.com/s?id=1681303264708121640&wfr=spider&for=pc][一文讲透K8s的Service概念]]
+  02.[[https://blog.csdn.net/huahua1999/article/details/124237065][k8s-service底层之 Iptables与 IPVS]]

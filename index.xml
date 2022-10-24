@@ -5,7 +5,28 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Wed, 28 Sep 2022 20:10:36 CST</updated>
+        <updated>Tue, 18 Oct 2022 22:06:22 CST</updated>
+        
+        <item>
+            <title>K8S学习笔记(07): 服务发现</title>
+            <link>http://mospany.github.io/2022/10/18/k8s-service/</link>
+            <pubDate>Tue, 18 Oct 2022 22:06:22 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://mospany.github.io/2022/10/18/k8s-service/</guid>
+            <description>
+
+&lt;p&gt;&lt;a id=&#34;orge49f2e1&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;service&#34;&gt;service&lt;/h1&gt;
+
+&lt;p&gt;&lt;a id=&#34;org535385f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;参考资料&#34;&gt;参考资料&lt;/h1&gt;
+
+&lt;p&gt;01.&lt;a href=&#34;https://baijiahao.baidu.com/s?id=1681303264708121640&amp;amp;wfr=spider&amp;amp;for=pc&#34;&gt;一文讲透K8s的Service概念&lt;/a&gt;&lt;br /&gt;
+02.&lt;a href=&#34;https://blog.csdn.net/huahua1999/article/details/124237065&#34;&gt;k8s-service底层之 Iptables与 IPVS&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
         
         <item>
             <title>K8S学习笔记(06): 资源</title>
@@ -3411,102 +3432,6 @@ tracepath6 www.xxx.com
 &lt;h1 id=&#34;ppt内容&#34;&gt;PPT内容&lt;/h1&gt;
 
 &lt;p&gt;&lt;center&gt;&lt;embed src=&#34;http://blog.mospan.cn/post/img/ipv6-base.pdf&#34; width=100% height=&#34;800&#34;&gt;&lt;/center&gt;&lt;/p&gt;
-</description>
-        </item>
-        
-        <item>
-            <title>我的博客Hugo使用手册</title>
-            <link>http://mospany.github.io/2019/02/02/mospan-hugo-blog-manual/</link>
-            <pubDate>Sat, 02 Feb 2019 15:18:53 CST</pubDate>
-            <author>Mospan</author>
-            <guid>http://mospany.github.io/2019/02/02/mospan-hugo-blog-manual/</guid>
-            <description>&lt;h1 id=&#34;hugo&#34;&gt;Hugo&lt;/h1&gt;
-
-&lt;p&gt;Hugo是一个用Go语言编写的静态网站生成器，它使用起来非常简单，相对于Jekyll复杂的安装设置来说，Hugo仅需要一个二进制文件hugo(hugo.exe)即可轻松用于本地调试和生成静态页面。&lt;/p&gt;
-
-&lt;p&gt;Hugo生成静态页面的效率很高，我的多篇博客文章生成几乎是瞬间完成的，而用Jekyll需要等待10秒左右。&lt;/p&gt;
-
-&lt;p&gt;Hugo自带watch的调试模式，可以在我修改MarkDown文章之后切换到浏览器，页面会检测到更新并且自动刷新，呈现出最终效果，能极大的提高博客书写效率。再加上Hugo是使用Go语言编写，已经没有任何理由不使用Hugo来代替Jekyll作为我的个人博客站点生成器了。&lt;/p&gt;
-
-&lt;h1 id=&#34;usage&#34;&gt;Usage&lt;/h1&gt;
-
-&lt;p&gt;Demo：
-&lt;a href=&#34;http://blog.mospan.cn/&#34; title=&#34;http://blog.mospan.cn/&#34;&gt;http://blog.mospan.cn/&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;界面参考 [http://cyrillschumacher.com/](http://cyrillschumacher.com/) 做了一些修改，并做了一个皮肤：panman。&lt;/p&gt;
-
-&lt;h2 id=&#34;源码&#34;&gt;源码&lt;/h2&gt;
-
-&lt;p&gt;下载源码到本地。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;$ git clone git@github.com:mospany/mospan-hugo-blog.git
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;记得把我的个人信息修改成自己的就行。&lt;/p&gt;
-
-&lt;h2 id=&#34;启动调试&#34;&gt;启动调试&lt;/h2&gt;
-
-&lt;h3 id=&#34;本地调试&#34;&gt;本地调试&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;$ cd mospan-hugo-blog
-$ ./debug.py
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;打开浏览器：http://localhost:1313&lt;/p&gt;
-
-&lt;h3 id=&#34;远程调试&#34;&gt;远程调试&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;$ cd mospan-hugo-blog
-$ ./debug.py AA.BB.CC.DD
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;打开浏览器：http://AA.BB.CC.DD:1313
-其中： AA.BB.CC.DD 为本机可访问IP地址。&lt;/p&gt;
-
-&lt;h2 id=&#34;创作&#34;&gt;创作&lt;/h2&gt;
-
-&lt;ul&gt;
-现在的hugo可支持markdown与org-mode文件格式，分别对应create-md.py于create-org.py脚本。
-&lt;li&gt;执行create-md.py或create-org.py。&lt;/li&gt;
-&lt;li&gt;输入文件标题，最后不要有空格。&lt;/li&gt;
-&lt;li&gt;它将根据themes/hugo-panman-theme/archetypes/default.[md|org]模板生成以日期+标题的文件。&lt;/li&gt;
-&lt;li&gt;打开新生成文件进行编辑，记得修改头部的categories、keywords、tags、title进行归类区分。&lt;/li&gt;
-&lt;li&gt;修改好后，通过push.py进行保存到github文件中。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;部署&#34;&gt;部署&lt;/h2&gt;
-
-&lt;p&gt;如果是第一次部署，执行：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;$ ./deploy.py first
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;否则&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;$ ./deploy.py manual
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;即可&lt;/p&gt;
-
-&lt;h1 id=&#34;改进记录&#34;&gt;改进记录&lt;/h1&gt;
-
-&lt;h1 id=&#34;缺陷&#34;&gt;缺陷&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Hugo对org-mode渲染没有markdown好。&lt;/li&gt;
-&lt;li&gt;文章标题还需更加美化。&lt;/li&gt;
-&lt;li&gt;右边的导航栏在某些浏览器下点击无效。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;参考资料&#34;&gt;参考资料&lt;/h1&gt;
-
-&lt;p&gt;【01】 &lt;a href=&#34;https://www.jianshu.com/p/57afa4844aaa&#34; title=&#34;Gitment评论功能接入踩坑教程&#34;&gt;Gitment评论功能接入踩坑教程&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;【02】 &lt;a href=&#34;https://www.qikqiak.com/post/hugo-integrated-gitment-plugin/&#34; title=&#34;Hugo 集成 Gitment 评论插件&#34;&gt;Hugo 集成 Gitment 评论插件&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;【03】&lt;a href=&#34;https://blog.csdn.net/wardseptember/article/details/82828391&#34; title=&#34;解决gitment无法登陆评论问题（Object ProgressEvent）&#34;&gt;解决gitment无法登陆评论问题（Object ProgressEvent）&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;【04】&lt;a href=&#34;https://www.xianmin.org/post/utterances-comment-system/&#34; title=&#34;更好的基于 github issues 的评论系统——utterances&#34;&gt;更好的基于 github issues 的评论系统——utterances&lt;/a&gt;&lt;/p&gt;
 </description>
         </item>
         
