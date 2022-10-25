@@ -17,7 +17,7 @@
       <pubDate>Tue, 18 Oct 2022 22:06:22 +0800</pubDate>
       
       <guid>http://mospany.github.io/2022/10/18/k8s-service/</guid>
-      <description>service 参考资料 01.一文讲透K8s的Service概念 02.k8s-service底层之 Iptables与 IPVS</description>
+      <description>service 参考资料 01.一文讲透K8s的Service概念 02.k8s-service底层之 Iptables与 IPVS 03.K8S的ServiceIP实现</description>
     </item>
     
     <item>

@@ -15,16 +15,18 @@
             <guid>http://mospany.github.io/2022/10/18/k8s-service/</guid>
             <description>
 
-&lt;p&gt;&lt;a id=&#34;orge49f2e1&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgcb05e36&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;service&#34;&gt;service&lt;/h1&gt;
 
-&lt;p&gt;&lt;a id=&#34;org535385f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org317409c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;参考资料&#34;&gt;参考资料&lt;/h1&gt;
 
 &lt;p&gt;01.&lt;a href=&#34;https://baijiahao.baidu.com/s?id=1681303264708121640&amp;amp;wfr=spider&amp;amp;for=pc&#34;&gt;一文讲透K8s的Service概念&lt;/a&gt;&lt;br /&gt;
-02.&lt;a href=&#34;https://blog.csdn.net/huahua1999/article/details/124237065&#34;&gt;k8s-service底层之 Iptables与 IPVS&lt;/a&gt;&lt;/p&gt;
+02.&lt;a href=&#34;https://blog.csdn.net/huahua1999/article/details/124237065&#34;&gt;k8s-service底层之 Iptables与 IPVS&lt;/a&gt;&lt;br /&gt;
+03.&lt;a href=&#34;https://blog.csdn.net/Deepexi_Date/article/details/111042410&#34;&gt;K8S的ServiceIP实现原理&lt;/a&gt;&lt;br /&gt;
+04.&lt;a href=&#34;http://t.zoukankan.com/fengdejiyixx-p-15568056.html&#34;&gt;http://t.zoukankan.com/fengdejiyixx-p-15568056.html&lt;/a&gt;&lt;/p&gt;
 </description>
         </item>
         

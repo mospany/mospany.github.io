@@ -17,3 +17,5 @@ url = "/2022/10/18/k8s-service/"
 * 参考资料
   01.[[https://baijiahao.baidu.com/s?id=1681303264708121640&wfr=spider&for=pc][一文讲透K8s的Service概念]]
   02.[[https://blog.csdn.net/huahua1999/article/details/124237065][k8s-service底层之 Iptables与 IPVS]]
+  03.[[https://blog.csdn.net/Deepexi_Date/article/details/111042410][K8S的ServiceIP实现原理]]
+  04.[[http://t.zoukankan.com/fengdejiyixx-p-15568056.html][http://t.zoukankan.com/fengdejiyixx-p-15568056.html]]
