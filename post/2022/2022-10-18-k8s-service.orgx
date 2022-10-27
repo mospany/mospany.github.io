@@ -19,3 +19,4 @@ url = "/2022/10/18/k8s-service/"
   02.[[https://blog.csdn.net/huahua1999/article/details/124237065][k8s-service底层之 Iptables与 IPVS]]
   03.[[https://blog.csdn.net/Deepexi_Date/article/details/111042410][K8S的ServiceIP实现原理]]
   04.[[http://t.zoukankan.com/fengdejiyixx-p-15568056.html][http://t.zoukankan.com/fengdejiyixx-p-15568056.html]]
+  05.[[https://blog.csdn.net/qq_37369726/article/details/121785627][kubernetes pod间通信,跨namespace互访]]
