@@ -196,6 +196,109 @@ url = "/2022/11/23/kubeadm-install-k8s/"
   #+END_SRC
 
 
+** 9、安装 Docker
+   #+BEGIN_QUOTE
+   所有节点执行
+   #+END_QUOTE
+
+   1、使用 sudo 或 root 权限登录 Centos。
+
+   2、确保 yum 包更新到最新。
+   #+BEGIN_SRC sh
+   sudo yum update
+   
+   #+END_SRC
+
+   3、执行 Docker 安装脚本。
+   #+BEGIN_SRC sh
+   curl -fsSL https://get.docker.com/ | sh 
+   #+END_SRC
+   执行这个脚本会添加 docker.repo 源并安装 Docker。
+
+   4、启动 Docker 进程。
+   #+BEGIN_SRC sh
+   $ sudo service docker start
+   
+   #+END_SRC
+
+   5、验证 docker 是否安装成功并在容器中执行一个测试的镜像。
+   #+BEGIN_SRC sh
+   sudo docker run hello-world
+   
+   [root@k8s-master ~]# sudo docker run hello-world
+
+     Hello from Docker!
+     This message shows that your installation appears to be working correctly.
+   #+END_SRC
+   到此，docker 在 CentOS 系统的安装完成。
+
+
+** 10、安装 kubeadm、kubelet
+   #+BEGIN_QUOTE
+   所有节点执行
+   #+END_QUOTE
+
+   1、添加 k8s 镜像源
+   #+BEGIN_QUOTE
+   地址：https://developer.aliyun.com/mirror/kubernetes?spm=a2c6h.13651102.0.0.1cd01b116JYQIn
+   #+END_QUOTE
+
+   #+BEGIN_SRC sh -n
+   [root@k8s-master ~]# cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+   > [kubernetes]
+   > name=Kubernetes
+   > baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
+   > enabled=1
+   > gpgcheck=0
+   > repo_gpgcheck=0
+   > gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
+   > EOF
+   [root@k8s-master ~]#
+   
+   #+END_SRC
+
+   2、建立 k8s YUM 缓存
+   #+BEGIN_SRC sh -n
+   [root@k8s-master ~]# yum makecache
+   已加载插件：fastestmirror
+   Loading mirror speeds from cached hostfile
+   base                                                                                                                                                                                 | 3.6 kB  00:00:00
+   docker-ce-stable                                                                                                                                                                     | 3.5 kB  00:00:00
+   epel                                                                                                                                                                                 | 4.7 kB  00:00:00
+   extras                                                                                                                                                                               | 2.9 kB  00:00:00
+   updates                                                                                                                                                                              | 2.9 kB  00:00:00
+   元数据缓存已建立
+   [root@k8s-master ~]#
+   
+   #+END_SRC
+
+   3、安装 k8s 相关工具
+   
+   #+BEGIN_SRC sh -n
+     # 查看可安装版本
+     [root@k8s-master ~]# yum list kubelet --showduplicates
+
+     ...
+     ...
+     kubelet.x86_64                                           1.23.0-0                                             kubernetes
+     kubelet.x86_64                                           1.23.1-0                                             kubernetes
+     kubelet.x86_64                                           1.23.2-0                                             kubernetes
+     kubelet.x86_64                                           1.23.3-0                                             kubernetes
+     kubelet.x86_64                                           1.23.4-0                                             kubernetes
+     kubelet.x86_64                                           1.23.5-0                                             kubernetes
+     kubelet.x86_64                                           1.23.6-0                                             kubernetes
+
+     # 开始安装（指定你要安装的版本）
+     [root@k8s-master ~]# yum install -y kubelet-1.23.6 kubeadm-1.23.6 kubectl-1.23.6
+
+    # 设置开机自启动并启动kubelet（kubelet由systemd管理）
+    [root@k8s-master ~]# systemctl enable kubelet && systemctl start kubelet
+   
+   #+END_SRC
+ 
+
+
+
 
 
    

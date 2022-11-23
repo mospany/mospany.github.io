@@ -66,11 +66,11 @@ export CGO_ENABLED=“1”。&lt;br /&gt;
             <guid>http://mospany.github.io/2022/11/23/kubeadm-install-k8s/</guid>
             <description>
 
-&lt;p&gt;&lt;a id=&#34;org9fda027&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgaa13252&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;规划&#34;&gt;规划&lt;/h1&gt;
 
-&lt;p&gt;&lt;a id=&#34;org76df821&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgf7e2686&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;服务配置&#34;&gt;服务配置&lt;/h2&gt;
 
@@ -117,7 +117,7 @@ export CGO_ENABLED=“1”。&lt;br /&gt;
 
 &lt;p&gt;**注**：这是演示 k8s 集群安装的实验环境，配置较低，生产环境中我们的服务器配置至少都是 8C/16G 的基础配置。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgffa3121&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orga2ed217&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;版本选择&#34;&gt;版本选择&lt;/h2&gt;
 
@@ -126,11 +126,11 @@ export CGO_ENABLED=“1”。&lt;br /&gt;
 &lt;li&gt;k8s组件版本：1.23.6&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgb3c7085&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org69615e3&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;一-服务器基础配置&#34;&gt;一、服务器基础配置&lt;/h1&gt;
 
-&lt;p&gt;&lt;a id=&#34;org99b3201&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org56c5240&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;1-配置主机名&#34;&gt;1、 配置主机名&lt;/h2&gt;
 
@@ -143,7 +143,7 @@ export CGO_ENABLED=“1”。&lt;br /&gt;
 [root@iZ8vbfafp7g52u8976flc2Z ~]# hostnamectl set-hostname k8s-work2
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;a id=&#34;org3ac520c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org64ba6bd&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;2-关闭防火墙&#34;&gt;2、关闭防火墙&lt;/h2&gt;
 
@@ -162,7 +162,7 @@ export CGO_ENABLED=“1”。&lt;br /&gt;
 9  
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;a id=&#34;org8517876&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org1771b48&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;3-互做本地解析&#34;&gt;3、互做本地解析&lt;/h2&gt;
 
@@ -178,7 +178,7 @@ export CGO_ENABLED=“1”。&lt;br /&gt;
 [root@k8s-master ~]#
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;a id=&#34;org1563bd3&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org54b18c2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;4-ssh-免密通信-可选&#34;&gt;4、SSH 免密通信（可选）&lt;/h2&gt;
 
@@ -232,7 +232,7 @@ export CGO_ENABLED=“1”。&lt;br /&gt;
   [root@k8s-master ~]# ssh-copy-id root@k8s-work2
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgc59838f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org5f5bf16&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;5-加载-br-netfilter-模块&#34;&gt;5、加载 br_netfilter 模块&lt;/h2&gt;
 
@@ -257,7 +257,7 @@ export CGO_ENABLED=“1”。&lt;br /&gt;
 14  
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;a id=&#34;org5639b73&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org5fdda10&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;6-允许-iptables-检查桥接流量&#34;&gt;6、允许 iptables 检查桥接流量&lt;/h2&gt;
 
@@ -279,7 +279,7 @@ export CGO_ENABLED=“1”。&lt;br /&gt;
 12  
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;a id=&#34;org0b7c220&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org29a2e2e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;7-关闭-swap&#34;&gt;7、关闭 swap&lt;/h2&gt;
 
@@ -295,7 +295,7 @@ export CGO_ENABLED=“1”。&lt;br /&gt;
 6  
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;a id=&#34;org31861e2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgf52e695&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;8-时间同步&#34;&gt;8、时间同步&lt;/h2&gt;
 
@@ -311,6 +311,110 @@ export CGO_ENABLED=“1”。&lt;br /&gt;
 6  # 将网络时间写入硬件时间
 7  [root@k8s-master ~]# hwclock --systohc
 8  
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org9216f79&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;9-安装-docker&#34;&gt;9、安装 Docker&lt;/h2&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;所有节点执行&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;1、使用 sudo 或 root 权限登录 Centos。&lt;/p&gt;
+
+&lt;p&gt;2、确保 yum 包更新到最新。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo yum update
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;3、执行 Docker 安装脚本。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;curl -fsSL https://get.docker.com/ | sh 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;执行这个脚本会添加 docker.repo 源并安装 Docker。&lt;/p&gt;
+
+&lt;p&gt;4、启动 Docker 进程。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ sudo service docker start
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;5、验证 docker 是否安装成功并在容器中执行一个测试的镜像。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo docker run hello-world
+
+[root@k8s-master ~]# sudo docker run hello-world
+
+  Hello from Docker!
+  This message shows that your installation appears to be working correctly.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;到此，docker 在 CentOS 系统的安装完成。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org5ec81d8&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;10-安装-kubeadm-kubelet&#34;&gt;10、安装 kubeadm、kubelet&lt;/h2&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;所有节点执行&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;1、添加 k8s 镜像源&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;地址：&lt;a href=&#34;https://developer.aliyun.com/mirror/kubernetes?spm=a2c6h.13651102.0.0.1cd01b116JYQIn&#34;&gt;https://developer.aliyun.com/mirror/kubernetes?spm=a2c6h.13651102.0.0.1cd01b116JYQIn&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code&gt; 1  [root@k8s-master ~]# cat &amp;lt;&amp;lt;EOF &amp;gt; /etc/yum.repos.d/kubernetes.repo
+ 2  &amp;gt; [kubernetes]
+ 3  &amp;gt; name=Kubernetes
+ 4  &amp;gt; baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
+ 5  &amp;gt; enabled=1
+ 6  &amp;gt; gpgcheck=0
+ 7  &amp;gt; repo_gpgcheck=0
+ 8  &amp;gt; gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
+ 9  &amp;gt; EOF
+10  [root@k8s-master ~]#
+11  
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;2、建立 k8s YUM 缓存&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt; 1  [root@k8s-master ~]# yum makecache
+ 2  已加载插件：fastestmirror
+ 3  Loading mirror speeds from cached hostfile
+ 4  base                                                                                                                                                                                 | 3.6 kB  00:00:00
+ 5  docker-ce-stable                                                                                                                                                                     | 3.5 kB  00:00:00
+ 6  epel                                                                                                                                                                                 | 4.7 kB  00:00:00
+ 7  extras                                                                                                                                                                               | 2.9 kB  00:00:00
+ 8  updates                                                                                                                                                                              | 2.9 kB  00:00:00
+ 9  元数据缓存已建立
+10  [root@k8s-master ~]#
+11  
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;3、安装 k8s 相关工具&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt; 1   # 查看可安装版本
+ 2   [root@k8s-master ~]# yum list kubelet --showduplicates
+ 3  
+ 4   ...
+ 5   ...
+ 6   kubelet.x86_64                                           1.23.0-0                                             kubernetes
+ 7   kubelet.x86_64                                           1.23.1-0                                             kubernetes
+ 8   kubelet.x86_64                                           1.23.2-0                                             kubernetes
+ 9   kubelet.x86_64                                           1.23.3-0                                             kubernetes
+10   kubelet.x86_64                                           1.23.4-0                                             kubernetes
+11   kubelet.x86_64                                           1.23.5-0                                             kubernetes
+12   kubelet.x86_64                                           1.23.6-0                                             kubernetes
+13  
+14   # 开始安装（指定你要安装的版本）
+15   [root@k8s-master ~]# yum install -y kubelet-1.23.6 kubeadm-1.23.6 kubectl-1.23.6
+16  
+17  # 设置开机自启动并启动kubelet（kubelet由systemd管理）
+18  [root@k8s-master ~]# systemctl enable kubelet &amp;amp;&amp;amp; systemctl start kubelet
+19  
 &lt;/code&gt;&lt;/pre&gt;
 </description>
         </item>
