@@ -79,11 +79,11 @@
     
     
 
-<p><a id="orgaa13252"></a></p>
+<p><a id="org4f3c086"></a></p>
 
 <h1 id="规划">规划</h1>
 
-<p><a id="orgf7e2686"></a></p>
+<p><a id="orgfdfecef"></a></p>
 
 <h2 id="服务配置">服务配置</h2>
 
@@ -130,7 +130,7 @@
 
 <p>**注**：这是演示 k8s 集群安装的实验环境，配置较低，生产环境中我们的服务器配置至少都是 8C/16G 的基础配置。</p>
 
-<p><a id="orga2ed217"></a></p>
+<p><a id="orgbfb1037"></a></p>
 
 <h2 id="版本选择">版本选择</h2>
 
@@ -139,11 +139,11 @@
 <li>k8s组件版本：1.23.6</li>
 </ul>
 
-<p><a id="org69615e3"></a></p>
+<p><a id="orge0cd109"></a></p>
 
 <h1 id="一-服务器基础配置">一、服务器基础配置</h1>
 
-<p><a id="org56c5240"></a></p>
+<p><a id="orgfbbc6fc"></a></p>
 
 <h2 id="1-配置主机名">1、 配置主机名</h2>
 
@@ -156,7 +156,7 @@
 [root@iZ8vbfafp7g52u8976flc2Z ~]# hostnamectl set-hostname k8s-work2
 </code></pre>
 
-<p><a id="org64ba6bd"></a></p>
+<p><a id="orgec07355"></a></p>
 
 <h2 id="2-关闭防火墙">2、关闭防火墙</h2>
 
@@ -175,7 +175,7 @@
 9  
 </code></pre>
 
-<p><a id="org1771b48"></a></p>
+<p><a id="org1b9a204"></a></p>
 
 <h2 id="3-互做本地解析">3、互做本地解析</h2>
 
@@ -191,7 +191,7 @@
 [root@k8s-master ~]#
 </code></pre>
 
-<p><a id="org54b18c2"></a></p>
+<p><a id="orgf3b9e1a"></a></p>
 
 <h2 id="4-ssh-免密通信-可选">4、SSH 免密通信（可选）</h2>
 
@@ -245,7 +245,7 @@
   [root@k8s-master ~]# ssh-copy-id root@k8s-work2
 </code></pre>
 
-<p><a id="org5f5bf16"></a></p>
+<p><a id="org97fcb39"></a></p>
 
 <h2 id="5-加载-br-netfilter-模块">5、加载 br_netfilter 模块</h2>
 
@@ -270,7 +270,7 @@
 14  
 </code></pre>
 
-<p><a id="org5fdda10"></a></p>
+<p><a id="org6cf490e"></a></p>
 
 <h2 id="6-允许-iptables-检查桥接流量">6、允许 iptables 检查桥接流量</h2>
 
@@ -292,7 +292,7 @@
 12  
 </code></pre>
 
-<p><a id="org29a2e2e"></a></p>
+<p><a id="org716427b"></a></p>
 
 <h2 id="7-关闭-swap">7、关闭 swap</h2>
 
@@ -308,7 +308,7 @@
 6  
 </code></pre>
 
-<p><a id="orgf52e695"></a></p>
+<p><a id="orga15d3fb"></a></p>
 
 <h2 id="8-时间同步">8、时间同步</h2>
 
@@ -326,7 +326,7 @@
 8  
 </code></pre>
 
-<p><a id="org9216f79"></a></p>
+<p><a id="org7ff8672"></a></p>
 
 <h2 id="9-安装-docker">9、安装 Docker</h2>
 
@@ -365,7 +365,7 @@
 
 <p>到此，docker 在 CentOS 系统的安装完成。</p>
 
-<p><a id="org5ec81d8"></a></p>
+<p><a id="orge392402"></a></p>
 
 <h2 id="10-安装-kubeadm-kubelet">10、安装 kubeadm、kubelet</h2>
 
@@ -429,6 +429,420 @@
 18  [root@k8s-master ~]# systemctl enable kubelet &amp;&amp; systemctl start kubelet
 19  
 </code></pre>
+
+<p><a id="org02e7601"></a></p>
+
+<h1 id="二-master-节点">二、Master 节点</h1>
+
+<p><a id="org88d2a45"></a></p>
+
+<h2 id="1-k8s-初始化">1、k8s 初始化</h2>
+
+<blockquote>
+<p>Master 节点执行</p>
+</blockquote>
+
+<pre><code>1   [root@k8s-master ~]# kubeadm init \
+2  --apiserver-advertise-address=172.25.140.216 \
+3  --image-repository registry.aliyuncs.com/google_containers \
+4  --kubernetes-version v1.23.6 \
+5  --service-cidr=10.96.0.0/12 \
+6  --pod-network-cidr=10.244.0.0/16 \
+7  --ignore-preflight-errors=all
+8  
+</code></pre>
+
+<p>参数说明：</p>
+
+<pre><code>1  --apiserver-advertise-address  # 集群master地址
+2  --image-repository             # 指定k8s镜像仓库地址
+3  --kubernetes-version           # 指定K8s版本（与kubeadm、kubelet版本保持一致）
+4  --service-cidr                 # Pod统一访问入口
+5  --pod-network-cidr             # Pod网络（与CNI网络保持一致）
+6  
+</code></pre>
+
+<p>初始化后输出内容：</p>
+
+<pre><code> 1  ...
+ 2  ...
+ 3  [addons] Applied essential addon: CoreDNS
+ 4  [addons] Applied essential addon: kube-proxy
+ 5  
+ 6  Your Kubernetes control-plane has initialized successfully!
+ 7  
+ 8  To start using your cluster, you need to run the following as a regular user:
+ 9  
+10     mkdir -p $HOME/.kube
+11     sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+12     sudo chown $(id -u):$(id -g) $HOME/.kube/config
+13  
+14    Alternatively, if you are the root user, you can run:
+15  
+16    export KUBECONFIG=/etc/kubernetes/admin.conf
+17  
+18  You should now deploy a pod network to the cluster.
+19  Run &quot;kubectl apply -f [podnetwork].yaml&quot; with one of the options listed at:
+20  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+21  
+22  Then you can join any number of worker nodes by running the following on each as root:
+23  
+24  kubeadm join 172.25.140.216:6443 --token 8d9mk7.08nyz6xc2d5boiy8 \
+25      --discovery-token-ca-cert-hash sha256:45542b0b380a8f959e5bc93f6dd7d1c5c78b202ff1a3eea5c97804549af9a12e
+26  
+</code></pre>
+
+<p><a id="org0b51700"></a></p>
+
+<h2 id="2-根据输出提示创建相关文件">2、根据输出提示创建相关文件</h2>
+
+<blockquote>
+<p>Master 节点执行</p>
+</blockquote>
+
+<pre><code>1  [root@k8s-master ~]# mkdir -p $HOME/.kube
+2  [root@k8s-master ~]# cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+3  [root@k8s-master ~]# chown $(id -u):$(id -g) $HOME/.kube/config
+4  [root@k8s-master ~]#
+5  
+</code></pre>
+
+<p><a id="org5a02bac"></a></p>
+
+<h2 id="3-查看-k8s-运行的容器">3、查看 k8s 运行的容器</h2>
+
+<blockquote>
+<p>Master 节点执行</p>
+</blockquote>
+
+<pre><code> 1  root@k8s-master ~]# kubectl get pods -n kube-system -o wide
+ 2  NAME                                 READY   STATUS    RESTARTS   AGE     IP               NODE         NOMINATED NODE   READINESS GATES
+ 3  coredns-6d8c4cb4d-ck2x5              0/1     Pending   0          8m4s    &lt;none&gt;           &lt;none&gt;       &lt;none&gt;           &lt;none&gt;
+ 4  coredns-6d8c4cb4d-mbctj              0/1     Pending   0          8m4s    &lt;none&gt;           &lt;none&gt;       &lt;none&gt;           &lt;none&gt;
+ 5  etcd-k8s-master                      1/1     Running   0          8m18s   172.25.140.216   k8s-master   &lt;none&gt;           &lt;none&gt;
+ 6  kube-apiserver-k8s-master            1/1     Running   0          8m18s   172.25.140.216   k8s-master   &lt;none&gt;           &lt;none&gt;
+ 7  kube-controller-manager-k8s-master   1/1     Running   0          8m18s   172.25.140.216   k8s-master   &lt;none&gt;           &lt;none&gt;
+ 8  kube-proxy-r84lg                     1/1     Running   0          8m4s    172.25.140.216   k8s-master   &lt;none&gt;           &lt;none&gt;
+ 9  kube-scheduler-k8s-master            1/1     Running   0          8m18s   172.25.140.216   k8s-master   &lt;none&gt;           &lt;none&gt;
+10  [root@k8s-master ~]#
+11  
+</code></pre>
+
+<p><a id="org2688836"></a></p>
+
+<h2 id="4-查看-k8s-节点">4、查看 k8s 节点</h2>
+
+<blockquote>
+<p>Master 节点执行</p>
+</blockquote>
+
+<pre><code>1  [root@k8s-master ~]# kubectl  get node -o wide
+2  NAME         STATUS     ROLES                  AGE   VERSION   INTERNAL-IP      EXTERNAL-IP   OS-IMAGE                KERNEL-VERSION               CONTAINER-RUNTIME
+3  k8s-master   NotReady   control-plane,master   11m   v1.23.6   172.25.140.216   &lt;none&gt;        CentOS Linux 7 (Core)   3.10.0-957.21.3.el7.x86_64   docker://20.10.21
+4  [root@k8s-master ~]#
+5  
+</code></pre>
+
+<p>可看到当前只有 k8s-master 节点，而且状态是 NotReady（未就绪），因为我们还没有部署网络插件（kubectl apply -f [podnetwork].yaml），于是接着部署容器网络（CNI）。</p>
+
+<p><a id="orge6d35ae"></a></p>
+
+<h2 id="5-容器网络-cni-部署">5、容器网络（CNI）部署</h2>
+
+<blockquote>
+<p>Master 节点执行<br />
+插件地址：<a href="https://kubernetes.io/docs/concepts/cluster-administration/addons/">https://kubernetes.io/docs/concepts/cluster-administration/addons/</a><br />
+该地址在 k8s-master 初始化成功时打印出来。</p>
+</blockquote>
+
+<p>1、选择一个主流的容器网络插件部署（Calico）<br />
+   <img src="http://blog.mospan.cn/post/img/k8s/kubeadm-install-k8s/calico-install-page.png" alt="img" /></p>
+
+<p>2、下载yml文件</p>
+
+<pre><code>[root@k8s-master kubeadm-install-k8s]# wget https://docs.projectcalico.org/manifests/calico.yaml --no-check-certificate
+</code></pre>
+
+<p>3、根据初始化的输出提示执行启动指令</p>
+
+<pre><code> 1  [root@k8s-master kubeadm-install-k8s]# kubectl apply -f calico.yaml
+ 2  poddisruptionbudget.policy/calico-kube-controllers created
+ 3  serviceaccount/calico-kube-controllers created
+ 4  serviceaccount/calico-node created
+ 5  configmap/calico-config created
+ 6  customresourcedefinition.apiextensions.k8s.io/bgpconfigurations.crd.projectcalico.org created
+ 7  customresourcedefinition.apiextensions.k8s.io/bgppeers.crd.projectcalico.org created
+ 8  customresourcedefinition.apiextensions.k8s.io/blockaffinities.crd.projectcalico.org created
+ 9  customresourcedefinition.apiextensions.k8s.io/caliconodestatuses.crd.projectcalico.org created
+10  customresourcedefinition.apiextensions.k8s.io/clusterinformations.crd.projectcalico.org created
+11  customresourcedefinition.apiextensions.k8s.io/felixconfigurations.crd.projectcalico.org created
+12  customresourcedefinition.apiextensions.k8s.io/globalnetworkpolicies.crd.projectcalico.org created
+13  customresourcedefinition.apiextensions.k8s.io/globalnetworksets.crd.projectcalico.org created
+14  customresourcedefinition.apiextensions.k8s.io/hostendpoints.crd.projectcalico.org created
+15  customresourcedefinition.apiextensions.k8s.io/ipamblocks.crd.projectcalico.org created
+16  customresourcedefinition.apiextensions.k8s.io/ipamconfigs.crd.projectcalico.org created
+17  customresourcedefinition.apiextensions.k8s.io/ipamhandles.crd.projectcalico.org created
+18  customresourcedefinition.apiextensions.k8s.io/ippools.crd.projectcalico.org created
+19  customresourcedefinition.apiextensions.k8s.io/ipreservations.crd.projectcalico.org created
+20  customresourcedefinition.apiextensions.k8s.io/kubecontrollersconfigurations.crd.projectcalico.org created
+21  customresourcedefinition.apiextensions.k8s.io/networkpolicies.crd.projectcalico.org created
+22  customresourcedefinition.apiextensions.k8s.io/networksets.crd.projectcalico.org created
+23  clusterrole.rbac.authorization.k8s.io/calico-kube-controllers created
+24  clusterrole.rbac.authorization.k8s.io/calico-node created
+25  clusterrolebinding.rbac.authorization.k8s.io/calico-kube-controllers created
+26  clusterrolebinding.rbac.authorization.k8s.io/calico-node created
+27  daemonset.apps/calico-node created
+28  deployment.apps/calico-kube-controllers created
+29  [root@k8s-master kubeadm-install-k8s]# 
+30  
+</code></pre>
+
+<p>4、看看该yaml文件所需要启动的容器</p>
+
+<pre><code> 1   [root@k8s-master kubeadm-install-k8s]# cat calico.yaml |grep image
+ 2         image: docker.io/calico/cni:v3.24.5
+ 3         imagePullPolicy: IfNotPresent
+ 4         image: docker.io/calico/cni:v3.24.5
+ 5         imagePullPolicy: IfNotPresent
+ 6         image: docker.io/calico/node:v3.24.5
+ 7         imagePullPolicy: IfNotPresent
+ 8         image: docker.io/calico/node:v3.24.5
+ 9         imagePullPolicy: IfNotPresent
+10         image: docker.io/calico/kube-controllers:v3.24.5
+11         imagePullPolicy: IfNotPresent
+12  [root@k8s-master kubeadm-install-k8s]   #
+13  
+</code></pre>
+
+<p>5、查看容器是否都 Running</p>
+
+<pre><code> 1  [root@k8s-master kubeadm-install-k8s]# kubectl get pods -n kube-system -o wide
+ 2  NAME                                       READY   STATUS    RESTARTS   AGE     IP               NODE         NOMINATED NODE   READINESS GATES
+ 3  calico-kube-controllers-7b8458594b-pdx5z   1/1     Running   0          4m37s   10.244.235.194   k8s-master   &lt;none&gt;           &lt;none&gt;
+ 4  calico-node-t8hhf                          1/1     Running   0          4m37s   172.25.140.216   k8s-master   &lt;none&gt;           &lt;none&gt;
+ 5  coredns-6d8c4cb4d-ck2x5                    1/1     Running   0          32m     10.244.235.195   k8s-master   &lt;none&gt;           &lt;none&gt;
+ 6  coredns-6d8c4cb4d-mbctj                    1/1     Running   0          32m     10.244.235.193   k8s-master   &lt;none&gt;           &lt;none&gt;
+ 7  etcd-k8s-master                            1/1     Running   0          32m     172.25.140.216   k8s-master   &lt;none&gt;           &lt;none&gt;
+ 8  kube-apiserver-k8s-master                  1/1     Running   0          32m     172.25.140.216   k8s-master   &lt;none&gt;           &lt;none&gt;
+ 9  kube-controller-manager-k8s-master         1/1     Running   0          32m     172.25.140.216   k8s-master   &lt;none&gt;           &lt;none&gt;
+10  kube-proxy-r84lg                           1/1     Running   0          32m     172.25.140.216   k8s-master   &lt;none&gt;           &lt;none&gt;
+11  kube-scheduler-k8s-master                  1/1     Running   0          32m     172.25.140.216   k8s-master   &lt;none&gt;           &lt;none&gt;
+12  [root@k8s-master kubeadm-install-k8s]#
+13  
+</code></pre>
+
+<p><a id="org4f4a98b"></a></p>
+
+<h1 id="三-work-节点">三、work 节点</h1>
+
+<p><a id="orgfc01846"></a></p>
+
+<h2 id="1-work-节点加入-k8s-集群">1、work 节点加入 k8s 集群</h2>
+
+<blockquote>
+<p>所有 work 节点执行</p>
+</blockquote>
+
+<pre><code> 1  # 复制k8s-master初始化屏幕输出的语句并在work节点执行
+ 2  [root@k8s-work1 ~]# kubeadm join 172.25.140.216:6443 --token 8d9mk7.08nyz6xc2d5boiy8 --discovery-token-ca-cert-hash sha256:45542b0b380a8f959e5bc93f6dd7d1c5c78b202ff1a3eea5c97804549af9a12e
+ 3  [root@k8s-work2 ~]# kubeadm join 172.25.140.216:6443 --token 8d9mk7.08nyz6xc2d5boiy8 --discovery-token-ca-cert-hash sha256:45542b0b380a8f959e5bc93f6dd7d1c5c78b202ff1a3eea5c97804549af9a12e
+ 4  
+ 5  preflight] Running pre-flight checks
+ 6  [preflight] Reading configuration from the cluster...
+ 7  [preflight] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -o yaml'
+ 8  [kubelet-start] Writing kubelet configuration to file &quot;/var/lib/kubelet/config.yaml&quot;
+ 9  [kubelet-start] Writing kubelet environment file with flags to file &quot;/var/lib/kubelet/kubeadm-flags.env&quot;
+10  [kubelet-start] Starting the kubelet
+11  [kubelet-start] Waiting for the kubelet to perform the TLS Bootstrap...
+12  
+13  This node has joined the cluster:
+14  * Certificate signing request was sent to apiserver and a response was received.
+15  * The Kubelet was informed of the new secure connection details.
+16  
+17  Run 'kubectl get nodes' on the control-plane to see this node join the cluster.
+18  
+19  [root@k8s-work2 ~]#
+20  
+</code></pre>
+
+<p><a id="org362c07d"></a></p>
+
+<h2 id="2-查询集群节点">2、查询集群节点</h2>
+
+<blockquote>
+<p>Master 节点执行</p>
+</blockquote>
+
+<pre><code>1  [root@k8s-master kubeadm-install-k8s]# kubectl  get node -o wide
+2  NAME         STATUS   ROLES                  AGE     VERSION   INTERNAL-IP      EXTERNAL-IP   OS-IMAGE                KERNEL-VERSION               CONTAINER-RUNTIME
+3  k8s-master   Ready    control-plane,master   50m     v1.23.6   172.25.140.216   &lt;none&gt;        CentOS Linux 7 (Core)   3.10.0-957.21.3.el7.x86_64   docker://20.10.21
+4  k8s-work1    Ready    &lt;none&gt;                 9m50s   v1.23.6   172.25.140.215   &lt;none&gt;        CentOS Linux 7 (Core)   3.10.0-957.21.3.el7.x86_64   docker://20.10.21
+5  k8s-work2    Ready    &lt;none&gt;                 2m41s   v1.23.6   172.25.140.214   &lt;none&gt;        CentOS Linux 7 (Core)   3.10.0-957.21.3.el7.x86_64   docker://20.10.21
+6  [root@k8s-master kubeadm-install-k8s]#
+7  
+</code></pre>
+
+<p>都为就绪状态了</p>
+
+<p><a id="orge747a84"></a></p>
+
+<h2 id="四-验证">四、验证</h2>
+
+<p>k8s 集群部署 nginx 服务，并通过浏览器进行访问验证。</p>
+
+<p><a id="org5ec8220"></a></p>
+
+<h2 id="1-创建-pod">1、创建 pod</h2>
+
+<pre><code> 1  [root@k8s-master kubeadm-install-k8s]# kubectl create deployment nginx --image=nginx
+ 2  deployment.apps/nginx created
+ 3  [root@k8s-master kubeadm-install-k8s]# kubectl expose deployment nginx --port=80 --type=NodePort
+ 4  service/nginx exposed
+ 5  [root@k8s-master kubeadm-install-k8s]# kubectl get pod,svc
+ 6  NAME                         READY   STATUS    RESTARTS   AGE
+ 7  pod/nginx-85b98978db-qkd6h   1/1     Running   0          36s
+ 8  
+ 9  NAME                 TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+10  service/kubernetes   ClusterIP   10.96.0.1       &lt;none&gt;        443/TCP        54m
+11  service/nginx        NodePort    10.108.180.91   &lt;none&gt;        80:31648/TCP   15s
+12  [root@k8s-master kubeadm-install-k8s]#
+13  
+</code></pre>
+
+<p><a id="orgd537fac"></a></p>
+
+<h2 id="2-访问-nginx">2、访问 Nginx</h2>
+
+<pre><code> 1  [root@k8s-master kubeadm-install-k8s]# curl 10.108.180.91:80
+ 2  &lt;!DOCTYPE html&gt;
+ 3  &lt;html&gt;
+ 4  &lt;head&gt;
+ 5  &lt;title&gt;Welcome to nginx!&lt;/title&gt;
+ 6  &lt;style&gt;
+ 7  html { color-scheme: light dark; }
+ 8  body { width: 35em; margin: 0 auto;
+ 9  font-family: Tahoma, Verdana, Arial, sans-serif; }
+10  &lt;/style&gt;
+11  &lt;/head&gt;
+12  &lt;body&gt;
+13  &lt;h1&gt;Welcome to nginx!&lt;/h1&gt;
+14  &lt;p&gt;If you see this page, the nginx web server is successfully installed and
+15  working. Further configuration is required.&lt;/p&gt;
+16  
+17  &lt;p&gt;For online documentation and support please refer to
+18  &lt;a href=&quot;http://nginx.org/&quot;&gt;nginx.org&lt;/a&gt;.&lt;br/&gt;
+19  Commercial support is available at
+20  &lt;a href=&quot;http://nginx.com/&quot;&gt;nginx.com&lt;/a&gt;.&lt;/p&gt;
+21  
+22  &lt;p&gt;&lt;em&gt;Thank you for using nginx.&lt;/em&gt;&lt;/p&gt;
+23  &lt;/body&gt;
+24  &lt;/html&gt;
+25  [root@k8s-master kubeadm-install-k8s]#
+26  
+</code></pre>
+
+<p>至此：kubeadm方式的k8s集群已经部署完成。</p>
+
+<p><a id="orga6cfda4"></a></p>
+
+<h1 id="faq">FAQ</h1>
+
+<p><a id="org4405cb7"></a></p>
+
+<h2 id="1-k8s编译报错">1、k8s编译报错</h2>
+
+<pre><code> 1  ...
+ 2  ...
+ 3  [kubelet-check] It seems like the kubelet isn't running or healthy.
+ 4  [kubelet-check] The HTTP call equal to 'curl -sSL http://localhost:10248/healthz' failed with error: Get &quot;http://localhost:10248/healthz&quot;: dial tcp [::1]:10248: connect: connection refused.
+ 5  
+ 6   Unfortunately, an error has occurred:
+ 7       timed out waiting for the condition
+ 8  
+ 9   This error is likely caused by:
+10       - The kubelet is not running
+11       - The kubelet is unhealthy due to a misconfiguration of the node in some way (required cgroups disabled)
+12  
+13   If you are on a systemd-powered system, you can try to troubleshoot the error with the following commands:
+14       - 'systemctl status kubelet'
+15       - 'journalctl -xeu kubelet'
+16  
+17   Additionally, a control plane component may have crashed or exited when started by the container runtime.
+18   To troubleshoot, list all containers using your preferred container runtimes CLI.
+19  
+20   Here is one example how you may list all Kubernetes containers running in docker:
+21       - 'docker ps -a | grep kube | grep -v pause'
+22       Once you have found the failing container, you can inspect its logs with:
+23       - 'docker logs CONTAINERID'
+24  
+25  error execution phase wait-control-plane: couldn't initialize a Kubernetes cluster
+26  To see the stack trace of this error execute with --v=5 or higher
+27  
+28  
+</code></pre>
+
+<p>查看日志</p>
+
+<pre><code>    Apr 26 20:33:30 test3 kubelet: I0426 20:33:30.588349   21936 docker_service.go:264] &quot;Docker Info&quot; dockerInfo=&amp;{ID:2NSH:KJPQ:XOKI:5XHN:ULL3:L4LG:SXA4:PR6J:DITW:HHCF:2RKL:U2NJ Containers:0 ContainersRunning:0 ContainersPaused:0 ContainersStopped:0 Images:7 Driver:overlay2 DriverStatus:[[Backing Filesystem extfs] [Supports d_type true] [Native Overlay Diff true]] SystemStatus:[] Plugins:{Volume:[local] Network:[bridge host macvlan null overlay] Authorization:[] Log:[awslogs fluentd gcplogs gelf journald json-file logentries splunk syslog]} MemoryLimit:true SwapLimit:true KernelMemory:true KernelMemoryTCP:false CPUCfsPeriod:true CPUCfsQuota:true CPUShares:true CPUSet:true PidsLimit:false IPv4Forwarding:true BridgeNfIptables:true BridgeNfIP6tables:true Debug:false NFd:24 OomKillDisable:true NGoroutines:45 SystemTime:2022-04-26T20:33:30.583063427+08:00 LoggingDriver:json-file CgroupDriver:cgroupfs CgroupVersion: NEventsListener:0 KernelVersion:3.10.0-1160.59.1.el7.x86_64 OperatingSystem:CentOS Linux 7 (Core) OSVersion: OSType:linux Architecture:x86_64 IndexServerAddress:https://index.docker.io/v1/ RegistryConfig:0xc000263340 NCPU:2 MemTotal:3873665024 GenericResources:[] DockerRootDir:/var/lib/docker HTTPProxy: HTTPSProxy: NoProxy: Name:k8s-master Labels:[] ExperimentalBuild:false ServerVersion:18.06.3-ce ClusterStore: ClusterAdvertise: Runtimes:map[runc:{Path:docker-runc Args:[] Shim:&lt;nil&gt;}] DefaultRuntime:runc Swarm:{NodeID: NodeAddr: LocalNodeState:inactive ControlAvailable:false Error: RemoteManagers:[] Nodes:0 Managers:0 Cluster:&lt;nil&gt; Warnings:[]} LiveRestoreEnabled:false Isolation: InitBinary:docker-init ContainerdCommit:{ID:468a545b9edcd5932818eb9de8e72413e616e86e Expected:468a545b9edcd5932818eb9de8e72413e616e86e} RuncCommit:{ID:a592beb5bc4c4092b1b1bac971afed27687340c5 Expected:a592beb5bc4c4092b1b1bac971afed27687340c5} InitCommit:{ID:fec3683 Expected:fec3683} SecurityOptions:[name=seccomp,profile=default] ProductLicense: DefaultAddressPools:[] Warnings:[]}
+Apr 26 20:33:30 test3 kubelet: E0426 20:33:30.588383   21936 server.go:302] &quot;Failed to run kubelet&quot; err=&quot;failed to run Kubelet: misconfiguration: kubelet cgroup driver: \&quot;systemd\&quot; is different from docker cgroup driver: \&quot;cgroupfs\&quot;&quot;
+</code></pre>
+
+<p>看报错的最后解释kubelet cgroup driver: \&ldquo;systemd\&rdquo; is different from docker cgroup driver: \&ldquo;cgroupfs\&rdquo;&ldquo;很明显 kubelet 与 Docker 的 cgroup 驱动程序不同，kubelet 为 systemd，而 Docker 为 cgroupfs。</p>
+
+<p>简单查看一下docker驱动：<br />
+[root@k8s-master opt]# docker info |grep Cgroup<br />
+Cgroup Driver: cgroupfs</p>
+
+<p>解决方案</p>
+
+<pre><code># 重置初始化
+[root@k8s-master ~]# kubeadm reset
+
+# 删除相关配置文件
+[root@k8s-master ~]# rm -rf $HOME/.kube/config  &amp;&amp; rm -rf $HOME/.kube
+
+# 修改 Docker 驱动为 systemd（即&quot;exec-opts&quot;: [&quot;native.cgroupdriver=systemd&quot;]）
+[root@k8s-master opt]# cat /etc/docker/daemon.json 
+{
+  &quot;registry-mirrors&quot;: [&quot;https://q1rw9tzz.mirror.aliyuncs.com&quot;],
+  &quot;exec-opts&quot;: [&quot;native.cgroupdriver=systemd&quot;]
+}
+
+# 重启 Docker
+[root@k8s-master opt]# systemctl daemon-reload 
+[root@k8s-master opt]# systemctl restart docker.service
+
+# 再次初始化k8s即可
+[root@k8s-master ~]# kubeadm init ...
+</code></pre>
+
+<p><a id="org0b33cbe"></a></p>
+
+<h2 id="2-work-节点加入-k8s-集群报错">2、work 节点加入 k8s 集群报错</h2>
+
+<p>报错1：</p>
+
+<pre><code>1  accepts at most 1 arg(s), received 3
+2  To see the stack trace of this error execute with --v=5 or higher
+3  
+</code></pre>
+
+<p>原因：命令不对，我是直接复制粘贴 k8s-master 初始化的终端输出结果，导致报错，所以最好先复制到 txt 文本下修改好格式再粘贴执行。</p>
+
+<p>报错2：</p>
+
+<pre><code>1  ...
+2  [kubelet-check] The HTTP call equal to 'curl -sSL http://localhost:10248/healthz' failed with error: Get &quot;http://localhost:10248/healthz&quot;: dial tcp 127.0.0.1:10248: connect: connection refused.
+3  
+</code></pre>
+
+<p>解决方法同Master</p>
+
+<p><a id="org9d65a10"></a></p>
+
+<h1 id="参考">参考</h1>
+
+<p>[01]<a href="https://blog.csdn.net/IT_ZRS/article/details/124466870">kubeadm 部署 k8s 集群</a></p>
 
     <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
   <div style="float:right;margin-top:0px;">
