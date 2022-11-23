@@ -6,10 +6,28 @@
     <description>Recent content in K8S on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Tue, 18 Oct 2022 22:06:22 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 22 Nov 2022 22:42:55 +0800</lastBuildDate>
     
 	<atom:link href="http://mospany.github.io/tags/k8s/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>K8S项目实践(02): 动手实现minicni</title>
+      <link>http://mospany.github.io/2022/11/22/k8s-practice-minicni/</link>
+      <pubDate>Tue, 22 Nov 2022 22:42:55 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2022/11/22/k8s-practice-minicni/</guid>
+      <description>FAQ cannot find package 编译不过 当出现如下错误时: $ make build Building the minicni on amd64... cmd/main.go:8:2: cannot find package &amp;quot;github.com/morvencao/minicni/pkg/args&amp;quot; in any of: /usr/local/go/src/github.com/morvencao/minicni/pkg/args (from $GOROOT) /Users/mosp/goget/src/github.com/morvencao/minicni/pkg/args (from $GOPATH) cmd/main.go:9:2: cannot find package &amp;quot;github.com/morvencao/minicni/pkg/handler&amp;quot; in any of: /usr/local/go/src/github.com/morvencao/minicni/pkg/handler (from $GOROOT) /Users/mosp/goget/src/github.com/morvencao/minicni/pkg/handler (from $GOPATH) make: *** [build] Error 1 需要把GO111MODU</description>
+    </item>
+    
+    <item>
+      <title>K8S项目实践(01): kubeadm安装K8S集群</title>
+      <link>http://mospany.github.io/2022/11/23/kubeadm-install-k8s/</link>
+      <pubDate>Tue, 22 Nov 2022 20:58:52 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2022/11/23/kubeadm-install-k8s/</guid>
+      <description>规划 服务配置 OS 配置 用途 CentOS 7.6 (172.25.140.216) 2C4G k8s-master CentOS 7.6 (172.25.140.215) 2C4G k8s-work1 CentOS 7.6 (172.25.140.214) 2C4G k8s-work2 **注**：这是演示 k8s 集群安装的实验环境，配置较低，生产环境中我们的服务器配置至少都是 8C/16G</description>
+    </item>
     
     <item>
       <title>K8S学习笔记(07): 服务发现</title>

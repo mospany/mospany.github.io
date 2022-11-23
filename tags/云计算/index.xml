@@ -6,10 +6,19 @@
     <description>Recent content in 云计算 on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Wed, 21 Sep 2022 21:01:59 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 22 Nov 2022 20:58:52 +0800</lastBuildDate>
     
 	<atom:link href="http://mospany.github.io/tags/%E4%BA%91%E8%AE%A1%E7%AE%97/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>K8S项目实践(01): kubeadm安装K8S集群</title>
+      <link>http://mospany.github.io/2022/11/23/kubeadm-install-k8s/</link>
+      <pubDate>Tue, 22 Nov 2022 20:58:52 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2022/11/23/kubeadm-install-k8s/</guid>
+      <description>规划 服务配置 OS 配置 用途 CentOS 7.6 (172.25.140.216) 2C4G k8s-master CentOS 7.6 (172.25.140.215) 2C4G k8s-work1 CentOS 7.6 (172.25.140.214) 2C4G k8s-work2 **注**：这是演示 k8s 集群安装的实验环境，配置较低，生产环境中我们的服务器配置至少都是 8C/16G</description>
+    </item>
     
     <item>
       <title>K8S学习笔记(04): kubectl命令技巧大全</title>

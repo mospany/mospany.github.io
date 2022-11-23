@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>云原生 on 墨斯潘園</title>
+    <link>http://mospany.github.io/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/</link>
+    <description>Recent content in 云原生 on 墨斯潘園</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 22 Nov 2022 22:42:55 +0800</lastBuildDate>
+    
+	<atom:link href="http://mospany.github.io/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>K8S项目实践(02): 动手实现minicni</title>
+      <link>http://mospany.github.io/2022/11/22/k8s-practice-minicni/</link>
+      <pubDate>Tue, 22 Nov 2022 22:42:55 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2022/11/22/k8s-practice-minicni/</guid>
+      <description>FAQ cannot find package 编译不过 当出现如下错误时: $ make build Building the minicni on amd64... cmd/main.go:8:2: cannot find package &amp;quot;github.com/morvencao/minicni/pkg/args&amp;quot; in any of: /usr/local/go/src/github.com/morvencao/minicni/pkg/args (from $GOROOT) /Users/mosp/goget/src/github.com/morvencao/minicni/pkg/args (from $GOPATH) cmd/main.go:9:2: cannot find package &amp;quot;github.com/morvencao/minicni/pkg/handler&amp;quot; in any of: /usr/local/go/src/github.com/morvencao/minicni/pkg/handler (from $GOROOT) /Users/mosp/goget/src/github.com/morvencao/minicni/pkg/handler (from $GOPATH) make: *** [build] Error 1 需要把GO111MODU</description>
+    </item>
+    
+  </channel>
+</rss>

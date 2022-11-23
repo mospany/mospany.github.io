@@ -5,7 +5,128 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Tue, 18 Oct 2022 22:06:22 CST</updated>
+        <updated>Tue, 22 Nov 2022 22:42:55 CST</updated>
+        
+        <item>
+            <title>K8S项目实践(02): 动手实现minicni</title>
+            <link>http://mospany.github.io/2022/11/22/k8s-practice-minicni/</link>
+            <pubDate>Tue, 22 Nov 2022 22:42:55 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://mospany.github.io/2022/11/22/k8s-practice-minicni/</guid>
+            <description>
+
+&lt;p&gt;&lt;a id=&#34;org819c566&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;faq&#34;&gt;FAQ&lt;/h1&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgef3fab8&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;cannot-find-package-编译不过&#34;&gt;cannot find package 编译不过&lt;/h2&gt;
+
+&lt;p&gt;当出现如下错误时:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ make build
+Building the minicni on amd64...
+cmd/main.go:8:2: cannot find package &amp;quot;github.com/morvencao/minicni/pkg/args&amp;quot; in any of:
+ /usr/local/go/src/github.com/morvencao/minicni/pkg/args (from $GOROOT)
+ /Users/mosp/goget/src/github.com/morvencao/minicni/pkg/args (from $GOPATH)
+cmd/main.go:9:2: cannot find package &amp;quot;github.com/morvencao/minicni/pkg/handler&amp;quot; in any of:
+ /usr/local/go/src/github.com/morvencao/minicni/pkg/handler (from $GOROOT)
+ /Users/mosp/goget/src/github.com/morvencao/minicni/pkg/handler (from $GOPATH)
+make: *** [build] Error 1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;需要把GO111MODULE=on或auto，才能使用Go module功能，可在.bashrc或.zshrc里加上：export GO111MODULE=auto&lt;br /&gt;
+详见&lt;a href=&#34;http://www.ay1.cc/article/18635.html&#34;&gt;go自动下载所有的依赖包go module使用详解_Golang&lt;/a&gt;：&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org0f4aa1f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;build-constraints-exclude-all-go-files-in&#34;&gt;build constraints exclude all Go files in&lt;/h2&gt;
+
+&lt;p&gt;当出现如下错误时:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ make build
+Building the minicni on amd64...
+go build github.com/containernetworking/plugins/pkg/ns: build constraints exclude all Go files in /Users/mosp/goget/pkg/mod/github.com/containernetworking/plugins@v1.1.1/pkg/ns
+make: *** [build] Error 1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;需要设置如下两个变量：&lt;br /&gt;
+export GOOS=“linux”。即：不能为darwin&lt;br /&gt;
+export CGO_ENABLED=“1”。&lt;br /&gt;
+详见：&lt;a href=&#34;https://blog.csdn.net/weixin_42845682/article/details/124568715&#34;&gt;build constraints exclude all Go files in xxx/xxx/xxx&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        
+        <item>
+            <title>K8S项目实践(01): kubeadm安装K8S集群</title>
+            <link>http://mospany.github.io/2022/11/23/kubeadm-install-k8s/</link>
+            <pubDate>Tue, 22 Nov 2022 20:58:52 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://mospany.github.io/2022/11/23/kubeadm-install-k8s/</guid>
+            <description>
+
+&lt;p&gt;&lt;a id=&#34;org6ef8c73&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;规划&#34;&gt;规划&lt;/h1&gt;
+
+&lt;p&gt;&lt;a id=&#34;org1b752a4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;服务配置&#34;&gt;服务配置&lt;/h2&gt;
+
+&lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
+
+
+&lt;colgroup&gt;
+&lt;col  class=&#34;org-left&#34; /&gt;
+
+&lt;col  class=&#34;org-left&#34; /&gt;
+
+&lt;col  class=&#34;org-left&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;OS&lt;/th&gt;
+&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;配置&lt;/th&gt;
+&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;用途&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;CentOS 7.6 (172.25.140.216)&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;2C4G&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;k8s-master&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;CentOS 7.6 (172.25.140.215)&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;2C4G&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;k8s-work1&lt;/td&gt;
+&lt;/tr&gt;
+
+
+&lt;tr&gt;
+&lt;td class=&#34;org-left&#34;&gt;CentOS 7.6 (172.25.140.214)&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;2C4G&lt;/td&gt;
+&lt;td class=&#34;org-left&#34;&gt;k8s-work2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;**注**：这是演示 k8s 集群安装的实验环境，配置较低，生产环境中我们的服务器配置至少都是 8C/16G 的基础配置。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org2f341d4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;版本选择&#34;&gt;版本选择&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;CentOS：7.6&lt;/li&gt;
+&lt;li&gt;k8s组件版本：1.23.6&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
         
         <item>
             <title>K8S学习笔记(07): 服务发现</title>
@@ -3082,359 +3203,6 @@ restydoc -s content_by_lua
 &lt;h1 id=&#34;小结&#34;&gt;小结&lt;/h1&gt;
 
 &lt;p&gt;一入技术深似海(可能还没入门), 同样是80后人与人差距啥这么大呢，有些时候感觉人与人之间的差距甚至大于人与动物之间的差距，路漫漫其修远兮，吾将上下而求索。&lt;/p&gt;
-</description>
-        </item>
-        
-        <item>
-            <title>IPv6时代已来，您Get了多少？</title>
-            <link>http://mospany.github.io/2019/08/09/ipv6-base/</link>
-            <pubDate>Fri, 09 Aug 2019 17:14:27 CST</pubDate>
-            <author>Mospan</author>
-            <guid>http://mospany.github.io/2019/08/09/ipv6-base/</guid>
-            <description>
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-main.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org64c0c7c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;为什么要用ipv6&#34;&gt;为什么要用IPv6&lt;/h1&gt;
-
-&lt;p&gt;如今互联网主要使用IPv4, 感觉已经蓬勃发展了够用了，那为什么还需要使用IPv6呢？主要有如下原因：&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;IPv4地址匮乏&lt;/li&gt;
-&lt;li&gt;NAT非根本解决办法，破坏了端到端模型&lt;/li&gt;
-&lt;li&gt;新技术对IP协议催生了更多的需求&lt;/li&gt;
-&lt;li&gt;政策驱动: 计划使用5-10年的时间建成全球最大的IPv6商用网络。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;随着5G、IOT万物互联的到来，IPv4已经不方便或不能承载如此大的需求了，更多的应用呼吁着IPv6尽快落地。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgfda1432&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;ipv6优势&#34;&gt;IPv6优势&lt;/h1&gt;
-
-&lt;p&gt;既然IPv4有以上不足，那IPv6有什么优势呢？主要如下：&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;近乎无限的地址空间&lt;/li&gt;
-&lt;li&gt;更简洁的报文头部&lt;/li&gt;
-&lt;li&gt;内置的安全性&lt;/li&gt;
-&lt;li&gt;更好的QoS支持&lt;/li&gt;
-&lt;li&gt;更好的移动性&lt;/li&gt;
-&lt;li&gt;编址层次等级&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgd14bab5&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;ipv6技术&#34;&gt;IPv6技术&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgf199107&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;标准-rfc&#34;&gt;标准(RFC)&lt;/h2&gt;
-
-&lt;p&gt;IPv6协议由很多RFC组成，IPv6协议族RFC如下， 其中&lt;br /&gt;
-&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-rfc.png&#34; alt=&#34;img&#34; /&gt;&lt;br /&gt;
-RFC5942 - IPv6子网模式：链路和子网前缀间的关系&lt;br /&gt;
-RFC5569 - IPv4/IPv6过渡技术之—— 6rd&lt;br /&gt;
-RFC3056 - IPv4/IPv6过渡技术之—— 6to4&lt;br /&gt;
-RFC2473 - IPv6标准中的通用分组隧道化&lt;br /&gt;
-RFC6333 - IPv4/IPv6过渡技术之——双栈精简版&lt;br /&gt;
-RFC5214 - IPv4/IPv6过渡技术之——ISATAP&lt;br /&gt;
-RFC4213 - IPv6主机和路由器的基本转换机制-双栈和隧&lt;br /&gt;
-RFC3775 - IPv6中的移动性支持&lt;br /&gt;
-RFC3053 - IPv4/IPv6过渡技术之——隧道代理&lt;br /&gt;
-RFC6434 - 对IPv6节点的要求&lt;br /&gt;
-RFC4294 - 对IPv6节点的要求&lt;br /&gt;
-RFC4294 - IPv6的默认地址选择&lt;br /&gt;
-RFC6071 - IP安全(IPsec)&lt;br /&gt;
-RFC5340 - IPv6的动态路由协议OSPFv3&lt;br /&gt;
-RFC3315 - DHCPv6&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org2a08aaa&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;报文格式&#34;&gt;报文格式&lt;/h2&gt;
-
-&lt;p&gt;IPv6报文格式与IPv4有一定相似，但比它简化和固定了好多，这样更容易解析与传输。&lt;br /&gt;
-&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-header.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org8d4e87c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;地址&#34;&gt;地址&lt;/h2&gt;
-
-&lt;p&gt;巨大的地址空间, 相当于地球上每粒沙子都有自己的地址。&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;IPv4&lt;/strong&gt;&lt;br /&gt;
-地址长度：32位&lt;br /&gt;
-地址空间：2的32次方，约42亿(世界上平均3个人有2个IP地址)&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;IPv6&lt;/strong&gt;&lt;br /&gt;
-地址长度：128位&lt;br /&gt;
-地址空间：2的128次方，约3.4 x 10^38个(地球上的每一粒沙子都有IP地址)&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgdc9712e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;表示&#34;&gt;表示&lt;/h3&gt;
-
-&lt;p&gt;非压缩： 2001:0da8:0207:0000:0000:0000:8207&lt;br /&gt;
-  压缩前导0：2001:0da8:0207:0:0:0:0:8207&lt;br /&gt;
-  压缩: 2001:0d08:0207::8207     注：只能有一个::&lt;br /&gt;
-  内嵌IPv4地址： ::192.168.1.1&lt;br /&gt;
-&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-addr.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgb488b46&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;分类&#34;&gt;分类&lt;/h3&gt;
-
-&lt;p&gt;IPv6也分单播、组播，但没有了广播，增加了任播anycast，它允许同一个IP配置在多台服务器上，通过路由的方式自动访问离用户的最近的服务器上去。&lt;br /&gt;
-&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/ipv6-base/addr-type.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org5489189&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;手工配置&#34;&gt;手工配置&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;添加IPv6地址&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;ip -6 addr add &amp;lt;ipv6address&amp;gt;/&amp;lt;prefixlength&amp;gt; dev &amp;lt;interface&amp;gt;
-
-ip -6 addr add 2001::1/64 dev eth0
-
-ifconfig &amp;lt;interface&amp;gt; inet6 add &amp;lt;ipv6address&amp;gt;/&amp;lt;prefixlength&amp;gt; 
-
-ifconfig eth0 inet6 add 2001::1/64
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;添加默认路由&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;ip -6 route add &amp;lt;ipv6address&amp;gt;/&amp;lt;prefixlength&amp;gt; via &amp;lt;ipv6address&amp;gt;
-
-ip -6 route add default via 2001::1 
-
-route -A inet6 add &amp;lt;ipv6address&amp;gt;/&amp;lt;prefixlength&amp;gt; gw
-
-route -A inet6 add default gw 2001::1 
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;查看路由&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;ip -6 route show
-
-route -6
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;a id=&#34;org956a030&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;无状态配置&#34;&gt;无状态配置&lt;/h3&gt;
-
-&lt;p&gt;IPv6的无状态配置是比较吸引我的一个特点，只要路由器支持插上网线就自动分配到全球唯一的地址就能自动联网。&lt;br /&gt;
-&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/ipv6-base/auto-1.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/ipv6-base/auto-2.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orge70663c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;常用命令&#34;&gt;常用命令&lt;/h2&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgfd8171c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;查看ip&#34;&gt;查看ip&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;ip -6 addr 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;orga991404&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;查看路由&#34;&gt;查看路由&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;ip -6 route
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgf2c7e21&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;查看多播地址&#34;&gt;查看多播地址&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;ip -6 maddr
-netstat -gn
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org04efb87&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;查看dns-aaaa记录-走ipv4路线&#34;&gt;查看dns AAAA记录(走IPv4路线)&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;dig -t AAAA www.xxx.com
-nslookup -query=AAAA www.xxx.com
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgbaf5477&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;查看dns-aaaa记录-走ipv6路线&#34;&gt;查看dns AAAA记录(走IPv6路线)&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;dig @2001::1 -6 -t AAAA www.xxx.com
-nslookup -query=AAAA www.xxx.com 2001::1
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgdb01478&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;查看dns-aaaa记录-走ipv6路线-最完整-最靠谱的办法&#34;&gt;查看dns AAAA记录(走IPv6路线, 最完整，最靠谱的办法)&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;dig @2001::1 -6 -t AAAA www.xxx.com +trace
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgb5ed7a7&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;curl&#34;&gt;curl&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;curl -6 https://www.xxx.com
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgd4f50fc&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;ping&#34;&gt;ping&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;ping6 www.xxx.com
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgfe8a668&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;trace-route&#34;&gt;trace route&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;mtr -6 www.xxx.com
-traceroute6 www.xxx.com 
-tracert6 www.xxx.com 
-tracepath6 www.xxx.com 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org5f9751c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;ping-1&#34;&gt;ping&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;ping6 www.xxx.com
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgc80feba&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;邻居地址解析-类似ipv4中的arping&#34;&gt;邻居地址解析，类似IPv4中的arping&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;ndisc6 -n 2001::1 eth0
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org631a50c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;iptables&#34;&gt;iptables&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;ip6tables-save
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgfd17b8c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;tcpdump&#34;&gt;tcpdump&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;tcpdump -nnn -i eth0 ip6
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org46e39eb&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;在线工具&#34;&gt;在线工具&lt;/h2&gt;
-
-&lt;p&gt;&lt;a id=&#34;org6ac0034&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;公共dns列列表&#34;&gt;公共dns列列表&lt;/h3&gt;
-
-&lt;p&gt;地址: &lt;a href=&#34;http://dns.icoa.cn/ipv6/&#34;&gt;http://dns.icoa.cn/ipv6/&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org49d22ec&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;查询-网站是否提供ipv6&#34;&gt;查询⽹网站是否提供IPv6&lt;/h3&gt;
-
-&lt;p&gt;地址:&lt;br /&gt;
-&lt;a href=&#34;https://ready.chair6.net/&#34;&gt;https://ready.chair6.net/&lt;/a&gt;&lt;br /&gt;
-&lt;a href=&#34;http://ip6tools.com/#checkWebServer&#34;&gt;http://ip6tools.com/#checkWebServer&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org91f5e2c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;查询我-自-己是否拥有公-网ipv6地址&#34;&gt;查询我⾃自⼰己是否拥有公⽹网IPv6地址&lt;/h3&gt;
-
-&lt;p&gt;地址：&lt;br /&gt;
-&lt;a href=&#34;http://www.test-ipv6.com&#34;&gt;http://www.test-ipv6.com&lt;/a&gt;&lt;br /&gt;
-&lt;a href=&#34;http://ip6tools.com/#WhatisMyIPv6Address&#34;&gt;http://ip6tools.com/#WhatisMyIPv6Address&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org6e6f575&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;协议栈&#34;&gt;协议栈&lt;/h2&gt;
-
-&lt;p&gt;IPv6与IPv4协议栈比较相似，经过精心设计后去掉了不少冗余或不合理部分，代码部分将近少了一半，使得更加简洁强大。&lt;br /&gt;
-&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-stack.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org7b102ac&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;现状&#34;&gt;现状&lt;/h1&gt;
-
-&lt;p&gt;IPv6目前用户覆盖率还不高，尤其是中国, 主要原因是钱，运营商通过维护或改造现有IPv4网络基本满足了目前大家的使用要求，在没有其他利益或政策驱动下很难主动自己贴钱去升级网络，再者需要大家都升级后才能完全使用，谁不愿意劳民伤财的去干这件事。但随着中国想努力引领世界，在政策与应用驱动下IPv6将大大加快。&lt;br /&gt;
-&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-now.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgc6aa769&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;过渡技术&#34;&gt;过渡技术&lt;/h1&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-transit.png&#34; alt=&#34;img&#34; /&gt;&lt;br /&gt;
-过渡技术主要解决IPv4和IPv6网络共存情况下的互联互通，主要由三种策略：&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;双栈协议：设备升级到IPv6同时保留IPv4支持，应用程序可以选择使用IPv4或IPv6; 协议应用允许应用逐渐从IPv4过渡到IPv6。&lt;/li&gt;
-&lt;li&gt;隧道封装：IPv6报文作为IPv4的载荷，或由MPLS承载在IPv4 internet海洋中连接多个IPv6孤岛&lt;/li&gt;
-&lt;li&gt;协议转换：提供IPv4和IPv6的互通动作，如NAT-PT等提供IPv6与IPv4互相访问的技术，适用于IPv6 internet与IPv4 internet共存，而两者又需要互相通讯的需求。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgecddc15&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;双栈协议&#34;&gt;双栈协议&lt;/h2&gt;
-
-&lt;p&gt;设备升级到IPv6的同时保留IPv4支持，应用程序可以选择使用IPv6或IPv4协议。&lt;br /&gt;
-所有的过渡技术都是基于双协议栈实现的。&lt;br /&gt;
-优点：互通性好、易于理解、实现简单。&lt;br /&gt;
-缺点：&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;对每个IPv4节点都要升级，成本较大，没有解决IPv4地址紧缺的问题。&lt;/li&gt;
-&lt;li&gt;部署复杂，所有设备都同时配置IPv4和IPv6；&lt;/li&gt;
-&lt;li&gt;对设备性能要求高，既要运行IPv6，又要运行IPv4。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a id=&#34;org011bb58&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;隧道封装&#34;&gt;隧道封装&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;IPv6 over IPv4 手动隧道(配置隧道)：隧道两端的边界路由器上通过静态指定隧道的源IPv4地址和目的IPv4地址而创建的隧道。&lt;/li&gt;
-&lt;li&gt;IPv6 over IPv4 GRE隧道(GRE隧道)： 使用IPv4的GRE隧道上承载IPv6流而实现IPv6互通。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a id=&#34;org5571ac2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;展望&#34;&gt;展望&lt;/h1&gt;
-
-&lt;p&gt;随着IPv6的普及与更多的应用落地， 使得人与人、物与物之间通信更加频繁，将催生出很多革命创新型应用或巨头公司，谁主沉浮，让我们拭目以待吧。&lt;br /&gt;
-&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/ipv6-base/ipv6-preview.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-</description>
-        </item>
-        
-        <item>
-            <title>IPv6技术概览(PDF版)</title>
-            <link>http://mospany.github.io/2019/08/02/ipv6-base/</link>
-            <pubDate>Fri, 02 Aug 2019 07:39:07 CST</pubDate>
-            <author>Mospan</author>
-            <guid>http://mospany.github.io/2019/08/02/ipv6-base/</guid>
-            <description>
-
-&lt;h1 id=&#34;描述&#34;&gt;描述&lt;/h1&gt;
-
-&lt;p&gt;此《IPv6技术概览》PPT内容由我个人的理解编写与部分来自互联网上的整理, 以便更多的读者分享交流。&lt;/p&gt;
-
-&lt;h1 id=&#34;ppt内容&#34;&gt;PPT内容&lt;/h1&gt;
-
-&lt;p&gt;&lt;center&gt;&lt;embed src=&#34;http://blog.mospan.cn/post/img/ipv6-base.pdf&#34; width=100% height=&#34;800&#34;&gt;&lt;/center&gt;&lt;/p&gt;
 </description>
         </item>
         

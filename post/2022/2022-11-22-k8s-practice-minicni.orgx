@@ -1,0 +1,42 @@
++++
+#+OPTIONS: \n:t
+categories = ["技术文章"]
+date = "2022-11-22T22:42:55+08:00"
+description = ""
+keywords = ["K8S","云原生"]
+tags = ["K8S","云原生"]
+title = "K8S项目实践(02): 动手实现minicni"
+url = "/2022/11/22/k8s-practice-minicni/"
+
++++
+
+* FAQ
+** cannot find package 编译不过
+   当出现如下错误时：
+   #+BEGIN_SRC sh
+   $ make build
+   Building the minicni on amd64...
+   cmd/main.go:8:2: cannot find package "github.com/morvencao/minicni/pkg/args" in any of:
+   	/usr/local/go/src/github.com/morvencao/minicni/pkg/args (from $GOROOT)
+   	/Users/mosp/goget/src/github.com/morvencao/minicni/pkg/args (from $GOPATH)
+   cmd/main.go:9:2: cannot find package "github.com/morvencao/minicni/pkg/handler" in any of:
+   	/usr/local/go/src/github.com/morvencao/minicni/pkg/handler (from $GOROOT)
+   	/Users/mosp/goget/src/github.com/morvencao/minicni/pkg/handler (from $GOPATH)
+   make: *** [build] Error 1
+   #+END_SRC
+   需要把GO111MODULE=on或auto，才能使用Go module功能，可在.bashrc或.zshrc里加上：export GO111MODULE=auto
+   详见[[http://www.ay1.cc/article/18635.html][go自动下载所有的依赖包go module使用详解_Golang]]：
+   
+** build constraints exclude all Go files in
+   当出现如下错误时:
+   #+BEGIN_SRC sh
+   $ make build
+   Building the minicni on amd64...
+   go build github.com/containernetworking/plugins/pkg/ns: build constraints exclude all Go files in /Users/mosp/goget/pkg/mod/github.com/containernetworking/plugins@v1.1.1/pkg/ns
+   make: *** [build] Error 1
+      
+   #+END_SRC
+   需要设置如下两个变量：
+   export GOOS=“linux”。即：不能为darwin
+   export CGO_ENABLED=“1”。 
+   详见：[[https://blog.csdn.net/weixin_42845682/article/details/124568715][build constraints exclude all Go files in xxx/xxx/xxx]]
