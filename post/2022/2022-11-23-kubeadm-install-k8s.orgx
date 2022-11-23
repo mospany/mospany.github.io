@@ -23,6 +23,178 @@ url = "/2022/11/23/kubeadm-install-k8s/"
    - CentOS：7.6
    - k8s组件版本：1.23.6
 
+* 一、服务器基础配置
+** 1、 配置主机名
+   #+BEGIN_QUOTE
+   所有节点执行
+   #+END_QUOTE
+
+   #+BEGIN_SRC sh
+   [root@iZ8vbfafp7g52u8976flc0Z ~]# hostnamectl set-hostname k8s-master
+   [root@iZ8vbfafp7g52u8976flc1Z ~]# hostnamectl set-hostname k8s-work1
+   [root@iZ8vbfafp7g52u8976flc2Z ~]# hostnamectl set-hostname k8s-work2
+   #+END_SRC
+
+** 2、关闭防火墙
+   #+BEGIN_QUOTE
+   所有节点执行
+   #+END_QUOTE
+
+   #+BEGIN_SRC sh -n
+   # 关闭firewalld
+   [root@k8s-master ~]# systemctl stop firewalld
+
+   # 关闭selinux
+   [root@k8s-master ~]# sed -i 's/enforcing/disabled/' /etc/selinux/config
+   [root@k8s-master ~]# setenforce 0
+    setenforce: SELinux is disabled
+   [root@k8s-master ~]#
+   
+   #+END_SRC
+
+** 3、互做本地解析
+   #+BEGIN_QUOTE
+   所有节点执行
+   #+END_QUOTE
+
+   #+BEGIN_SRC sh
+   [root@k8s-master ~]# cat /etc/hosts
+   172.25.140.216 k8s-master
+   172.25.140.215 k8s-work1
+   172.25.140.214 k8s-work2
+
+   [root@k8s-master ~]#
+   
+   #+END_SRC
+
+** 4、SSH 免密通信（可选）
+   #+BEGIN_QUOTE
+   所有节点执行
+   #+END_QUOTE
+
+   #+BEGIN_SRC -n
+   [root@k8s-master ~]# ssh-keygen
+     Generating public/private rsa key pair.
+     Enter file in which to save the key (/root/.ssh/id_rsa):
+     Enter passphrase (empty for no passphrase):
+     Enter same passphrase again:
+     Your identification has been saved in /root/.ssh/id_rsa.
+     Your public key has been saved in /root/.ssh/id_rsa.pub.
+     The key fingerprint is:
+     SHA256:s+JcU9ctsItBgDC+UwxgmFhnsQGpy9SELkEOx4Lmk/0 root@k8s-master
+     The key's randomart image is:
+     +---[RSA 2048]----+
+     |=*B+Oo ..        |
+     |X=o= *.  .       |
+     |+== o o   . .    |
+     |o* o o   .   + . |
+     |+.. +   S o o o .|
+     |..   E   + + . . |
+     |      . + . .    |
+     |     o o .       |
+     |      o          |
+     +----[SHA256]-----+
+     [root@k8s-master ~]#
+       
+   #+END_SRC
+
+   #+BEGIN_QUOTE
+   所有节点执行（互发公钥）
+   #+END_QUOTE
+
+   #+BEGIN_SRC -n
+   [root@k8s-master ~]# ssh-copy-id root@k8s-work1
+     /usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "/root/.ssh/id_rsa.pub"
+     The authenticity of host 'k8s-work1 (172.25.140.215)' can't be established.
+     ECDSA key fingerprint is SHA256:BMN7TIKDbFKdG3v1TVHmy3i6BYm7TGS8Hsnu1F9+UkI.
+     ECDSA key fingerprint is MD5:71:60:e2:6c:38:e2:20:d8:9c:94:77:54:cb:10:33:32.
+     Are you sure you want to continue connecting (yes/no)? yes
+     /usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
+     /usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
+     root@k8s-work1's password:
+     
+     Number of key(s) added: 1
+     
+     Now try logging into the machine, with:   "ssh 'root@k8s-work1'"
+     and check to make sure that only the key(s) you wanted were added.
+     
+     [root@k8s-master ~]# ssh-copy-id root@k8s-work2
+   
+   #+END_SRC
+
+** 5、加载 br_netfilter 模块
+   #+BEGIN_QUOTE
+   确保 br_netfilter 模块被加载
+   所有节点执行
+   #+END_QUOTE
+
+   #+BEGIN_SRC sh -n
+     # 加载模块
+     [root@k8s-master ~]# modprobe br_netfilter
+     ## 查看加载请看
+     [root@k8s-master ~]# lsmod | grep br_netfilter
+     br_netfilter           22256  0
+     bridge                151336  1 br_netfilter
+
+     # 永久生效
+     [root@k8s-master ~]# cat <<EOF | tee /etc/modules-load.d/k8s.conf
+     > br_netfilter
+     > EOF
+     br_netfilter
+     [root@k8s-master ~]#
+   
+   #+END_SRC
+
+** 6、允许 iptables 检查桥接流量
+   #+BEGIN_QUOTE
+   所有节点执行
+   #+END_QUOTE
+
+   #+BEGIN_SRC sh -n
+     [root@k8s-master ~]# cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
+     > br_netfilter
+     > EOF
+     br_netfilter
+     [root@k8s-master ~]# cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+     > net.bridge.bridge-nf-call-ip6tables = 1
+     > net.bridge.bridge-nf-call-iptables = 1
+     > EOF
+     net.bridge.bridge-nf-call-ip6tables = 1
+     net.bridge.bridge-nf-call-iptables = 1
+    [root@k8s-master ~]# sudo sysctl --system
+   
+   #+END_SRC
+
+** 7、关闭 swap
+   #+BEGIN_QUOTE
+   所有节点执行
+   #+END_QUOTE 
+
+   #+BEGIN_SRC sh -n
+     # 临时关闭
+     [root@k8s-master ~]# swapoff -a
+
+     # 永久关闭
+     [root@k8s-master ~]# sed -ri 's/.*swap.*/#&/' /etc/fstab
+   
+   #+END_SRC
+
+** 8、时间同步
+  #+BEGIN_QUOTE
+  所有节点执行
+  #+END_QUOTE 
+
+  #+BEGIN_SRC sh -n
+    # 同步网络时间
+    [root@k8s-master ~]# ntpdate time.nist.gov
+    23 Nov 22:36:07 ntpdate[12307]: adjust time server 132.163.96.6 offset -0.009024 sec
+
+    [root@k8s-master ~]#
+    # 将网络时间写入硬件时间
+    [root@k8s-master ~]# hwclock --systohc
+  
+  #+END_SRC
+
 
 
 

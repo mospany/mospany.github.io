@@ -66,11 +66,11 @@ export CGO_ENABLED=“1”。&lt;br /&gt;
             <guid>http://mospany.github.io/2022/11/23/kubeadm-install-k8s/</guid>
             <description>
 
-&lt;p&gt;&lt;a id=&#34;org6ef8c73&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org9fda027&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;规划&#34;&gt;规划&lt;/h1&gt;
 
-&lt;p&gt;&lt;a id=&#34;org1b752a4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org76df821&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;服务配置&#34;&gt;服务配置&lt;/h2&gt;
 
@@ -117,7 +117,7 @@ export CGO_ENABLED=“1”。&lt;br /&gt;
 
 &lt;p&gt;**注**：这是演示 k8s 集群安装的实验环境，配置较低，生产环境中我们的服务器配置至少都是 8C/16G 的基础配置。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org2f341d4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgffa3121&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;版本选择&#34;&gt;版本选择&lt;/h2&gt;
 
@@ -125,6 +125,193 @@ export CGO_ENABLED=“1”。&lt;br /&gt;
 &lt;li&gt;CentOS：7.6&lt;/li&gt;
 &lt;li&gt;k8s组件版本：1.23.6&lt;/li&gt;
 &lt;/ul&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgb3c7085&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;一-服务器基础配置&#34;&gt;一、服务器基础配置&lt;/h1&gt;
+
+&lt;p&gt;&lt;a id=&#34;org99b3201&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;1-配置主机名&#34;&gt;1、 配置主机名&lt;/h2&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;所有节点执行&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code&gt;[root@iZ8vbfafp7g52u8976flc0Z ~]# hostnamectl set-hostname k8s-master
+[root@iZ8vbfafp7g52u8976flc1Z ~]# hostnamectl set-hostname k8s-work1
+[root@iZ8vbfafp7g52u8976flc2Z ~]# hostnamectl set-hostname k8s-work2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org3ac520c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;2-关闭防火墙&#34;&gt;2、关闭防火墙&lt;/h2&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;所有节点执行&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code&gt;1  # 关闭firewalld
+2  [root@k8s-master ~]# systemctl stop firewalld
+3  
+4  # 关闭selinux
+5  [root@k8s-master ~]# sed -i &#39;s/enforcing/disabled/&#39; /etc/selinux/config
+6  [root@k8s-master ~]# setenforce 0
+7   setenforce: SELinux is disabled
+8  [root@k8s-master ~]#
+9  
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org8517876&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;3-互做本地解析&#34;&gt;3、互做本地解析&lt;/h2&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;所有节点执行&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# cat /etc/hosts
+172.25.140.216 k8s-master
+172.25.140.215 k8s-work1
+172.25.140.214 k8s-work2
+
+[root@k8s-master ~]#
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org1563bd3&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;4-ssh-免密通信-可选&#34;&gt;4、SSH 免密通信（可选）&lt;/h2&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;所有节点执行&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# ssh-keygen
+  Generating public/private rsa key pair.
+  Enter file in which to save the key (/root/.ssh/id_rsa):
+  Enter passphrase (empty for no passphrase):
+  Enter same passphrase again:
+  Your identification has been saved in /root/.ssh/id_rsa.
+  Your public key has been saved in /root/.ssh/id_rsa.pub.
+  The key fingerprint is:
+  SHA256:s+JcU9ctsItBgDC+UwxgmFhnsQGpy9SELkEOx4Lmk/0 root@k8s-master
+  The key&#39;s randomart image is:
+  +---[RSA 2048]----+
+  |=*B+Oo ..        |
+  |X=o= *.  .       |
+  |+== o o   . .    |
+  |o* o o   .   + . |
+  |+.. +   S o o o .|
+  |..   E   + + . . |
+  |      . + . .    |
+  |     o o .       |
+  |      o          |
+  +----[SHA256]-----+
+  [root@k8s-master ~]#
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;所有节点执行（互发公钥）&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# ssh-copy-id root@k8s-work1
+  /usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: &amp;quot;/root/.ssh/id_rsa.pub&amp;quot;
+  The authenticity of host &#39;k8s-work1 (172.25.140.215)&#39; can&#39;t be established.
+  ECDSA key fingerprint is SHA256:BMN7TIKDbFKdG3v1TVHmy3i6BYm7TGS8Hsnu1F9+UkI.
+  ECDSA key fingerprint is MD5:71:60:e2:6c:38:e2:20:d8:9c:94:77:54:cb:10:33:32.
+  Are you sure you want to continue connecting (yes/no)? yes
+  /usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
+  /usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
+  root@k8s-work1&#39;s password:
+
+  Number of key(s) added: 1
+
+  Now try logging into the machine, with:   &amp;quot;ssh &#39;root@k8s-work1&#39;&amp;quot;
+  and check to make sure that only the key(s) you wanted were added.
+
+  [root@k8s-master ~]# ssh-copy-id root@k8s-work2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgc59838f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;5-加载-br-netfilter-模块&#34;&gt;5、加载 br_netfilter 模块&lt;/h2&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;确保 br_netfilter 模块被加载&lt;br /&gt;
+所有节点执行&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code&gt; 1  # 加载模块
+ 2  [root@k8s-master ~]# modprobe br_netfilter
+ 3  ## 查看加载请看
+ 4  [root@k8s-master ~]# lsmod | grep br_netfilter
+ 5  br_netfilter           22256  0
+ 6  bridge                151336  1 br_netfilter
+ 7  
+ 8  # 永久生效
+ 9  [root@k8s-master ~]# cat &amp;lt;&amp;lt;EOF | tee /etc/modules-load.d/k8s.conf
+10  &amp;gt; br_netfilter
+11  &amp;gt; EOF
+12  br_netfilter
+13  [root@k8s-master ~]#
+14  
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org5639b73&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;6-允许-iptables-检查桥接流量&#34;&gt;6、允许 iptables 检查桥接流量&lt;/h2&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;所有节点执行&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code&gt; 1   [root@k8s-master ~]# cat &amp;lt;&amp;lt;EOF | sudo tee /etc/modules-load.d/k8s.conf
+ 2   &amp;gt; br_netfilter
+ 3   &amp;gt; EOF
+ 4   br_netfilter
+ 5   [root@k8s-master ~]# cat &amp;lt;&amp;lt;EOF | sudo tee /etc/sysctl.d/k8s.conf
+ 6   &amp;gt; net.bridge.bridge-nf-call-ip6tables = 1
+ 7   &amp;gt; net.bridge.bridge-nf-call-iptables = 1
+ 8   &amp;gt; EOF
+ 9   net.bridge.bridge-nf-call-ip6tables = 1
+10   net.bridge.bridge-nf-call-iptables = 1
+11  [root@k8s-master ~]# sudo sysctl --system
+12  
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org0b7c220&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;7-关闭-swap&#34;&gt;7、关闭 swap&lt;/h2&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;所有节点执行&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code&gt;1  # 临时关闭
+2  [root@k8s-master ~]# swapoff -a
+3  
+4  # 永久关闭
+5  [root@k8s-master ~]# sed -ri &#39;s/.*swap.*/#&amp;amp;/&#39; /etc/fstab
+6  
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org31861e2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;8-时间同步&#34;&gt;8、时间同步&lt;/h2&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;所有节点执行&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code&gt;1  # 同步网络时间
+2  [root@k8s-master ~]# ntpdate time.nist.gov
+3  23 Nov 22:36:07 ntpdate[12307]: adjust time server 132.163.96.6 offset -0.009024 sec
+4  
+5  [root@k8s-master ~]#
+6  # 将网络时间写入硬件时间
+7  [root@k8s-master ~]# hwclock --systohc
+8  
+&lt;/code&gt;&lt;/pre&gt;
 </description>
         </item>
         
