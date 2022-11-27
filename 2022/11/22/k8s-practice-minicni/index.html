@@ -6,10 +6,10 @@
   <title>K8S项目实践(02): 动手实现minicni - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
   <meta name="keywords" content="K8S,云原生,">
-  <meta name="description" content="FAQ cannot find package 编译不过 当出现如下错误时: $ make build Building the minicni on amd64... cmd/main.go:8:2: cannot find package &quot;github.com/morvencao/minicni/pkg/args&quot; in any of: /usr/local/go/src/github.com/morvencao/minicni/pkg/args (from $GOROOT) /Users/mosp/goget/src/github.com/morvencao/minicni/pkg/args (from $GOPATH) cmd/main.go:9:2: cannot find package &quot;github.com/morvencao/minicni/pkg/handler&quot; in any of: /usr/local/go/src/github.com/morvencao/minicni/pkg/handler (from $GOROOT) /Users/mosp/goget/src/github.com/morvencao/minicni/pkg/handler (from $GOPATH) make: *** [build] Error 1 需要把GO111MODU">
+  <meta name="description" content="简介 不管是容器网络还是 Kubernetes 网络都需要解决以下两个核心问题： 容器/Pod IP 地址的管理 容器/Pod 之间的相互通信 容器/Pod IP 地址的管理包括容器 IP">
   <meta name="author" content="mospan">
   <meta itemprop="name" content="K8S项目实践(02): 动手实现minicni - 墨斯潘園">
-  <meta itemprop="description" content="FAQ cannot find package 编译不过 当出现如下错误时: $ make build Building the minicni on amd64... cmd/main.go:8:2: cannot find package &quot;github.com/morvencao/minicni/pkg/args&quot; in any of: /usr/local/go/src/github.com/morvencao/minicni/pkg/args (from $GOROOT) /Users/mosp/goget/src/github.com/morvencao/minicni/pkg/args (from $GOPATH) cmd/main.go:9:2: cannot find package &quot;github.com/morvencao/minicni/pkg/handler&quot; in any of: /usr/local/go/src/github.com/morvencao/minicni/pkg/handler (from $GOROOT) /Users/mosp/goget/src/github.com/morvencao/minicni/pkg/handler (from $GOPATH) make: *** [build] Error 1 需要把GO111MODU">
+  <meta itemprop="description" content="简介 不管是容器网络还是 Kubernetes 网络都需要解决以下两个核心问题： 容器/Pod IP 地址的管理 容器/Pod 之间的相互通信 容器/Pod IP 地址的管理包括容器 IP">
   <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
@@ -79,15 +79,71 @@
     
     
 
-<p><a id="org819c566"></a></p>
+<p><a id="org5531869"></a></p>
+
+<h1 id="简介">简介</h1>
+
+<p>不管是容器网络还是 Kubernetes 网络都需要解决以下两个核心问题：</p>
+
+<ul>
+<li>容器/Pod IP 地址的管理</li>
+<li>容器/Pod 之间的相互通信</li>
+</ul>
+
+<p>容器/Pod IP 地址的管理包括容器 IP 地址的分配与回收，而容器/Pod 之间的相互通信包括同一主机的容器/Pod 之间和跨主机的容器/Pod 之间通信两种场景。这两个问题也不能完全分开来看，因为不同的解决方案往往要同时考虑以上两点。对于同一主机的容器/Pod 之间的通信来说实现相对容易，实际的挑战在于，不同容器/Pod 完全可能分布在不同的集群节点上，如何实现跨主机节点的通信不是一件容易的事情。</p>
+
+<p>如果不采用 SDN(Software define networking) 方式来修改底层网络设备的配置，主流方案是在主机节点的 underlay 网络平面构建新的 overlay 网络负责传输容器/Pod 之间通信数据。这种网络方案在如何复用原有的 underlay 网络平面也有不同的实现方式：</p>
+
+<ul>
+<li>将容器的数据包封装到原主机网络（underlay 网络平面）的三层或四层数据包中，然后使用主机网络的三层或者四层协议传输到目标主机，目标主机拆包后再转发给目标容器；</li>
+<li>把容器网络加到主机路由表中，把主机网络（underlay 网络平面）设备当作容器网关，通过路由规则转发到指定的主机，实现容器的三层互通；</li>
+</ul>
+
+<p><a id="orgd6262c1"></a></p>
+
+<h1 id="cni原理">CNI原理</h1>
+
+<p>CNI 规范相对于 CNM(Container Network Model) 对开发者的约束更少、更开放，不依赖于容器运行时，因此也更简单。关于 CNI 规范的详情请查看<a href="https://github.com/containernetworking/cni/blob/master/SPEC.md">官方文档</a>。</p>
+
+<p>实现一个 CNI 网络插件只需要一个配置文件和一个可执行文件：</p>
+
+<ul>
+<li>配置文件描述插件的版本、名称、描述等基本信息；</li>
+<li>可执行文件会被上层的容器管理平台调用，一个 CNI 可执行文件需要实现将容器加入到网络的 ADD 操作以及将容器从网络中删除的 DEL 操作等；</li>
+</ul>
+
+<p>Kubernetes 使用 CNI 网络插件的基本工作流程是：</p>
+
+<ul>
+<li>kubelet 先创建 pause 容器创建对应的网络命名空间；</li>
+<li>根据配置调用具体的 CNI 插件，可以配置成 CNI 插件链来进行链式调用；</li>
+<li>当 CNI 插件被调用时，它根据环境变量以及命令行参数来获得网络命名空间、容器的网络设备等必要信息，然后执行 ADD 或者其他操作；</li>
+<li>CNI 插件给 pause 容器配置正确的网络，pod 中其他的容器都是复用 pause 容器的网络；</li>
+</ul>
+
+<p><a id="orgb584384"></a></p>
+
+<h1 id="编译部署">编译部署</h1>
+
+<p><a id="orge241346"></a></p>
+
+<h2 id="1-编译">1、编译</h2>
+
+<pre><code>make build
+make image
+</code></pre>
+
+<p><img src="http://blog.mospan.cn/post/img/k8s/minicni/make-image-minicni.png" alt="img" /></p>
+
+<p><a id="orgbf06f7f"></a></p>
 
 <h1 id="faq">FAQ</h1>
 
-<p><a id="orgef3fab8"></a></p>
+<p><a id="orgb72f37d"></a></p>
 
 <h2 id="cannot-find-package-编译不过">cannot find package 编译不过</h2>
 
-<p>当出现如下错误时:</p>
+<p>当出现如下错误时：</p>
 
 <pre><code>$ make build
 Building the minicni on amd64...
@@ -103,7 +159,7 @@ make: *** [build] Error 1
 <p>需要把GO111MODULE=on或auto，才能使用Go module功能，可在.bashrc或.zshrc里加上：export GO111MODULE=auto<br />
 详见<a href="http://www.ay1.cc/article/18635.html">go自动下载所有的依赖包go module使用详解_Golang</a>：</p>
 
-<p><a id="org0f4aa1f"></a></p>
+<p><a id="org24dc85b"></a></p>
 
 <h2 id="build-constraints-exclude-all-go-files-in">build constraints exclude all Go files in</h2>
 
@@ -119,6 +175,14 @@ make: *** [build] Error 1
 export GOOS=“linux”。即：不能为darwin<br />
 export CGO_ENABLED=“1”。<br />
 详见：<a href="https://blog.csdn.net/weixin_42845682/article/details/124568715">build constraints exclude all Go files in xxx/xxx/xxx</a></p>
+
+<p><a id="org6941997"></a></p>
+
+<h1 id="参考资料">参考资料</h1>
+
+<p>【01】 <a href="https://blog.csdn.net/u012772803/article/details/113703029">find -print0和xargs -0原理及用法</a>]<br />
+【02】 <a href="https://zhuanlan.zhihu.com/p/411181637">Go语言import分组管理利器: goimports-reviser</a><br />
+【03】 <a href="https://morven.life/posts/create-your-own-cni-with-golang/">使用 Go 从零开始实现 CNI</a>]</p>
 
     <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
   <div style="float:right;margin-top:0px;">
