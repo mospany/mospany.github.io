@@ -10,6 +10,43 @@ url = "/2022/11/22/k8s-practice-minicni/"
 
 +++
 
+* 简介
+  不管是容器网络还是 Kubernetes 网络都需要解决以下两个核心问题：
+
+  - 容器/Pod IP 地址的管理
+  - 容器/Pod 之间的相互通信
+  容器/Pod IP 地址的管理包括容器 IP 地址的分配与回收，而容器/Pod 之间的相互通信包括同一主机的容器/Pod 之间和跨主机的容器/Pod 之间通信两种场景。这两个问题也不能完全分开来看，因为不同的解决方案往往要同时考虑以上两点。对于同一主机的容器/Pod 之间的通信来说实现相对容易，实际的挑战在于，不同容器/Pod 完全可能分布在不同的集群节点上，如何实现跨主机节点的通信不是一件容易的事情。
+
+如果不采用 SDN(Software define networking) 方式来修改底层网络设备的配置，主流方案是在主机节点的 underlay 网络平面构建新的 overlay 网络负责传输容器/Pod 之间通信数据。这种网络方案在如何复用原有的 underlay 网络平面也有不同的实现方式：
+
+  - 将容器的数据包封装到原主机网络（underlay 网络平面）的三层或四层数据包中，然后使用主机网络的三层或者四层协议传输到目标主机，目标主机拆包后再转发给目标容器；
+  - 把容器网络加到主机路由表中，把主机网络（underlay 网络平面）设备当作容器网关，通过路由规则转发到指定的主机，实现容器的三层互通；
+
+* CNI原理
+  CNI 规范相对于 CNM(Container Network Model) 对开发者的约束更少、更开放，不依赖于容器运行时，因此也更简单。关于 CNI 规范的详情请查看[[https://github.com/containernetworking/cni/blob/master/SPEC.md][官方文档]]。
+
+  实现一个 CNI 网络插件只需要一个配置文件和一个可执行文件：
+
+  - 配置文件描述插件的版本、名称、描述等基本信息；
+  - 可执行文件会被上层的容器管理平台调用，一个 CNI 可执行文件需要实现将容器加入到网络的 ADD 操作以及将容器从网络中删除的 DEL 操作等；
+
+  Kubernetes 使用 CNI 网络插件的基本工作流程是：
+
+  - kubelet 先创建 pause 容器创建对应的网络命名空间；
+  - 根据配置调用具体的 CNI 插件，可以配置成 CNI 插件链来进行链式调用；
+  - 当 CNI 插件被调用时，它根据环境变量以及命令行参数来获得网络命名空间、容器的网络设备等必要信息，然后执行 ADD 或者其他操作；
+  - CNI 插件给 pause 容器配置正确的网络，pod 中其他的容器都是复用 pause 容器的网络；
+  
+* 编译部署
+** 1、编译
+   #+BEGIN_SRC sh
+   make build
+   make image
+   #+END_SRC
+    [[http://blog.mospan.cn/post/img/k8s/minicni/make-image-minicni.png]]
+
+
+
 * FAQ
 ** cannot find package 编译不过
    当出现如下错误时：
@@ -40,3 +77,9 @@ url = "/2022/11/22/k8s-practice-minicni/"
    export GOOS=“linux”。即：不能为darwin
    export CGO_ENABLED=“1”。 
    详见：[[https://blog.csdn.net/weixin_42845682/article/details/124568715][build constraints exclude all Go files in xxx/xxx/xxx]]
+
+
+* 参考资料
+  【01】 [[https://blog.csdn.net/u012772803/article/details/113703029][find -print0和xargs -0原理及用法]]]
+  【02】 [[https://zhuanlan.zhihu.com/p/411181637][Go语言import分组管理利器: goimports-reviser]]
+  【03】 [[https://morven.life/posts/create-your-own-cni-with-golang/][使用 Go 从零开始实现 CNI]]]
