@@ -15,7 +15,7 @@
             <guid>http://mospany.github.io/2022/11/22/k8s-practice-minicni/</guid>
             <description>
 
-&lt;p&gt;&lt;a id=&#34;org5531869&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgd133fa4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;简介&#34;&gt;简介&lt;/h1&gt;
 
@@ -35,7 +35,7 @@
 &lt;li&gt;把容器网络加到主机路由表中，把主机网络（underlay 网络平面）设备当作容器网关，通过路由规则转发到指定的主机，实现容器的三层互通；&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgd6262c1&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgdfcc34c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;cni原理&#34;&gt;CNI原理&lt;/h1&gt;
 
@@ -57,11 +57,11 @@
 &lt;li&gt;CNI 插件给 pause 容器配置正确的网络，pod 中其他的容器都是复用 pause 容器的网络；&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgb584384&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgf704b0e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;编译部署&#34;&gt;编译部署&lt;/h1&gt;
 
-&lt;p&gt;&lt;a id=&#34;orge241346&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgf794672&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;1-编译&#34;&gt;1、编译&lt;/h2&gt;
 
@@ -71,11 +71,94 @@ make image
 
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/minicni/make-image-minicni.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgbf06f7f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;在docker hub里已看到了minicni镜像：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/minicni/docker-hub-minicni.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgae77af5&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;部署&#34;&gt;部署&lt;/h2&gt;
+
+&lt;p&gt;1、登录已安装好的k8s集群，把之前已存在的cni如(calico)卸载掉再安装minici:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[root@k8s-master minicni]# kubectl  apply -f minicni.yaml
+clusterrole.rbac.authorization.k8s.io/minicni created
+serviceaccount/minicni created
+clusterrolebinding.rbac.authorization.k8s.io/minicni created
+configmap/minicni-config created
+Warning: spec.template.spec.nodeSelector[beta.kubernetes.io/os]: deprecated since v1.14; use &amp;quot;kubernetes.io/os&amp;quot; instead
+Warning: spec.template.metadata.annotations[scheduler.alpha.kubernetes.io/critical-pod]: non-functional in v1.16+; use the &amp;quot;priorityClassName&amp;quot; field instead
+daemonset.apps/minicni-node created
+[root@k8s-master minicni]#
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;2、查看minicni部署状态：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[root@k8s-master minicni]# kubectl get pod -A -o wide
+ NAMESPACE     NAME                                       READY   STATUS        RESTARTS        AGE     IP               NODE         NOMINATED NODE   READINESS GATES
+ default       nginx-85b98978db-qkd6h                     0/1     Completed     5               4d21h   &amp;lt;none&amp;gt;           k8s-work1    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+ kube-system   calico-kube-controllers-7b8458594b-p2fqj   0/1     Terminating   2               4d12h   &amp;lt;none&amp;gt;           k8s-work2    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+ kube-system   coredns-6d8c4cb4d-ck2x5                    0/1     Completed     7               4d22h   &amp;lt;none&amp;gt;           k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+ kube-system   coredns-6d8c4cb4d-mbctj                    0/1     Completed     7               4d22h   &amp;lt;none&amp;gt;           k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+ kube-system   etcd-k8s-master                            1/1     Running       8 (8m14s ago)   4d22h   172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+ kube-system   kube-apiserver-k8s-master                  1/1     Running       8 (8m4s ago)    4d22h   172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+ kube-system   kube-controller-manager-k8s-master         1/1     Running       8 (8m14s ago)   4d22h   172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+ kube-system   kube-proxy-dnsjg                           1/1     Running       8 (8m14s ago)   4d21h   172.25.140.215   k8s-work1    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+ kube-system   kube-proxy-r84lg                           1/1     Running       8 (8m14s ago)   4d22h   172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+ kube-system   kube-proxy-tbkx2                           1/1     Running       7 (8m14s ago)   4d21h   172.25.140.214   k8s-work2    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+ kube-system   kube-scheduler-k8s-master                  1/1     Running       8 (8m14s ago)   4d22h   172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+ kube-system   minicni-node-8lmxc                         1/1     Running       0               5m17s   172.25.140.214   k8s-work2    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+ kube-system   minicni-node-sgjmg                         1/1     Running       0               5m17s   172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+ kube-system   minicni-node-xslgx                         1/1     Running       0               5m17s   172.25.140.215   k8s-work1    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt; 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可以看出minicni处于Running状态。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org8decf4b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;测试&#34;&gt;测试&lt;/h1&gt;
+
+&lt;p&gt;1、环境准备, 分别给node打上相应的标签&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[root@k8s-master minicni]# k label nodes k8s-master role=master
+node/k8s-master labeled
+[root@k8s-master minicni]# k label nodes k8s-work1 role=worker
+node/k8s-work1 labeled
+[root@k8s-master minicni]# k label nodes k8s-work2 role=worker
+node/k8s-work2 labeled
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;2、分别在 master 与 worker 节点部署 netshoot 与 httpbin：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[root@k8s-master minicni]# k apply -f test-pods.yaml
+pod/httpbin-master created
+pod/netshoot-master created
+pod/httpbin-worker created
+pod/netshoot-worker created
+[root@k8s-master minicni]#
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;3、确保所有 pod 都启动并开始运行：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[root@k8s-master minicni]# k get pod
+NAME                     READY   STATUS              RESTARTS   AGE
+httpbin-master           0/1     ContainerCreating   0          8s
+httpbin-worker           0/1     ContainerCreating   0          8s
+netshoot-master          0/1     ContainerCreating   0          8s
+netshoot-worker          0/1     ContainerCreating   0          8s
+[root@k8s-master minicni]# 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;发现状态为ContainerCreating, 查看pod描述报错为:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Warning  FailedCreatePodSandBox  36s                kubelet            Failed to create pod sandbox: rpc error: code = Unknown desc = [failed to set up sandbox container &amp;quot;7cb17eace85729539db7d7af1a4955a353a14eb7ffa96f84c117ee6633b3e2b5&amp;quot; network for pod &amp;quot;httpbin-master&amp;quot;: networkPlugin cni failed to set up pod &amp;quot;httpbin-master_default&amp;quot; network: error getting ClusterInformation: connection is unauthorized: Unauthorized, failed to clean up sandbox container &amp;quot;7cb17eace85729539db7d7af1a4955a353a14eb7ffa96f84c117ee6633b3e2b5&amp;quot; network for pod &amp;quot;httpbin-master&amp;quot;: networkPlugin cni failed to teardown pod &amp;quot;httpbin-master_default&amp;quot; network: error getting ClusterInformation: connection is unauthorized: Unauthorized]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org836c0e0&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;faq&#34;&gt;FAQ&lt;/h1&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgb72f37d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgc16bc0c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;cannot-find-package-编译不过&#34;&gt;cannot find package 编译不过&lt;/h2&gt;
 
@@ -95,7 +178,7 @@ make: *** [build] Error 1
 &lt;p&gt;需要把GO111MODULE=on或auto，才能使用Go module功能，可在.bashrc或.zshrc里加上：export GO111MODULE=auto&lt;br /&gt;
 详见&lt;a href=&#34;http://www.ay1.cc/article/18635.html&#34;&gt;go自动下载所有的依赖包go module使用详解_Golang&lt;/a&gt;：&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org24dc85b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org479694f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;build-constraints-exclude-all-go-files-in&#34;&gt;build constraints exclude all Go files in&lt;/h2&gt;
 
@@ -112,7 +195,7 @@ export GOOS=“linux”。即：不能为darwin&lt;br /&gt;
 export CGO_ENABLED=“1”。&lt;br /&gt;
 详见：&lt;a href=&#34;https://blog.csdn.net/weixin_42845682/article/details/124568715&#34;&gt;build constraints exclude all Go files in xxx/xxx/xxx&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org6941997&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgbf5ea05&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;参考资料&#34;&gt;参考资料&lt;/h1&gt;
 

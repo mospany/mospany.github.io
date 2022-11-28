@@ -79,7 +79,7 @@
     
     
 
-<p><a id="org5531869"></a></p>
+<p><a id="orgd133fa4"></a></p>
 
 <h1 id="简介">简介</h1>
 
@@ -99,7 +99,7 @@
 <li>把容器网络加到主机路由表中，把主机网络（underlay 网络平面）设备当作容器网关，通过路由规则转发到指定的主机，实现容器的三层互通；</li>
 </ul>
 
-<p><a id="orgd6262c1"></a></p>
+<p><a id="orgdfcc34c"></a></p>
 
 <h1 id="cni原理">CNI原理</h1>
 
@@ -121,11 +121,11 @@
 <li>CNI 插件给 pause 容器配置正确的网络，pod 中其他的容器都是复用 pause 容器的网络；</li>
 </ul>
 
-<p><a id="orgb584384"></a></p>
+<p><a id="orgf704b0e"></a></p>
 
 <h1 id="编译部署">编译部署</h1>
 
-<p><a id="orge241346"></a></p>
+<p><a id="orgf794672"></a></p>
 
 <h2 id="1-编译">1、编译</h2>
 
@@ -135,11 +135,94 @@ make image
 
 <p><img src="http://blog.mospan.cn/post/img/k8s/minicni/make-image-minicni.png" alt="img" /></p>
 
-<p><a id="orgbf06f7f"></a></p>
+<p>在docker hub里已看到了minicni镜像：</p>
+
+<p><img src="http://blog.mospan.cn/post/img/k8s/minicni/docker-hub-minicni.png" alt="img" /></p>
+
+<p><a id="orgae77af5"></a></p>
+
+<h2 id="部署">部署</h2>
+
+<p>1、登录已安装好的k8s集群，把之前已存在的cni如(calico)卸载掉再安装minici:</p>
+
+<pre><code>[root@k8s-master minicni]# kubectl  apply -f minicni.yaml
+clusterrole.rbac.authorization.k8s.io/minicni created
+serviceaccount/minicni created
+clusterrolebinding.rbac.authorization.k8s.io/minicni created
+configmap/minicni-config created
+Warning: spec.template.spec.nodeSelector[beta.kubernetes.io/os]: deprecated since v1.14; use &quot;kubernetes.io/os&quot; instead
+Warning: spec.template.metadata.annotations[scheduler.alpha.kubernetes.io/critical-pod]: non-functional in v1.16+; use the &quot;priorityClassName&quot; field instead
+daemonset.apps/minicni-node created
+[root@k8s-master minicni]#
+</code></pre>
+
+<p>2、查看minicni部署状态：</p>
+
+<pre><code>[root@k8s-master minicni]# kubectl get pod -A -o wide
+ NAMESPACE     NAME                                       READY   STATUS        RESTARTS        AGE     IP               NODE         NOMINATED NODE   READINESS GATES
+ default       nginx-85b98978db-qkd6h                     0/1     Completed     5               4d21h   &lt;none&gt;           k8s-work1    &lt;none&gt;           &lt;none&gt;
+ kube-system   calico-kube-controllers-7b8458594b-p2fqj   0/1     Terminating   2               4d12h   &lt;none&gt;           k8s-work2    &lt;none&gt;           &lt;none&gt;
+ kube-system   coredns-6d8c4cb4d-ck2x5                    0/1     Completed     7               4d22h   &lt;none&gt;           k8s-master   &lt;none&gt;           &lt;none&gt;
+ kube-system   coredns-6d8c4cb4d-mbctj                    0/1     Completed     7               4d22h   &lt;none&gt;           k8s-master   &lt;none&gt;           &lt;none&gt;
+ kube-system   etcd-k8s-master                            1/1     Running       8 (8m14s ago)   4d22h   172.25.140.216   k8s-master   &lt;none&gt;           &lt;none&gt;
+ kube-system   kube-apiserver-k8s-master                  1/1     Running       8 (8m4s ago)    4d22h   172.25.140.216   k8s-master   &lt;none&gt;           &lt;none&gt;
+ kube-system   kube-controller-manager-k8s-master         1/1     Running       8 (8m14s ago)   4d22h   172.25.140.216   k8s-master   &lt;none&gt;           &lt;none&gt;
+ kube-system   kube-proxy-dnsjg                           1/1     Running       8 (8m14s ago)   4d21h   172.25.140.215   k8s-work1    &lt;none&gt;           &lt;none&gt;
+ kube-system   kube-proxy-r84lg                           1/1     Running       8 (8m14s ago)   4d22h   172.25.140.216   k8s-master   &lt;none&gt;           &lt;none&gt;
+ kube-system   kube-proxy-tbkx2                           1/1     Running       7 (8m14s ago)   4d21h   172.25.140.214   k8s-work2    &lt;none&gt;           &lt;none&gt;
+ kube-system   kube-scheduler-k8s-master                  1/1     Running       8 (8m14s ago)   4d22h   172.25.140.216   k8s-master   &lt;none&gt;           &lt;none&gt;
+ kube-system   minicni-node-8lmxc                         1/1     Running       0               5m17s   172.25.140.214   k8s-work2    &lt;none&gt;           &lt;none&gt;
+ kube-system   minicni-node-sgjmg                         1/1     Running       0               5m17s   172.25.140.216   k8s-master   &lt;none&gt;           &lt;none&gt;
+ kube-system   minicni-node-xslgx                         1/1     Running       0               5m17s   172.25.140.215   k8s-work1    &lt;none&gt;           &lt;none&gt; 
+</code></pre>
+
+<p>可以看出minicni处于Running状态。</p>
+
+<p><a id="org8decf4b"></a></p>
+
+<h1 id="测试">测试</h1>
+
+<p>1、环境准备, 分别给node打上相应的标签</p>
+
+<pre><code>[root@k8s-master minicni]# k label nodes k8s-master role=master
+node/k8s-master labeled
+[root@k8s-master minicni]# k label nodes k8s-work1 role=worker
+node/k8s-work1 labeled
+[root@k8s-master minicni]# k label nodes k8s-work2 role=worker
+node/k8s-work2 labeled
+</code></pre>
+
+<p>2、分别在 master 与 worker 节点部署 netshoot 与 httpbin：</p>
+
+<pre><code>[root@k8s-master minicni]# k apply -f test-pods.yaml
+pod/httpbin-master created
+pod/netshoot-master created
+pod/httpbin-worker created
+pod/netshoot-worker created
+[root@k8s-master minicni]#
+</code></pre>
+
+<p>3、确保所有 pod 都启动并开始运行：</p>
+
+<pre><code>[root@k8s-master minicni]# k get pod
+NAME                     READY   STATUS              RESTARTS   AGE
+httpbin-master           0/1     ContainerCreating   0          8s
+httpbin-worker           0/1     ContainerCreating   0          8s
+netshoot-master          0/1     ContainerCreating   0          8s
+netshoot-worker          0/1     ContainerCreating   0          8s
+[root@k8s-master minicni]# 
+</code></pre>
+
+<p>发现状态为ContainerCreating, 查看pod描述报错为:</p>
+
+<pre><code>Warning  FailedCreatePodSandBox  36s                kubelet            Failed to create pod sandbox: rpc error: code = Unknown desc = [failed to set up sandbox container &quot;7cb17eace85729539db7d7af1a4955a353a14eb7ffa96f84c117ee6633b3e2b5&quot; network for pod &quot;httpbin-master&quot;: networkPlugin cni failed to set up pod &quot;httpbin-master_default&quot; network: error getting ClusterInformation: connection is unauthorized: Unauthorized, failed to clean up sandbox container &quot;7cb17eace85729539db7d7af1a4955a353a14eb7ffa96f84c117ee6633b3e2b5&quot; network for pod &quot;httpbin-master&quot;: networkPlugin cni failed to teardown pod &quot;httpbin-master_default&quot; network: error getting ClusterInformation: connection is unauthorized: Unauthorized]
+</code></pre>
+
+<p><a id="org836c0e0"></a></p>
 
 <h1 id="faq">FAQ</h1>
 
-<p><a id="orgb72f37d"></a></p>
+<p><a id="orgc16bc0c"></a></p>
 
 <h2 id="cannot-find-package-编译不过">cannot find package 编译不过</h2>
 
@@ -159,7 +242,7 @@ make: *** [build] Error 1
 <p>需要把GO111MODULE=on或auto，才能使用Go module功能，可在.bashrc或.zshrc里加上：export GO111MODULE=auto<br />
 详见<a href="http://www.ay1.cc/article/18635.html">go自动下载所有的依赖包go module使用详解_Golang</a>：</p>
 
-<p><a id="org24dc85b"></a></p>
+<p><a id="org479694f"></a></p>
 
 <h2 id="build-constraints-exclude-all-go-files-in">build constraints exclude all Go files in</h2>
 
@@ -176,7 +259,7 @@ export GOOS=“linux”。即：不能为darwin<br />
 export CGO_ENABLED=“1”。<br />
 详见：<a href="https://blog.csdn.net/weixin_42845682/article/details/124568715">build constraints exclude all Go files in xxx/xxx/xxx</a></p>
 
-<p><a id="org6941997"></a></p>
+<p><a id="orgbf5ea05"></a></p>
 
 <h1 id="参考资料">参考资料</h1>
 

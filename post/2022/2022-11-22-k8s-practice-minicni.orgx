@@ -45,6 +45,92 @@ url = "/2022/11/22/k8s-practice-minicni/"
    #+END_SRC
     [[http://blog.mospan.cn/post/img/k8s/minicni/make-image-minicni.png]]
 
+    在docker hub里已看到了minicni镜像：
+    
+    [[http://blog.mospan.cn/post/img/k8s/minicni/docker-hub-minicni.png]]
+
+** 部署
+   1、登录已安装好的k8s集群，把之前已存在的cni如(calico)卸载掉再安装minici:
+   #+BEGIN_SRC sh
+   [root@k8s-master minicni]# kubectl  apply -f minicni.yaml
+   clusterrole.rbac.authorization.k8s.io/minicni created
+   serviceaccount/minicni created
+   clusterrolebinding.rbac.authorization.k8s.io/minicni created
+   configmap/minicni-config created
+   Warning: spec.template.spec.nodeSelector[beta.kubernetes.io/os]: deprecated since v1.14; use "kubernetes.io/os" instead
+   Warning: spec.template.metadata.annotations[scheduler.alpha.kubernetes.io/critical-pod]: non-functional in v1.16+; use the "priorityClassName" field instead
+   daemonset.apps/minicni-node created
+   [root@k8s-master minicni]#
+   
+   #+END_SRC
+
+   2、查看minicni部署状态：
+   #+BEGIN_SRC sh
+   [root@k8s-master minicni]# kubectl get pod -A -o wide
+    NAMESPACE     NAME                                       READY   STATUS        RESTARTS        AGE     IP               NODE         NOMINATED NODE   READINESS GATES
+    default       nginx-85b98978db-qkd6h                     0/1     Completed     5               4d21h   <none>           k8s-work1    <none>           <none>
+    kube-system   calico-kube-controllers-7b8458594b-p2fqj   0/1     Terminating   2               4d12h   <none>           k8s-work2    <none>           <none>
+    kube-system   coredns-6d8c4cb4d-ck2x5                    0/1     Completed     7               4d22h   <none>           k8s-master   <none>           <none>
+    kube-system   coredns-6d8c4cb4d-mbctj                    0/1     Completed     7               4d22h   <none>           k8s-master   <none>           <none>
+    kube-system   etcd-k8s-master                            1/1     Running       8 (8m14s ago)   4d22h   172.25.140.216   k8s-master   <none>           <none>
+    kube-system   kube-apiserver-k8s-master                  1/1     Running       8 (8m4s ago)    4d22h   172.25.140.216   k8s-master   <none>           <none>
+    kube-system   kube-controller-manager-k8s-master         1/1     Running       8 (8m14s ago)   4d22h   172.25.140.216   k8s-master   <none>           <none>
+    kube-system   kube-proxy-dnsjg                           1/1     Running       8 (8m14s ago)   4d21h   172.25.140.215   k8s-work1    <none>           <none>
+    kube-system   kube-proxy-r84lg                           1/1     Running       8 (8m14s ago)   4d22h   172.25.140.216   k8s-master   <none>           <none>
+    kube-system   kube-proxy-tbkx2                           1/1     Running       7 (8m14s ago)   4d21h   172.25.140.214   k8s-work2    <none>           <none>
+    kube-system   kube-scheduler-k8s-master                  1/1     Running       8 (8m14s ago)   4d22h   172.25.140.216   k8s-master   <none>           <none>
+    kube-system   minicni-node-8lmxc                         1/1     Running       0               5m17s   172.25.140.214   k8s-work2    <none>           <none>
+    kube-system   minicni-node-sgjmg                         1/1     Running       0               5m17s   172.25.140.216   k8s-master   <none>           <none>
+    kube-system   minicni-node-xslgx                         1/1     Running       0               5m17s   172.25.140.215   k8s-work1    <none>           <none> 
+   #+END_SRC
+   可以看出minicni处于Running状态。
+
+   
+* 测试
+  1、环境准备, 分别给node打上相应的标签
+  #+BEGIN_SRC sh
+  [root@k8s-master minicni]# k label nodes k8s-master role=master
+  node/k8s-master labeled
+  [root@k8s-master minicni]# k label nodes k8s-work1 role=worker
+  node/k8s-work1 labeled
+  [root@k8s-master minicni]# k label nodes k8s-work2 role=worker
+  node/k8s-work2 labeled
+  
+  #+END_SRC
+   
+  2、分别在 master 与 worker 节点部署 netshoot 与 httpbin：
+  #+BEGIN_SRC sh
+  [root@k8s-master minicni]# k apply -f test-pods.yaml
+  pod/httpbin-master created
+  pod/netshoot-master created
+  pod/httpbin-worker created
+  pod/netshoot-worker created
+  [root@k8s-master minicni]#
+  
+  #+END_SRC
+
+  3、确保所有 pod 都启动并开始运行：
+  #+BEGIN_SRC sh
+  [root@k8s-master minicni]# k get pod
+  NAME                     READY   STATUS              RESTARTS   AGE
+  httpbin-master           0/1     ContainerCreating   0          8s
+  httpbin-worker           0/1     ContainerCreating   0          8s
+  netshoot-master          0/1     ContainerCreating   0          8s
+  netshoot-worker          0/1     ContainerCreating   0          8s
+  [root@k8s-master minicni]# 
+  
+  #+END_SRC
+  发现状态为ContainerCreating, 查看pod描述报错为:
+  #+BEGIN_SRC sh
+  Warning  FailedCreatePodSandBox  36s                kubelet            Failed to create pod sandbox: rpc error: code = Unknown desc = [failed to set up sandbox container "7cb17eace85729539db7d7af1a4955a353a14eb7ffa96f84c117ee6633b3e2b5" network for pod "httpbin-master": networkPlugin cni failed to set up pod "httpbin-master_default" network: error getting ClusterInformation: connection is unauthorized: Unauthorized, failed to clean up sandbox container "7cb17eace85729539db7d7af1a4955a353a14eb7ffa96f84c117ee6633b3e2b5" network for pod "httpbin-master": networkPlugin cni failed to teardown pod "httpbin-master_default" network: error getting ClusterInformation: connection is unauthorized: Unauthorized]
+  
+  #+END_SRC 
+  
+
+
+ 
+   
+
 
 
 * FAQ
