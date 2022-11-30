@@ -15,7 +15,7 @@
             <guid>http://mospany.github.io/2022/11/22/k8s-practice-minicni/</guid>
             <description>
 
-&lt;p&gt;&lt;a id=&#34;orgd133fa4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org121139c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;简介&#34;&gt;简介&lt;/h1&gt;
 
@@ -35,7 +35,7 @@
 &lt;li&gt;把容器网络加到主机路由表中，把主机网络（underlay 网络平面）设备当作容器网关，通过路由规则转发到指定的主机，实现容器的三层互通；&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgdfcc34c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org54efc4c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;cni原理&#34;&gt;CNI原理&lt;/h1&gt;
 
@@ -57,11 +57,11 @@
 &lt;li&gt;CNI 插件给 pause 容器配置正确的网络，pod 中其他的容器都是复用 pause 容器的网络；&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgf704b0e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orge3f3f5f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;编译部署&#34;&gt;编译部署&lt;/h1&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgf794672&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org4d0d842&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;1-编译&#34;&gt;1、编译&lt;/h2&gt;
 
@@ -75,7 +75,7 @@ make image
 
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/minicni/docker-hub-minicni.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgae77af5&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgc5e36dd&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;部署&#34;&gt;部署&lt;/h2&gt;
 
@@ -114,7 +114,7 @@ daemonset.apps/minicni-node created
 
 &lt;p&gt;可以看出minicni处于Running状态。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org8decf4b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org4f59518&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;测试&#34;&gt;测试&lt;/h1&gt;
 
@@ -154,11 +154,64 @@ netshoot-worker          0/1     ContainerCreating   0          8s
 &lt;pre&gt;&lt;code&gt;Warning  FailedCreatePodSandBox  36s                kubelet            Failed to create pod sandbox: rpc error: code = Unknown desc = [failed to set up sandbox container &amp;quot;7cb17eace85729539db7d7af1a4955a353a14eb7ffa96f84c117ee6633b3e2b5&amp;quot; network for pod &amp;quot;httpbin-master&amp;quot;: networkPlugin cni failed to set up pod &amp;quot;httpbin-master_default&amp;quot; network: error getting ClusterInformation: connection is unauthorized: Unauthorized, failed to clean up sandbox container &amp;quot;7cb17eace85729539db7d7af1a4955a353a14eb7ffa96f84c117ee6633b3e2b5&amp;quot; network for pod &amp;quot;httpbin-master&amp;quot;: networkPlugin cni failed to teardown pod &amp;quot;httpbin-master_default&amp;quot; network: error getting ClusterInformation: connection is unauthorized: Unauthorized]
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;a id=&#34;org836c0e0&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;如果安装了calico网络插件，需要删除calico:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;kubectl delete -f  &amp;lt;yaml&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;还要去所有节点etc/cni/net.d/目录下 删掉与calico相关的所有配置文件, 然后重启机器。 不然pod起不来，会报错 network: error getting ClusterInformation: connection is unauthorized: Unauthorized .&lt;/p&gt;
+
+&lt;p&gt;4、最后再查看POD都变成Running状态了&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[root@k8s-master minicni]# k get pod -A -o wide
+NAMESPACE     NAME                                 READY   STATUS    RESTARTS       AGE     IP               NODE         NOMINATED NODE   READINESS GATES
+default       httpbin-master                       1/1     Running   0              20m     10.244.0.4       k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+default       httpbin-worker                       1/1     Running   0              20m     10.244.2.2       k8s-work2    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+default       netshoot-master                      1/1     Running   0              20m     10.244.0.5       k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+default       netshoot-worker                      1/1     Running   0              20m     10.244.2.3       k8s-work2    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+default       nginx-85b98978db-2hzc9               1/1     Running   0              50m     10.244.1.2       k8s-work1    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+kube-system   coredns-6d8c4cb4d-ck2x5              1/1     Running   9 (24h ago)    6d23h   10.244.0.2       k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+kube-system   coredns-6d8c4cb4d-mbctj              1/1     Running   9 (24h ago)    6d23h   10.244.0.3       k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+kube-system   etcd-k8s-master                      1/1     Running   10 (24h ago)   6d23h   172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+kube-system   kube-apiserver-k8s-master            1/1     Running   12 (24h ago)   6d23h   172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+kube-system   kube-controller-manager-k8s-master   1/1     Running   10 (24h ago)   6d23h   172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+kube-system   kube-proxy-dnsjg                     1/1     Running   10 (24h ago)   6d22h   172.25.140.215   k8s-work1    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+kube-system   kube-proxy-r84lg                     1/1     Running   10 (24h ago)   6d23h   172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+kube-system   kube-proxy-tbkx2                     1/1     Running   9 (24h ago)    6d22h   172.25.140.214   k8s-work2    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+kube-system   kube-scheduler-k8s-master            1/1     Running   10 (24h ago)   6d23h   172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+kube-system   minicni-node-5w9fn                   1/1     Running   0              55m     172.25.140.215   k8s-work1    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+kube-system   minicni-node-jb5cj                   1/1     Running   0              55m     172.25.140.214   k8s-work2    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+kube-system   minicni-node-kp25h                   1/1     Running   0              55m     172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+[root@k8s-master minicni]#
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;5、之后测试以下四种网络通信是否正常：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;pod 到宿主机的通信&lt;/p&gt;
+
+&lt;p&gt;[root@k8s-master minicni]# kubectl exec -ti netshoot-master &amp;ndash; /bin/bash
+bash-5.1# ping 172.25.140.216
+PING 172.25.140.216 (172.25.140.216) 56(84) bytes of data.
+64 bytes from 172.25.140.216: icmp_seq=1 ttl=64 time=0.074 ms
+64 bytes from 172.25.140.216: icmp_seq=2 ttl=64 time=0.035 ms
+64 bytes from 172.25.140.216: icmp_seq=3 ttl=64 time=0.033 ms
+64 bytes from 172.25.140.216: icmp_seq=4 ttl=64 time=0.043 ms
+64 bytes from 172.25.140.216: icmp_seq=5 ttl=64 time=0.048 ms
+^C
+&amp;mdash; 172.25.140.216 ping statistics &amp;mdash;
+5 packets transmitted, 5 received, 0% packet loss, time 3999ms
+rtt min/avg/max/mdev = 0.033/0.046/0.074/0.014 ms
+bash-5.1#&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;pod 到其他主机的通信&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgf116bbb&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;faq&#34;&gt;FAQ&lt;/h1&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgc16bc0c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org812724e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;cannot-find-package-编译不过&#34;&gt;cannot find package 编译不过&lt;/h2&gt;
 
@@ -178,7 +231,7 @@ make: *** [build] Error 1
 &lt;p&gt;需要把GO111MODULE=on或auto，才能使用Go module功能，可在.bashrc或.zshrc里加上：export GO111MODULE=auto&lt;br /&gt;
 详见&lt;a href=&#34;http://www.ay1.cc/article/18635.html&#34;&gt;go自动下载所有的依赖包go module使用详解_Golang&lt;/a&gt;：&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org479694f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org0c17da3&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;build-constraints-exclude-all-go-files-in&#34;&gt;build constraints exclude all Go files in&lt;/h2&gt;
 
@@ -195,13 +248,14 @@ export GOOS=“linux”。即：不能为darwin&lt;br /&gt;
 export CGO_ENABLED=“1”。&lt;br /&gt;
 详见：&lt;a href=&#34;https://blog.csdn.net/weixin_42845682/article/details/124568715&#34;&gt;build constraints exclude all Go files in xxx/xxx/xxx&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgbf5ea05&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgbc4dee4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;参考资料&#34;&gt;参考资料&lt;/h1&gt;
 
 &lt;p&gt;【01】 &lt;a href=&#34;https://blog.csdn.net/u012772803/article/details/113703029&#34;&gt;find -print0和xargs -0原理及用法&lt;/a&gt;]&lt;br /&gt;
 【02】 &lt;a href=&#34;https://zhuanlan.zhihu.com/p/411181637&#34;&gt;Go语言import分组管理利器: goimports-reviser&lt;/a&gt;&lt;br /&gt;
-【03】 &lt;a href=&#34;https://morven.life/posts/create-your-own-cni-with-golang/&#34;&gt;使用 Go 从零开始实现 CNI&lt;/a&gt;]&lt;/p&gt;
+【03】 &lt;a href=&#34;https://morven.life/posts/create-your-own-cni-with-golang/&#34;&gt;使用 Go 从零开始实现 CNI&lt;/a&gt;&lt;br /&gt;
+【04】&lt;a href=&#34;https://blog.csdn.net/a5534789/article/details/112848404&#34;&gt;centOS内网安装kubernetes集群&lt;/a&gt;&lt;/p&gt;
 </description>
         </item>
         

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>hugo on 墨斯潘園</title>
+    <title>Hugo on 墨斯潘園</title>
     <link>http://mospany.github.io/tags/hugo/</link>
-    <description>Recent content in hugo on 墨斯潘園</description>
+    <description>Recent content in Hugo on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <lastBuildDate>Sat, 02 Feb 2019 15:18:53 +0800</lastBuildDate>
