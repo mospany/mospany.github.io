@@ -3,8 +3,8 @@
 categories = ["技术文章"]
 date = "2022-11-22T22:42:55+08:00"
 description = ""
-keywords = ["K8S","云原生"]
-tags = ["K8S","云原生"]
+keywords = ["K8S","项目实践"]
+tags = ["K8S","项目实践"]
 title = "K8S项目实践(02): 动手实现minicni"
 url = "/2022/11/22/k8s-practice-minicni/"
 
