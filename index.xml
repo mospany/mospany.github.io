@@ -9,13 +9,13 @@
         
         <item>
             <title>K8S项目实践(02): 动手实现minicni</title>
-            <link>http://mospany.github.io/2022/11/22/k8s-practice-minicni/</link>
+            <link>http://mospany.github.io/2022/11/22/k8s-practice-minicni//</link>
             <pubDate>Tue, 22 Nov 2022 22:42:55 CST</pubDate>
             <author>Mospan</author>
-            <guid>http://mospany.github.io/2022/11/22/k8s-practice-minicni/</guid>
+            <guid>http://mospany.github.io/2022/11/22/k8s-practice-minicni//</guid>
             <description>
 
-&lt;p&gt;&lt;a id=&#34;org121139c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgb8cf6bc&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;简介&#34;&gt;简介&lt;/h1&gt;
 
@@ -35,11 +35,15 @@
 &lt;li&gt;把容器网络加到主机路由表中，把主机网络（underlay 网络平面）设备当作容器网关，通过路由规则转发到指定的主机，实现容器的三层互通；&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a id=&#34;org54efc4c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgfbc8441&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;cni原理&#34;&gt;CNI原理&lt;/h1&gt;
 
 &lt;p&gt;CNI 规范相对于 CNM(Container Network Model) 对开发者的约束更少、更开放，不依赖于容器运行时，因此也更简单。关于 CNI 规范的详情请查看&lt;a href=&#34;https://github.com/containernetworking/cni/blob/master/SPEC.md&#34;&gt;官方文档&lt;/a&gt;。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/minicni/cni-standard.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;详见: &lt;a href=&#34;https://blog.csdn.net/elihe2011/article/details/122926399&#34;&gt;K8S 网络CNI&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;实现一个 CNI 网络插件只需要一个配置文件和一个可执行文件：&lt;/p&gt;
 
@@ -57,11 +61,109 @@
 &lt;li&gt;CNI 插件给 pause 容器配置正确的网络，pod 中其他的容器都是复用 pause 容器的网络；&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a id=&#34;orge3f3f5f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org3e71a72&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;cni配置文件&#34;&gt;CNI配置文件&lt;/h1&gt;
+
+&lt;p&gt;现在我们来到关键的部分。一般来说，CNI 插件需要在集群的每个节点上运行，在 CNI 的规范里面，实现一个 CNI 插件首先需要一个 JSON 格式的配置文件，配置文件需要放到每个节点的 &lt;em&gt;etc/cni/net.d&lt;/em&gt; 目录，一般命名为 &amp;lt;数字&amp;gt;-&lt;CNI-plugin&gt;.conf，而且配置文件至少需要以下几个必须的字段：&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;cniVersion: CNI 插件的字符串版本号，要求符合 Semantic Version 2.0 规范；&lt;/li&gt;
+&lt;li&gt;name: 字符串形式的网络名；&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;type: 字符串表示的 CNI 插件的可运行文件；&lt;br /&gt;
+除此之外，我们也可以增加一些自定义的配置字段，用于传递参数给 CNI 插件，这些配置会在运行时传递给 CNI 插件。在我们的例子里面，需要配置每个宿主机网桥的设备名、网络设备的最大传输单元(MTU)以及每个节点分配的24位子网地址，因此，我们的 CNI 插件的配置看起来会像下面这样：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  {
+    &amp;quot;cniVersion&amp;quot;: &amp;quot;0.1.0&amp;quot;,
+    &amp;quot;name&amp;quot;: &amp;quot;minicni&amp;quot;,
+    &amp;quot;type&amp;quot;: &amp;quot;minicni&amp;quot;,
+    &amp;quot;bridge&amp;quot;: &amp;quot;minicni0&amp;quot;,
+    &amp;quot;mtu&amp;quot;: 1500,
+    &amp;quot;subnet&amp;quot;: __NODE_SUBNET__
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Note: 确保配置文件放到 &lt;em&gt;etc/cni/net.d&lt;/em&gt; 目录，kubelet 默认此目录寻找 CNI 插件配置；并且，插件的配置可以分为多个插件链的形式来运行，但是为了简单起见，在我们的例子中，只配置一个独立的 CNI 插件，因为配置文件的后缀名为 .conf。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;a id=&#34;org29e17dd&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;cni核心实现&#34;&gt;CNI核心实现&lt;/h1&gt;
+
+&lt;p&gt;接下来就开始看怎么实现 CNI 插件来管理 pod IP 地址以及配置容器网络设备。在此之前，我们需要明确的是，CNI 介入的时机是 kubelet 创建 pause 容器创建对应的网络命名空间之后，同时当 CNI 插件被调用的时候，kubelet 会将相关操作命令以及参数通过环境变量的形式传递给它。这些环境变量包括：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;CNI_COMMAND: CNI 操作命令，包括 ADD, DEL, CHECK 以及 VERSION&lt;/li&gt;
+&lt;li&gt;CNI_CONTAINERID: 容器 ID&lt;/li&gt;
+&lt;li&gt;CNI_NETNS: pod 网络命名空间&lt;/li&gt;
+&lt;li&gt;CNI_IFNAME: pod 网络设备名称&lt;/li&gt;
+&lt;li&gt;CNI_PATH: CNI 插件可执行文件的搜索路径&lt;/li&gt;
+&lt;li&gt;CNI_ARGS: 可选的其他参数，形式类似于 key1=value1,key2=value2&amp;#x2026;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;在运行时，kubelet 通过 CNI 配置文件寻找 CNI 可执行文件，然后基于上述几个环境变量来执行相关的操作。CNI 插件必须支持的操作包括：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;ADD: 将 pod 加入到 pod 网络中&lt;/li&gt;
+&lt;li&gt;DEL: 将 pod 从 pod 网络中删除&lt;/li&gt;
+&lt;li&gt;CHECK: 检查 pod 网络配置正常&lt;/li&gt;
+&lt;li&gt;VERSION: 返回可选 CNI 插件的版本信息&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;让我们直接跳到 CNI 插件的入口函数：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;func main() {
+    cmd, cmdArgs, err := args.GetArgsFromEnv()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, &amp;quot;getting cmd arguments with error: %v&amp;quot;, err)
+    }
+
+    fh := handler.NewFileHandler(IPStore)
+
+    switch cmd {
+    case &amp;quot;ADD&amp;quot;:
+        err = fh.HandleAdd(cmdArgs)
+    case &amp;quot;DEL&amp;quot;:
+        err = fh.HandleDel(cmdArgs)
+    case &amp;quot;CHECK&amp;quot;:
+        err = fh.HandleCheck(cmdArgs)
+    case &amp;quot;VERSION&amp;quot;:
+        err = fh.HandleVersion(cmdArgs)
+    default:
+        err = fmt.Errorf(&amp;quot;unknown CNI_COMMAND: %s&amp;quot;, cmd)
+    }
+    if err != nil {
+        fmt.Fprintf(os.Stderr, &amp;quot;Failed to handle CNI_COMMAND %q: %v&amp;quot;, cmd, err)
+        os.Exit(1)
+    }
+ }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可以看到，我们首先调用 GetArgsFromEnv() 函数将 CNI 插件的操作命令以及相关参数通过环境变量读入，同时从标准输入获取 CNI 插件的 JSON 配置，然后基于不同的 CNI 操作命令执行不同的处理函数。&lt;/p&gt;
+
+&lt;p&gt;需要注意的是，我们将处理函数的集合实现为一个接口，这样就可以很容易的扩展不同的接口实现。在最基础的版本实现中，我们基本文件存储分配的 IP 信息。但是，这种实现方式存在很多问题，例如，文件存储不可靠，读写可能会发生冲突等，在后续的版本中，我们会实现基于 kubernetes 存储的接口实现，将子网信息以及 IP 信息存储到 apiserver 中，从而实现可靠存储。&lt;/p&gt;
+
+&lt;p&gt;接下来，我们就看看基于文件的接口实现是怎么处理这些 CNI 操作命令的。&lt;br /&gt;
+对于 ADD 命令：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;从标准输入获取 CNI 插件的配置信息，最重要的是当前宿主机网桥的设备名、网络设备的最大传输单元(MTU)以及当前节点分配的24位子网地址；&lt;/li&gt;
+&lt;li&gt;然后从环境变量中找到对应的 CNI 操作参数，包括 pod 容器网络命名空间以及 pod 网络设备名等；&lt;/li&gt;
+&lt;li&gt;接下来创建或者更新节点宿主机网桥，从当前节点分配的24位子网地址中抽取子网的网关地址，准备分配给节点宿主机网桥；&lt;/li&gt;
+&lt;li&gt;接着将从文件读取已经分配的 IP 地址列表，遍历24位子网地址并从中取出第一个没有被分配的 IP 地址信息，准备分配给 pod 网络设备；pod 网络设备是 veth 设备对，一端在 pod 网络命名空间中，另外一端连接着宿主机上的网桥设备，同时所有的 pod 网络设备将宿主机上的网桥设备当作默认网关；&lt;/li&gt;
+&lt;li&gt;最终成功后需要将新的 pod IP 写入到文件中。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;看起来很简单对吧？其实作为最简单的方式，这种方案可以实现最基础的 ADD 功能：&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org90b2a2e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;编译部署&#34;&gt;编译部署&lt;/h1&gt;
 
-&lt;p&gt;&lt;a id=&#34;org4d0d842&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orge68cb58&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;1-编译&#34;&gt;1、编译&lt;/h2&gt;
 
@@ -75,7 +177,7 @@ make image
 
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/minicni/docker-hub-minicni.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgc5e36dd&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org660f2ce&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;部署&#34;&gt;部署&lt;/h2&gt;
 
@@ -114,7 +216,7 @@ daemonset.apps/minicni-node created
 
 &lt;p&gt;可以看出minicni处于Running状态。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org4f59518&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgdb96ccb&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;测试&#34;&gt;测试&lt;/h1&gt;
 
@@ -190,7 +292,7 @@ kube-system   minicni-node-kp25h                   1/1     Running   0          
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;pod 到宿主机的通信&lt;/p&gt;
 
-&lt;p&gt;[root@k8s-master minicni]# kubectl exec -ti netshoot-master &amp;ndash; /bin/bash
+&lt;pre&gt;&lt;code&gt;[root@k8s-master minicni]# kubectl exec -ti netshoot-master -- /bin/bash
 bash-5.1# ping 172.25.140.216
 PING 172.25.140.216 (172.25.140.216) 56(84) bytes of data.
 64 bytes from 172.25.140.216: icmp_seq=1 ttl=64 time=0.074 ms
@@ -199,19 +301,69 @@ PING 172.25.140.216 (172.25.140.216) 56(84) bytes of data.
 64 bytes from 172.25.140.216: icmp_seq=4 ttl=64 time=0.043 ms
 64 bytes from 172.25.140.216: icmp_seq=5 ttl=64 time=0.048 ms
 ^C
-&amp;mdash; 172.25.140.216 ping statistics &amp;mdash;
+--- 172.25.140.216 ping statistics ---
 5 packets transmitted, 5 received, 0% packet loss, time 3999ms
 rtt min/avg/max/mdev = 0.033/0.046/0.074/0.014 ms
-bash-5.1#&lt;/p&gt;&lt;/li&gt;
+bash-5.1#
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 
-&lt;li&gt;&lt;p&gt;pod 到其他主机的通信&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;同一个节点 pod-to-pod 通信&lt;br /&gt;
+默认情况下，同一台主机上的 pod-to-pod 网络包默认会被 Linux 内核丢弃，原因是 Linux 默认会把非 default 网络命名空间的网络包看作是外部数据包，关于这个问题的具体细节，请查看 stackoverflow 上的讨论。目前，我们需要在每个集群结点上使用以下命令手动添加以下 iptables 规则来让 pod-to-pod 网络数据包顺利转发：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# iptables -t filter -A FORWARD -s 10.244.0.0/24  -j ACCEPT
+[root@k8s-master ~]# iptables -t filter -A FORWARD -d 10.244.0.0/24  -j ACCEPT
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;再进行测试:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# kubectl  exec -ti netshoot-master -- /bin/bash
+bash-5.1# ping 10.244.0.25
+PING 10.244.0.25 (10.244.0.25) 56(84) bytes of data.
+64 bytes from 10.244.0.25: icmp_seq=1 ttl=64 time=0.079 ms
+64 bytes from 10.244.0.25: icmp_seq=2 ttl=64 time=0.061 ms 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;测试通信正常。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;pod 到其他主机的通信&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# kubectl  exec -ti netshoot-master -- /bin/bash
+bash-5.1# ping 172.25.140.214
+PING 172.25.140.214 (172.25.140.214) 56(84) bytes of data.
+
+^C
+--- 172.25.140.214 ping statistics ---
+4 packets transmitted, 0 received, 100% packet loss, time 2999ms
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Ping不通，原因是阿里云底层网络对非法IP限制，不是随便配个IP就可以通，如需通可以考虑overlay如calico或本地虚拟机搭建方式。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;跨一个节点 pod-to-pod 通信&lt;br /&gt;
+对于跨节点的 pod-to-pod 网络包，需要像 Calico 那样添加宿主机的路由表，保证发往各个节点上的 pod 流量经过节点的转发。目前这些路由表需要手动添加：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ip route add 10.244.2.0/24  via 172.25.140.214 dev eth0 #run on master 
+ip route add 10.244.0.0/24  via 172.25.140.216 dev eth0 #run on worker
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;再测试：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# kubectl  exec -ti netshoot-master -- /bin/bash
+bash-5.1# ping 10.244.2.11
+PING 10.244.2.11 (10.244.2.11) 56(84) bytes of data.
+
+^C
+--- 10.244.2.11 ping statistics ---
+108 packets transmitted, 0 received, 100% packet loss, time 106996ms    
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;现象与原理同上。&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgf116bbb&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org0d7df39&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;faq&#34;&gt;FAQ&lt;/h1&gt;
 
-&lt;p&gt;&lt;a id=&#34;org812724e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgbede682&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;cannot-find-package-编译不过&#34;&gt;cannot find package 编译不过&lt;/h2&gt;
 
@@ -231,7 +383,7 @@ make: *** [build] Error 1
 &lt;p&gt;需要把GO111MODULE=on或auto，才能使用Go module功能，可在.bashrc或.zshrc里加上：export GO111MODULE=auto&lt;br /&gt;
 详见&lt;a href=&#34;http://www.ay1.cc/article/18635.html&#34;&gt;go自动下载所有的依赖包go module使用详解_Golang&lt;/a&gt;：&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org0c17da3&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org3f9bdab&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;build-constraints-exclude-all-go-files-in&#34;&gt;build constraints exclude all Go files in&lt;/h2&gt;
 
@@ -248,14 +400,18 @@ export GOOS=“linux”。即：不能为darwin&lt;br /&gt;
 export CGO_ENABLED=“1”。&lt;br /&gt;
 详见：&lt;a href=&#34;https://blog.csdn.net/weixin_42845682/article/details/124568715&#34;&gt;build constraints exclude all Go files in xxx/xxx/xxx&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgbc4dee4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org12cec89&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;参考资料&#34;&gt;参考资料&lt;/h1&gt;
 
 &lt;p&gt;【01】 &lt;a href=&#34;https://blog.csdn.net/u012772803/article/details/113703029&#34;&gt;find -print0和xargs -0原理及用法&lt;/a&gt;]&lt;br /&gt;
 【02】 &lt;a href=&#34;https://zhuanlan.zhihu.com/p/411181637&#34;&gt;Go语言import分组管理利器: goimports-reviser&lt;/a&gt;&lt;br /&gt;
 【03】 &lt;a href=&#34;https://morven.life/posts/create-your-own-cni-with-golang/&#34;&gt;使用 Go 从零开始实现 CNI&lt;/a&gt;&lt;br /&gt;
-【04】&lt;a href=&#34;https://blog.csdn.net/a5534789/article/details/112848404&#34;&gt;centOS内网安装kubernetes集群&lt;/a&gt;&lt;/p&gt;
+【04】 &lt;a href=&#34;https://blog.csdn.net/a5534789/article/details/112848404&#34;&gt;centOS内网安装kubernetes集群&lt;/a&gt;&lt;br /&gt;
+【05】 &lt;a href=&#34;https://zhuanlan.zhihu.com/p/415032187&#34;&gt;Linux 路由表(RIB表、FIB表)、ARP表、MAC表整理&lt;/a&gt;]&lt;br /&gt;
+【06】 &lt;a href=&#34;https://www.jianshu.com/p/75704eb30eff&#34;&gt;查看CNI中的veth pair&lt;/a&gt;&lt;br /&gt;
+【07】 &lt;a href=&#34;https://mp.weixin.qq.com/s/7t_MoZ0quJF50VoIwqvKyQ&#34;&gt;一文吃透 K8S 网络模型&lt;/a&gt;&lt;br /&gt;
+【08】 &lt;a href=&#34;https://blog.csdn.net/elihe2011/article/details/122926399&#34;&gt;K8S 网络CNI&lt;/a&gt;&lt;/p&gt;
 </description>
         </item>
         

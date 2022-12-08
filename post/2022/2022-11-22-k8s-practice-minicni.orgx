@@ -25,6 +25,11 @@ url = "/2022/11/22/k8s-practice-minicni/"
 * CNI原理
   CNI 规范相对于 CNM(Container Network Model) 对开发者的约束更少、更开放，不依赖于容器运行时，因此也更简单。关于 CNI 规范的详情请查看[[https://github.com/containernetworking/cni/blob/master/SPEC.md][官方文档]]。
 
+    [[http://blog.mospan.cn/post/img/k8s/minicni/cni-standard.png]]
+
+    详见: [[https://blog.csdn.net/elihe2011/article/details/122926399][K8S 网络CNI]]
+
+
   实现一个 CNI 网络插件只需要一个配置文件和一个可执行文件：
 
   - 配置文件描述插件的版本、名称、描述等基本信息；
@@ -36,6 +41,88 @@ url = "/2022/11/22/k8s-practice-minicni/"
   - 根据配置调用具体的 CNI 插件，可以配置成 CNI 插件链来进行链式调用；
   - 当 CNI 插件被调用时，它根据环境变量以及命令行参数来获得网络命名空间、容器的网络设备等必要信息，然后执行 ADD 或者其他操作；
   - CNI 插件给 pause 容器配置正确的网络，pod 中其他的容器都是复用 pause 容器的网络；
+
+* CNI配置文件
+  现在我们来到关键的部分。一般来说，CNI 插件需要在集群的每个节点上运行，在 CNI 的规范里面，实现一个 CNI 插件首先需要一个 JSON 格式的配置文件，配置文件需要放到每个节点的 /etc/cni/net.d/ 目录，一般命名为 <数字>-<CNI-plugin>.conf，而且配置文件至少需要以下几个必须的字段：
+
+ 1. cniVersion: CNI 插件的字符串版本号，要求符合 Semantic Version 2.0 规范；
+ 2. name: 字符串形式的网络名；
+ 3. type: 字符串表示的 CNI 插件的可运行文件；
+  除此之外，我们也可以增加一些自定义的配置字段，用于传递参数给 CNI 插件，这些配置会在运行时传递给 CNI 插件。在我们的例子里面，需要配置每个宿主机网桥的设备名、网络设备的最大传输单元(MTU)以及每个节点分配的24位子网地址，因此，我们的 CNI 插件的配置看起来会像下面这样：
+ 
+  #+BEGIN_SRC json
+  {
+    "cniVersion": "0.1.0",
+    "name": "minicni",
+    "type": "minicni",
+    "bridge": "minicni0",
+    "mtu": 1500,
+    "subnet": __NODE_SUBNET__
+}
+  
+  #+END_SRC
+
+ #+BEGIN_QUOTE
+ Note: 确保配置文件放到 /etc/cni/net.d/ 目录，kubelet 默认此目录寻找 CNI 插件配置；并且，插件的配置可以分为多个插件链的形式来运行，但是为了简单起见，在我们的例子中，只配置一个独立的 CNI 插件，因为配置文件的后缀名为 .conf。
+ #+END_QUOTE 
+
+* CNI核心实现
+  接下来就开始看怎么实现 CNI 插件来管理 pod IP 地址以及配置容器网络设备。在此之前，我们需要明确的是，CNI 介入的时机是 kubelet 创建 pause 容器创建对应的网络命名空间之后，同时当 CNI 插件被调用的时候，kubelet 会将相关操作命令以及参数通过环境变量的形式传递给它。这些环境变量包括：
+  - CNI_COMMAND: CNI 操作命令，包括 ADD, DEL, CHECK 以及 VERSION
+  - CNI_CONTAINERID: 容器 ID
+  - CNI_NETNS: pod 网络命名空间
+  - CNI_IFNAME: pod 网络设备名称
+  - CNI_PATH: CNI 插件可执行文件的搜索路径
+  - CNI_ARGS: 可选的其他参数，形式类似于 key1=value1,key2=value2...
+  在运行时，kubelet 通过 CNI 配置文件寻找 CNI 可执行文件，然后基于上述几个环境变量来执行相关的操作。CNI 插件必须支持的操作包括：
+
+  - ADD: 将 pod 加入到 pod 网络中
+  - DEL: 将 pod 从 pod 网络中删除
+  - CHECK: 检查 pod 网络配置正常
+  - VERSION: 返回可选 CNI 插件的版本信息
+  让我们直接跳到 CNI 插件的入口函数：
+  #+BEGIN_SRC go
+    func main() {
+  	    cmd, cmdArgs, err := args.GetArgsFromEnv()
+  	    if err != nil {
+  	    	fmt.Fprintf(os.Stderr, "getting cmd arguments with error: %v", err)
+  	    }
+  
+  	    fh := handler.NewFileHandler(IPStore)
+  
+  	    switch cmd {
+  	    case "ADD":
+  	    	err = fh.HandleAdd(cmdArgs)
+  	    case "DEL":
+  	    	err = fh.HandleDel(cmdArgs)
+  	    case "CHECK":
+  	    	err = fh.HandleCheck(cmdArgs)
+  	    case "VERSION":
+  	    	err = fh.HandleVersion(cmdArgs)
+  	    default:
+  	    	err = fmt.Errorf("unknown CNI_COMMAND: %s", cmd)
+  	    }
+  	    if err != nil {
+  	    	fmt.Fprintf(os.Stderr, "Failed to handle CNI_COMMAND %q: %v", cmd, err)
+  	    	os.Exit(1)
+  	    }
+     }
+  #+END_SRC
+  可以看到，我们首先调用 GetArgsFromEnv() 函数将 CNI 插件的操作命令以及相关参数通过环境变量读入，同时从标准输入获取 CNI 插件的 JSON 配置，然后基于不同的 CNI 操作命令执行不同的处理函数。
+
+  需要注意的是，我们将处理函数的集合实现为一个接口，这样就可以很容易的扩展不同的接口实现。在最基础的版本实现中，我们基本文件存储分配的 IP 信息。但是，这种实现方式存在很多问题，例如，文件存储不可靠，读写可能会发生冲突等，在后续的版本中，我们会实现基于 kubernetes 存储的接口实现，将子网信息以及 IP 信息存储到 apiserver 中，从而实现可靠存储。
+
+  接下来，我们就看看基于文件的接口实现是怎么处理这些 CNI 操作命令的。
+  对于 ADD 命令：
+
+  - 从标准输入获取 CNI 插件的配置信息，最重要的是当前宿主机网桥的设备名、网络设备的最大传输单元(MTU)以及当前节点分配的24位子网地址；
+  - 然后从环境变量中找到对应的 CNI 操作参数，包括 pod 容器网络命名空间以及 pod 网络设备名等；
+  - 接下来创建或者更新节点宿主机网桥，从当前节点分配的24位子网地址中抽取子网的网关地址，准备分配给节点宿主机网桥；
+  - 接着将从文件读取已经分配的 IP 地址列表，遍历24位子网地址并从中取出第一个没有被分配的 IP 地址信息，准备分配给 pod 网络设备；pod 网络设备是 veth 设备对，一端在 pod 网络命名空间中，另外一端连接着宿主机上的网桥设备，同时所有的 pod 网络设备将宿主机上的网桥设备当作默认网关；
+  - 最终成功后需要将新的 pod IP 写入到文件中。
+
+看起来很简单对吧？其实作为最简单的方式，这种方案可以实现最基础的 ADD 功能：
+   
   
 * 编译部署
 ** 1、编译
@@ -158,36 +245,77 @@ url = "/2022/11/22/k8s-practice-minicni/"
   5、之后测试以下四种网络通信是否正常：
 
   - pod 到宿主机的通信
-  #+BEGIN_SRC sh
-  [root@k8s-master minicni]# kubectl exec -ti netshoot-master -- /bin/bash
-  bash-5.1# ping 172.25.140.216
-  PING 172.25.140.216 (172.25.140.216) 56(84) bytes of data.
-  64 bytes from 172.25.140.216: icmp_seq=1 ttl=64 time=0.074 ms
-  64 bytes from 172.25.140.216: icmp_seq=2 ttl=64 time=0.035 ms
-  64 bytes from 172.25.140.216: icmp_seq=3 ttl=64 time=0.033 ms
-  64 bytes from 172.25.140.216: icmp_seq=4 ttl=64 time=0.043 ms
-  64 bytes from 172.25.140.216: icmp_seq=5 ttl=64 time=0.048 ms
-  ^C
-  --- 172.25.140.216 ping statistics ---
-  5 packets transmitted, 5 received, 0% packet loss, time 3999ms
-  rtt min/avg/max/mdev = 0.033/0.046/0.074/0.014 ms
-  bash-5.1# 
+
+    #+BEGIN_SRC sh 
+
+    [root@k8s-master minicni]# kubectl exec -ti netshoot-master -- /bin/bash
+    bash-5.1# ping 172.25.140.216
+    PING 172.25.140.216 (172.25.140.216) 56(84) bytes of data.
+    64 bytes from 172.25.140.216: icmp_seq=1 ttl=64 time=0.074 ms
+    64 bytes from 172.25.140.216: icmp_seq=2 ttl=64 time=0.035 ms
+    64 bytes from 172.25.140.216: icmp_seq=3 ttl=64 time=0.033 ms
+    64 bytes from 172.25.140.216: icmp_seq=4 ttl=64 time=0.043 ms
+    64 bytes from 172.25.140.216: icmp_seq=5 ttl=64 time=0.048 ms
+    ^C
+    --- 172.25.140.216 ping statistics ---
+    5 packets transmitted, 5 received, 0% packet loss, time 3999ms
+    rtt min/avg/max/mdev = 0.033/0.046/0.074/0.014 ms
+    bash-5.1# 
+    
+    #+END_SRC   
+
+  - 同一个节点 pod-to-pod 通信
+    默认情况下，同一台主机上的 pod-to-pod 网络包默认会被 Linux 内核丢弃，原因是 Linux 默认会把非 default 网络命名空间的网络包看作是外部数据包，关于这个问题的具体细节，请查看 stackoverflow 上的讨论。目前，我们需要在每个集群结点上使用以下命令手动添加以下 iptables 规则来让 pod-to-pod 网络数据包顺利转发：
+
+    #+BEGIN_SRC sh
+    [root@k8s-master ~]# iptables -t filter -A FORWARD -s 10.244.0.0/24  -j ACCEPT
+    [root@k8s-master ~]# iptables -t filter -A FORWARD -d 10.244.0.0/24  -j ACCEPT
+    #+END_SRC
+
+    再进行测试:
   
-  #+END_SRC   
+    #+BEGIN_SRC sh
+    [root@k8s-master ~]# kubectl  exec -ti netshoot-master -- /bin/bash
+    bash-5.1# ping 10.244.0.25
+    PING 10.244.0.25 (10.244.0.25) 56(84) bytes of data.
+    64 bytes from 10.244.0.25: icmp_seq=1 ttl=64 time=0.079 ms
+    64 bytes from 10.244.0.25: icmp_seq=2 ttl=64 time=0.061 ms 
+  
+    #+END_SRC
+    测试通信正常。
+
 
   - pod 到其他主机的通信
-  #+BEGIN_SRC sh
-  
-  
-  #+END_SRC
-  
-  
 
+    #+BEGIN_SRC sh
+    [root@k8s-master ~]# kubectl  exec -ti netshoot-master -- /bin/bash
+    bash-5.1# ping 172.25.140.214
+    PING 172.25.140.214 (172.25.140.214) 56(84) bytes of data.
 
- 
-   
+    ^C
+    --- 172.25.140.214 ping statistics ---
+    4 packets transmitted, 0 received, 100% packet loss, time 2999ms
+  
+    #+END_SRC
+    Ping不通，原因是阿里云底层网络对非法IP限制，不是随便配个IP就可以通，如需通可以考虑overlay如calico或本地虚拟机搭建方式。
 
+  - 跨一个节点 pod-to-pod 通信
+    对于跨节点的 pod-to-pod 网络包，需要像 Calico 那样添加宿主机的路由表，保证发往各个节点上的 pod 流量经过节点的转发。目前这些路由表需要手动添加：
+    #+BEGIN_SRC 
+    ip route add 10.244.2.0/24  via 172.25.140.214 dev eth0 #run on master 
+    ip route add 10.244.0.0/24  via 172.25.140.216 dev eth0 #run on worker
+    #+END_SRC
+    再测试：
+    #+BEGIN_SRC sh
+    [root@k8s-master ~]# kubectl  exec -ti netshoot-master -- /bin/bash
+    bash-5.1# ping 10.244.2.11
+    PING 10.244.2.11 (10.244.2.11) 56(84) bytes of data.
 
+    ^C
+    --- 10.244.2.11 ping statistics ---
+    108 packets transmitted, 0 received, 100% packet loss, time 106996ms    
+    #+END_SRC
+    现象与原理同上。
 
 * FAQ
 ** cannot find package 编译不过
@@ -225,4 +353,9 @@ url = "/2022/11/22/k8s-practice-minicni/"
   【01】 [[https://blog.csdn.net/u012772803/article/details/113703029][find -print0和xargs -0原理及用法]]]
   【02】 [[https://zhuanlan.zhihu.com/p/411181637][Go语言import分组管理利器: goimports-reviser]]
   【03】 [[https://morven.life/posts/create-your-own-cni-with-golang/][使用 Go 从零开始实现 CNI]]
-  【04】[[https://blog.csdn.net/a5534789/article/details/112848404][centOS内网安装kubernetes集群]] 
+  【04】 [[https://blog.csdn.net/a5534789/article/details/112848404][centOS内网安装kubernetes集群]] 
+  【05】 [[https://zhuanlan.zhihu.com/p/415032187][Linux 路由表(RIB表、FIB表)、ARP表、MAC表整理]]] 
+  【06】 [[https://www.jianshu.com/p/75704eb30eff][查看CNI中的veth pair]]
+  【07】 [[https://mp.weixin.qq.com/s/7t_MoZ0quJF50VoIwqvKyQ][一文吃透 K8S 网络模型]] 
+  【08】 [[https://blog.csdn.net/elihe2011/article/details/122926399][K8S 网络CNI]] 
+  

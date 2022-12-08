@@ -1,0 +1,21 @@
+#    -*- mode: org -*-
+
+
+Archived entries from file /Users/mosp/study/myblog/mospan-hugo-blog/content/post/2022/2022-11-22-k8s-practice-minicni.orgx
+
+
+* 参考资料
+  :PROPERTIES:
+  :ARCHIVE_TIME: 2022-12-03 Sat 21:28
+  :ARCHIVE_FILE: ~/study/myblog/mospan-hugo-blog/content/post/2022/2022-11-22-k8s-practice-minicni.orgx
+  :ARCHIVE_CATEGORY: 2022-11-22-k8s-practice-minicni
+  :END:
+  【01】 [[https://blog.csdn.net/u012772803/article/details/113703029][find -print0和xargs -0原理及用法]]]
+  【02】 [[https://zhuanlan.zhihu.com/p/411181637][Go语言import分组管理利器: goimports-reviser]]
+  【03】 [[https://morven.life/posts/create-your-own-cni-with-golang/][使用 Go 从零开始实现 CNI]]
+  【04】 [[https://blog.csdn.net/a5534789/article/details/112848404][centOS内网安装kubernetes集群]] 
+  【05】 [[https://zhuanlan.zhihu.com/p/415032187][Linux 路由表(RIB表、FIB表)、ARP表、MAC表整理]]] 
+  【06】 [[https://www.jianshu.com/p/75704eb30eff][查看CNI中的veth pair]]
+  【07】 [[https://mp.weixin.qq.com/s/7t_MoZ0quJF50VoIwqvKyQ][一文吃透 K8S 网络模型]] 
+  【08】 ]
+  

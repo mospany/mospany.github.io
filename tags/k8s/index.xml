@@ -13,10 +13,10 @@
     
     <item>
       <title>K8S项目实践(02): 动手实现minicni</title>
-      <link>http://mospany.github.io/2022/11/22/k8s-practice-minicni/</link>
+      <link>http://mospany.github.io/2022/11/22/k8s-practice-minicni//</link>
       <pubDate>Tue, 22 Nov 2022 22:42:55 +0800</pubDate>
       
-      <guid>http://mospany.github.io/2022/11/22/k8s-practice-minicni/</guid>
+      <guid>http://mospany.github.io/2022/11/22/k8s-practice-minicni//</guid>
       <description>简介 不管是容器网络还是 Kubernetes 网络都需要解决以下两个核心问题： 容器/Pod IP 地址的管理 容器/Pod 之间的相互通信 容器/Pod IP 地址的管理包括容器 IP</description>
     </item>
     
