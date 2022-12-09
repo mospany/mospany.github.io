@@ -3,8 +3,8 @@
 categories = ["技术文章"]
 date = "2022-11-22T22:42:55+08:00"
 description = ""
-keywords = ["K8S","项目实践"]
-tags = ["K8S","项目实践"]
+keywords = ["K8S","云计算"]
+tags = ["K8S","云计算"]
 title = "K8S项目实践(02): 动手实现minicni"
 url = "/2022/11/22/k8s-practice-minicni/"
 
@@ -83,30 +83,34 @@ url = "/2022/11/22/k8s-practice-minicni/"
   让我们直接跳到 CNI 插件的入口函数：
   #+BEGIN_SRC go
     func main() {
-  	    cmd, cmdArgs, err := args.GetArgsFromEnv()
-  	    if err != nil {
-  	    	fmt.Fprintf(os.Stderr, "getting cmd arguments with error: %v", err)
-  	    }
-  
-  	    fh := handler.NewFileHandler(IPStore)
-  
-  	    switch cmd {
-  	    case "ADD":
-  	    	err = fh.HandleAdd(cmdArgs)
-  	    case "DEL":
-  	    	err = fh.HandleDel(cmdArgs)
-  	    case "CHECK":
-  	    	err = fh.HandleCheck(cmdArgs)
-  	    case "VERSION":
-  	    	err = fh.HandleVersion(cmdArgs)
-  	    default:
-  	    	err = fmt.Errorf("unknown CNI_COMMAND: %s", cmd)
-  	    }
-  	    if err != nil {
-  	    	fmt.Fprintf(os.Stderr, "Failed to handle CNI_COMMAND %q: %v", cmd, err)
-  	    	os.Exit(1)
-  	    }
+     	setupLogger()
+     
+     	cmd, cmdArgs, err := args.GetArgsFromEnv()
+     	if err != nil {
+     		log.Fatalf("getting cmd arguments with error: %v", err)
+     		os.Exit(1)
+     	}
+     
+     	fh := handler.NewFileHandler(IPStore)
+     
+     	switch cmd {
+     	case "ADD":
+     		err = fh.HandleAdd(cmdArgs)
+     	case "DEL":
+     		err = fh.HandleDel(cmdArgs)
+     	case "CHECK":
+     		err = fh.HandleCheck(cmdArgs)
+     	case "VERSION":
+     		err = fh.HandleVersion(cmdArgs)
+     	default:
+     		err = fmt.Errorf("unknown CNI_COMMAND: %s", cmd)
+     	}
+     	if err != nil {
+     		fmt.Fprintf(os.Stderr, "Failed to handle CNI_COMMAND %q: %v", cmd, err)
+     		os.Exit(1)
+     	}
      }
+
   #+END_SRC
   可以看到，我们首先调用 GetArgsFromEnv() 函数将 CNI 插件的操作命令以及相关参数通过环境变量读入，同时从标准输入获取 CNI 插件的 JSON 配置，然后基于不同的 CNI 操作命令执行不同的处理函数。
 
@@ -121,7 +125,303 @@ url = "/2022/11/22/k8s-practice-minicni/"
   - 接着将从文件读取已经分配的 IP 地址列表，遍历24位子网地址并从中取出第一个没有被分配的 IP 地址信息，准备分配给 pod 网络设备；pod 网络设备是 veth 设备对，一端在 pod 网络命名空间中，另外一端连接着宿主机上的网桥设备，同时所有的 pod 网络设备将宿主机上的网桥设备当作默认网关；
   - 最终成功后需要将新的 pod IP 写入到文件中。
 
-看起来很简单对吧？其实作为最简单的方式，这种方案可以实现最基础的 ADD 功能：
+看起来很简单对吧？其实作为最简单的方式，这种方案可以实现最基础的 ADD 功能, kubelet调用参数如下:
+  #+BEGIN_SRC sh
+  2022/12/09 20:17:14 cmd: ADD, ContainerID: 504032948df53a9f7bc7c35d01fb89f32b8db7a1d87514f546b78b91d2d8150a, Netns: /proc/3444/ns/net, ifName: eth0, Path: /opt/cni/bin, Args: IgnoreUnknown=1;K8S_POD_NAMESPACE=kube-system;K8S_POD_NAME=coredns-6d8c4cb4d-mbctj;K8S_POD_INFRA_CONTAINER_ID=504032948df53a9f7bc7c35d01fb89f32b8db7a1d87514f546b78b91d2d8150a, StdinData: {"bridge":"minicni0","cniVersion":"0.1.0","mtu":1500,"name":"minicni","subnet":"10.244.0.0/24","type":"minicni"}.
+
+2022/12/09 20:17:14 cmd: ADD, ContainerID: 84546b1f14b339f69528d96b60e3b50a983e024daf00a6ef990819d1717aaff7, Netns: /proc/3491/ns/net, ifName: eth0, Path: /opt/cni/bin, Args: IgnoreUnknown=1;K8S_POD_NAMESPACE=kube-system;K8S_POD_NAME=coredns-6d8c4cb4d-ck2x5;K8S_POD_INFRA_CONTAINER_ID=84546b1f14b339f69528d96b60e3b50a983e024daf00a6ef990819d1717aaff7, StdinData: {"bridge":"minicni0","cniVersion":"0.1.0","mtu":1500,"name":"minicni","subnet":"10.244.0.0/24","type":"minicni"}.
+  #+END_SRC
+  实现代码如下:  
+  #+BEGIN_SRC go -n
+  func (fh *FileHandler) HandleAdd(cmdArgs *args.CmdArgs) error {
+  	cniConfig := args.CNIConfiguration{}
+  	if err := json.Unmarshal(cmdArgs.StdinData, &cniConfig); err != nil {
+  		return err
+  	}
+  	allIPs, err := nettool.GetAllIPs(cniConfig.Subnet)
+  	if err != nil {
+  		return err
+  	}
+  	gwIP := allIPs[0]
+  
+  	// open or create the file that stores all the reserved IPs
+  	f, err := os.OpenFile(fh.IPStore, os.O_RDWR|os.O_CREATE, 0600)
+  	if err != nil {
+  		return fmt.Errorf("failed to open file that stores reserved IPs %v", err)
+  	}
+  	defer f.Close()
+  
+  	// get all the reserved IPs from file
+  	content, err := ioutil.ReadAll(f)
+  	if err != nil {
+  		return err
+  	}
+  	reservedIPs := strings.Split(strings.TrimSpace(string(content)), "\n")
+  
+  	podIP := ""
+  	for _, ip := range allIPs[1:] {
+  		reserved := false
+  		for _, rip := range reservedIPs {
+  			if ip == rip {
+  				reserved = true
+  				break
+  			}
+  		}
+  		if !reserved {
+  			podIP = ip
+  			reservedIPs = append(reservedIPs, podIP)
+  			break
+  		}
+  	}
+  	if podIP == "" {
+  		return fmt.Errorf("no IP available")
+  	}
+  
+  	// Create or update bridge
+  	brName := cniConfig.Bridge
+  	if brName != "" {
+  		// fall back to default bridge name: minicni0
+  		brName = "minicni0"
+  	}
+  	mtu := cniConfig.MTU
+  	if mtu == 0 {
+  		// fall back to default MTU: 1500
+  		mtu = 1500
+  	}
+  	br, err := nettool.CreateOrUpdateBridge(brName, gwIP, mtu)
+  	if err != nil {
+  		return err
+  	}
+  
+  	netns, err := ns.GetNS(cmdArgs.Netns)
+  	if err != nil {
+  		return err
+  	}
+  
+  	if err := nettool.SetupVeth(netns, br, cmdArgs.IfName, podIP, gwIP, mtu); err != nil {
+  		return err
+  	}
+  
+  	// write reserved IPs back into file
+  	if err := ioutil.WriteFile(fh.IPStore, []byte(strings.Join(reservedIPs, "\n")), 0600); err != nil {
+  		return fmt.Errorf("failed to write reserved IPs into file: %v", err)
+  	}
+  
+  	addCmdResult := &AddCmdResult{
+  		CniVersion: cniConfig.CniVersion,
+  		IPs: &nettool.AllocatedIP{
+  			Version: "IPv4",
+  			Address: podIP,
+  			Gateway: gwIP,
+  		},
+  	}
+  	addCmdResultBytes, err := json.Marshal(addCmdResult)
+  	if err != nil {
+  		return err
+  	}
+  
+  	// kubelet expects json format from stdout if success
+  	fmt.Print(string(addCmdResultBytes))
+  
+  	return nil
+  }
+  
+  #+END_SRC
+  一个关键的问题是如何选择合适的 Go 语言库函数来操作 Linux 网络设备，如创建网桥设备、网络命名空间以及连接 veth 设备对。在我们的例子中，选择了比较成熟的 netlink，实际上，所有基于 iproute2 工具包的命令在 netlink 库中都有对应的 API，例如 ip link add 可以通过调用 AddLink() 函数来实现。
+
+  还有一个问题需要格外小心，那就是处理网络命名空间切换、Go 协程与线程调度问题。在 Linux 中，不同的操作系统线程可能会设置不同的网络命名空间，而 Go 语言的协程会基于操作系统线程的负载以及其他信息动态地在不同的操作系统线程之间切换，这样可能会导致 Go 协程在意想不到的情况下切换到不同的网络命名空间中。
+
+  比较稳妥的做法是，利用 Go 语言提供的 runtime.LockOSThread() 函数保证特定的 Go 协程绑定到当前的操作系统线程中。
+
+  对于 ADD 操作的返回，确保操作成功之后向标准输出中写入 ADD 操作的返回信息：
+  #+BEGIN_SRC go
+    	addCmdResult := &AddCmdResult{
+  		CniVersion: cniConfig.CniVersion,
+  		IPs: &nettool.AllocatedIP{
+  			Version: "IPv4",
+  			Address: podIP,
+  			Gateway: gwIP,
+  		},
+  	}
+  	addCmdResultBytes, err := json.Marshal(addCmdResult)
+  	if err != nil {
+  		return err
+  	}
+  
+  	// kubelet expects json format from stdout if success
+  	fmt.Print(string(addCmdResultBytes))
+  
+  #+END_SRC
+
+  保留IP文件内容如下: 
+  #+BEGIN_SRC sh -n 
+  [root@k8s-master ~]# cat /tmp/reserved_ips
+  10.244.0.2/24
+  10.244.0.3/24
+  10.244.0.4/24
+  10.244.0.5/24
+  10.244.0.6/24
+  10.244.0.7/24
+  10.244.0.8/24
+  10.244.0.9/24
+  10.244.0.10/24
+  10.244.0.11/24
+  10.244.0.12/24
+  10.244.0.13/24
+  10.244.0.14/24
+  10.244.0.15/24
+  10.244.0.16/24
+  10.244.0.17/24
+  10.244.0.18/24
+  10.244.0.19/24
+  10.244.0.20/24
+  10.244.0.21/24
+  10.244.0.22/24
+  10.244.0.23/24
+  10.244.0.24/24
+  10.244.0.25/24
+  10.244.0.26/24
+  10.244.0.27/24  
+  #+END_SRC
+
+  其他三个 CNI 操作命令的处理就更简单了。DEL 操作只需要回收分配的 IP 地址，从文件中删除对应的条目，我们不需要处理 pod 网络设备的删除，原因是 kubelet 在删除 pod 网络命名空间之后这些 pod 网络设备也会自动被删除；CHECK 命令检查之前创建的网络设备与配置，暂时是可选的；VERSION 命令以 JSON 形式输出 CNI 版本信息到标准输出。
+ CNI_DEL命令参数如下:
+ #+BEGIN_SRC sh
+ 2022/12/09 20:16:55 cmd: DEL, ContainerID: 88722baed9e508ab6cc4525a6b0b05da12c65efa1bbf7c1e27f0fee0c4b4f7e7, Netns: , ifName: eth0, Path: /opt/cni/bin, Args: IgnoreUnknown=1;K8S_POD_NAMESPACE=kube-system;K8S_POD_NAME=coredns-6d8c4cb4d-ck2x5;K8S_POD_INFRA_CONTAINER_ID=88722baed9e508ab6cc4525a6b0b05da12c65efa1bbf7c1e27f0fee0c4b4f7e7, StdinData: {"bridge":"minicni0","cniVersion":"0.1.0","mtu":1500,"name":"minicni","subnet":"10.244.0.0/24","type":"minicni"}. 
+ #+END_SRC
+ 删除操作实现代码如下：
+ #+BEGIN_SRC go -n
+ func (fh *FileHandler) HandleDel(cmdArgs *args.CmdArgs) error {
+	netns, err := ns.GetNS(cmdArgs.Netns)
+	if err != nil {
+		return err
+	}
+	ip, err := nettool.GetVethIPInNS(netns, cmdArgs.IfName)
+	if err != nil {
+		return err
+	}
+
+	// open or create the file that stores all the reserved IPs
+	f, err := os.OpenFile(fh.IPStore, os.O_RDWR|os.O_CREATE, 0600)
+	if err != nil {
+		return fmt.Errorf("failed to open file that stores reserved IPs %v", err)
+	}
+	defer f.Close()
+
+	// get all the reserved IPs from file
+	content, err := ioutil.ReadAll(f)
+	if err != nil {
+		return err
+	}
+	reservedIPs := strings.Split(strings.TrimSpace(string(content)), "\n")
+
+	for i, rip := range reservedIPs {
+		if rip == ip {
+			reservedIPs = append(reservedIPs[:i], reservedIPs[i+1:]...)
+			break
+		}
+	}
+
+	// write reserved IPs back into file
+	if err := ioutil.WriteFile(fh.IPStore, []byte(strings.Join(reservedIPs, "\n")), 0600); err != nil {
+		return fmt.Errorf("failed to write reserved IPs into file: %v", err)
+	}
+
+	return nil
+}
+ 
+ #+END_SRC 
+
+  - CNI_VERSION参数如下：
+    #+BEGIN_SRC sh
+    2022/12/09 20:18:24 cmd: VERSION, ContainerID: , Netns: dummy, ifName: dummy, Path: dummy, Args: , StdinData: {"cniVersion":"0.4.0"}. 
+    #+END_SRC
+
+    实现代码如下: 
+    #+BEGIN_SRC go -n
+    func (fh *FileHandler) HandleVersion(cmdArgs *args.CmdArgs) error {
+	   versionInfo, err := json.Marshal(fh.VersionInfo)
+	   if err != nil {
+		   return err
+	   }
+	   fmt.Print(string(versionInfo))
+	   return nil
+    }
+    #+END_SRC
+
+* CNI 安装工具
+  CNI 插件需要运行在集群中的每个节点上，而且 CNI 插件配置信息与可运行文件必须在每个节点特殊的目录中，因此，安装 CNI 插件非常适合使用 DaemonSet 并挂载 CNI 插件目录，为了避免安装 CNI 的工具不能被正常调度，我们需要使用 hostNetwork 来使用宿主机的网络。同时，将 CNI 插件配置以 ConfigMap 的形式挂载，这样方便终端用户配置 CNI 插件。更详细的信息请查看安装工具部署文件。
+
+  #+BEGIN_SRC sh
+  [root@k8s-master ~]# k describe node k8s-master  | grep CIDR
+  PodCIDR:                      10.244.0.0/24
+  PodCIDRs:                     10.244.0.0/24
+  [root@k8s-master ~]#
+  
+  #+END_SRC
+  另外需要注意的是，我们在安装 CNI 插件的脚本中获取每个节点划分得到的24子网信息、检查是否合法然后写入到 CNI 配置信息中：
+  
+  #+BEGIN_SRC sh -n
+  # The environment variables used to connect to the kube-apiserver
+   SERVICE_ACCOUNT_PATH=/var/run/secrets/kubernetes.io/serviceaccount
+   SERVICEACCOUNT_TOKEN=$(cat $SERVICE_ACCOUNT_PATH/token)
+   KUBE_CACERT=${KUBE_CACERT:-$SERVICE_ACCOUNT_PATH/ca.crt}
+   KUBERNETES_SERVICE_PROTOCOL=${KUBERNETES_SERVICE_PROTOCOL-https}
+   
+   # Check if we're running as a k8s pod.
+   if [ -f "$SERVICE_ACCOUNT_PATH/token" ];
+   then
+       # some variables should be automatically set inside a pod
+       if [ -z "${KUBERNETES_SERVICE_HOST}" ]; then
+           exit_with_message "KUBERNETES_SERVICE_HOST not set"
+       fi
+       if [ -z "${KUBERNETES_SERVICE_PORT}" ]; then
+           exit_with_message "KUBERNETES_SERVICE_PORT not set"
+       fi
+   fi
+   
+   # exit if the NODE_NAME environment variable is not set.
+   if [[ -z "${NODE_NAME}" ]];
+   then
+       exit_with_message "NODE_NAME not set."
+   fi
+   
+   
+   NODE_RESOURCE_PATH="${KUBERNETES_SERVICE_PROTOCOL}://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT}/api/v1/nodes/${NODE_NAME}"
+   NODE_SUBNET=$(curl --cacert "${KUBE_CACERT}" --header "Authorization: Bearer ${SERVICEACCOUNT_TOKEN}" -X GET "${NODE_RESOURCE_PATH}" | jq ".spec.podCIDR")
+   
+   # Check if the node subnet is valid IPv4 CIDR address
+   IPV4_CIDR_REGEX="(((25[0-5]|2[0-4][0-9]|1?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|1?[0-9][0-9]?))(\/([8-9]|[1-2][0-9]|3[0-2]))([^0-9.]|$)"
+   if [[ ${NODE_SUBNET} =~ ${IPV4_CIDR_REGEX} ]]
+   then
+       echo "${NODE_SUBNET} is a valid IPv4 CIDR address."
+   else
+       exit_with_message "${NODE_SUBNET} is not a valid IPv4 CIDR address!"
+   fi
+   
+   # exit if the NODE_NAME environment variable is not set.
+   if [[ -z "${CNI_NETWORK_CONFIG}" ]];
+   then
+       exit_with_message "CNI_NETWORK_CONFIG not set."
+   fi
+   
+   TMP_CONF='/minicni.conf.tmp'
+   cat >"${TMP_CONF}" <<EOF
+   ${CNI_NETWORK_CONFIG}
+   EOF
+   
+   # Replace the __NODE_SUBNET__
+   grep "__NODE_SUBNET__" "${TMP_CONF}" && sed -i s~__NODE_SUBNET__~"${NODE_SUBNET}"~g "${TMP_CONF}"
+   
+   # Log the config file
+   echo "CNI config: $(cat "${TMP_CONF}")"
+   
+   # Move the temporary CNI config into the CNI configuration directory.
+   mv "${TMP_CONF}" "${CNI_NET_DIR}/${CNI_CONF_NAME}" || \
+     exit_with_error "Failed to move ${TMP_CONF} to ${CNI_CONF_NAME}."
+   
+   echo "Created CNI config ${CNI_CONF_NAME}"
+  #+END_SRC 
    
   
 * 编译部署

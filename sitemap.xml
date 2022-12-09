@@ -19,7 +19,7 @@
     </url>
     
     <url>
-        <loc>http://mospany.github.io/2022/11/22/k8s-practice-minicni//</loc>
+        <loc>http://mospany.github.io/2022/11/22/k8s-practice-minicni/</loc>
         <lastmod>2022-11-22T22:42:55+08:00</lastmod>
     </url>
     
@@ -31,6 +31,12 @@
     
     <url>
         <loc>http://mospany.github.io/tags/</loc>
+        <lastmod>2022-11-22T22:42:55+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/%E4%BA%91%E8%AE%A1%E7%AE%97/</loc>
         <lastmod>2022-11-22T22:42:55+08:00</lastmod>
         <priority>0</priority>
     </url>
@@ -48,20 +54,8 @@
     </url>
     
     <url>
-        <loc>http://mospany.github.io/tags/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5/</loc>
-        <lastmod>2022-11-22T22:42:55+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
         <loc>http://mospany.github.io/2022/11/23/kubeadm-install-k8s/</loc>
         <lastmod>2022-11-22T20:58:52+08:00</lastmod>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/%E4%BA%91%E8%AE%A1%E7%AE%97/</loc>
-        <lastmod>2022-11-22T20:58:52+08:00</lastmod>
-        <priority>0</priority>
     </url>
     
     <url>

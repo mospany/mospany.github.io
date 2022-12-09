@@ -5,7 +5,7 @@
   <base href="http://mospany.github.io/">
   <title>K8S项目实践(02): 动手实现minicni - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
-  <meta name="keywords" content="K8S,项目实践,">
+  <meta name="keywords" content="K8S,云计算,">
   <meta name="description" content="简介 不管是容器网络还是 Kubernetes 网络都需要解决以下两个核心问题： 容器/Pod IP 地址的管理 容器/Pod 之间的相互通信 容器/Pod IP 地址的管理包括容器 IP">
   <meta name="author" content="mospan">
   <meta itemprop="name" content="K8S项目实践(02): 动手实现minicni - 墨斯潘園">
@@ -63,7 +63,7 @@
 	<article itemprop="articleBody">
     <header class="article-info clearfix">
   <h1 itemprop="name">
-      <a href="http://mospany.github.io/2022/11/22/k8s-practice-minicni//" title="K8S项目实践(02): 动手实现minicni" itemprop="url">K8S项目实践(02): 动手实现minicni</a>
+      <a href="http://mospany.github.io/2022/11/22/k8s-practice-minicni/" title="K8S项目实践(02): 动手实现minicni" itemprop="url">K8S项目实践(02): 动手实现minicni</a>
   </h1>
   <p class="article-author">By 
     
@@ -79,7 +79,7 @@
     
     
 
-<p><a id="orgb8cf6bc"></a></p>
+<p><a id="orgfaa973a"></a></p>
 
 <h1 id="简介">简介</h1>
 
@@ -99,7 +99,7 @@
 <li>把容器网络加到主机路由表中，把主机网络（underlay 网络平面）设备当作容器网关，通过路由规则转发到指定的主机，实现容器的三层互通；</li>
 </ul>
 
-<p><a id="orgfbc8441"></a></p>
+<p><a id="org3709b23"></a></p>
 
 <h1 id="cni原理">CNI原理</h1>
 
@@ -125,7 +125,7 @@
 <li>CNI 插件给 pause 容器配置正确的网络，pod 中其他的容器都是复用 pause 容器的网络；</li>
 </ul>
 
-<p><a id="org3e71a72"></a></p>
+<p><a id="orgec132b9"></a></p>
 
 <h1 id="cni配置文件">CNI配置文件</h1>
 
@@ -153,7 +153,7 @@
 <p>Note: 确保配置文件放到 <em>etc/cni/net.d</em> 目录，kubelet 默认此目录寻找 CNI 插件配置；并且，插件的配置可以分为多个插件链的形式来运行，但是为了简单起见，在我们的例子中，只配置一个独立的 CNI 插件，因为配置文件的后缀名为 .conf。</p>
 </blockquote>
 
-<p><a id="org29e17dd"></a></p>
+<p><a id="orgeb0c3b0"></a></p>
 
 <h1 id="cni核心实现">CNI核心实现</h1>
 
@@ -180,9 +180,12 @@
 <p>让我们直接跳到 CNI 插件的入口函数：</p>
 
 <pre><code>func main() {
+    setupLogger()
+
     cmd, cmdArgs, err := args.GetArgsFromEnv()
     if err != nil {
-        fmt.Fprintf(os.Stderr, &quot;getting cmd arguments with error: %v&quot;, err)
+        log.Fatalf(&quot;getting cmd arguments with error: %v&quot;, err)
+        os.Exit(1)
     }
 
     fh := handler.NewFileHandler(IPStore)
@@ -221,13 +224,314 @@
 <li>最终成功后需要将新的 pod IP 写入到文件中。</li>
 </ul>
 
-<p>看起来很简单对吧？其实作为最简单的方式，这种方案可以实现最基础的 ADD 功能：</p>
+<p>看起来很简单对吧？其实作为最简单的方式，这种方案可以实现最基础的 ADD 功能, kubelet调用参数如下:</p>
 
-<p><a id="org90b2a2e"></a></p>
+<pre><code>  2022/12/09 20:17:14 cmd: ADD, ContainerID: 504032948df53a9f7bc7c35d01fb89f32b8db7a1d87514f546b78b91d2d8150a, Netns: /proc/3444/ns/net, ifName: eth0, Path: /opt/cni/bin, Args: IgnoreUnknown=1;K8S_POD_NAMESPACE=kube-system;K8S_POD_NAME=coredns-6d8c4cb4d-mbctj;K8S_POD_INFRA_CONTAINER_ID=504032948df53a9f7bc7c35d01fb89f32b8db7a1d87514f546b78b91d2d8150a, StdinData: {&quot;bridge&quot;:&quot;minicni0&quot;,&quot;cniVersion&quot;:&quot;0.1.0&quot;,&quot;mtu&quot;:1500,&quot;name&quot;:&quot;minicni&quot;,&quot;subnet&quot;:&quot;10.244.0.0/24&quot;,&quot;type&quot;:&quot;minicni&quot;}.
+
+2022/12/09 20:17:14 cmd: ADD, ContainerID: 84546b1f14b339f69528d96b60e3b50a983e024daf00a6ef990819d1717aaff7, Netns: /proc/3491/ns/net, ifName: eth0, Path: /opt/cni/bin, Args: IgnoreUnknown=1;K8S_POD_NAMESPACE=kube-system;K8S_POD_NAME=coredns-6d8c4cb4d-ck2x5;K8S_POD_INFRA_CONTAINER_ID=84546b1f14b339f69528d96b60e3b50a983e024daf00a6ef990819d1717aaff7, StdinData: {&quot;bridge&quot;:&quot;minicni0&quot;,&quot;cniVersion&quot;:&quot;0.1.0&quot;,&quot;mtu&quot;:1500,&quot;name&quot;:&quot;minicni&quot;,&quot;subnet&quot;:&quot;10.244.0.0/24&quot;,&quot;type&quot;:&quot;minicni&quot;}.
+</code></pre>
+
+<p>实现代码如下:</p>
+
+<pre><code> 1  func (fh *FileHandler) HandleAdd(cmdArgs *args.CmdArgs) error {
+ 2    cniConfig := args.CNIConfiguration{}
+ 3    if err := json.Unmarshal(cmdArgs.StdinData, &amp;cniConfig); err != nil {
+ 4        return err
+ 5    }
+ 6    allIPs, err := nettool.GetAllIPs(cniConfig.Subnet)
+ 7    if err != nil {
+ 8        return err
+ 9    }
+10    gwIP := allIPs[0]
+11  
+12    // open or create the file that stores all the reserved IPs
+13    f, err := os.OpenFile(fh.IPStore, os.O_RDWR|os.O_CREATE, 0600)
+14    if err != nil {
+15        return fmt.Errorf(&quot;failed to open file that stores reserved IPs %v&quot;, err)
+16    }
+17    defer f.Close()
+18  
+19    // get all the reserved IPs from file
+20    content, err := ioutil.ReadAll(f)
+21    if err != nil {
+22        return err
+23    }
+24    reservedIPs := strings.Split(strings.TrimSpace(string(content)), &quot;\n&quot;)
+25  
+26    podIP := &quot;&quot;
+27    for _, ip := range allIPs[1:] {
+28        reserved := false
+29        for _, rip := range reservedIPs {
+30            if ip == rip {
+31                reserved = true
+32                break
+33            }
+34        }
+35        if !reserved {
+36            podIP = ip
+37            reservedIPs = append(reservedIPs, podIP)
+38            break
+39        }
+40    }
+41    if podIP == &quot;&quot; {
+42        return fmt.Errorf(&quot;no IP available&quot;)
+43    }
+44  
+45    // Create or update bridge
+46    brName := cniConfig.Bridge
+47    if brName != &quot;&quot; {
+48        // fall back to default bridge name: minicni0
+49        brName = &quot;minicni0&quot;
+50    }
+51    mtu := cniConfig.MTU
+52    if mtu == 0 {
+53        // fall back to default MTU: 1500
+54        mtu = 1500
+55    }
+56    br, err := nettool.CreateOrUpdateBridge(brName, gwIP, mtu)
+57    if err != nil {
+58        return err
+59    }
+60  
+61    netns, err := ns.GetNS(cmdArgs.Netns)
+62    if err != nil {
+63        return err
+64    }
+65  
+66    if err := nettool.SetupVeth(netns, br, cmdArgs.IfName, podIP, gwIP, mtu); err != nil {
+67        return err
+68    }
+69  
+70    // write reserved IPs back into file
+71    if err := ioutil.WriteFile(fh.IPStore, []byte(strings.Join(reservedIPs, &quot;\n&quot;)), 0600); err != nil {
+72        return fmt.Errorf(&quot;failed to write reserved IPs into file: %v&quot;, err)
+73    }
+74  
+75    addCmdResult := &amp;AddCmdResult{
+76        CniVersion: cniConfig.CniVersion,
+77        IPs: &amp;nettool.AllocatedIP{
+78            Version: &quot;IPv4&quot;,
+79            Address: podIP,
+80            Gateway: gwIP,
+81        },
+82    }
+83    addCmdResultBytes, err := json.Marshal(addCmdResult)
+84    if err != nil {
+85        return err
+86    }
+87  
+88    // kubelet expects json format from stdout if success
+89    fmt.Print(string(addCmdResultBytes))
+90  
+91    return nil
+92  }
+93  
+</code></pre>
+
+<p>一个关键的问题是如何选择合适的 Go 语言库函数来操作 Linux 网络设备，如创建网桥设备、网络命名空间以及连接 veth 设备对。在我们的例子中，选择了比较成熟的 netlink，实际上，所有基于 iproute2 工具包的命令在 netlink 库中都有对应的 API，例如 ip link add 可以通过调用 AddLink() 函数来实现。</p>
+
+<p>还有一个问题需要格外小心，那就是处理网络命名空间切换、Go 协程与线程调度问题。在 Linux 中，不同的操作系统线程可能会设置不同的网络命名空间，而 Go 语言的协程会基于操作系统线程的负载以及其他信息动态地在不同的操作系统线程之间切换，这样可能会导致 Go 协程在意想不到的情况下切换到不同的网络命名空间中。</p>
+
+<p>比较稳妥的做法是，利用 Go 语言提供的 runtime.LockOSThread() 函数保证特定的 Go 协程绑定到当前的操作系统线程中。</p>
+
+<p>对于 ADD 操作的返回，确保操作成功之后向标准输出中写入 ADD 操作的返回信息：</p>
+
+<pre><code>    addCmdResult := &amp;AddCmdResult{
+    CniVersion: cniConfig.CniVersion,
+    IPs: &amp;nettool.AllocatedIP{
+        Version: &quot;IPv4&quot;,
+        Address: podIP,
+        Gateway: gwIP,
+    },
+}
+addCmdResultBytes, err := json.Marshal(addCmdResult)
+if err != nil {
+    return err
+}
+
+// kubelet expects json format from stdout if success
+fmt.Print(string(addCmdResultBytes))
+</code></pre>
+
+<p>保留IP文件内容如下:</p>
+
+<pre><code> 1  [root@k8s-master ~]# cat /tmp/reserved_ips
+ 2  10.244.0.2/24
+ 3  10.244.0.3/24
+ 4  10.244.0.4/24
+ 5  10.244.0.5/24
+ 6  10.244.0.6/24
+ 7  10.244.0.7/24
+ 8  10.244.0.8/24
+ 9  10.244.0.9/24
+10  10.244.0.10/24
+11  10.244.0.11/24
+12  10.244.0.12/24
+13  10.244.0.13/24
+14  10.244.0.14/24
+15  10.244.0.15/24
+16  10.244.0.16/24
+17  10.244.0.17/24
+18  10.244.0.18/24
+19  10.244.0.19/24
+20  10.244.0.20/24
+21  10.244.0.21/24
+22  10.244.0.22/24
+23  10.244.0.23/24
+24  10.244.0.24/24
+25  10.244.0.25/24
+26  10.244.0.26/24
+27  10.244.0.27/24  
+</code></pre>
+
+<p>其他三个 CNI 操作命令的处理就更简单了。DEL 操作只需要回收分配的 IP 地址，从文件中删除对应的条目，我们不需要处理 pod 网络设备的删除，原因是 kubelet 在删除 pod 网络命名空间之后这些 pod 网络设备也会自动被删除；CHECK 命令检查之前创建的网络设备与配置，暂时是可选的；VERSION 命令以 JSON 形式输出 CNI 版本信息到标准输出。<br />
+CNI_DEL命令参数如下:</p>
+
+<pre><code>2022/12/09 20:16:55 cmd: DEL, ContainerID: 88722baed9e508ab6cc4525a6b0b05da12c65efa1bbf7c1e27f0fee0c4b4f7e7, Netns: , ifName: eth0, Path: /opt/cni/bin, Args: IgnoreUnknown=1;K8S_POD_NAMESPACE=kube-system;K8S_POD_NAME=coredns-6d8c4cb4d-ck2x5;K8S_POD_INFRA_CONTAINER_ID=88722baed9e508ab6cc4525a6b0b05da12c65efa1bbf7c1e27f0fee0c4b4f7e7, StdinData: {&quot;bridge&quot;:&quot;minicni0&quot;,&quot;cniVersion&quot;:&quot;0.1.0&quot;,&quot;mtu&quot;:1500,&quot;name&quot;:&quot;minicni&quot;,&quot;subnet&quot;:&quot;10.244.0.0/24&quot;,&quot;type&quot;:&quot;minicni&quot;}. 
+</code></pre>
+
+<p>删除操作实现代码如下：</p>
+
+<pre><code> 1   func (fh *FileHandler) HandleDel(cmdArgs *args.CmdArgs) error {
+ 2      netns, err := ns.GetNS(cmdArgs.Netns)
+ 3      if err != nil {
+ 4          return err
+ 5      }
+ 6      ip, err := nettool.GetVethIPInNS(netns, cmdArgs.IfName)
+ 7      if err != nil {
+ 8          return err
+ 9      }
+10  
+11      // open or create the file that stores all the reserved IPs
+12      f, err := os.OpenFile(fh.IPStore, os.O_RDWR|os.O_CREATE, 0600)
+13      if err != nil {
+14          return fmt.Errorf(&quot;failed to open file that stores reserved IPs %v&quot;, err)
+15      }
+16      defer f.Close()
+17  
+18      // get all the reserved IPs from file
+19      content, err := ioutil.ReadAll(f)
+20      if err != nil {
+21          return err
+22      }
+23      reservedIPs := strings.Split(strings.TrimSpace(string(content)), &quot;\n&quot;)
+24  
+25      for i, rip := range reservedIPs {
+26          if rip == ip {
+27              reservedIPs = append(reservedIPs[:i], reservedIPs[i+1:]...)
+28              break
+29          }
+30      }
+31  
+32      // write reserved IPs back into file
+33      if err := ioutil.WriteFile(fh.IPStore, []byte(strings.Join(reservedIPs, &quot;\n&quot;)), 0600); err != nil {
+34          return fmt.Errorf(&quot;failed to write reserved IPs into file: %v&quot;, err)
+35      }
+36  
+37      return nil
+38  }
+39  
+</code></pre>
+
+<ul>
+<li><p>CNI_VERSION参数如下：</p>
+
+<pre><code>2022/12/09 20:18:24 cmd: VERSION, ContainerID: , Netns: dummy, ifName: dummy, Path: dummy, Args: , StdinData: {&quot;cniVersion&quot;:&quot;0.4.0&quot;}. 
+</code></pre>
+
+<p>实现代码如下:</p>
+
+<pre><code>1  func (fh *FileHandler) HandleVersion(cmdArgs *args.CmdArgs) error {
+2     versionInfo, err := json.Marshal(fh.VersionInfo)
+3     if err != nil {
+4         return err
+5     }
+6     fmt.Print(string(versionInfo))
+7     return nil
+8  }
+</code></pre></li>
+</ul>
+
+<p><a id="orgb4b32d9"></a></p>
+
+<h1 id="cni-安装工具">CNI 安装工具</h1>
+
+<p>CNI 插件需要运行在集群中的每个节点上，而且 CNI 插件配置信息与可运行文件必须在每个节点特殊的目录中，因此，安装 CNI 插件非常适合使用 DaemonSet 并挂载 CNI 插件目录，为了避免安装 CNI 的工具不能被正常调度，我们需要使用 hostNetwork 来使用宿主机的网络。同时，将 CNI 插件配置以 ConfigMap 的形式挂载，这样方便终端用户配置 CNI 插件。更详细的信息请查看安装工具部署文件。</p>
+
+<pre><code>[root@k8s-master ~]# k describe node k8s-master  | grep CIDR
+PodCIDR:                      10.244.0.0/24
+PodCIDRs:                     10.244.0.0/24
+[root@k8s-master ~]#
+</code></pre>
+
+<p>另外需要注意的是，我们在安装 CNI 插件的脚本中获取每个节点划分得到的24子网信息、检查是否合法然后写入到 CNI 配置信息中：</p>
+
+<pre><code> 1  # The environment variables used to connect to the kube-apiserver
+ 2   SERVICE_ACCOUNT_PATH=/var/run/secrets/kubernetes.io/serviceaccount
+ 3   SERVICEACCOUNT_TOKEN=$(cat $SERVICE_ACCOUNT_PATH/token)
+ 4   KUBE_CACERT=${KUBE_CACERT:-$SERVICE_ACCOUNT_PATH/ca.crt}
+ 5   KUBERNETES_SERVICE_PROTOCOL=${KUBERNETES_SERVICE_PROTOCOL-https}
+ 6  
+ 7   # Check if we're running as a k8s pod.
+ 8   if [ -f &quot;$SERVICE_ACCOUNT_PATH/token&quot; ];
+ 9   then
+10       # some variables should be automatically set inside a pod
+11       if [ -z &quot;${KUBERNETES_SERVICE_HOST}&quot; ]; then
+12           exit_with_message &quot;KUBERNETES_SERVICE_HOST not set&quot;
+13       fi
+14       if [ -z &quot;${KUBERNETES_SERVICE_PORT}&quot; ]; then
+15           exit_with_message &quot;KUBERNETES_SERVICE_PORT not set&quot;
+16       fi
+17   fi
+18  
+19   # exit if the NODE_NAME environment variable is not set.
+20   if [[ -z &quot;${NODE_NAME}&quot; ]];
+21   then
+22       exit_with_message &quot;NODE_NAME not set.&quot;
+23   fi
+24  
+25  
+26   NODE_RESOURCE_PATH=&quot;${KUBERNETES_SERVICE_PROTOCOL}://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT}/api/v1/nodes/${NODE_NAME}&quot;
+27   NODE_SUBNET=$(curl --cacert &quot;${KUBE_CACERT}&quot; --header &quot;Authorization: Bearer ${SERVICEACCOUNT_TOKEN}&quot; -X GET &quot;${NODE_RESOURCE_PATH}&quot; | jq &quot;.spec.podCIDR&quot;)
+28  
+29   # Check if the node subnet is valid IPv4 CIDR address
+30   IPV4_CIDR_REGEX=&quot;(((25[0-5]|2[0-4][0-9]|1?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|1?[0-9][0-9]?))(\/([8-9]|[1-2][0-9]|3[0-2]))([^0-9.]|$)&quot;
+31   if [[ ${NODE_SUBNET} =~ ${IPV4_CIDR_REGEX} ]]
+32   then
+33       echo &quot;${NODE_SUBNET} is a valid IPv4 CIDR address.&quot;
+34   else
+35       exit_with_message &quot;${NODE_SUBNET} is not a valid IPv4 CIDR address!&quot;
+36   fi
+37  
+38   # exit if the NODE_NAME environment variable is not set.
+39   if [[ -z &quot;${CNI_NETWORK_CONFIG}&quot; ]];
+40   then
+41       exit_with_message &quot;CNI_NETWORK_CONFIG not set.&quot;
+42   fi
+43  
+44   TMP_CONF='/minicni.conf.tmp'
+45   cat &gt;&quot;${TMP_CONF}&quot; &lt;&lt;EOF
+46   ${CNI_NETWORK_CONFIG}
+47   EOF
+48  
+49   # Replace the __NODE_SUBNET__
+50   grep &quot;__NODE_SUBNET__&quot; &quot;${TMP_CONF}&quot; &amp;&amp; sed -i s~__NODE_SUBNET__~&quot;${NODE_SUBNET}&quot;~g &quot;${TMP_CONF}&quot;
+51  
+52   # Log the config file
+53   echo &quot;CNI config: $(cat &quot;${TMP_CONF}&quot;)&quot;
+54  
+55   # Move the temporary CNI config into the CNI configuration directory.
+56   mv &quot;${TMP_CONF}&quot; &quot;${CNI_NET_DIR}/${CNI_CONF_NAME}&quot; || \
+57     exit_with_error &quot;Failed to move ${TMP_CONF} to ${CNI_CONF_NAME}.&quot;
+58  
+59   echo &quot;Created CNI config ${CNI_CONF_NAME}&quot;
+</code></pre>
+
+<p><a id="org9970dc4"></a></p>
 
 <h1 id="编译部署">编译部署</h1>
 
-<p><a id="orge68cb58"></a></p>
+<p><a id="orgd1c3c68"></a></p>
 
 <h2 id="1-编译">1、编译</h2>
 
@@ -241,7 +545,7 @@ make image
 
 <p><img src="http://blog.mospan.cn/post/img/k8s/minicni/docker-hub-minicni.png" alt="img" /></p>
 
-<p><a id="org660f2ce"></a></p>
+<p><a id="org4e72f27"></a></p>
 
 <h2 id="部署">部署</h2>
 
@@ -280,7 +584,7 @@ daemonset.apps/minicni-node created
 
 <p>可以看出minicni处于Running状态。</p>
 
-<p><a id="orgdb96ccb"></a></p>
+<p><a id="org370284e"></a></p>
 
 <h1 id="测试">测试</h1>
 
@@ -423,11 +727,11 @@ PING 10.244.2.11 (10.244.2.11) 56(84) bytes of data.
 <p>现象与原理同上。</p></li>
 </ul>
 
-<p><a id="org0d7df39"></a></p>
+<p><a id="orgb51c532"></a></p>
 
 <h1 id="faq">FAQ</h1>
 
-<p><a id="orgbede682"></a></p>
+<p><a id="orgdc842c7"></a></p>
 
 <h2 id="cannot-find-package-编译不过">cannot find package 编译不过</h2>
 
@@ -447,7 +751,7 @@ make: *** [build] Error 1
 <p>需要把GO111MODULE=on或auto，才能使用Go module功能，可在.bashrc或.zshrc里加上：export GO111MODULE=auto<br />
 详见<a href="http://www.ay1.cc/article/18635.html">go自动下载所有的依赖包go module使用详解_Golang</a>：</p>
 
-<p><a id="org3f9bdab"></a></p>
+<p><a id="orga2808f1"></a></p>
 
 <h2 id="build-constraints-exclude-all-go-files-in">build constraints exclude all Go files in</h2>
 
@@ -464,7 +768,7 @@ export GOOS=“linux”。即：不能为darwin<br />
 export CGO_ENABLED=“1”。<br />
 详见：<a href="https://blog.csdn.net/weixin_42845682/article/details/124568715">build constraints exclude all Go files in xxx/xxx/xxx</a></p>
 
-<p><a id="org12cec89"></a></p>
+<p><a id="orga4ae153"></a></p>
 
 <h1 id="参考资料">参考资料</h1>
 
@@ -488,7 +792,7 @@ export CGO_ENABLED=“1”。<br />
   <div>
     <p style="margin-top:0px;">作者：<a target="_blank" href="http://blog.mospan.cn/">mospan</a>
       <br />微信关注：墨斯潘園
-      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2022/11/22/k8s-practice-minicni//">http://mospany.github.io/2022/11/22/k8s-practice-minicni//</a>
+      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2022/11/22/k8s-practice-minicni/">http://mospany.github.io/2022/11/22/k8s-practice-minicni/</a>
       <br />
       文章版权归本人所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
   </div>
@@ -504,7 +808,7 @@ export CGO_ENABLED=“1”。<br />
   
   <a href="/tags/k8s">K8S</a>
   
-  <a href="/tags/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5">项目实践</a>
+  <a href="/tags/%E4%BA%91%E8%AE%A1%E7%AE%97">云计算</a>
   
 </div>
 
@@ -515,14 +819,14 @@ export CGO_ENABLED=“1”。<br />
   
   <a class="article-category-link" href="/categories/k8s">K8S</a>
   
-  <a class="article-category-link" href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5">项目实践</a>
+  <a class="article-category-link" href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97">云计算</a>
   
 </div>
 
 
 
   <div class="article-share" id="share">
-    <div data-url="http://mospany.github.io/2022/11/22/k8s-practice-minicni//" data-title="K8S项目实践(02): 动手实现minicni" data-tsina="3833537679" class="share clearfix">
+    <div data-url="http://mospany.github.io/2022/11/22/k8s-practice-minicni/" data-title="K8S项目实践(02): 动手实现minicni" data-tsina="3833537679" class="share clearfix">
     </div>
   </div>
 </footer>
@@ -616,7 +920,7 @@ gitment.render('git-comments')
       
 			<li><a href="http://mospany.github.io/tags/yaml" title="yaml">yaml<sup>1</sup></a></li>
       
-			<li><a href="http://mospany.github.io/tags/%e4%ba%91%e8%ae%a1%e7%ae%97" title="云计算">云计算<sup>4</sup></a></li>
+			<li><a href="http://mospany.github.io/tags/%e4%ba%91%e8%ae%a1%e7%ae%97" title="云计算">云计算<sup>5</sup></a></li>
       
 			<li><a href="http://mospany.github.io/tags/%e4%ba%92%e8%81%94%e7%bd%91" title="互联网">互联网<sup>1</sup></a></li>
       
@@ -643,8 +947,6 @@ gitment.render('git-comments')
 			<li><a href="http://mospany.github.io/tags/%e9%82%ae%e7%ae%b1" title="邮箱">邮箱<sup>1</sup></a></li>
       
 			<li><a href="http://mospany.github.io/tags/%e9%9d%a2%e8%af%95" title="面试">面试<sup>1</sup></a></li>
-      
-			<li><a href="http://mospany.github.io/tags/%e9%a1%b9%e7%9b%ae%e5%ae%9e%e8%b7%b5" title="项目实践">项目实践<sup>1</sup></a></li>
       
 		</ul>
 </div>
@@ -718,7 +1020,7 @@ gitment.render('git-comments')
       
       
       <li class="archive-list-item">
-        <a class="archive-list-link" href="http://mospany.github.io/post/#2022-11">2022年11月</a><span class="archive-list-count">11</span>
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2022-11">2022年11月</a><span class="archive-list-count">10</span>
       </li>
       
       
@@ -866,8 +1168,6 @@ gitment.render('git-comments')
     <a href="http://mospany.github.io/tags/%e9%82%ae%e7%ae%b1" style="font-size: 12px;">邮箱</a>
     
     <a href="http://mospany.github.io/tags/%e9%9d%a2%e8%af%95" style="font-size: 12px;">面试</a>
-    
-    <a href="http://mospany.github.io/tags/%e9%a1%b9%e7%9b%ae%e5%ae%9e%e8%b7%b5" style="font-size: 12px;">项目实践</a>
     
   </div>
 </div>
