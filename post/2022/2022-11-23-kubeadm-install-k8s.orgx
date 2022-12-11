@@ -676,3 +676,4 @@ Apr 26 20:33:30 test3 kubelet: E0426 20:33:30.588383   21936 server.go:302] "Fai
 
 * 参考
   [01][[https://blog.csdn.net/IT_ZRS/article/details/124466870][kubeadm 部署 k8s 集群]] 
+  [02][[https://blog.csdn.net/oscarun/article/details/125595521?spm=1001.2014.3001.5502][kubeadm系列-00-overview]]
