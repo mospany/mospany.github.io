@@ -43,11 +43,211 @@ url = "/2022/12/11/k8s-random-scheduler/"
    首先scheduler会启动一个client-go的Informer来监听Pod事件（不只Pod其实还有Node等资源变更事件），这时候注册的Informer回调事件会区分Pod是否已经被调度（spec.nodeName），已经调度过的Pod则只是更新调度器缓存，而未被调度的Pod会加入到调度队列，然后经过调度框架执行注册的插件，在绑定周期前会进行Pod的假定动作，从而更新调度器缓存中该Pod状态，最后在绑定周期执行完向ApiServer发起BindAPI，从而完成了一次调度过程。
  
 * 实现
-   
+** 创建调度器
+   1、获取集群kubeconfig配置。
+   2、调用client-go生成clientset。
+   3、填充调度器相关参数, 包含获取node列表和关注的POD。
+   4、返回调度器
+   #+BEGIN_SRC go
+   func NewScheduler(podQueue chan *v1.Pod, quit chan struct{}) Scheduler {
+	config, err := rest.InClusterConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
 
+	clientset, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return Scheduler{
+		clientset:  clientset,
+		podQueue:   podQueue,
+		nodeLister: initInformers(clientset, podQueue, quit),
+		predicates: []predicateFunc{
+			randomPredicate,
+		},
+		priorities: []priorityFunc{
+			randomPriority,
+		},
+	}
+  }
    
+   #+END_SRC
+
+** 运行调度器
+   不间断的从关注的POD列表中选出进行调度。
+*** 找合适节点
+    1、找到可用节点列表
+    2、给节点随机打100以内的分数
+    3、选择分数最高的节点
+    #+BEGIN_SRC go
+    func (s *Scheduler) findFit(pod *v1.Pod) (string, error) {
+	    nodes, err := s.nodeLister.List(labels.Everything())
+	    if err != nil {
+	    	return "", err
+	    }
+
+	    filteredNodes := s.runPredicates(nodes, pod)
+	    if len(filteredNodes) == 0 {
+	    	return "", errors.New("failed to find node that fits pod")
+	    }
+	    priorities := s.prioritize(filteredNodes, pod)
+	    return s.findBestNode(priorities), nil
+    }
+    #+END_SRC
+
+*** 绑定POD
+    #+BEGIN_SRC go
+    func (s *Scheduler) bindPod(ctx context.Context, p *v1.Pod, node string) error {
+	    opts := metav1.CreateOptions{}
+	    return s.clientset.CoreV1().Pods(p.Namespace).Bind(ctx, &v1.Binding{
+	    	ObjectMeta: metav1.ObjectMeta{
+	    		Name:      p.Name,
+	    		Namespace: p.Namespace,
+	    	},
+	    	Target: v1.ObjectReference{
+	    		APIVersion: "v1",
+	    		Kind:       "Node",
+	    		Name:       node,
+	    	},
+	    }, opts)
+    }
+    #+END_SRC
+
+*** 发送event事件
+    #+BEGIN_SRC go
+    func (s *Scheduler) emitEvent(ctx context.Context, p *v1.Pod, message string) error {
+	    timestamp := time.Now().UTC()
+	    opts := metav1.CreateOptions{}
+	    _, err := s.clientset.CoreV1().Events(p.Namespace).Create(ctx, &v1.Event{
+	    	Count:          1,
+	    	Message:        message,
+	    	Reason:         "Scheduled",
+	    	LastTimestamp:  metav1.NewTime(timestamp),
+	    	FirstTimestamp: metav1.NewTime(timestamp),
+	    	Type:           "Normal",
+	    	Source: v1.EventSource{
+	    		Component: schedulerName,
+	    	},
+	    	InvolvedObject: v1.ObjectReference{
+	    		Kind:      "Pod",
+	    		Name:      p.Name,
+	    		Namespace: p.Namespace,
+	    		UID:       p.UID,
+	    	},
+	    	ObjectMeta: metav1.ObjectMeta{
+	    		GenerateName: p.Name + "-",
+	    	},
+	    }, opts)
+	    if err != nil {
+	    	return err
+	    }
+	    return nil
+     }
+    #+END_SRC
+
+   查看events信息可以看出random-scheduler打出的“laced pod [default/sleep-5b6fd9944c-5scxv] on k8s-master"等信息。"
+
+    #+BEGIN_SRC sh
+    27s         Normal    Scheduled           pod/sleep-5b6fd9944c-5scxv    Placed pod [default/sleep-5b6fd9944c-5scxv] on k8s-master
+    #+END_SRC
+   
+* 验证
+** 编译
+   #+BEGIN_SRC sh
+   $ make docker-image
+   $ make docker-push
+   #+END_SRC 
+** 部署
+   #+BEGIN_SRC sh
+   $ kubectl apply -f rbac.yaml
+   $ kubectl  apply -f deployment.yaml
+   $ kubectl apply -f sleep.yaml
+   #+END_SRC
+   把sleep.yaml里改为schedulerName: random-scheduler就可以使用该调度器。
+   
+   #+BEGIN_SRC sh
+   [root@k8s-master deployment]# kubectl  get pod -A -o wide
+   NAMESPACE     NAME                                 READY   STATUS    RESTARTS       AGE     IP               NODE         NOMINATED NODE   READINESS GATES
+   default       httpbin-master                       1/1     Running   2 (11h ago)    3d22h   10.244.0.36      k8s-master   <none>           <none>
+   default       httpbin-worker                       1/1     Running   2 (11h ago)    3d22h   10.244.2.15      k8s-work2    <none>           <none>
+   default       netshoot-master                      1/1     Running   2 (11h ago)    3d22h   10.244.0.35      k8s-master   <none>           <none>
+   default       netshoot-worker                      1/1     Running   2 (11h ago)    3d22h   10.244.2.14      k8s-work2    <none>           <none>
+   default       random-scheduler-6dc78999cc-vnxzg    1/1     Running   0              9m      10.244.0.37      k8s-master   <none>           <none>
+   default       sleep-5b6fd9944c-7rn5m               1/1     Running   0              11h     10.244.1.6       k8s-work1    <none>           <none>
+   default       sleep-5b6fd9944c-bwb9t               1/1     Running   0              11h     10.244.0.38      k8s-master   <none>           <none>
+   kube-system   coredns-6d8c4cb4d-ck2x5              1/1     Running   20 (11h ago)   19d     10.244.0.34      k8s-master   <none>           <none>
+   kube-system   coredns-6d8c4cb4d-mbctj              1/1     Running   20 (11h ago)   19d     10.244.0.33      k8s-master   <none>           <none>
+   kube-system   etcd-k8s-master                      1/1     Running   22 (11h ago)   19d     172.25.140.216   k8s-master   <none>           <none>
+   kube-system   kube-apiserver-k8s-master            1/1     Running   24 (11h ago)   19d     172.25.140.216   k8s-master   <none>           <none>
+   kube-system   kube-controller-manager-k8s-master   1/1     Running   22 (11h ago)   19d     172.25.140.216   k8s-master   <none>           <none>
+   kube-system   kube-proxy-dnsjg                     1/1     Running   21 (11h ago)   19d     172.25.140.215   k8s-work1    <none>           <none>
+   kube-system   kube-proxy-r84lg                     1/1     Running   22 (11h ago)   19d     172.25.140.216   k8s-master   <none>           <none>
+   kube-system   kube-proxy-tbkx2                     1/1     Running   20 (11h ago)   19d     172.25.140.214   k8s-work2    <none>           <none>
+   kube-system   kube-scheduler-k8s-master            1/1     Running   22 (11h ago)   19d     172.25.140.216   k8s-master   <none>           <none>
+   kube-system   minicni-node-2xq2d                   1/1     Running   2 (11h ago)    3d23h   172.25.140.214   k8s-work2    <none>           <none>
+   kube-system   minicni-node-dsq8c                   1/1     Running   2 (11h ago)    3d23h   172.25.140.216   k8s-master   <none>           <none>
+   kube-system   minicni-node-h8hm8                   1/1     Running   2 (11h ago)    3d23h   172.25.140.215   k8s-work1    <none>           <none>
+   
+   #+END_SRC
+   可以看出, random-scheduler-6dc78999cc-vnxzg 和 sleep pod已正常变成Running状态。
+    
+** 验证
+   #+BEGIN_SRC sh
+   [root@k8s-master deployment]# kubectl  logs random-scheduler-6dc78999cc-vnxzg
+    I'm a scheduler!
+    2022/12/13 12:12:02 New Node Added to Store: k8s-master
+    2022/12/13 12:12:02 New Node Added to Store: k8s-work1
+    2022/12/13 12:12:02 New Node Added to Store: k8s-work2
+    found a pod to schedule: default / sleep-5b6fd9944c-bwb9t
+    2022/12/13 12:12:02 nodes that fit:
+    2022/12/13 12:12:02 k8s-master
+    2022/12/13 12:12:02 k8s-work1
+    2022/12/13 12:12:02 k8s-work2
+    2022/12/13 12:12:02 calculated priorities: map[k8s-master:79 k8s-work1:68 k8s-work2:15]
+    Placed pod [default/sleep-5b6fd9944c-bwb9t] on k8s-master
+    
+    found a pod to schedule: default / sleep-5b6fd9944c-7rn5m
+    2022/12/13 12:12:02 nodes that fit:
+    2022/12/13 12:12:02 k8s-master
+    2022/12/13 12:12:02 k8s-work1
+    2022/12/13 12:12:02 calculated priorities: map[k8s-master:26 k8s-work1:50]
+    Placed pod [default/sleep-5b6fd9944c-7rn5m] on k8s-work1
+    
+    [root@k8s-master deployment]# kubectl logs sleep-5b6fd9944c-7rn5m
+    [root@k8s-master deployment]# 
+   
+   #+END_SRC
+   从random-scheduler日志看， sleep容器经过random-scheduler进行调度的。
+
+   #+BEGIN_SRC sh
+   [root@k8s-master deployment]# k get events
+    - LAST SEEN   TYPE      REASON              OBJECT                        MESSAGE
+    39m         Normal    Pulled              pod/netshoot-master           Container image "nicolaka/netshoot:latest" already present on machine
+    39m         Normal    Created             pod/netshoot-master           Created container centos
+    39m         Normal    Started             pod/netshoot-master           Started container centos
+    39m         Normal    Pulled              pod/netshoot-worker           Container image "nicolaka/netshoot:latest" already present on machine
+    39m         Normal    Created             pod/netshoot-worker           Created container centos
+    39m         Normal    Started             pod/netshoot-worker           Started container centos
+    27s         Normal    Scheduled           pod/sleep-5b6fd9944c-5scxv    Placed pod [default/sleep-5b6fd9944c-5scxv] on k8s-master
+    26s         Normal    Pulled              pod/sleep-5b6fd9944c-5scxv    Container image "tutum/curl" already present on machine
+    26s         Normal    Created             pod/sleep-5b6fd9944c-5scxv    Created container sleep
+    26s         Normal    Started             pod/sleep-5b6fd9944c-5scxv    Started container sleep
+    50s         Normal    Killing             pod/sleep-5b6fd9944c-7rn5m    Stopping container sleep
+    50s         Normal    Killing             pod/sleep-5b6fd9944c-bwb9t    Stopping container sleep
+    27s         Normal    Scheduled           pod/sleep-5b6fd9944c-rccmj    Placed pod [default/sleep-5b6fd9944c-rccmj] on k8s-work2
+    26s         Normal    Pulling             pod/sleep-5b6fd9944c-rccmj    Pulling image "tutum/curl"
+    27s         Normal    SuccessfulCreate    replicaset/sleep-5b6fd9944c   Created pod: sleep-5b6fd9944c-rccmj
+    27s         Normal    SuccessfulCreate    replicaset/sleep-5b6fd9944c   Created pod: sleep-5b6fd9944c-5scxv
+    27s         Normal    ScalingReplicaSet   deployment/sleep              Scaled up replica set sleep-5b6fd9944c to 2
+    [root@k8s-master deployment]#
+   
+   #+END_SRC
+   查看events信息可以看出random-scheduler打出的“laced pod [default/sleep-5b6fd9944c-5scxv] on k8s-master"等信息。"
 
 * 参考资料
   [01] [[https://www.cnblogs.com/z-gh/p/15409763.html][k8s调度器介绍（调度框架版本）]] 
   [02] [[https://zhuanlan.zhihu.com/p/400351590][client-go功能详解]]
   [03] [[https://www.jb51.net/article/253965.htm][一篇文章搞懂Go语言中的Context]]]
+  [04] [[https://www.cnblogs.com/yangyuliufeng/p/13611126.html][深入理解k8s中的informer机制]]]
