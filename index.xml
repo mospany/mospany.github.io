@@ -55,7 +55,7 @@
 
 &lt;p&gt;而调度框架的设计相比之前则更复杂一点，但确更加灵活和便于扩展，关于调度框架的设计细节可以查看官方文档——624-scheduling-framework，当然我也有一遍文章对其做了翻译还加了一些便于理解的补充——KEP: 624-scheduling-framework。总结来说调度框架的出现是为了解决以前webhooks扩展器的局限性，一个是扩展点只有：筛选、打分、抢占、绑定，而调度框架则在这之上又细分了11个扩展点；另一个则是通过http调用扩展进程的方式其实效率不高，调度框架的设计用的是静态编译的方式将扩展的程序代码和scheduler源码一起编译成新的scheduler，然后通过scheduler配置文件启用需要的插件，在进程内就能通过函数调用的方式执行插件。&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/scheduler/pod-life-cycle.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/scheduler/scheduler-startup.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;上面是一个简略版的调度器处理pod流程：&lt;/p&gt;
 
