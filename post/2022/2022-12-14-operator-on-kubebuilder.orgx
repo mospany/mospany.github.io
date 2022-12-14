@@ -1,0 +1,351 @@
++++
+#+OPTIONS: \n:t
+categories = ["技术文章"]
+date = "2022-12-14T18:24:22+08:00"
+description = ""
+keywords = ["K8S","项目实践"]
+tags = ["K8S","项目实践"]
+title = "K8S项目实践(04): 基于kubebuilder编写operator"
+url = "/2022/12/14/operator-on-kubebuilder/"
+
++++
+
+* 介绍
+* 镜像仓库
+**  注册仓库
+  登录https://registry.hub.docker.com/进行注册，如用户名为mospany, 密码为自定义。
+**  使用镜像
+***  登录仓库
+    #+BEGIN_SRC sh
+    $ docker login index.docker.io
+    Username: mospany
+    Password:
+    Login Succeeded
+
+    或直接 docker login默认登录docker hub。
+   
+    #+END_SRC
+
+***  上传镜像
+    #+BEGIN_SRC sh
+    $ docker tag loggen:latest mospany/loggen:latest
+    $ docker push mospany/loggen:latest
+    #+END_SRC
+
+   [[http://blog.mospan.cn/post/img/k8s/operatorr/hub-docker.png]]
+
+    参见：https://hub.docker.com/repository/docker/mospany/loggen
+
+*** 下载镜像
+   #+BEGIN_SRC sh
+   $ docker pull mospany/loggen:latest
+   latest: Pulling from mospany/loggen
+   Digest: sha256:0cdeece36f8a003dd6b9c463cc73dad93479deabec08c1def033e72ec9818539
+   Status: Image is up to date for mospany/loggen:latest
+   docker.io/mospany/loggen:latest
+   #+END_SRC        
+
+* 项目
+** 创建项目 
+
+#+BEGIN_SRC sh
+mkdir guestbook
+cd guestbook
+go mod init guestbook
+kubebuilder init --domain xiaohongshu.org --owner "luxiu"
+kubebuilder create api --group redis  --version v1 --kind RedisCluster
+
+#+END_SRC
+
+关键截图如下：
+   [[http://blog.mospan.cn/post/img/k8s/operatorr/kubebuilder-operator.png]]
+
+**  修改文件
+1）修改Dockerfile的gcr.io镜像为其他可访问镜像(如golang:1.18)
+   #+BEGIN_QUOTE
+   为了防止出现“failed to solve with frontend dockerfile.v0: failed to create LLB definition: failed to do request: Head "https://gcr.io/v2/distroless/static/manifests/nonroot": Service Unavailable”错误，需修改Dockerfile的gcr.io镜像为其他可访问镜像(如golang:1.18)
+   #+END_QUOTE
+  
+2）修改Dockerfile添加代理
+   #+BEGIN_QUOTE
+   为了防止go mod download时不至于超时连不上，需在Run go mod download行上面添加
+   #+END_QUOTE
+   #+BEGIN_SRC sh
+   ENV GOPROXY="https://goproxy.cn"
+   #+END_SRC
+
+   否则会出现如下错误：
+   #+BEGIN_QUOTE
+
+   3.469 go: cloud.google.com/go@v0.81.0: Get "https://proxy.golang.org/cloud.google.com/go/@v/v0.81.0.mod": malformed HTTP response "\x00\x00\x12\x04\x00\x00\x00\x00\x00\x00\x03\x00\x00\x00\x80\x00\x04\x00\x01\x00\x00\x00\x05\x00\xff\xff\xff\x00\x00\x04\b\x00\x00\x00\x00\x00\u007f\xff\x00\x00\x00\x00\b\a\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01"
+   #+END_QUOTE
+  
+   **切记切记**： 先修改好再编译，否则一直出现上面错误(当时找了半天)
+
+ #+BEGIN_SRC sh
+
+ # Build the manager binary
+   FROM golang:1.18 as builder
+   ENV GOPROXY="https://goproxy.cn"
+   
+   WORKDIR /workspace
+   # Copy the Go Modules manifests
+   COPY go.mod go.mod
+   COPY go.sum go.sum
+   # cache deps before building and copying source so that we don't need to re-download as much
+   # and so that source changes don't invalidate our downloaded layer
+   RUN go mod download
+   
+   # Copy the go source
+   COPY main.go main.go
+   COPY api/ api/
+   COPY controllers/ controllers/
+   
+   # Build
+   RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -o manager main.go
+   
+   # Use distroless as minimal base image to package the manager binary
+   # Refer to https://github.com/GoogleContainerTools/distroless for more details
+   #FROM gcr.io/distroless/static:nonroot
+   FROM centos:latest
+   WORKDIR /
+   COPY --from=builder /workspace/manager .
+   USER 65532:65532
+   
+   ENTRYPOINT ["/manager"]
+ 
+   #+END_SRC
+
+  必须在Dockerfile里面设置代理”ENV GOPROXY="https://goproxy.cn"“才行，如下设置也不行。
+
+   [[http://blog.mospan.cn/post/img/k8s/operatorr/docker-preferences.png]]
+
+3）修改Makefile中的crd中的配置
+  给kubectl加上所要连接的集群， 如本机为--context docker-desktop。可通过如下命令获得：
+  #+BEGIN_SRC sh
+
+  kubectl config get-contexts
+  kubectl cluster-info
+  kubectl config view
+  #+END_SRC
+   [[http://blog.mospan.cn/post/img/k8s/operatorr/kubectl-info.png]]
+  
+ 对应的Makefile修改如下：
+ #+BEGIN_SRC Makefile
+   
+  .PHONY: install
+  install: manifests kustomize ## Install CRDs into the K8s cluster specified in ~/.kube/config.
+  	$(KUSTOMIZE) build config/crd | kubectl --context docker-desktop  apply -f -
+  
+  .PHONY: uninstall
+  uninstall: manifests kustomize ## Uninstall CRDs from the K8s cluster specified in ~/.kube/config. Call with ignore-not-found=true to ignore resource not found errors during deletion.
+  	$(KUSTOMIZE) build config/crd | kubectl --context docker-desktop  delete --ignore-not-found=$(ignore-not-found) -f -
+  
+  .PHONY: deploy
+  deploy: manifests kustomize ## Deploy controller to the K8s cluster specified in ~/.kube/config.
+  	cd config/manager && $(KUSTOMIZE) edit set image controller=${IMG}
+  	$(KUSTOMIZE) build config/default | kubectl --context docker-desktop  apply -f -
+  
+  .PHONY: undeploy
+  undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/config. Call with ignore-not-found=true to ignore resource not found errors during deletion.
+	$(KUSTOMIZE) build config/default | kubectl --context docker-desktop  delete --ignore-not-found=$(ignore-not-found) -f -
+ #+END_SRC
+
+** 编译
+*** make help
+    #+BEGIN_SRC sh
+    make help
+    #+END_SRC
+
+   [[http://blog.mospan.cn/post/img/k8s/operatorr/make-help.png]]
+   
+***  make build
+编译并在bin/下生成目标可执行程序。
+
+   [[http://blog.mospan.cn/post/img/k8s/operatorr/make-build.png]]
+
+*** make install
+安装crd到目标集群，这一步可能受github网络影响自动下载kustomize慢需要多试几次或隔天再试。
+   [[http://blog.mospan.cn/post/img/k8s/operatorr/make-install.png]]
+
+*** make docker-build
+   [[http://blog.mospan.cn/post/img/k8s/operatorr/make-docker-build.png]]
+   可以在刚生成的镜像列表中生成镜像。
+   [[http://blog.mospan.cn/post/img/k8s/operatorr/make-docker-images.png]]
+
+***  make docker-push
+1）先增加要上传镜像的tag
+#+BEGIN_SRC sh
+
+$ docker tag controller:latest docker.io/mospany/controller:latest
+#+END_SRC
+
+2）make docker-push 
+#+BEGIN_SRC sh
+$ make docker-push IMG=docker.io/mospany/controller:latest
+#+END_SRC
+   [[http://blog.mospan.cn/post/img/k8s/operatorr/make-docker-push.png]]
+
+3) 查看docker hub上传效果
+   [[http://blog.mospan.cn/post/img/k8s/operatorr/make-docker-hub.png]]
+
+
+** 运行
+先在mac上安装k8s集群，详见：[Mac系统安装k8s集群](https://blog.51cto.com/zlyang/4838042)
+
+*** 本地运行
+要想在本地运行 controller，只需要执行下面的命令，你将看到 controller 启动和运行时输出：
+   #+BEGIN_SRC sh
+   make run
+   #+END_SRC
+   [[http://blog.mospan.cn/post/img/k8s/operatorr/make-run.png]]
+
+*** 部署到k8s集群中运行
+    #+BEGIN_SRC sh
+
+    make deploy IMG=docker.io/mospany/controller:v1.0
+    #+END_SRC
+   [[http://blog.mospan.cn/post/img/k8s/operatorr/make-deploy.png]]
+
+   查看日志
+   #+BEGIN_SRC sh
+   kubectl logs -n guestbook-system guestbook-controller-manager-7c67b5bd6c-gm5qs
+   #+END_SRC
+   [[http://blog.mospan.cn/post/img/k8s/operatorr/make-logs.png]]
+
+**  创建CR
+该创建自定义资源对象CR了，如原生中的rc/deployment等对象
+#+BEGIN_SRC sh
+
+# mosp @ mospdeMacBook-Pro in ~/work/pingan/arch/mysrc/guestbook [21:14:17]
+$ kubectl get RedisCluster
+NAME                  AGE
+rediscluster-sample   48m
+
+# mosp @ mospdeMacBook-Pro in ~/work/pingan/arch/mysrc/guestbook [21:22:49]
+$ kubectl get RedisCluster -o yaml
+apiVersion: v1
+items:
+- apiVersion: redis.xiaohongshu.org/v1
+  kind: RedisCluster
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"redis.xiaohongshu.org/v1","kind":"RedisCluster","metadata":{"annotations":{},"name":"rediscluster-sample","namespace":"default"},"spec":null}
+    creationTimestamp: "2022-07-29T12:34:11Z"
+    generation: 1
+    name: rediscluster-sample
+    namespace: default
+    resourceVersion: "200052"
+    uid: 18eaf75f-9597-46af-bd88-abf7153c1377
+  status: {}
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
+
+# mosp @ mospdeMacBook-Pro in ~/work/pingan/arch/mysrc/guestbook [21:23:07]
+#+END_SRC
+
+** 开发业务逻辑
+下面我们将修改 CRD 的数据结构并在 controller 中增加一些日志输出。
+
+*** 修改 CRD
+我们将修改api/v1/rediscluster_types.go 文件的内容，在 CRD 中增加 FirstName、LastName 和 Status 字段。
+#+BEGIN_SRC go
+
+// RedisClusterSpec defines the desired state of RedisCluster
+type RedisClusterSpec struct {
+    // INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
+
+    // Important: Run "make" to regenerate code after modifying this file
+
+    // Foo is an example field of RedisCluster. Edit rediscluster_types.go to remove/update
+    FirstName string `json:"firstname"`
+    LastName  string `json:"lastname"`
+}
+
+// RedisClusterStatus defines the observed state of RedisCluster
+type RedisClusterStatus struct {
+    // INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
+
+    // Important: Run "make" to regenerate code after modifying this file
+    Status string `json:"Status"`
+}
+#+END_SRC
+
+*** 修改 Reconcile 函数
+Reconcile 函数是 Operator 的核心逻辑，Operator 的业务逻辑都位于 controllers/rediscluster_controller.go 文件的 Reconcile 函数中
+#+BEGIN_SRC go
+
+func (r *RedisClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+    _ = log.FromContext(ctx)
+
+    // TODO(user): your logic here
+
+    // 获取当前的 CR，并打印
+    logger := log.FromContext(ctx)
+    obj := &redisv1.RedisCluster{}
+    if err := r.Get(ctx, req.NamespacedName, obj); err != nil {
+        logger.Error(err, "Unable to fetch object")
+        return ctrl.Result{}, nil
+    } else {
+        logger.Info("Greeting from Kubebuilder to", obj.Spec.FirstName, obj.Spec.LastName)
+    }
+
+    // 初始化 CR 的 Status 为 Running
+    obj.Status.Status = "Running"
+    if err := r.Status().Update(ctx, obj); err != nil {
+        logger.Error(err, "unable to update status")
+    }
+
+    return ctrl.Result{}, nil
+}
+#+END_SRC
+
+*** 运行测试
+ - 安装CRD（同上）
+
+ - 部署controller（同上）
+
+ - 创建CR
+ 修改 config/samples/redis_v1_rediscluster.yaml 文件中的配置
+ #+BEGIN_SRC yaml
+ 
+apiVersion: redis.xiaohongshu.org/v1
+kind: RedisCluster
+metadata:
+  name: rediscluster-sample
+spec:
+  # TODO(user): Add fields here
+  firstname: Jimmy
+  lastname: Song
+ #+END_SRC
+
+执行下面命令，创建CR：
+#+BEGIN_SRC sh
+
+$ k8sdev apply -f  config/samples/redis_v1_rediscluster.yaml
+#+END_SRC
+
+查看controller里的运行日志：
+
+   [[http://blog.mospan.cn/post/img/k8s/operatorr/controller-logs.png]]
+
+
+* 原理
+
+* 实现
+
+* 参考资料
+【01】[使用shell命令行登陆Docker Hub出现的404Not found的问题](https://blog.csdn.net/weixin_43568070/article/details/89892620)
+【02】[Docker镜像推送Dockerhub](https://blog.csdn.net/HaHa_Sir/article/details/119412754)
+【03】[使用 kubebuilder 创建并部署 k8s-operator](https://www.cnblogs.com/mysql-dba/p/15982341.html)
+【04】[Kustomize的基本使用](http://tnblog.net/hb/article/details/7516)
+【05】[【kubebuilder2.0】安装、源码分析 ](https://www.cnblogs.com/lizhewei/p/13214785.html)
+【06】[深入解析 Kubebuilder：让编写 CRD 变得更简单](https://www.cnblogs.com/alisystemsoftware/p/11580202.html)
+【07】[一篇带给你KubeBuilder 简明教程](https://os.51cto.com/article/661378.html)
+【08】[深入解析Kubebuilder](https://blog.csdn.net/chenxy02/article/details/125554680)
+【09】[什么是RBAC](https://blog.csdn.net/qq_45874107/article/details/119839187)
+
+

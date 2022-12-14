@@ -5,7 +5,414 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Sun, 11 Dec 2022 11:51:52 CST</updated>
+        <updated>Wed, 14 Dec 2022 18:24:22 CST</updated>
+        
+        <item>
+            <title>K8S项目实践(04): 基于kubebuilder编写operator</title>
+            <link>http://mospany.github.io/2022/12/14/operator-on-kubebuilder/</link>
+            <pubDate>Wed, 14 Dec 2022 18:24:22 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://mospany.github.io/2022/12/14/operator-on-kubebuilder/</guid>
+            <description>
+
+&lt;p&gt;&lt;a id=&#34;orgfd75324&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;介绍&#34;&gt;介绍&lt;/h1&gt;
+
+&lt;p&gt;&lt;a id=&#34;orge181acf&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;镜像仓库&#34;&gt;镜像仓库&lt;/h1&gt;
+
+&lt;p&gt;&lt;a id=&#34;org4dc70c9&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;注册仓库&#34;&gt;注册仓库&lt;/h2&gt;
+
+&lt;p&gt;登录&lt;a href=&#34;https://registry.hub.docker.com/进行注册，如用户名为mospany&#34;&gt;https://registry.hub.docker.com/进行注册，如用户名为mospany&lt;/a&gt;, 密码为自定义。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgcf5186b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;使用镜像&#34;&gt;使用镜像&lt;/h2&gt;
+
+&lt;p&gt;&lt;a id=&#34;org6869380&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;登录仓库&#34;&gt;登录仓库&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;$ docker login index.docker.io
+Username: mospany
+Password:
+Login Succeeded
+
+或直接 docker login默认登录docker hub。
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org710c04e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;上传镜像&#34;&gt;上传镜像&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;$ docker tag loggen:latest mospany/loggen:latest
+$ docker push mospany/loggen:latest
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operatorr/hub-docker.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;参见：&lt;a href=&#34;https://hub.docker.com/repository/docker/mospany/loggen&#34;&gt;https://hub.docker.com/repository/docker/mospany/loggen&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org24bdd0f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;下载镜像&#34;&gt;下载镜像&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;$ docker pull mospany/loggen:latest
+latest: Pulling from mospany/loggen
+Digest: sha256:0cdeece36f8a003dd6b9c463cc73dad93479deabec08c1def033e72ec9818539
+Status: Image is up to date for mospany/loggen:latest
+docker.io/mospany/loggen:latest
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org3dc8e5f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;项目&#34;&gt;项目&lt;/h1&gt;
+
+&lt;p&gt;&lt;a id=&#34;org8e7c80b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;创建项目&#34;&gt;创建项目&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;mkdir guestbook
+cd guestbook
+go mod init guestbook
+kubebuilder init --domain xiaohongshu.org --owner &amp;quot;luxiu&amp;quot;
+kubebuilder create api --group redis  --version v1 --kind RedisCluster
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;关键截图如下：&lt;br /&gt;
+   &lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operatorr/kubebuilder-operator.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org28a7b3e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;修改文件&#34;&gt;修改文件&lt;/h2&gt;
+
+&lt;p&gt;1）修改Dockerfile的gcr.io镜像为其他可访问镜像(如golang:1.18)&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;为了防止出现“failed to solve with frontend dockerfile.v0: failed to create LLB definition: failed to do request: Head &amp;ldquo;&lt;a href=&#34;https://gcr.io/v2/distroless/static/manifests/nonroot&#34;&gt;https://gcr.io/v2/distroless/static/manifests/nonroot&lt;/a&gt;&amp;ldquo;: Service Unavailable”错误，需修改Dockerfile的gcr.io镜像为其他可访问镜像(如golang:1.18)&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;2）修改Dockerfile添加代理&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;为了防止go mod download时不至于超时连不上，需在Run go mod download行上面添加&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code&gt;ENV GOPROXY=&amp;quot;https://goproxy.cn&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;否则会出现如下错误：&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;3.469 go: cloud.google.com/go@v0.81.0: Get &amp;ldquo;&lt;a href=&#34;https://proxy.golang.org/cloud.google.com/go/@v/v0.81.0.mod&#34;&gt;https://proxy.golang.org/cloud.google.com/go/@v/v0.81.0.mod&lt;/a&gt;&amp;ldquo;: malformed HTTP response &amp;ldquo;\x00\x00\x12\x04\x00\x00\x00\x00\x00\x00\x03\x00\x00\x00\x80\x00\x04\x00\x01\x00\x00\x00\x05\x00\xff\xff\xff\x00\x00\x04\b\x00\x00\x00\x00\x00\u007f\xff\x00\x00\x00\x00\b\a\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01&amp;rdquo;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;**切记切记**： 先修改好再编译，否则一直出现上面错误(当时找了半天)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# Build the manager binary
+  FROM golang:1.18 as builder
+  ENV GOPROXY=&amp;quot;https://goproxy.cn&amp;quot;
+
+  WORKDIR /workspace
+  # Copy the Go Modules manifests
+  COPY go.mod go.mod
+  COPY go.sum go.sum
+  # cache deps before building and copying source so that we don&#39;t need to re-download as much
+  # and so that source changes don&#39;t invalidate our downloaded layer
+  RUN go mod download
+
+  # Copy the go source
+  COPY main.go main.go
+  COPY api/ api/
+  COPY controllers/ controllers/
+
+  # Build
+  RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -o manager main.go
+
+  # Use distroless as minimal base image to package the manager binary
+  # Refer to https://github.com/GoogleContainerTools/distroless for more details
+  #FROM gcr.io/distroless/static:nonroot
+  FROM centos:latest
+  WORKDIR /
+  COPY --from=builder /workspace/manager .
+  USER 65532:65532
+
+  ENTRYPOINT [&amp;quot;/manager&amp;quot;]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;必须在Dockerfile里面设置代理”ENV GOPROXY=&amp;rdquo;&lt;https://goproxy.cn&#34;“才行，如下设置也不行&gt;。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operatorr/docker-preferences.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;3）修改Makefile中的crd中的配置&lt;br /&gt;
+  给kubectl加上所要连接的集群， 如本机为&amp;#x2013;context docker-desktop。可通过如下命令获得：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;kubectl config get-contexts
+kubectl cluster-info
+kubectl config view
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operatorr/kubectl-info.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;对应的Makefile修改如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;.PHONY: install
+install: manifests kustomize ## Install CRDs into the K8s cluster specified in ~/.kube/config.
+  $(KUSTOMIZE) build config/crd | kubectl --context docker-desktop  apply -f -
+
+.PHONY: uninstall
+uninstall: manifests kustomize ## Uninstall CRDs from the K8s cluster specified in ~/.kube/config. Call with ignore-not-found=true to ignore resource not found errors during deletion.
+  $(KUSTOMIZE) build config/crd | kubectl --context docker-desktop  delete --ignore-not-found=$(ignore-not-found) -f -
+
+.PHONY: deploy
+deploy: manifests kustomize ## Deploy controller to the K8s cluster specified in ~/.kube/config.
+  cd config/manager &amp;amp;&amp;amp; $(KUSTOMIZE) edit set image controller=${IMG}
+  $(KUSTOMIZE) build config/default | kubectl --context docker-desktop  apply -f -
+
+.PHONY: undeploy
+undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/config. Call with ignore-not-found=true to ignore resource not found errors during deletion.
+  $(KUSTOMIZE) build config/default | kubectl --context docker-desktop  delete --ignore-not-found=$(ignore-not-found) -f -
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org36758f2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;编译&#34;&gt;编译&lt;/h2&gt;
+
+&lt;p&gt;&lt;a id=&#34;org6bf6172&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;make-help&#34;&gt;make help&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;make help
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operatorr/make-help.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org519553b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;make-build&#34;&gt;make build&lt;/h3&gt;
+
+&lt;p&gt;编译并在bin/下生成目标可执行程序。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operatorr/make-build.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org2dd91bb&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;make-install&#34;&gt;make install&lt;/h3&gt;
+
+&lt;p&gt;安装crd到目标集群，这一步可能受github网络影响自动下载kustomize慢需要多试几次或隔天再试。&lt;br /&gt;
+   &lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operatorr/make-install.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org416c2a6&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;make-docker-build&#34;&gt;make docker-build&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operatorr/make-docker-build.png&#34; alt=&#34;img&#34; /&gt;&lt;br /&gt;
+可以在刚生成的镜像列表中生成镜像。&lt;br /&gt;
+&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operatorr/make-docker-images.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org80dc9ab&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;make-docker-push&#34;&gt;make docker-push&lt;/h3&gt;
+
+&lt;p&gt;1）先增加要上传镜像的tag&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ docker tag controller:latest docker.io/mospany/controller:latest
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;2）make docker-push&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ make docker-push IMG=docker.io/mospany/controller:latest
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operatorr/make-docker-push.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;查看docker hub上传效果&lt;br /&gt;
+&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operatorr/make-docker-hub.png&#34; alt=&#34;img&#34; /&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;a id=&#34;org7c30fe1&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;运行&#34;&gt;运行&lt;/h2&gt;
+
+&lt;p&gt;先在mac上安装k8s集群，详见：&lt;a href=&#34;https://blog.51cto.com/zlyang/4838042&#34;&gt;Mac系统安装k8s集群&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org48206c2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;本地运行&#34;&gt;本地运行&lt;/h3&gt;
+
+&lt;p&gt;要想在本地运行 controller，只需要执行下面的命令，你将看到 controller 启动和运行时输出：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;make run
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operatorr/make-run.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgaf67979&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;部署到k8s集群中运行&#34;&gt;部署到k8s集群中运行&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;make deploy IMG=docker.io/mospany/controller:v1.0
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operatorr/make-deploy.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;查看日志&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;kubectl logs -n guestbook-system guestbook-controller-manager-7c67b5bd6c-gm5qs
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operatorr/make-logs.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgd52a315&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;创建cr&#34;&gt;创建CR&lt;/h2&gt;
+
+&lt;p&gt;该创建自定义资源对象CR了，如原生中的rc/deployment等对象&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# mosp @ mospdeMacBook-Pro in ~/work/pingan/arch/mysrc/guestbook [21:14:17]
+$ kubectl get RedisCluster
+NAME                  AGE
+rediscluster-sample   48m
+
+# mosp @ mospdeMacBook-Pro in ~/work/pingan/arch/mysrc/guestbook [21:22:49]
+$ kubectl get RedisCluster -o yaml
+apiVersion: v1
+items:
+- apiVersion: redis.xiaohongshu.org/v1
+  kind: RedisCluster
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {&amp;quot;apiVersion&amp;quot;:&amp;quot;redis.xiaohongshu.org/v1&amp;quot;,&amp;quot;kind&amp;quot;:&amp;quot;RedisCluster&amp;quot;,&amp;quot;metadata&amp;quot;:{&amp;quot;annotations&amp;quot;:{},&amp;quot;name&amp;quot;:&amp;quot;rediscluster-sample&amp;quot;,&amp;quot;namespace&amp;quot;:&amp;quot;default&amp;quot;},&amp;quot;spec&amp;quot;:null}
+    creationTimestamp: &amp;quot;2022-07-29T12:34:11Z&amp;quot;
+    generation: 1
+    name: rediscluster-sample
+    namespace: default
+    resourceVersion: &amp;quot;200052&amp;quot;
+    uid: 18eaf75f-9597-46af-bd88-abf7153c1377
+  status: {}
+kind: List
+metadata:
+  resourceVersion: &amp;quot;&amp;quot;
+  selfLink: &amp;quot;&amp;quot;
+
+# mosp @ mospdeMacBook-Pro in ~/work/pingan/arch/mysrc/guestbook [21:23:07]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org6e0a70e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;开发业务逻辑&#34;&gt;开发业务逻辑&lt;/h2&gt;
+
+&lt;p&gt;下面我们将修改 CRD 的数据结构并在 controller 中增加一些日志输出。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org2d593f7&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;修改-crd&#34;&gt;修改 CRD&lt;/h3&gt;
+
+&lt;p&gt;我们将修改api/v1/rediscluster_types.go 文件的内容，在 CRD 中增加 FirstName、LastName 和 Status 字段。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// RedisClusterSpec defines the desired state of RedisCluster
+type RedisClusterSpec struct {
+    // INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
+
+    // Important: Run &amp;quot;make&amp;quot; to regenerate code after modifying this file
+
+    // Foo is an example field of RedisCluster. Edit rediscluster_types.go to remove/update
+    FirstName string `json:&amp;quot;firstname&amp;quot;`
+    LastName  string `json:&amp;quot;lastname&amp;quot;`
+}
+
+// RedisClusterStatus defines the observed state of RedisCluster
+type RedisClusterStatus struct {
+    // INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
+
+    // Important: Run &amp;quot;make&amp;quot; to regenerate code after modifying this file
+    Status string `json:&amp;quot;Status&amp;quot;`
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org2e8bba4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;修改-reconcile-函数&#34;&gt;修改 Reconcile 函数&lt;/h3&gt;
+
+&lt;p&gt;Reconcile 函数是 Operator 的核心逻辑，Operator 的业务逻辑都位于 controllers/rediscluster_controller.go 文件的 Reconcile 函数中&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;func (r *RedisClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+    _ = log.FromContext(ctx)
+
+    // TODO(user): your logic here
+
+    // 获取当前的 CR，并打印
+    logger := log.FromContext(ctx)
+    obj := &amp;amp;redisv1.RedisCluster{}
+    if err := r.Get(ctx, req.NamespacedName, obj); err != nil {
+        logger.Error(err, &amp;quot;Unable to fetch object&amp;quot;)
+        return ctrl.Result{}, nil
+    } else {
+        logger.Info(&amp;quot;Greeting from Kubebuilder to&amp;quot;, obj.Spec.FirstName, obj.Spec.LastName)
+    }
+
+    // 初始化 CR 的 Status 为 Running
+    obj.Status.Status = &amp;quot;Running&amp;quot;
+    if err := r.Status().Update(ctx, obj); err != nil {
+        logger.Error(err, &amp;quot;unable to update status&amp;quot;)
+    }
+
+    return ctrl.Result{}, nil
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org77b1993&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;运行测试&#34;&gt;运行测试&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;安装CRD（同上）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;部署controller（同上）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;创建CR&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;修改 config/samples/redis_v1_rediscluster.yaml 文件中的配置&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;apiVersion: redis.xiaohongshu.org/v1
+kind: RedisCluster
+metadata:
+  name: rediscluster-sample
+spec:
+  # TODO(user): Add fields here
+  firstname: Jimmy
+  lastname: Song
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;执行下面命令，创建CR：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ k8sdev apply -f  config/samples/redis_v1_rediscluster.yaml
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;查看controller里的运行日志：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operatorr/controller-logs.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;参考资料&#34;&gt;参考资料&lt;/h1&gt;
+
+&lt;p&gt;【01】&lt;a href=&#34;https://blog.csdn.net/weixin_43568070/article/details/89892620&#34;&gt;使用shell命令行登陆Docker Hub出现的404Not found的问题&lt;/a&gt;&lt;br /&gt;
+【02】&lt;a href=&#34;https://blog.csdn.net/HaHa_Sir/article/details/119412754&#34;&gt;Docker镜像推送Dockerhub&lt;/a&gt;&lt;br /&gt;
+【03】&lt;a href=&#34;https://www.cnblogs.com/mysql-dba/p/15982341.html&#34;&gt;使用 kubebuilder 创建并部署 k8s-operator&lt;/a&gt;&lt;br /&gt;
+【04】&lt;a href=&#34;http://tnblog.net/hb/article/details/7516&#34;&gt;Kustomize的基本使用&lt;/a&gt;&lt;br /&gt;
+【05】&lt;a href=&#34;https://www.cnblogs.com/lizhewei/p/13214785.html&#34;&gt;【kubebuilder2.0】安装、源码分析 &lt;/a&gt;&lt;br /&gt;
+【06】&lt;a href=&#34;https://www.cnblogs.com/alisystemsoftware/p/11580202.html&#34;&gt;深入解析 Kubebuilder：让编写 CRD 变得更简单&lt;/a&gt;&lt;br /&gt;
+【07】&lt;a href=&#34;https://os.51cto.com/article/661378.html&#34;&gt;一篇带给你KubeBuilder 简明教程&lt;/a&gt;&lt;br /&gt;
+【08】&lt;a href=&#34;https://blog.csdn.net/chenxy02/article/details/125554680&#34;&gt;深入解析Kubebuilder&lt;/a&gt;&lt;br /&gt;
+【09】&lt;a href=&#34;https://blog.csdn.net/qq_45874107/article/details/119839187&#34;&gt;什么是RBAC&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
         
         <item>
             <title>K8S项目实践(03): 随机调度器</title>
@@ -4548,58 +4955,6 @@ DNS报文如上图所示，其他左图为报文完整格式，后图区域数�
 
 &lt;p&gt;RFC中支持超文本咖啡壶协议（RFC2324）与茶壶协议(RFC7168),而emacs提供了完全支持RFC2323的coffee.el插件提供控制展示界面，只要你有一根网线，加一个支持此协议的咖啡壶，你确实可以用emacs煮咖啡，甚至有人已经用它来炒过川菜。&lt;br /&gt;
 &lt;img src=&#34;http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-cook.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-</description>
-        </item>
-        
-        <item>
-            <title>为什么老家得有房</title>
-            <link>http://mospany.github.io/2019/10/14/go-home-build-house/</link>
-            <pubDate>Mon, 14 Oct 2019 14:17:41 CST</pubDate>
-            <author>Mospan</author>
-            <guid>http://mospany.github.io/2019/10/14/go-home-build-house/</guid>
-            <description>
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/go-home-build-house/main.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;很多农村人到城市里打工或工作，不怎么在农村老家住了，但还要在老家建一座新房，这是为什么呢？&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orga367a76&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;老家才是永远的根&#34;&gt;老家才是永远的根&lt;/h1&gt;
-
-&lt;p&gt;无论在哪里谋生，只要老家的房子还在，那就还有一条退路，还有一个寄托。如果老家的房子都没有了，那就像无根浮萍，灵魂永远没有寄托。&lt;br /&gt;
-虽然人可以搬进城里，但是亲情搬不走，只要老家的房子还在，隔三差五的回去看看，这个家就还是一个完整的家，一个团聚的家。房子没了，家也散了，亲情也淡了，那是花多少钱也弥补不回来的。&lt;br /&gt;
-很多现在在外打拼的人，以后还是要回到农村养老的,回到乡下老家，养养鸡、种种菜、钓钓鱼，平日里喝点小酒、打点小牌，生命是从这里开始的，再从这里结束。&lt;/p&gt;
-
-&lt;p&gt;对于大多数农村出来的人来说，外面的房子，只是一个住所，老家的房子，才是真正的家。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgb73086d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;最好吃的永远是家乡菜&#34;&gt;最好吃的永远是家乡菜&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;org87e2a8a&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;在城市里只有工作没有生活&#34;&gt;在城市里只有工作没有生活&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;org51360fb&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;蜗居在城市向往着豪宅&#34;&gt;蜗居在城市向往着豪宅&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;org4168492&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;美好的回忆很多都在儿时的老家&#34;&gt;美好的回忆很多都在儿时的老家&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;org6df280d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;返璞归真-回归田园风光&#34;&gt;返璞归真，回归田园风光&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgc371da2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;新农村建设越来越好&#34;&gt;新农村建设越来越好&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;org8f4993c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;现在不盖房以后回不去了&#34;&gt;现在不盖房以后回不去了&lt;/h1&gt;
 </description>
         </item>
         
