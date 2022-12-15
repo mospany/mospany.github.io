@@ -117,7 +117,7 @@ Login Succeeded
 $ docker push mospany/loggen:latest
 </code></pre>
 
-<p><img src="http://blog.mospan.cn/post/img/k8s/operatorr/hub-docker.png" alt="img" /></p>
+<p><img src="http://blog.mospan.cn/post/img/k8s/operator/hub-docker.png" alt="img" /></p>
 
 <p>参见：<a href="https://hub.docker.com/repository/docker/mospany/loggen">https://hub.docker.com/repository/docker/mospany/loggen</a></p>
 
@@ -148,7 +148,7 @@ kubebuilder create api --group redis  --version v1 --kind RedisCluster
 </code></pre>
 
 <p>关键截图如下：<br />
-   <img src="http://blog.mospan.cn/post/img/k8s/operatorr/kubebuilder-operator.png" alt="img" /></p>
+   <img src="http://blog.mospan.cn/post/img/k8s/operator/kubebuilder-operator.png" alt="img" /></p>
 
 <p><a id="org28a7b3e"></a></p>
 
@@ -210,7 +210,7 @@ kubebuilder create api --group redis  --version v1 --kind RedisCluster
 
 <p>必须在Dockerfile里面设置代理”ENV GOPROXY=&rdquo;<https://goproxy.cn"“才行，如下设置也不行>。</p>
 
-<p><img src="http://blog.mospan.cn/post/img/k8s/operatorr/docker-preferences.png" alt="img" /></p>
+<p><img src="http://blog.mospan.cn/post/img/k8s/operator/docker-preferences.png" alt="img" /></p>
 
 <p>3）修改Makefile中的crd中的配置<br />
   给kubectl加上所要连接的集群， 如本机为&#x2013;context docker-desktop。可通过如下命令获得：</p>
@@ -220,7 +220,7 @@ kubectl cluster-info
 kubectl config view
 </code></pre>
 
-<p><img src="http://blog.mospan.cn/post/img/k8s/operatorr/kubectl-info.png" alt="img" /></p>
+<p><img src="http://blog.mospan.cn/post/img/k8s/operator/kubectl-info.png" alt="img" /></p>
 
 <p>对应的Makefile修改如下：</p>
 
@@ -253,7 +253,7 @@ undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/confi
 <pre><code>make help
 </code></pre>
 
-<p><img src="http://blog.mospan.cn/post/img/k8s/operatorr/make-help.png" alt="img" /></p>
+<p><img src="http://blog.mospan.cn/post/img/k8s/operator/make-help.png" alt="img" /></p>
 
 <p><a id="org519553b"></a></p>
 
@@ -261,22 +261,22 @@ undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/confi
 
 <p>编译并在bin/下生成目标可执行程序。</p>
 
-<p><img src="http://blog.mospan.cn/post/img/k8s/operatorr/make-build.png" alt="img" /></p>
+<p><img src="http://blog.mospan.cn/post/img/k8s/operator/make-build.png" alt="img" /></p>
 
 <p><a id="org2dd91bb"></a></p>
 
 <h3 id="make-install">make install</h3>
 
 <p>安装crd到目标集群，这一步可能受github网络影响自动下载kustomize慢需要多试几次或隔天再试。<br />
-   <img src="http://blog.mospan.cn/post/img/k8s/operatorr/make-install.png" alt="img" /></p>
+   <img src="http://blog.mospan.cn/post/img/k8s/operator/make-install.png" alt="img" /></p>
 
 <p><a id="org416c2a6"></a></p>
 
 <h3 id="make-docker-build">make docker-build</h3>
 
-<p><img src="http://blog.mospan.cn/post/img/k8s/operatorr/make-docker-build.png" alt="img" /><br />
+<p><img src="http://blog.mospan.cn/post/img/k8s/operator/make-docker-build.png" alt="img" /><br />
 可以在刚生成的镜像列表中生成镜像。<br />
-<img src="http://blog.mospan.cn/post/img/k8s/operatorr/make-docker-images.png" alt="img" /></p>
+<img src="http://blog.mospan.cn/post/img/k8s/operator/make-docker-images.png" alt="img" /></p>
 
 <p><a id="org80dc9ab"></a></p>
 
@@ -292,11 +292,11 @@ undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/confi
 <pre><code>$ make docker-push IMG=docker.io/mospany/controller:latest
 </code></pre>
 
-<p><img src="http://blog.mospan.cn/post/img/k8s/operatorr/make-docker-push.png" alt="img" /></p>
+<p><img src="http://blog.mospan.cn/post/img/k8s/operator/make-docker-push.png" alt="img" /></p>
 
 <ol>
 <li>查看docker hub上传效果<br />
-<img src="http://blog.mospan.cn/post/img/k8s/operatorr/make-docker-hub.png" alt="img" /></li>
+<img src="http://blog.mospan.cn/post/img/k8s/operator/make-docker-hub.png" alt="img" /></li>
 </ol>
 
 <p><a id="org7c30fe1"></a></p>
@@ -314,7 +314,7 @@ undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/confi
 <pre><code>make run
 </code></pre>
 
-<p><img src="http://blog.mospan.cn/post/img/k8s/operatorr/make-run.png" alt="img" /></p>
+<p><img src="http://blog.mospan.cn/post/img/k8s/operator/make-run.png" alt="img" /></p>
 
 <p><a id="orgaf67979"></a></p>
 
@@ -323,14 +323,14 @@ undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/confi
 <pre><code>make deploy IMG=docker.io/mospany/controller:v1.0
 </code></pre>
 
-<p><img src="http://blog.mospan.cn/post/img/k8s/operatorr/make-deploy.png" alt="img" /></p>
+<p><img src="http://blog.mospan.cn/post/img/k8s/operator/make-deploy.png" alt="img" /></p>
 
 <p>查看日志</p>
 
 <pre><code>kubectl logs -n guestbook-system guestbook-controller-manager-7c67b5bd6c-gm5qs
 </code></pre>
 
-<p><img src="http://blog.mospan.cn/post/img/k8s/operatorr/make-logs.png" alt="img" /></p>
+<p><img src="http://blog.mospan.cn/post/img/k8s/operator/make-logs.png" alt="img" /></p>
 
 <p><a id="orgd52a315"></a></p>
 
@@ -462,7 +462,7 @@ spec:
 
 <p>查看controller里的运行日志：</p>
 
-<p><img src="http://blog.mospan.cn/post/img/k8s/operatorr/controller-logs.png" alt="img" /></p>
+<p><img src="http://blog.mospan.cn/post/img/k8s/operator/controller-logs.png" alt="img" /></p>
 
 <h1 id="参考资料">参考资料</h1>
 

@@ -118,7 +118,7 @@ kubebuilder create api --group redis  --version v1 --kind RedisCluster
 
   必须在Dockerfile里面设置代理”ENV GOPROXY="https://goproxy.cn"“才行，如下设置也不行。
 
-   [[http://blog.mospan.cn/post/img/k8s/operatorr/docker-preferences.png]]
+   [[http://blog.mospan.cn/post/img/k8s/operator/docker-preferences.png]]
 
 3）修改Makefile中的crd中的配置
   给kubectl加上所要连接的集群， 如本机为--context docker-desktop。可通过如下命令获得：
@@ -128,7 +128,7 @@ kubebuilder create api --group redis  --version v1 --kind RedisCluster
   kubectl cluster-info
   kubectl config view
   #+END_SRC
-   [[http://blog.mospan.cn/post/img/k8s/operatorr/kubectl-info.png]]
+   [[http://blog.mospan.cn/post/img/k8s/operator/kubectl-info.png]]
   
  对应的Makefile修改如下：
  #+BEGIN_SRC Makefile
@@ -157,21 +157,21 @@ kubebuilder create api --group redis  --version v1 --kind RedisCluster
     make help
     #+END_SRC
 
-   [[http://blog.mospan.cn/post/img/k8s/operatorr/make-help.png]]
+   [[http://blog.mospan.cn/post/img/k8s/operator/make-help.png]]
    
 ***  make build
 编译并在bin/下生成目标可执行程序。
 
-   [[http://blog.mospan.cn/post/img/k8s/operatorr/make-build.png]]
+   [[http://blog.mospan.cn/post/img/k8s/operator/make-build.png]]
 
 *** make install
 安装crd到目标集群，这一步可能受github网络影响自动下载kustomize慢需要多试几次或隔天再试。
-   [[http://blog.mospan.cn/post/img/k8s/operatorr/make-install.png]]
+   [[http://blog.mospan.cn/post/img/k8s/operator/make-install.png]]
 
 *** make docker-build
-   [[http://blog.mospan.cn/post/img/k8s/operatorr/make-docker-build.png]]
+   [[http://blog.mospan.cn/post/img/k8s/operator/make-docker-build.png]]
    可以在刚生成的镜像列表中生成镜像。
-   [[http://blog.mospan.cn/post/img/k8s/operatorr/make-docker-images.png]]
+   [[http://blog.mospan.cn/post/img/k8s/operator/make-docker-images.png]]
 
 ***  make docker-push
 1）先增加要上传镜像的tag
@@ -184,10 +184,10 @@ $ docker tag controller:latest docker.io/mospany/controller:latest
 #+BEGIN_SRC sh
 $ make docker-push IMG=docker.io/mospany/controller:latest
 #+END_SRC
-   [[http://blog.mospan.cn/post/img/k8s/operatorr/make-docker-push.png]]
+   [[http://blog.mospan.cn/post/img/k8s/operator/make-docker-push.png]]
 
 3) 查看docker hub上传效果
-   [[http://blog.mospan.cn/post/img/k8s/operatorr/make-docker-hub.png]]
+   [[http://blog.mospan.cn/post/img/k8s/operator/make-docker-hub.png]]
 
 
 ** 运行
@@ -198,20 +198,20 @@ $ make docker-push IMG=docker.io/mospany/controller:latest
    #+BEGIN_SRC sh
    make run
    #+END_SRC
-   [[http://blog.mospan.cn/post/img/k8s/operatorr/make-run.png]]
+   [[http://blog.mospan.cn/post/img/k8s/operator/make-run.png]]
 
 *** 部署到k8s集群中运行
     #+BEGIN_SRC sh
 
     make deploy IMG=docker.io/mospany/controller:v1.0
     #+END_SRC
-   [[http://blog.mospan.cn/post/img/k8s/operatorr/make-deploy.png]]
+   [[http://blog.mospan.cn/post/img/k8s/operator/make-deploy.png]]
 
    查看日志
    #+BEGIN_SRC sh
    kubectl logs -n guestbook-system guestbook-controller-manager-7c67b5bd6c-gm5qs
    #+END_SRC
-   [[http://blog.mospan.cn/post/img/k8s/operatorr/make-logs.png]]
+   [[http://blog.mospan.cn/post/img/k8s/operator/make-logs.png]]
 
 **  创建CR
 该创建自定义资源对象CR了，如原生中的rc/deployment等对象
@@ -330,7 +330,7 @@ $ k8sdev apply -f  config/samples/redis_v1_rediscluster.yaml
 
 查看controller里的运行日志：
 
-   [[http://blog.mospan.cn/post/img/k8s/operatorr/controller-logs.png]]
+   [[http://blog.mospan.cn/post/img/k8s/operator/controller-logs.png]]
 
 
 * 原理
