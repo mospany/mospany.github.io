@@ -6,10 +6,10 @@
   <title>K8S项目实践(04): 基于kubebuilder编写operator - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
   <meta name="keywords" content="K8S,项目实践,">
-  <meta name="description" content="介绍 镜像仓库 注册仓库 登录https://registry.hub.docker.com/进行注册，如用户名为mospany, 密码为自定义。 使">
+  <meta name="description" content="介绍 Kubebuilder是一个由controller-runtime支持的出色SDK，它可以帮助您轻松快速地在 Go 中编写Kubernetes">
   <meta name="author" content="mospan">
   <meta itemprop="name" content="K8S项目实践(04): 基于kubebuilder编写operator - 墨斯潘園">
-  <meta itemprop="description" content="介绍 镜像仓库 注册仓库 登录https://registry.hub.docker.com/进行注册，如用户名为mospany, 密码为自定义。 使">
+  <meta itemprop="description" content="介绍 Kubebuilder是一个由controller-runtime支持的出色SDK，它可以帮助您轻松快速地在 Go 中编写Kubernetes">
   <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
@@ -79,25 +79,155 @@
     
     
 
-<p><a id="orgfd75324"></a></p>
+<p><a id="orgcfa7382"></a></p>
 
 <h1 id="介绍">介绍</h1>
 
-<p><a id="orge181acf"></a></p>
+<p>Kubebuilder是一个由controller-runtime支持的出色SDK，它可以帮助您轻松快速地在 Go 中编写Kubernetes operator，方法是处理多种忙碌的事情，例如以组织良好的方式引导大量样板代码，设置有用的 Makefile make，目标是构建、运行和部署operator、构建 CRD、设置相关的 Dockefile、RBAC、涉及部署operator的多个 YAML 等等。<br />
+Kubebuilder 是一个使用 CRDs 构建 K8s API 的 SDK，主要是：</p>
+
+<ul>
+<li>提供脚手架工具初始化 CRDs 工程，自动生成 boilerplate 代码和配置；</li>
+<li>提供代码库封装底层的 K8s go-client；</li>
+</ul>
+
+<p>方便用户从零开始开发 CRDs，Controllers 和 Admission Webhooks 来扩展 K8s。</p>
+
+<p>为了编写自定义的operatro，需要进行如下:</p>
+
+<ol>
+<li>安装kubebuilder</li>
+<li>使用kubebuilder进行项目创建</li>
+<li>编写operator代码</li>
+<li>编译打包镜像上传到镜像仓库。</li>
+</ol>
+
+<p><a id="org0fa6862"></a></p>
+
+<h1 id="原理">原理</h1>
+
+<p><img src="http://blog.mospan.cn/post/img/k8s/operatorr/kubebuilder-arch.png" alt="img" /></p>
+
+<p><a id="org78ac50d"></a></p>
+
+<h2 id="基础概念">基础概念</h2>
+
+<p><a id="org52cd124"></a></p>
+
+<h3 id="gvks-gvrs">GVKs&amp;GVRs</h3>
+
+<p>GVK = GroupVersionKind，GVR = GroupVersionResource。</p>
+
+<ul>
+<li>API Group &amp; Versions（GV）</li>
+</ul>
+
+<p>API Group 是相关 API 功能的集合，每个 Group 拥有一或多个 Versions，用于接口的演进。</p>
+
+<ul>
+<li>Kinds &amp; Resources（GVR）</li>
+</ul>
+
+<p>每个 GV 都包含多个 API 类型，称为 Kinds，在不同的 Versions 之间同一个 Kind 定义可能不同， Resource 是 Kind 的对象标识（resource type），一般来说 Kinds 和 Resources 是 1:1 的，比如 pods Resource 对应 Pod Kind，但是有时候相同的 Kind 可能对应多个 Resources，比如 Scale Kind 可能对应很多 Resources：deployments/scale，replicasets/scale，对于 CRD 来说，只会是 1:1 的关系。</p>
+
+<p>每一个 GVK 都关联着一个 package 中给定的 root Go type，比如 apps/v1/Deployment 就关联着 K8s 源码里面 k8s.io/api/apps/v1 package 中的 Deployment struct，我们提交的各类资源定义 YAML 文件都需要写：</p>
+
+<p>apiVersion：这个就是 GV 。kind：这个就是 K。</p>
+
+<p>根据 GVK K8s 就能找到你到底要创建什么类型的资源，根据你定义的 Spec 创建好资源之后就成为了 Resource，也就是 GVR。GVK/GVR 就是 K8s 资源的坐标，是我们创建/删除/修改/读取资源的基础。</p>
+
+<p><a id="org691e4a3"></a></p>
+
+<h3 id="scheme">Scheme</h3>
+
+<p>每一组 Controllers 都需要一个 Scheme，提供了 Kinds 与对应 Go types 的映射，也就是说给定 Go type 就知道他的 GVK，给定 GVK 就知道他的 Go type，比如说我们给定一个 Scheme: &ldquo;tutotial.kubebuilder.io/api/v1&rdquo;.CronJob{} 这个 Go type 映射到 batch.tutotial.kubebuilder.io/v1 的 CronJob GVK，那么从 Api Server 获取到下面的 JSON:</p>
+
+<pre><code>{
+    &quot;kind&quot;: &quot;CronJob&quot;,
+    &quot;apiVersion&quot;: &quot;batch.tutorial.kubebuilder.io/v1&quot;,
+    ...
+}
+</code></pre>
+
+<p>就能构造出对应的 Go type了，通过这个 Go type 也能正确地获取 GVR 的一些信息，控制器可以通过该 Go type 获取到期望状态以及其他辅助信息进行调谐逻辑。</p>
+
+<p><a id="orgc45a76f"></a></p>
+
+<h3 id="manager">Manager</h3>
+
+<p>Kubebuilder 的核心组件，具有 3 个职责：</p>
+
+<ul>
+<li>负责运行所有的 Controllers；</li>
+<li>初始化共享 caches，包含 listAndWatch 功能；</li>
+<li>初始化 clients 用于与 Api Server 通信。</li>
+</ul>
+
+<p><a id="org50d3209"></a></p>
+
+<h3 id="cache">Cache</h3>
+
+<p>Kubebuilder 的核心组件，负责在 Controller 进程里面根据 Scheme 同步 Api Server 中所有该 Controller 关心 GVKs 的 GVRs，其核心是 GVK -&gt; Informer 的映射，Informer 会负责监听对应 GVK 的 GVRs 的创建/删除/更新操作，以触发 Controller 的 Reconcile 逻辑。</p>
+
+<p><a id="org7fb1547"></a></p>
+
+<h3 id="controller">Controller</h3>
+
+<p>Kubebuidler 为我们生成的脚手架文件，我们只需要实现 Reconcile 方法即可。</p>
+
+<p><a id="org528499e"></a></p>
+
+<h3 id="client">Client</h3>
+
+<p>在实现 Controller 的时候不可避免地需要对某些资源类型进行创建/删除/更新，就是通过该 Clients 实现的，其中查询功能实际查询是本地的 Cache，写操作直接访问 Api Server。</p>
+
+<p><a id="org16de8d6"></a></p>
+
+<h3 id="index">Index</h3>
+
+<p>由于 Controller 经常要对 Cache 进行查询，Kubebuilder 提供 Index utility 给 Cache 加索引提升查询效率。</p>
+
+<p><a id="org607691c"></a></p>
+
+<h3 id="finalizer">Finalizer</h3>
+
+<p>在一般情况下，如果资源被删除之后，我们虽然能够被触发删除事件，但是这个时候从 Cache 里面无法读取任何被删除对象的信息，这样一来，导致很多垃圾清理工作因为信息不足无法进行，K8s 的 Finalizer 字段用于处理这种情况。在 K8s 中，只要对象 ObjectMeta 里面的 Finalizers 不为空，对该对象的 delete 操作就会转变为 update 操作，具体说就是 update deletionTimestamp 字段，其意义就是告诉 K8s 的 GC“在deletionTimestamp 这个时刻之后，只要 Finalizers 为空，就立马删除掉该对象”。</p>
+
+<p>所以一般的使用姿势就是在创建对象时把 Finalizers 设置好（任意 string），然后处理 DeletionTimestamp 不为空的 update 操作（实际是 delete），根据 Finalizers 的值执行完所有的 pre-delete hook（此时可以在 Cache 里面读取到被删除对象的任何信息）之后将 Finalizers 置为空即可。</p>
+
+<p><a id="org0c0efe9"></a></p>
+
+<h3 id="ownerreference">OwnerReference</h3>
+
+<p>K8s GC 在删除一个对象时，任何 ownerReference 是该对象的对象都会被清除，与此同时，Kubebuidler 支持所有对象的变更都会触发 Owner 对象 controller 的 Reconcile 方法。</p>
+
+<p><a id="orgb1ddf8b"></a></p>
+
+<h1 id="实现">实现</h1>
+
+<p>1、构造新的scheme,<br />
+2、解析命令行参数，获取或默认metric和健康检查端口。<br />
+3、实例化 manager，参数 config<br />
+   3.1） 向 manager 添加 scheme<br />
+   3.2） 向 manager 添加 controller，该 controller 包含一个 reconciler 结构体，我们需要在 reconciler 结构体实现逻辑处理<br />
+4、向manager添加healthz和readyz探测。<br />
+5、启动 manager.start()</p>
+
+<p><a id="org40fbcb7"></a></p>
 
 <h1 id="镜像仓库">镜像仓库</h1>
 
-<p><a id="org4dc70c9"></a></p>
+<p><a id="org246c0bb"></a></p>
 
 <h2 id="注册仓库">注册仓库</h2>
 
 <p>登录<a href="https://registry.hub.docker.com/进行注册，如用户名为mospany">https://registry.hub.docker.com/进行注册，如用户名为mospany</a>, 密码为自定义。</p>
 
-<p><a id="orgcf5186b"></a></p>
+<p><a id="org43ccc0d"></a></p>
 
 <h2 id="使用镜像">使用镜像</h2>
 
-<p><a id="org6869380"></a></p>
+<p><a id="org829ca45"></a></p>
 
 <h3 id="登录仓库">登录仓库</h3>
 
@@ -109,7 +239,7 @@ Login Succeeded
 或直接 docker login默认登录docker hub。
 </code></pre>
 
-<p><a id="org710c04e"></a></p>
+<p><a id="org2fc914e"></a></p>
 
 <h3 id="上传镜像">上传镜像</h3>
 
@@ -117,11 +247,11 @@ Login Succeeded
 $ docker push mospany/loggen:latest
 </code></pre>
 
-<p><img src="http://blog.mospan.cn/post/img/k8s/operator/hub-docker.png" alt="img" /></p>
+<p><img src="http://blog.mospan.cn/post/img/k8s/operatorr/hub-docker.png" alt="img" /></p>
 
 <p>参见：<a href="https://hub.docker.com/repository/docker/mospany/loggen">https://hub.docker.com/repository/docker/mospany/loggen</a></p>
 
-<p><a id="org24bdd0f"></a></p>
+<p><a id="org3d0e3a5"></a></p>
 
 <h3 id="下载镜像">下载镜像</h3>
 
@@ -132,11 +262,11 @@ Status: Image is up to date for mospany/loggen:latest
 docker.io/mospany/loggen:latest
 </code></pre>
 
-<p><a id="org3dc8e5f"></a></p>
+<p><a id="orgc8a2f44"></a></p>
 
 <h1 id="项目">项目</h1>
 
-<p><a id="org8e7c80b"></a></p>
+<p><a id="org3a9cf00"></a></p>
 
 <h2 id="创建项目">创建项目</h2>
 
@@ -148,9 +278,9 @@ kubebuilder create api --group redis  --version v1 --kind RedisCluster
 </code></pre>
 
 <p>关键截图如下：<br />
-   <img src="http://blog.mospan.cn/post/img/k8s/operator/kubebuilder-operator.png" alt="img" /></p>
+   <img src="http://blog.mospan.cn/post/img/k8s/operatorr/kubebuilder-operator.png" alt="img" /></p>
 
-<p><a id="org28a7b3e"></a></p>
+<p><a id="org1ddad49"></a></p>
 
 <h2 id="修改文件">修改文件</h2>
 
@@ -172,7 +302,7 @@ kubebuilder create api --group redis  --version v1 --kind RedisCluster
 <p>否则会出现如下错误：</p>
 
 <blockquote>
-<p>3.469 go: cloud.google.com/go@v0.81.0: Get &ldquo;<a href="https://proxy.golang.org/cloud.google.com/go/@v/v0.81.0.mod">https://proxy.golang.org/cloud.google.com/go/@v/v0.81.0.mod</a>&ldquo;: malformed HTTP response &ldquo;\x00\x00\x12\x04\x00\x00\x00\x00\x00\x00\x03\x00\x00\x00\x80\x00\x04\x00\x01\x00\x00\x00\x05\x00\xff\xff\xff\x00\x00\x04\b\x00\x00\x00\x00\x00\u007f\xff\x00\x00\x00\x00\b\a\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01&rdquo;</p>
+<p>3.469 go: cloud.google.com/go@v0.81.0: Get &ldquo;<a href="https://proxy.golang.org/cloud.google.com/go/@v/v0.81.0.mod">https://proxy.golang.org/cloud.google.com/go/@v/v0.81.0.mod</a>&ldquo;: malformed HTTP response &ldquo;\x00\x00\x12\x04&#x2026;\x00\x00\x01&rdquo;</p>
 </blockquote>
 
 <p>**切记切记**： 先修改好再编译，否则一直出现上面错误(当时找了半天)</p>
@@ -242,11 +372,11 @@ undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/confi
   $(KUSTOMIZE) build config/default | kubectl --context docker-desktop  delete --ignore-not-found=$(ignore-not-found) -f -
 </code></pre>
 
-<p><a id="org36758f2"></a></p>
+<p><a id="orgf288f34"></a></p>
 
 <h2 id="编译">编译</h2>
 
-<p><a id="org6bf6172"></a></p>
+<p><a id="org99eec51"></a></p>
 
 <h3 id="make-help">make help</h3>
 
@@ -255,7 +385,7 @@ undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/confi
 
 <p><img src="http://blog.mospan.cn/post/img/k8s/operator/make-help.png" alt="img" /></p>
 
-<p><a id="org519553b"></a></p>
+<p><a id="org54938e4"></a></p>
 
 <h3 id="make-build">make build</h3>
 
@@ -263,14 +393,14 @@ undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/confi
 
 <p><img src="http://blog.mospan.cn/post/img/k8s/operator/make-build.png" alt="img" /></p>
 
-<p><a id="org2dd91bb"></a></p>
+<p><a id="orge8e0f0a"></a></p>
 
 <h3 id="make-install">make install</h3>
 
 <p>安装crd到目标集群，这一步可能受github网络影响自动下载kustomize慢需要多试几次或隔天再试。<br />
    <img src="http://blog.mospan.cn/post/img/k8s/operator/make-install.png" alt="img" /></p>
 
-<p><a id="org416c2a6"></a></p>
+<p><a id="orge3f35bb"></a></p>
 
 <h3 id="make-docker-build">make docker-build</h3>
 
@@ -278,7 +408,7 @@ undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/confi
 可以在刚生成的镜像列表中生成镜像。<br />
 <img src="http://blog.mospan.cn/post/img/k8s/operator/make-docker-images.png" alt="img" /></p>
 
-<p><a id="org80dc9ab"></a></p>
+<p><a id="org54b15f4"></a></p>
 
 <h3 id="make-docker-push">make docker-push</h3>
 
@@ -299,13 +429,13 @@ undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/confi
 <img src="http://blog.mospan.cn/post/img/k8s/operator/make-docker-hub.png" alt="img" /></li>
 </ol>
 
-<p><a id="org7c30fe1"></a></p>
+<p><a id="org5f3af46"></a></p>
 
 <h2 id="运行">运行</h2>
 
 <p>先在mac上安装k8s集群，详见：<a href="https://blog.51cto.com/zlyang/4838042">Mac系统安装k8s集群</a></p>
 
-<p><a id="org48206c2"></a></p>
+<p><a id="org861d0fa"></a></p>
 
 <h3 id="本地运行">本地运行</h3>
 
@@ -316,7 +446,7 @@ undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/confi
 
 <p><img src="http://blog.mospan.cn/post/img/k8s/operator/make-run.png" alt="img" /></p>
 
-<p><a id="orgaf67979"></a></p>
+<p><a id="org5dc2c10"></a></p>
 
 <h3 id="部署到k8s集群中运行">部署到k8s集群中运行</h3>
 
@@ -332,7 +462,7 @@ undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/confi
 
 <p><img src="http://blog.mospan.cn/post/img/k8s/operator/make-logs.png" alt="img" /></p>
 
-<p><a id="orgd52a315"></a></p>
+<p><a id="orgf9f8f6e"></a></p>
 
 <h2 id="创建cr">创建CR</h2>
 
@@ -368,13 +498,13 @@ metadata:
 # mosp @ mospdeMacBook-Pro in ~/work/pingan/arch/mysrc/guestbook [21:23:07]
 </code></pre>
 
-<p><a id="org6e0a70e"></a></p>
+<p><a id="org7b598e7"></a></p>
 
 <h2 id="开发业务逻辑">开发业务逻辑</h2>
 
 <p>下面我们将修改 CRD 的数据结构并在 controller 中增加一些日志输出。</p>
 
-<p><a id="org2d593f7"></a></p>
+<p><a id="org869a73b"></a></p>
 
 <h3 id="修改-crd">修改 CRD</h3>
 
@@ -400,7 +530,7 @@ type RedisClusterStatus struct {
 }
 </code></pre>
 
-<p><a id="org2e8bba4"></a></p>
+<p><a id="orga981c1e"></a></p>
 
 <h3 id="修改-reconcile-函数">修改 Reconcile 函数</h3>
 
@@ -431,7 +561,7 @@ type RedisClusterStatus struct {
 }
 </code></pre>
 
-<p><a id="org77b1993"></a></p>
+<p><a id="org1cfb9cb"></a></p>
 
 <h3 id="运行测试">运行测试</h3>
 
@@ -464,6 +594,8 @@ spec:
 
 <p><img src="http://blog.mospan.cn/post/img/k8s/operator/controller-logs.png" alt="img" /></p>
 
+<p><a id="org1683514"></a></p>
+
 <h1 id="参考资料">参考资料</h1>
 
 <p>【01】<a href="https://blog.csdn.net/weixin_43568070/article/details/89892620">使用shell命令行登陆Docker Hub出现的404Not found的问题</a><br />
@@ -474,7 +606,9 @@ spec:
 【06】<a href="https://www.cnblogs.com/alisystemsoftware/p/11580202.html">深入解析 Kubebuilder：让编写 CRD 变得更简单</a><br />
 【07】<a href="https://os.51cto.com/article/661378.html">一篇带给你KubeBuilder 简明教程</a><br />
 【08】<a href="https://blog.csdn.net/chenxy02/article/details/125554680">深入解析Kubebuilder</a><br />
-【09】<a href="https://blog.csdn.net/qq_45874107/article/details/119839187">什么是RBAC</a></p>
+【09】<a href="https://blog.csdn.net/qq_45874107/article/details/119839187">什么是RBAC</a><br />
+【10】<a href="https://blog.ihypo.net/15763910382218.html">Kubernetes Controller Manager 工作原理</a><br />
+【11】<a href="https://jishuin.proginn.com/p/763bfbd3012b">controller-runtime 之 manager 实现</a></p>
 
     <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
   <div style="float:right;margin-top:0px;">
@@ -497,6 +631,28 @@ spec:
 	</div>
   <footer class="article-footer clearfix">
   
+
+<div class="article-tags">
+  <span></span>
+  
+  <a href="/tags/k8s">K8S</a>
+  
+  <a href="/tags/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5">项目实践</a>
+  
+</div>
+
+
+
+<div class="article-categories">
+  <span></span>
+  
+  <a class="article-category-link" href="/categories/k8s">K8S</a>
+  
+  <a class="article-category-link" href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5">项目实践</a>
+  
+</div>
+
+
 
   <div class="article-share" id="share">
     <div data-url="http://mospany.github.io/2022/12/14/operator-on-kubebuilder/" data-title="K8S项目实践(04): 基于kubebuilder编写operator" data-tsina="3833537679" class="share clearfix">
@@ -573,7 +729,7 @@ gitment.render('git-comments')
       
 			<li><a href="http://mospany.github.io/tags/ipv6" title="ipv6">ipv6<sup>2</sup></a></li>
       
-			<li><a href="http://mospany.github.io/tags/k8s" title="k8s">k8s<sup>10</sup></a></li>
+			<li><a href="http://mospany.github.io/tags/k8s" title="k8s">k8s<sup>11</sup></a></li>
       
 			<li><a href="http://mospany.github.io/tags/openresty" title="openresty">openresty<sup>1</sup></a></li>
       
@@ -621,7 +777,7 @@ gitment.render('git-comments')
       
 			<li><a href="http://mospany.github.io/tags/%e9%9d%a2%e8%af%95" title="面试">面试<sup>1</sup></a></li>
       
-			<li><a href="http://mospany.github.io/tags/%e9%a1%b9%e7%9b%ae%e5%ae%9e%e8%b7%b5" title="项目实践">项目实践<sup>1</sup></a></li>
+			<li><a href="http://mospany.github.io/tags/%e9%a1%b9%e7%9b%ae%e5%ae%9e%e8%b7%b5" title="项目实践">项目实践<sup>2</sup></a></li>
       
 		</ul>
 </div>

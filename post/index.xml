@@ -17,7 +17,7 @@
       <pubDate>Wed, 14 Dec 2022 18:24:22 +0800</pubDate>
       
       <guid>http://mospany.github.io/2022/12/14/operator-on-kubebuilder/</guid>
-      <description>介绍 镜像仓库 注册仓库 登录https://registry.hub.docker.com/进行注册，如用户名为mospany, 密码为自定义。 使</description>
+      <description>介绍 Kubebuilder是一个由controller-runtime支持的出色SDK，它可以帮助您轻松快速地在 Go 中编写Kubernetes</description>
     </item>
     
     <item>

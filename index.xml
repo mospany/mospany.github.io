@@ -15,25 +15,155 @@
             <guid>http://mospany.github.io/2022/12/14/operator-on-kubebuilder/</guid>
             <description>
 
-&lt;p&gt;&lt;a id=&#34;orgfd75324&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgcfa7382&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;介绍&#34;&gt;介绍&lt;/h1&gt;
 
-&lt;p&gt;&lt;a id=&#34;orge181acf&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Kubebuilder是一个由controller-runtime支持的出色SDK，它可以帮助您轻松快速地在 Go 中编写Kubernetes operator，方法是处理多种忙碌的事情，例如以组织良好的方式引导大量样板代码，设置有用的 Makefile make，目标是构建、运行和部署operator、构建 CRD、设置相关的 Dockefile、RBAC、涉及部署operator的多个 YAML 等等。&lt;br /&gt;
+Kubebuilder 是一个使用 CRDs 构建 K8s API 的 SDK，主要是：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;提供脚手架工具初始化 CRDs 工程，自动生成 boilerplate 代码和配置；&lt;/li&gt;
+&lt;li&gt;提供代码库封装底层的 K8s go-client；&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;方便用户从零开始开发 CRDs，Controllers 和 Admission Webhooks 来扩展 K8s。&lt;/p&gt;
+
+&lt;p&gt;为了编写自定义的operatro，需要进行如下:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;安装kubebuilder&lt;/li&gt;
+&lt;li&gt;使用kubebuilder进行项目创建&lt;/li&gt;
+&lt;li&gt;编写operator代码&lt;/li&gt;
+&lt;li&gt;编译打包镜像上传到镜像仓库。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;a id=&#34;org0fa6862&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;原理&#34;&gt;原理&lt;/h1&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operatorr/kubebuilder-arch.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org78ac50d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;基础概念&#34;&gt;基础概念&lt;/h2&gt;
+
+&lt;p&gt;&lt;a id=&#34;org52cd124&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;gvks-gvrs&#34;&gt;GVKs&amp;amp;GVRs&lt;/h3&gt;
+
+&lt;p&gt;GVK = GroupVersionKind，GVR = GroupVersionResource。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;API Group &amp;amp; Versions（GV）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;API Group 是相关 API 功能的集合，每个 Group 拥有一或多个 Versions，用于接口的演进。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Kinds &amp;amp; Resources（GVR）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;每个 GV 都包含多个 API 类型，称为 Kinds，在不同的 Versions 之间同一个 Kind 定义可能不同， Resource 是 Kind 的对象标识（resource type），一般来说 Kinds 和 Resources 是 1:1 的，比如 pods Resource 对应 Pod Kind，但是有时候相同的 Kind 可能对应多个 Resources，比如 Scale Kind 可能对应很多 Resources：deployments/scale，replicasets/scale，对于 CRD 来说，只会是 1:1 的关系。&lt;/p&gt;
+
+&lt;p&gt;每一个 GVK 都关联着一个 package 中给定的 root Go type，比如 apps/v1/Deployment 就关联着 K8s 源码里面 k8s.io/api/apps/v1 package 中的 Deployment struct，我们提交的各类资源定义 YAML 文件都需要写：&lt;/p&gt;
+
+&lt;p&gt;apiVersion：这个就是 GV 。kind：这个就是 K。&lt;/p&gt;
+
+&lt;p&gt;根据 GVK K8s 就能找到你到底要创建什么类型的资源，根据你定义的 Spec 创建好资源之后就成为了 Resource，也就是 GVR。GVK/GVR 就是 K8s 资源的坐标，是我们创建/删除/修改/读取资源的基础。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org691e4a3&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;scheme&#34;&gt;Scheme&lt;/h3&gt;
+
+&lt;p&gt;每一组 Controllers 都需要一个 Scheme，提供了 Kinds 与对应 Go types 的映射，也就是说给定 Go type 就知道他的 GVK，给定 GVK 就知道他的 Go type，比如说我们给定一个 Scheme: &amp;ldquo;tutotial.kubebuilder.io/api/v1&amp;rdquo;.CronJob{} 这个 Go type 映射到 batch.tutotial.kubebuilder.io/v1 的 CronJob GVK，那么从 Api Server 获取到下面的 JSON:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;{
+    &amp;quot;kind&amp;quot;: &amp;quot;CronJob&amp;quot;,
+    &amp;quot;apiVersion&amp;quot;: &amp;quot;batch.tutorial.kubebuilder.io/v1&amp;quot;,
+    ...
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;就能构造出对应的 Go type了，通过这个 Go type 也能正确地获取 GVR 的一些信息，控制器可以通过该 Go type 获取到期望状态以及其他辅助信息进行调谐逻辑。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgc45a76f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;manager&#34;&gt;Manager&lt;/h3&gt;
+
+&lt;p&gt;Kubebuilder 的核心组件，具有 3 个职责：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;负责运行所有的 Controllers；&lt;/li&gt;
+&lt;li&gt;初始化共享 caches，包含 listAndWatch 功能；&lt;/li&gt;
+&lt;li&gt;初始化 clients 用于与 Api Server 通信。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a id=&#34;org50d3209&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;cache&#34;&gt;Cache&lt;/h3&gt;
+
+&lt;p&gt;Kubebuilder 的核心组件，负责在 Controller 进程里面根据 Scheme 同步 Api Server 中所有该 Controller 关心 GVKs 的 GVRs，其核心是 GVK -&amp;gt; Informer 的映射，Informer 会负责监听对应 GVK 的 GVRs 的创建/删除/更新操作，以触发 Controller 的 Reconcile 逻辑。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org7fb1547&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;controller&#34;&gt;Controller&lt;/h3&gt;
+
+&lt;p&gt;Kubebuidler 为我们生成的脚手架文件，我们只需要实现 Reconcile 方法即可。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org528499e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;client&#34;&gt;Client&lt;/h3&gt;
+
+&lt;p&gt;在实现 Controller 的时候不可避免地需要对某些资源类型进行创建/删除/更新，就是通过该 Clients 实现的，其中查询功能实际查询是本地的 Cache，写操作直接访问 Api Server。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org16de8d6&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;index&#34;&gt;Index&lt;/h3&gt;
+
+&lt;p&gt;由于 Controller 经常要对 Cache 进行查询，Kubebuilder 提供 Index utility 给 Cache 加索引提升查询效率。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org607691c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;finalizer&#34;&gt;Finalizer&lt;/h3&gt;
+
+&lt;p&gt;在一般情况下，如果资源被删除之后，我们虽然能够被触发删除事件，但是这个时候从 Cache 里面无法读取任何被删除对象的信息，这样一来，导致很多垃圾清理工作因为信息不足无法进行，K8s 的 Finalizer 字段用于处理这种情况。在 K8s 中，只要对象 ObjectMeta 里面的 Finalizers 不为空，对该对象的 delete 操作就会转变为 update 操作，具体说就是 update deletionTimestamp 字段，其意义就是告诉 K8s 的 GC“在deletionTimestamp 这个时刻之后，只要 Finalizers 为空，就立马删除掉该对象”。&lt;/p&gt;
+
+&lt;p&gt;所以一般的使用姿势就是在创建对象时把 Finalizers 设置好（任意 string），然后处理 DeletionTimestamp 不为空的 update 操作（实际是 delete），根据 Finalizers 的值执行完所有的 pre-delete hook（此时可以在 Cache 里面读取到被删除对象的任何信息）之后将 Finalizers 置为空即可。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org0c0efe9&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;ownerreference&#34;&gt;OwnerReference&lt;/h3&gt;
+
+&lt;p&gt;K8s GC 在删除一个对象时，任何 ownerReference 是该对象的对象都会被清除，与此同时，Kubebuidler 支持所有对象的变更都会触发 Owner 对象 controller 的 Reconcile 方法。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgb1ddf8b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;实现&#34;&gt;实现&lt;/h1&gt;
+
+&lt;p&gt;1、构造新的scheme,&lt;br /&gt;
+2、解析命令行参数，获取或默认metric和健康检查端口。&lt;br /&gt;
+3、实例化 manager，参数 config&lt;br /&gt;
+   3.1） 向 manager 添加 scheme&lt;br /&gt;
+   3.2） 向 manager 添加 controller，该 controller 包含一个 reconciler 结构体，我们需要在 reconciler 结构体实现逻辑处理&lt;br /&gt;
+4、向manager添加healthz和readyz探测。&lt;br /&gt;
+5、启动 manager.start()&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org40fbcb7&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;镜像仓库&#34;&gt;镜像仓库&lt;/h1&gt;
 
-&lt;p&gt;&lt;a id=&#34;org4dc70c9&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org246c0bb&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;注册仓库&#34;&gt;注册仓库&lt;/h2&gt;
 
 &lt;p&gt;登录&lt;a href=&#34;https://registry.hub.docker.com/进行注册，如用户名为mospany&#34;&gt;https://registry.hub.docker.com/进行注册，如用户名为mospany&lt;/a&gt;, 密码为自定义。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgcf5186b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org43ccc0d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;使用镜像&#34;&gt;使用镜像&lt;/h2&gt;
 
-&lt;p&gt;&lt;a id=&#34;org6869380&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org829ca45&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;登录仓库&#34;&gt;登录仓库&lt;/h3&gt;
 
@@ -45,7 +175,7 @@ Login Succeeded
 或直接 docker login默认登录docker hub。
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;a id=&#34;org710c04e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org2fc914e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;上传镜像&#34;&gt;上传镜像&lt;/h3&gt;
 
@@ -53,11 +183,11 @@ Login Succeeded
 $ docker push mospany/loggen:latest
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operator/hub-docker.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operatorr/hub-docker.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;参见：&lt;a href=&#34;https://hub.docker.com/repository/docker/mospany/loggen&#34;&gt;https://hub.docker.com/repository/docker/mospany/loggen&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org24bdd0f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org3d0e3a5&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;下载镜像&#34;&gt;下载镜像&lt;/h3&gt;
 
@@ -68,11 +198,11 @@ Status: Image is up to date for mospany/loggen:latest
 docker.io/mospany/loggen:latest
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;a id=&#34;org3dc8e5f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgc8a2f44&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;项目&#34;&gt;项目&lt;/h1&gt;
 
-&lt;p&gt;&lt;a id=&#34;org8e7c80b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org3a9cf00&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;创建项目&#34;&gt;创建项目&lt;/h2&gt;
 
@@ -84,9 +214,9 @@ kubebuilder create api --group redis  --version v1 --kind RedisCluster
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;关键截图如下：&lt;br /&gt;
-   &lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operator/kubebuilder-operator.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+   &lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operatorr/kubebuilder-operator.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org28a7b3e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org1ddad49&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;修改文件&#34;&gt;修改文件&lt;/h2&gt;
 
@@ -108,7 +238,7 @@ kubebuilder create api --group redis  --version v1 --kind RedisCluster
 &lt;p&gt;否则会出现如下错误：&lt;/p&gt;
 
 &lt;blockquote&gt;
-&lt;p&gt;3.469 go: cloud.google.com/go@v0.81.0: Get &amp;ldquo;&lt;a href=&#34;https://proxy.golang.org/cloud.google.com/go/@v/v0.81.0.mod&#34;&gt;https://proxy.golang.org/cloud.google.com/go/@v/v0.81.0.mod&lt;/a&gt;&amp;ldquo;: malformed HTTP response &amp;ldquo;\x00\x00\x12\x04\x00\x00\x00\x00\x00\x00\x03\x00\x00\x00\x80\x00\x04\x00\x01\x00\x00\x00\x05\x00\xff\xff\xff\x00\x00\x04\b\x00\x00\x00\x00\x00\u007f\xff\x00\x00\x00\x00\b\a\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01&amp;rdquo;&lt;/p&gt;
+&lt;p&gt;3.469 go: cloud.google.com/go@v0.81.0: Get &amp;ldquo;&lt;a href=&#34;https://proxy.golang.org/cloud.google.com/go/@v/v0.81.0.mod&#34;&gt;https://proxy.golang.org/cloud.google.com/go/@v/v0.81.0.mod&lt;/a&gt;&amp;ldquo;: malformed HTTP response &amp;ldquo;\x00\x00\x12\x04&amp;#x2026;\x00\x00\x01&amp;rdquo;&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;p&gt;**切记切记**： 先修改好再编译，否则一直出现上面错误(当时找了半天)&lt;/p&gt;
@@ -178,11 +308,11 @@ undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/confi
   $(KUSTOMIZE) build config/default | kubectl --context docker-desktop  delete --ignore-not-found=$(ignore-not-found) -f -
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;a id=&#34;org36758f2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgf288f34&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;编译&#34;&gt;编译&lt;/h2&gt;
 
-&lt;p&gt;&lt;a id=&#34;org6bf6172&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org99eec51&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;make-help&#34;&gt;make help&lt;/h3&gt;
 
@@ -191,7 +321,7 @@ undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/confi
 
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operator/make-help.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org519553b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org54938e4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;make-build&#34;&gt;make build&lt;/h3&gt;
 
@@ -199,14 +329,14 @@ undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/confi
 
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operator/make-build.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org2dd91bb&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orge8e0f0a&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;make-install&#34;&gt;make install&lt;/h3&gt;
 
 &lt;p&gt;安装crd到目标集群，这一步可能受github网络影响自动下载kustomize慢需要多试几次或隔天再试。&lt;br /&gt;
    &lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operator/make-install.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org416c2a6&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orge3f35bb&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;make-docker-build&#34;&gt;make docker-build&lt;/h3&gt;
 
@@ -214,7 +344,7 @@ undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/confi
 可以在刚生成的镜像列表中生成镜像。&lt;br /&gt;
 &lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operator/make-docker-images.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org80dc9ab&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org54b15f4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;make-docker-push&#34;&gt;make docker-push&lt;/h3&gt;
 
@@ -235,13 +365,13 @@ undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/confi
 &lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operator/make-docker-hub.png&#34; alt=&#34;img&#34; /&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;&lt;a id=&#34;org7c30fe1&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org5f3af46&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;运行&#34;&gt;运行&lt;/h2&gt;
 
 &lt;p&gt;先在mac上安装k8s集群，详见：&lt;a href=&#34;https://blog.51cto.com/zlyang/4838042&#34;&gt;Mac系统安装k8s集群&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org48206c2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org861d0fa&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;本地运行&#34;&gt;本地运行&lt;/h3&gt;
 
@@ -252,7 +382,7 @@ undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/confi
 
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operator/make-run.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgaf67979&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org5dc2c10&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;部署到k8s集群中运行&#34;&gt;部署到k8s集群中运行&lt;/h3&gt;
 
@@ -268,7 +398,7 @@ undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/confi
 
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operator/make-logs.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgd52a315&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgf9f8f6e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;创建cr&#34;&gt;创建CR&lt;/h2&gt;
 
@@ -304,13 +434,13 @@ metadata:
 # mosp @ mospdeMacBook-Pro in ~/work/pingan/arch/mysrc/guestbook [21:23:07]
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;a id=&#34;org6e0a70e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org7b598e7&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;开发业务逻辑&#34;&gt;开发业务逻辑&lt;/h2&gt;
 
 &lt;p&gt;下面我们将修改 CRD 的数据结构并在 controller 中增加一些日志输出。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org2d593f7&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org869a73b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;修改-crd&#34;&gt;修改 CRD&lt;/h3&gt;
 
@@ -336,7 +466,7 @@ type RedisClusterStatus struct {
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;a id=&#34;org2e8bba4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orga981c1e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;修改-reconcile-函数&#34;&gt;修改 Reconcile 函数&lt;/h3&gt;
 
@@ -367,7 +497,7 @@ type RedisClusterStatus struct {
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;a id=&#34;org77b1993&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org1cfb9cb&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;运行测试&#34;&gt;运行测试&lt;/h3&gt;
 
@@ -400,6 +530,8 @@ spec:
 
 &lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operator/controller-logs.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
+&lt;p&gt;&lt;a id=&#34;org1683514&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
 &lt;h1 id=&#34;参考资料&#34;&gt;参考资料&lt;/h1&gt;
 
 &lt;p&gt;【01】&lt;a href=&#34;https://blog.csdn.net/weixin_43568070/article/details/89892620&#34;&gt;使用shell命令行登陆Docker Hub出现的404Not found的问题&lt;/a&gt;&lt;br /&gt;
@@ -410,7 +542,9 @@ spec:
 【06】&lt;a href=&#34;https://www.cnblogs.com/alisystemsoftware/p/11580202.html&#34;&gt;深入解析 Kubebuilder：让编写 CRD 变得更简单&lt;/a&gt;&lt;br /&gt;
 【07】&lt;a href=&#34;https://os.51cto.com/article/661378.html&#34;&gt;一篇带给你KubeBuilder 简明教程&lt;/a&gt;&lt;br /&gt;
 【08】&lt;a href=&#34;https://blog.csdn.net/chenxy02/article/details/125554680&#34;&gt;深入解析Kubebuilder&lt;/a&gt;&lt;br /&gt;
-【09】&lt;a href=&#34;https://blog.csdn.net/qq_45874107/article/details/119839187&#34;&gt;什么是RBAC&lt;/a&gt;&lt;/p&gt;
+【09】&lt;a href=&#34;https://blog.csdn.net/qq_45874107/article/details/119839187&#34;&gt;什么是RBAC&lt;/a&gt;&lt;br /&gt;
+【10】&lt;a href=&#34;https://blog.ihypo.net/15763910382218.html&#34;&gt;Kubernetes Controller Manager 工作原理&lt;/a&gt;&lt;br /&gt;
+【11】&lt;a href=&#34;https://jishuin.proginn.com/p/763bfbd3012b&#34;&gt;controller-runtime 之 manager 实现&lt;/a&gt;&lt;/p&gt;
 </description>
         </item>
         
