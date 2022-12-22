@@ -5,7 +5,141 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Wed, 14 Dec 2022 18:24:22 CST</updated>
+        <updated>Thu, 22 Dec 2022 22:21:36 CST</updated>
+        
+        <item>
+            <title>K8S项目实践(05): 动手实现CSI驱动</title>
+            <link>http://mospany.github.io/2022/12/22/k8s-sci-driver/</link>
+            <pubDate>Thu, 22 Dec 2022 22:21:36 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://mospany.github.io/2022/12/22/k8s-sci-driver/</guid>
+            <description>
+
+&lt;p&gt;&lt;a id=&#34;orgef08608&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;简介&#34;&gt;简介&lt;/h1&gt;
+
+&lt;p&gt;外部存储接入 Kubernetes 的方式主要有两种：In-Tree 和 Out-of-Tree。其中 In-Tree 是指存储驱动的源码都在 Kubernetes 代码库中，与 Kubernetes 一起发布、迭代、管理，这种方式灵活性较差，且门槛较高。Out-of-Tree 是指存储插件由第三方编写、发布、管理，作为一种扩展与 Kubernetes 配合使用。Out-of-Tree 主要有 FlexVolume 和 CSI 两种实现方式，其中，FlexVolume 因为其命令式的特点，不易维护和管理，从 Kubernetes v1.23 版本开始已被弃用。因此 CSI 已经成为 Kubernetes 存储扩展（ Out-of-Tree ）的唯一方式。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org0815e85&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;csi组成&#34;&gt;CSI组成&lt;/h1&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/csi/csi-component.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;通常情况下：CSI Driver = DaemonSet + Deployment(StatefuleSet) 。&lt;br /&gt;
+其中:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;绿色部分：Identity、Node、Controller 是需要开发者自己实现的，被称为 Custom Components。&lt;/li&gt;
+&lt;li&gt;粉色部分：node-driver-registrar、external-attacher、external-provisioner 组件是 Kubernetes 团队开发和维护的，被称为 External Components，它们都是以 sidecar 的形式与 Custom Components 配合使用的。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a id=&#34;org1811c70&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;custom-components&#34;&gt;Custom Components&lt;/h2&gt;
+
+&lt;p&gt;Custom Components 本质是 3 个 gRPC Services：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Identity Service 顾名思义，主要用于对外暴露这个插件本身的信息，比如驱动的名称、驱动的能力等：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  service Identity {
+  rpc GetPluginInfo(GetPluginInfoRequest)
+    returns (GetPluginInfoResponse) {}
+
+  rpc GetPluginCapabilities(GetPluginCapabilitiesRequest)
+    returns (GetPluginCapabilitiesResponse) {}
+
+  rpc Probe (ProbeRequest)
+    returns (ProbeResponse) {}
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Controller Service 主要定义一些 无需在宿主机上执行的操作，这也是与下文的 Node Service 最根本的区别。以 CreateVolume 为例，k8s 通过调用该方法创建底层存储。比如底层使用了某云供应商的云硬盘服务，开发者在 CreateVolume 方法实现中应该调用云硬盘服务的创建 / 订购云硬盘的 API，调用 API 这个操作是不需要在特定宿主机上执行的。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  service Controller {
+  rpc CreateVolume (CreateVolumeRequest)
+    returns (CreateVolumeResponse) {}
+
+  rpc DeleteVolume (DeleteVolumeRequest)
+    returns (DeleteVolumeResponse) {}
+
+  rpc ControllerPublishVolume (ControllerPublishVolumeRequest)
+    returns (ControllerPublishVolumeResponse) {}
+
+  rpc ControllerUnpublishVolume (ControllerUnpublishVolumeRequest)
+    returns (ControllerUnpublishVolumeResponse) {}
+
+  rpc ValidateVolumeCapabilities (ValidateVolumeCapabilitiesRequest)
+    returns (ValidateVolumeCapabilitiesResponse) {}
+
+  rpc ListVolumes (ListVolumesRequest)
+    returns (ListVolumesResponse) {}
+
+  rpc GetCapacity (GetCapacityRequest)
+    returns (GetCapacityResponse) {}
+
+  rpc ControllerGetCapabilities (ControllerGetCapabilitiesRequest)
+    returns (ControllerGetCapabilitiesResponse) {}
+
+  rpc CreateSnapshot (CreateSnapshotRequest)
+    returns (CreateSnapshotResponse) {}
+
+  rpc DeleteSnapshot (DeleteSnapshotRequest)
+    returns (DeleteSnapshotResponse) {}
+
+  rpc ListSnapshots (ListSnapshotsRequest)
+    returns (ListSnapshotsResponse) {}
+
+  rpc ControllerExpandVolume (ControllerExpandVolumeRequest)
+    returns (ControllerExpandVolumeResponse) {}
+
+  rpc ControllerGetVolume (ControllerGetVolumeRequest)
+    returns (ControllerGetVolumeResponse) {
+        option (alpha_method) = true;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Node Service 定义了 需要在宿主机上执行的操作，比如：mount、unmount。在前面的部署架构图中，Node Service 使用 Daemonset 的方式部署，也是为了确保 Node Service 会被运行在每个节点，以便执行诸如 mount 之类的指令。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  service Node {
+  rpc NodeStageVolume (NodeStageVolumeRequest)
+    returns (NodeStageVolumeResponse) {}
+
+  rpc NodeUnstageVolume (NodeUnstageVolumeRequest)
+    returns (NodeUnstageVolumeResponse) {}
+
+  rpc NodePublishVolume (NodePublishVolumeRequest)
+    returns (NodePublishVolumeResponse) {}
+
+  rpc NodeUnpublishVolume (NodeUnpublishVolumeRequest)
+    returns (NodeUnpublishVolumeResponse) {}
+
+  rpc NodeGetVolumeStats (NodeGetVolumeStatsRequest)
+    returns (NodeGetVolumeStatsResponse) {}
+
+  rpc NodeExpandVolume(NodeExpandVolumeRequest)
+    returns (NodeExpandVolumeResponse) {}
+
+  rpc NodeGetCapabilities (NodeGetCapabilitiesRequest)
+    returns (NodeGetCapabilitiesResponse) {}
+
+  rpc NodeGetInfo (NodeGetInfoRequest)
+    returns (NodeGetInfoResponse) {}
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgcb61815&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;参考&#34;&gt;参考&lt;/h1&gt;
+
+&lt;p&gt;【01】&lt;a href=&#34;https://zhuanlan.zhihu.com/p/583032625&#34;&gt;如何实现一个 Kubernetes CSI Driver&lt;/a&gt;&lt;br /&gt;
+【02】&lt;a href=&#34;https://zhuanlan.zhihu.com/p/539307741&#34;&gt;Kubernetes CSI 驱动开发指南&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
         
         <item>
             <title>K8S项目实践(04): 基于kubebuilder编写operator</title>
@@ -4878,217 +5012,6 @@ DNS报文如上图所示，其他左图为报文完整格式，后图区域数�
 &lt;h1 id=&#34;小结&#34;&gt;小结&lt;/h1&gt;
 
 &lt;p&gt;区块链是个要技术有技术，要场景有场景，希望在国家政策推动下曾经风靡一时的现象能再回来，出现很多现象级应用改善现有社会，作为普通人的我们可以有钱出钱有力出力， 投资好可以高回报，有技术出力研发出有用好用的产品， 让互联网和资本走出寒冬， 大环境变好后至少大家好找工作赚到钱不更好么？&lt;/p&gt;
-</description>
-        </item>
-        
-        <item>
-            <title>编辑器终结者: vim与emacs双剑合璧</title>
-            <link>http://mospany.github.io/2019/10/17/vim-in-emacs/</link>
-            <pubDate>Thu, 17 Oct 2019 13:54:40 CST</pubDate>
-            <author>Mospan</author>
-            <guid>http://mospany.github.io/2019/10/17/vim-in-emacs/</guid>
-            <description>
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/vim-in-emacs/main.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgdbd1829&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;神器传说&#34;&gt;神器传说&lt;/h1&gt;
-
-&lt;p&gt;在猿的世界里，流传着两大神器的传说： 一个是神的编辑器Emacs，另一个是编辑器之神Vim。&lt;br /&gt;
-追求独步天下的高手为了得到它驾驭它，在江湖里宣起了几十年的血雨腥风至今任无法收拾呈蔓延趋势:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;有的把Emacs比作屠龙宝刀，Vim则是倚天剑， 有“武林至尊，宝刀屠龙，号令天下，莫敢不从，倚天不出，谁与争锋”之势。&lt;/li&gt;
-&lt;li&gt;用Emacs的是海盗， 用Vim的是忍者。Emacs大而全， Vi小而快，Vi有两大模式：“命令模式”和“插入模式”，分别对应忍者的：“匿踪模式”和“战斗模式”；&lt;/li&gt;
-&lt;li&gt;性子暴躁的喜欢vim，性格平缓的喜欢emacs，用vim能让你享受到敲击出噼里啪啦的肌肉快感， 而用emacs却能让心如止水、修心养性的感受。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;怎么样才能做到神在使用编辑器之神呢？&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org9bee0d2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;追寻编辑器的心路历程&#34;&gt;追寻编辑器的心路历程&lt;/h1&gt;
-
-&lt;p&gt;猿在江湖漂为了少挨刀，要么追求绝世武功，要么无上兵器，功夫不负有心人，最终找到它前也一路坎坷：&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;第一次见到师傅习武，仍是DOS时代使用的Turbo C（妈呀暴露年龄了），只见白色光标在蓝屏之间闪烁挥之不去。&lt;/li&gt;
-&lt;li&gt;进入师门后先后经历了notepad、UltraEdit、visual c++ 6.0等刀、枪、剑、戟、斧、钺、钩、叉、鞭、锏、锤、挝、镋、棍、槊、棒、拐、流星锤十八种兵器，打下十八铜人阵拿到双证后下山出道。&lt;/li&gt;
-&lt;li&gt;出道后先后尝试用了UltraEdit、visual c++ 6.0、sourceinsight、eclipse、sublime text、VS Code、Vim等始终不尽如意。&lt;/li&gt;
-&lt;li&gt;直到后来遇见emacs， 才感受到了它的强大，作为一个伪装成的编辑器的操作系统，用着用着有时想单手操作，于是想到了把vim集成到emacs，既能享受到了emacs的强大又能用到vim的快捷，每天都有左右互博的久违感觉，目前已用多年再也纠结其他编辑器认定了它就是唯一的终极编辑器。&lt;/li&gt;
-&lt;li&gt;为什么喜欢全键盘的终端模式而不用带鼠标的现在GUI IDE环境， 一个是全键盘更快更能专注其中， 而是现在已是云时代部署在公司开发时到家里也即可使用而不用同步不用每天背mbp回来，终端模式是最好的选择。&lt;/li&gt;
-&lt;li&gt;都说编辑器分为三种， 一种是Vim，一种是emacs，剩下的就是Other， 你是属于哪一种呢？ 欢迎在留言下方分享您的使用心得。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;它们大致学习曲线如下：&lt;br /&gt;
-&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/vim-in-emacs/learning-curves.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org3716a5b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;安装配置&#34;&gt;安装配置&lt;/h1&gt;
-
-&lt;p&gt;要想在emacs使用vim，其实是在emacs配置中增加Vim模拟器evil-mode即可。&lt;br /&gt;
-先从官网下载git clone git://gitorious.org/evil/evil.git到.emacs.d下再安装,&lt;br /&gt;
-在配置文件里.emacs或init.el里增加如下配置：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;(add-to-list &#39;load-path &amp;quot;~/.emacs.d/evil&amp;quot;)
-(require &#39;evil)
-(evil-mode 1)
-;(setq evil-default-state &#39;emacs) ;; emacs-mode
-(setq evil-default-state &#39;normal) ;; vim-normal-mode
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;要在emacs和vim模式里面随意切换使用：C-z。&lt;br /&gt;
-也可以把emacs中想用的功能映射到evil-mode下，这样就可以拥有了emacs中所有功能的快捷操作方式，它大致配置如下：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;;; I learn this trick from ReneFroger, need latest expand-region
-;; @see https://github.com/redguardtoo/evil-matchit/issues/38
-(define-key evil-visual-state-map (kbd &amp;quot;v&amp;quot;) &#39;er/expand-region)
-(define-key evil-insert-state-map (kbd &amp;quot;C-e&amp;quot;) &#39;move-end-of-line)
-(define-key evil-insert-state-map (kbd &amp;quot;C-k&amp;quot;) &#39;kill-line)
-(define-key evil-insert-state-map (kbd &amp;quot;M-j&amp;quot;) &#39;yas-expand)
-(define-key evil-emacs-state-map (kbd &amp;quot;M-j&amp;quot;) &#39;yas-expand)
-(global-set-key (kbd &amp;quot;C-r&amp;quot;) &#39;undo-tree-redo)
-
-;; My frequently used commands are listed here
-(setq evil-leader/leader &amp;quot;,&amp;quot;)
-(require &#39;evil-leader)
-(evil-leader/set-key
- ;windowmove
- &amp;quot;wh&amp;quot; &#39;windmove-left
- &amp;quot;wl&amp;quot; &#39;windmove-right
- &amp;quot;wk&amp;quot; &#39;windmove-up
- &amp;quot;wj&amp;quot; &#39;windmove-down
-)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;具体可参考&lt;a href=&#34;https://github.com/mospany/emacs.d-for-linux/blob/master/config/init-evil.el即可&#34;&gt;https://github.com/mospany/emacs.d-for-linux/blob/master/config/init-evil.el即可&lt;/a&gt;。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orge046aca&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;emacs功能概览&#34;&gt;emacs功能概览&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;收发电子邮件&lt;/li&gt;
-&lt;li&gt;通过FTP/TRAMP编辑远程档案&lt;/li&gt;
-&lt;li&gt;通过Telnet登录主机&lt;/li&gt;
-&lt;li&gt;上新闻组&lt;/li&gt;
-&lt;li&gt;对多种编程语言的编辑&lt;/li&gt;
-&lt;li&gt;调试程序，结合GDB，EDebug等，支持C/C++，Perl，&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Python，Lisp等等&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;玩游戏&lt;/li&gt;
-&lt;li&gt;管理日程，Task，ToDo，约会等&lt;/li&gt;
-&lt;li&gt;个人信息管理&lt;/li&gt;
-&lt;li&gt;文件比较&lt;/li&gt;
-&lt;li&gt;阅读info和man文档&lt;/li&gt;
-&lt;li&gt;浏览网站&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;为各种程序（TeX等）提供统一的操作界面&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-frame.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a id=&#34;org166e498&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;文档编辑&#34;&gt;文档编辑&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;写文档(org)&lt;/li&gt;
-&lt;li&gt;做幻灯片(beamer)&lt;/li&gt;
-&lt;li&gt;做表格&lt;/li&gt;
-&lt;li&gt;列编辑(cua)&lt;/li&gt;
-&lt;li&gt;记笔记(evernote)&lt;/li&gt;
-&lt;li&gt;写博客(cnblogs)&lt;/li&gt;
-&lt;li&gt;时间管理(gtd)&lt;/li&gt;
-&lt;li&gt;任务计划(gtd)&lt;/li&gt;
-&lt;li&gt;思维导图(freemind)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgb22db31&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;org-mode&#34;&gt;Org-mode&lt;/h2&gt;
-
-&lt;p&gt;Org-模式（Org-mode）是文本编辑软件Emacs的一种支持内容分级显示的编辑模式。&lt;br /&gt;
-这种模式支持写 to-do 列表，日志管理，做笔记，做工程计划或者写网页。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/vim-in-emacs/org-mode.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgf33b210&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;编程相关&#34;&gt;编程相关&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;适用多种语言编写&lt;/li&gt;
-&lt;li&gt;代码阅读(XCscope和ecb)&lt;/li&gt;
-&lt;li&gt;代码调试(gdb)&lt;/li&gt;
-&lt;li&gt;代码搜索定位(grep)&lt;/li&gt;
-&lt;li&gt;代码着色&lt;/li&gt;
-&lt;li&gt;自动补全&lt;/li&gt;
-&lt;li&gt;统一注释格式(doxymacs)&lt;/li&gt;
-&lt;li&gt;代码折叠&lt;/li&gt;
-&lt;li&gt;智能编译&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a id=&#34;org4dcec9d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;版本控制-git&#34;&gt;版本控制(git)&lt;/h2&gt;
-
-&lt;p&gt;在emacs用git功能，更加方便的进行git库的提交/查看等版本控制功能。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-git.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgc0f6593&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;休闲娱乐&#34;&gt;休闲娱乐&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;看电影听音乐(EMMS)&lt;/li&gt;
-&lt;li&gt;心理医生(doctor)&lt;/li&gt;
-&lt;li&gt;游戏(俄罗斯方块/贪食蛇)&lt;/li&gt;
-&lt;li&gt;屏幕保护(zone)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgfc36767&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;看电影听音乐-emms&#34;&gt;看电影听音乐(EMMS)&lt;/h2&gt;
-
-&lt;p&gt;EMMS 让你可以在 Emacs 里面播放多媒体文件，他被设计的小巧干净，使用外部 播放器进行播放。是一个小巧、可扩展的完全由 Elisp写成的多媒体系统，支持 多种音频、视频格式以及流媒体播放(这事实上由你所使用的播放器决定)，可以 进行标签操作、方便的播放列表管理以及打分制度，&lt;br /&gt;
-总之，这正是我想要的。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgefe8084&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;听音乐&#34;&gt;听音乐&lt;/h3&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-music.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org71fcae1&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;看电影&#34;&gt;看电影&lt;/h3&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-movice.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org2740f5f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;游戏&#34;&gt;游戏&lt;/h2&gt;
-
-&lt;p&gt;俄罗斯方块或贪食蛇等&lt;br /&gt;
-&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-game.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgded90a9&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;做美食&#34;&gt;做美食&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgebe7bab&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;煮咖啡-炒川菜&#34;&gt;煮咖啡、 炒川菜&lt;/h2&gt;
-
-&lt;p&gt;RFC中支持超文本咖啡壶协议（RFC2324）与茶壶协议(RFC7168),而emacs提供了完全支持RFC2323的coffee.el插件提供控制展示界面，只要你有一根网线，加一个支持此协议的咖啡壶，你确实可以用emacs煮咖啡，甚至有人已经用它来炒过川菜。&lt;br /&gt;
-&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/vim-in-emacs/emacs-cook.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 </description>
         </item>
         

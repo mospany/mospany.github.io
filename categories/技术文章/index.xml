@@ -6,10 +6,19 @@
     <description>Recent content in 技术文章 on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Wed, 14 Dec 2022 18:24:22 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 22 Dec 2022 22:21:36 +0800</lastBuildDate>
     
 	<atom:link href="http://mospany.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>K8S项目实践(05): 动手实现CSI驱动</title>
+      <link>http://mospany.github.io/2022/12/22/k8s-sci-driver/</link>
+      <pubDate>Thu, 22 Dec 2022 22:21:36 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2022/12/22/k8s-sci-driver/</guid>
+      <description>简介 外部存储接入 Kubernetes 的方式主要有两种：In-Tree 和 Out-of-Tree。其中 In-Tree 是指存储驱动的源码都在 Kubernetes 代码库中，与 Kubernetes 一起发布、迭代、管理</description>
+    </item>
     
     <item>
       <title>K8S项目实践(04): 基于kubebuilder编写operator</title>

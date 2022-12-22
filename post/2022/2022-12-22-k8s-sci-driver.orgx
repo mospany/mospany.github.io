@@ -1,0 +1,124 @@
++++
+#+OPTIONS: \n:t
+categories = ["技术文章"]
+date = "2022-12-22T22:21:36+08:00"
+description = ""
+keywords = ["K8S","项目实践"]
+tags = ["K8S","项目实践"]
+title = "K8S项目实践(05): 动手实现CSI驱动"
+url = "/2022/12/22/k8s-sci-driver/"
+
++++
+
+* 简介
+  外部存储接入 Kubernetes 的方式主要有两种：In-Tree 和 Out-of-Tree。其中 In-Tree 是指存储驱动的源码都在 Kubernetes 代码库中，与 Kubernetes 一起发布、迭代、管理，这种方式灵活性较差，且门槛较高。Out-of-Tree 是指存储插件由第三方编写、发布、管理，作为一种扩展与 Kubernetes 配合使用。Out-of-Tree 主要有 FlexVolume 和 CSI 两种实现方式，其中，FlexVolume 因为其命令式的特点，不易维护和管理，从 Kubernetes v1.23 版本开始已被弃用。因此 CSI 已经成为 Kubernetes 存储扩展（ Out-of-Tree ）的唯一方式。
+
+* CSI组成
+   
+   [[http://blog.mospan.cn/post/img/k8s/csi/csi-component.png]]
+
+   通常情况下：CSI Driver = DaemonSet + Deployment(StatefuleSet) 。
+   其中:
+      - 绿色部分：Identity、Node、Controller 是需要开发者自己实现的，被称为 Custom Components。
+      - 粉色部分：node-driver-registrar、external-attacher、external-provisioner 组件是 Kubernetes 团队开发和维护的，被称为 External Components，它们都是以 sidecar 的形式与 Custom Components 配合使用的。
+
+** Custom Components
+  Custom Components 本质是 3 个 gRPC Services：
+  
+  - Identity Service 顾名思义，主要用于对外暴露这个插件本身的信息，比如驱动的名称、驱动的能力等：
+    #+BEGIN_SRC go
+    service Identity {
+    rpc GetPluginInfo(GetPluginInfoRequest)
+      returns (GetPluginInfoResponse) {}
+    
+    rpc GetPluginCapabilities(GetPluginCapabilitiesRequest)
+      returns (GetPluginCapabilitiesResponse) {}
+    
+    rpc Probe (ProbeRequest)
+      returns (ProbeResponse) {}
+  }
+    
+    #+END_SRC
+
+  - Controller Service 主要定义一些 无需在宿主机上执行的操作，这也是与下文的 Node Service 最根本的区别。以 CreateVolume 为例，k8s 通过调用该方法创建底层存储。比如底层使用了某云供应商的云硬盘服务，开发者在 CreateVolume 方法实现中应该调用云硬盘服务的创建 / 订购云硬盘的 API，调用 API 这个操作是不需要在特定宿主机上执行的。
+    #+BEGIN_SRC go
+    service Controller {
+    rpc CreateVolume (CreateVolumeRequest)
+      returns (CreateVolumeResponse) {}
+    
+    rpc DeleteVolume (DeleteVolumeRequest)
+      returns (DeleteVolumeResponse) {}
+    
+    rpc ControllerPublishVolume (ControllerPublishVolumeRequest)
+      returns (ControllerPublishVolumeResponse) {}
+    
+    rpc ControllerUnpublishVolume (ControllerUnpublishVolumeRequest)
+      returns (ControllerUnpublishVolumeResponse) {}
+    
+    rpc ValidateVolumeCapabilities (ValidateVolumeCapabilitiesRequest)
+      returns (ValidateVolumeCapabilitiesResponse) {}
+    
+    rpc ListVolumes (ListVolumesRequest)
+      returns (ListVolumesResponse) {}
+    
+    rpc GetCapacity (GetCapacityRequest)
+      returns (GetCapacityResponse) {}
+    
+    rpc ControllerGetCapabilities (ControllerGetCapabilitiesRequest)
+      returns (ControllerGetCapabilitiesResponse) {}
+    
+    rpc CreateSnapshot (CreateSnapshotRequest)
+      returns (CreateSnapshotResponse) {}
+    
+    rpc DeleteSnapshot (DeleteSnapshotRequest)
+      returns (DeleteSnapshotResponse) {}
+    
+    rpc ListSnapshots (ListSnapshotsRequest)
+      returns (ListSnapshotsResponse) {}
+    
+    rpc ControllerExpandVolume (ControllerExpandVolumeRequest)
+      returns (ControllerExpandVolumeResponse) {}
+    
+    rpc ControllerGetVolume (ControllerGetVolumeRequest)
+      returns (ControllerGetVolumeResponse) {
+          option (alpha_method) = true;
+      }
+  }
+    
+    #+END_SRC
+  
+  - Node Service 定义了 需要在宿主机上执行的操作，比如：mount、unmount。在前面的部署架构图中，Node Service 使用 Daemonset 的方式部署，也是为了确保 Node Service 会被运行在每个节点，以便执行诸如 mount 之类的指令。
+    #+BEGIN_SRC go
+    service Node {
+    rpc NodeStageVolume (NodeStageVolumeRequest)
+      returns (NodeStageVolumeResponse) {}
+    
+    rpc NodeUnstageVolume (NodeUnstageVolumeRequest)
+      returns (NodeUnstageVolumeResponse) {}
+    
+    rpc NodePublishVolume (NodePublishVolumeRequest)
+      returns (NodePublishVolumeResponse) {}
+    
+    rpc NodeUnpublishVolume (NodeUnpublishVolumeRequest)
+      returns (NodeUnpublishVolumeResponse) {}
+    
+    rpc NodeGetVolumeStats (NodeGetVolumeStatsRequest)
+      returns (NodeGetVolumeStatsResponse) {}
+    
+    rpc NodeExpandVolume(NodeExpandVolumeRequest)
+      returns (NodeExpandVolumeResponse) {}
+    
+    rpc NodeGetCapabilities (NodeGetCapabilitiesRequest)
+      returns (NodeGetCapabilitiesResponse) {}
+    
+    rpc NodeGetInfo (NodeGetInfoRequest)
+      returns (NodeGetInfoResponse) {}
+  }
+    #+END_SRC
+
+
+
+
+* 参考
+  【01】[[https://zhuanlan.zhihu.com/p/583032625][如何实现一个 Kubernetes CSI Driver]] 
+  【02】[[https://zhuanlan.zhihu.com/p/539307741][Kubernetes CSI 驱动开发指南]]

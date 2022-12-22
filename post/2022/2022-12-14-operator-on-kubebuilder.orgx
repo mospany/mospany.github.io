@@ -26,7 +26,7 @@ url = "/2022/12/14/operator-on-kubebuilder/"
 
 * 原理
 
-   [[http://blog.mospan.cn/post/img/k8s/operatorr/kubebuilder-arch.png]]
+   [[http://blog.mospan.cn/post/img/k8s/operator/kubebuilder-arch.png]]
 
 ** 基础概念
 *** GVKs&GVRs
@@ -112,7 +112,7 @@ url = "/2022/12/14/operator-on-kubebuilder/"
     $ docker push mospany/loggen:latest
     #+END_SRC
 
-   [[http://blog.mospan.cn/post/img/k8s/operatorr/hub-docker.png]]
+   [[http://blog.mospan.cn/post/img/k8s/operator/hub-docker.png]]
 
     参见：https://hub.docker.com/repository/docker/mospany/loggen
 
@@ -138,7 +138,7 @@ kubebuilder create api --group redis  --version v1 --kind RedisCluster
 #+END_SRC
 
 关键截图如下：
-   [[http://blog.mospan.cn/post/img/k8s/operatorr/kubebuilder-operator.png]]
+   [[http://blog.mospan.cn/post/img/k8s/operator/kubebuilder-operator.png]]
 
 **  修改文件
 1）修改Dockerfile的gcr.io镜像为其他可访问镜像(如golang:1.18)
