@@ -120,31 +120,277 @@ url = "/2022/12/22/k8s-sci-driver/"
 
 * NFS搭建
   由于实现CSI需要一个后端存储，Linux提供NFS功能可以免费搭建一个NSC存储功能用来验证。
-  搭建办法详见: [[https://www.codeleading.com/article/35162638950/][阿里云服务器 CentOS7 下安装和配置 NFS]]
+  搭建办法详见: [[http://blog.mospan.cn/2023/01/15/aliyun-ecs-install-nfs/][CentOS7 下安装和配置 NFS]] 
   
 
 * 部署
-  进入代码工程中的deploy下运行命令`kubectl apply -f .`
+** 部署node
+  进入代码工程中的deploy下运行命令`kubectl apply -f node.yaml`
   #+BEGIN_SRC sh
-  
-  
-  #+END_SRC 
-  查看下运行日志和监听地址:
+  [root@k8s-master nfscsi]# pwd
+  /root/nfscsi
+  [root@k8s-master nfscsi]# cd deploy/
+  [root@k8s-master deploy]# ls
+  node.yaml  provisioner.yaml
+  [root@k8s-master deploy]# ll
+  总用量 12
+  -rw-r--r-- 1 root root 3720 1月   8 22:18 node.yaml
+  -rw-r--r-- 1 root root 4413 1月   8 22:16 provisioner.yaml
 
+  [root@k8s-master deploy]# k apply -f node.yaml
+  serviceaccount/nfs-csi-node created
+  clusterrole.rbac.authorization.k8s.io/nfs-csi-node created
+  clusterrolebinding.rbac.authorization.k8s.io/nfs-csi-node created
+  daemonset.apps/nfs-csi-node created
+  [root@k8s-master deploy]#
+      
+  #+END_SRC 
+  查看POD的运行状态：
   #+BEGIN_SRC sh
-  [root@k8s-master deploy]# kubectl logs hdls-controller-0 -c csi-plugin
-  I0105 12:21:54.144268       1 main.go:49] [/workspace/bin/csi-demo --endpoint=unix:///var/lib/csi/sockets/pluginproxy/csi.sock --nodeid=k8s-master]
-  I0105 12:21:54.144362       1 driver.go:49] Driver: hdls version  commit  date
-  I0105 12:21:54.144468       1 driver.go:63] endpoint: unix:///var/lib/csi/sockets/pluginproxy/csi.sock, scheme: unix, addr: /var/lib/csi/sockets/pluginproxy/csi.sock
-  I0105 12:21:54.144815       1 driver.go:86] Listening for connection on address: &net.UnixAddr{Name:"/var/lib/csi/sockets/pluginproxy/csi.sock", Net:"unix"}
-  [root@k8s-master deploy]# ll /var/lib/kubelet/csi-plugins/demo.csi.com/csi.sock
-  srwxr-xr-x 1 root root 0 1月   5 20:21 /var/lib/kubelet/csi-plugins/demo.csi.com/csi.sock
+  [root@k8s-master deploy]# k get pod -A -o wide | grep nfs
+  kube-system   nfs-csi-node-x28zj                         2/2     Running   0                10m   172.25.140.216   k8s-master   <none>           <none>
+  [root@k8s-master deploy]#
+  [root@k8s-master deploy]# k get ds -A
+  NAMESPACE     NAME           DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR                                              AGE
+  kube-system   calico-node    3         3         3       3            3           kubernetes.io/os=linux                                     19d
+  kube-system   kube-proxy     3         3         3       3            3           kubernetes.io/os=linux                                     52d
+  kube-system   nfs-csi-node   1         1         1       1            1           kubernetes.io/hostname=k8s-master,kubernetes.io/os=linux   10m
   [root@k8s-master deploy]#
   
   #+END_SRC
+  pod正常启动后，先查看node-driver-registrar的日志，注册正常：
+  #+BEGIN_SRC sh
+    [root@k8s-master nfscsi]# kubectl logs -n kube-system nfs-csi-node-x28zj node-driver-registrar
+    I0115 07:45:31.451826       1 main.go:166] Version: v2.5.0
+    I0115 07:45:31.451864       1 main.go:167] Running node-driver-registrar in mode=registration
+    I0115 07:45:31.452324       1 main.go:191] Attempting to open a gRPC connection with: "/csi/csi.sock"
+    I0115 07:45:32.455714       1 main.go:198] Calling CSI driver to discover driver name
+    I0115 07:45:32.457464       1 main.go:208] CSI driver name: "nfscsi"
+    I0115 07:45:32.457493       1 node_register.go:53] Starting Registration Server at: /registration/nfscsi-reg.sock
+    I0115 07:45:32.457582       1 node_register.go:62] Registration Server started at: /registration/nfscsi-reg.sock
+    I0115 07:45:32.458992       1 node_register.go:92] Skipping HTTP server because endpoint is set to: ""
+    I0115 07:45:33.018081       1 main.go:102] Received GetInfo call: &InfoRequest{}
+    I0115 07:45:33.018292       1 main.go:109] "Kubelet registration probe created" path="/var/lib/kubelet/plugins/csi-nfsplugin/registration"
+    I0115 07:45:33.623838       1 main.go:120] Received NotifyRegistrationStatus call: &RegistrationStatus{PluginRegistered:true,Error:,}
+    [root@k8s-master nfscsi]# ll /var/lib/kubelet/plugins/csi-nfsplugin/csi.sock
+    srwxr-xr-x 1 root root 0 1月  15 15:45 /var/lib/kubelet/plugins/csi-nfsplugin/csi.sock
+    [root@k8s-master nfscsi]#
+  
+  #+END_SRC
+  再看看自己编码nfs-csi容器日志，注册过程只调用了GetPluginInfo和NodeGetInfo
+  方法：
+  #+BEGIN_SRC sh
+  [root@k8s-master nfscsi]# kubectl logs -n kube-system nfs-csi-node-x28zj nfs-csi
+  2023/01/15 07:45:31 driverName: nfscsi, version: N/A, nodeID: k8s-master
+  2023/01/15 07:45:31 grpc server start
+  2023/01/15 07:45:32 GetPluginInfo request
+  2023/01/15 07:45:33 NodeGetInfo request
+  [root@k8s-master nfscsi]#
+  
+  #+END_SRC
+  node-driver-registrar和CSI进程的sock文件：
+  #+BEGIN_SRC sh
+  [root@k8s-master nfscsi]# ll /var/lib/kubelet/plugins_registry/
+  总用量 0
+  srwx------ 1 root root 0 1月  15 15:45 nfscsi-reg.sock
+  [root@k8s-master nfscsi]#
+  
+  #+END_SRC
+  node对象的annotation：
+  #+BEGIN_SRC sh
+    [root@k8s-master nfscsi]# kubectl get node k8s-master  -oyaml| grep annotations -A 9
+    annotations:
+      csi.volume.kubernetes.io/nodeid: '{"nfscsi":"k8s-master"}'
+      kubeadm.alpha.kubernetes.io/cri-socket: /var/run/dockershim.sock
+      node.alpha.kubernetes.io/ttl: "0"
+      projectcalico.org/IPv4Address: 172.25.140.216/20
+      projectcalico.org/IPv4IPIPTunnelAddr: 10.244.235.192
+      volumes.kubernetes.io/controller-managed-attach-detach: "true"
+    creationTimestamp: "2022-11-23T15:34:38Z"
+    labels:
+      app: hdls-csi-controller
+    [root@k8s-master nfscsi]#
+    
+  #+END_SRC
+  最后验证CSINode对象：
+  #+BEGIN_SRC sh
+  [root@k8s-master nfscsi]# k get csinode -o wide
+  NAME         DRIVERS   AGE
+  k8s-master   1         52d
+  k8s-work1    0         52d
+  k8s-work2    0         52d
+  [root@k8s-master nfscsi]# kubectl get csinode k8s-master -o yaml
+  apiVersion: storage.k8s.io/v1
+  kind: CSINode
+  metadata:
+    annotations:
+      storage.alpha.kubernetes.io/migrated-plugins: kubernetes.io/aws-ebs,kubernetes.io/azure-disk,kubernetes.io/cinder,kubernetes.io/gce-pd
+    creationTimestamp: "2022-11-23T15:34:38Z"
+    name: k8s-master
+    ownerReferences:
+    - apiVersion: v1
+      kind: Node
+      name: k8s-master
+      uid: cb4c3e59-66e5-40a0-a385-aa2072719381
+    resourceVersion: "278990"
+    uid: cf0f93f0-495e-49f2-88b4-6f7126ca6176
+  spec:
+    drivers:
+    - name: nfscsi
+      nodeID: k8s-master
+      topologyKeys: null
+  [root@k8s-master nfscsi]#
+    
+  #+END_SRC
+  到这里我们成功完成并验证了CSI的注册。
+
+** 部署provisioner
+   Dynamic Provisioning原理：所谓的Dynamic Provisioning，其实就是创建pvc后会自动创建卷和pv，并把pv和pvc绑定
+    
+   部署运行:
+   #+BEGIN_SRC sh
+   [root@k8s-master deploy]# kubectl apply -f provisioner.yaml
+   storageclass.storage.k8s.io/nfscsi created
+   csidriver.storage.k8s.io/nfscsi created
+   serviceaccount/nfs-csi-provisioner created
+   clusterrole.rbac.authorization.k8s.io/nfs-csi-provisioner created
+   clusterrolebinding.rbac.authorization.k8s.io/nfs-csi-provisioner created
+   deployment.apps/nfs-csi-provisioner created
+   [root@k8s-master deploy]#
+   
+   #+END_SRC
+   观察对应的provisioner是否起来：
+   #+BEGIN_SRC 
+   [root@k8s-master deploy]# k get pod -A -o wide | grep nfs
+   kube-system   nfs-csi-node-vxkc8                         2/2     Running   0               10m     172.25.140.216   k8s-master   <none>           <none>
+   kube-system   nfs-csi-provisioner-6f7db46646-77lqv       2/2     Running   0               2m20s   172.25.140.216   k8s-master   <none>           <none>
+   [root@k8s-master deploy]#
+   #+END_SRC
+
+*** 创建PVC
+   准备一个如下的pvc yaml，apply该yaml：
+   #+BEGIN_SRC yaml
+   [root@k8s-master test]# pwd
+   /root/nfscsi/test
+   [root@k8s-master test]# cat pvc.yaml
+   apiVersion: v1
+   kind: PersistentVolumeClaim
+   metadata:
+     name: test-pvc
+   spec:
+     accessModes:
+       - ReadWriteOnce
+     storageClassName: nfscsi
+     resources:
+       requests:
+         storage: 1Gi
+      
+   #+END_SRC
+
+   查看是否会自动创建卷、pv，并和pvc绑定：
+
+   #+BEGIN_SRC sh
+     [root@k8s-master test]# kubectl apply -f pvc.yaml
+     persistentvolumeclaim/test-pvc created
+     [root@k8s-master test]# k get pvc
+     NAME       STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+     test-pvc   Bound    pvc-910384b5-b5eb-4196-b6d3-876f9679ed05   1Gi        RWO            nfscsi         20s
+     [root@k8s-master test]# k get pv
+     NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS     CLAIM              STORAGECLASS   REASON   AGE
+     pvc-910384b5-b5eb-4196-b6d3-876f9679ed05   1Gi        RWO            Delete           Bound      default/test-pvc   nfscsi                  35s
+     [root@k8s-master test]# ll /mnt/nfs-data/
+     总用量 16
+     drwxr-xr-x 2 root root 4096 1月  15 17:06 pvc-910384b5-b5eb-4196-b6d3-876f9679ed05
+     [root@k8s-master test]# ll /data/
+     总用量 16
+     drwxr-xr-x 2 root root 4096 1月   8 22:22 pvc-7115a52d-ba4f-4571-adbc-25e71941ca55
+     [root@k8s-master test]#
+          
+   #+END_SRC
+
+   查看provisioner pod日志：
+   #+BEGIN_SRC sh
+     [root@k8s-master test]# k logs -n kube-system  nfs-csi-provisioner-6f7db46646-77lqv nfs-csi
+     2023/01/15 08:41:03 driverName: nfscsi, version: N/A, nodeID: k8s-master
+     2023/01/15 08:41:03 grpc server start
+     2023/01/15 08:41:04 Probe request
+     2023/01/15 08:41:04 GetPluginInfo request
+     2023/01/15 08:41:04 GetPluginCapabilities request
+     2023/01/15 08:41:04 ControllerGetCapabilities request
+     ...
+     2023/01/15 09:06:26 CreateVolume request
+     2023/01/15 09:06:26 req name:  pvc-910384b5-b5eb-4196-b6d3-876f9679ed05
+     
+   #+END_SRC
+   可以看出创建pvc时自动绑定pv成功。
+
+*** 删除PVC
+    
 
 
 * 测试
+** 验证POD使用CSI
+   先准备POD的yaml
+   #+BEGIN_SRC yaml
+   [root@k8s-master test]# cat pod.yaml
+   apiVersion: v1
+   kind: Pod
+   metadata:
+     name: test-nginx-sci-pod
+   spec:
+     nodeName: k8s-master  # 运行在安装了csi插件的node上
+     containers:
+     - name: nginx
+       image: nginx:latest
+       imagePullPolicy: IfNotPresent
+       volumeMounts:
+       - name: nfs-pvc
+         mountPath: /var/log/nginx
+     volumes:
+     - name: nfs-pvc
+       persistentVolumeClaim:
+         claimName: test-pvc
+      [root@k8s-master test]#  
+   #+END_SRC
+   
+   运行
+   #+BEGIN_SRC sh
+   [root@k8s-master test]# kubectl apply -f pod.yaml
+   pod/test-nginx-sci-pod created
+   [root@k8s-master test]# kubectl get pod -A | grep test-nginx
+   default       test-nginx-sci-pod                         1/1     Running   0                18s
+   [root@k8s-master test]#
+   #+END_SRC
+
+   查看nginx日志
+   #+BEGIN_SRC sh
+   [root@k8s-master test]# ll /mnt/nfs-data/pvc-910384b5-b5eb-4196-b6d3-876f9679ed05/
+   总用量 4
+   -rw-r--r-- 1 root root    0 1月  15 17:48 access.log
+   -rw-r--r-- 1 root root 1641 1月  15 17:52 error.log
+   [root@k8s-master test]#
+   [root@k8s-master test]# tail /mnt/nfs-data/pvc-910384b5-b5eb-4196-b6d3-876f9679ed05/access.log
+   [root@k8s-master test]# tail /mnt/nfs-data/pvc-910384b5-b5eb-4196-b6d3-876f9679ed05/error.log
+   2023/01/15 09:49:20 [notice] 1#1: worker process 33 exited with code 0
+   2023/01/15 09:49:20 [notice] 1#1: exit
+   2023/01/15 09:51:39 [notice] 1#1: using the "epoll" event method
+   2023/01/15 09:51:39 [notice] 1#1: nginx/1.21.5
+   2023/01/15 09:51:39 [notice] 1#1: built by gcc 10.2.1 20210110 (Debian 10.2.1-6)
+   2023/01/15 09:51:39 [notice] 1#1: OS: Linux 3.10.0-957.21.3.el7.x86_64
+   2023/01/15 09:51:39 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 65536:65536
+   2023/01/15 09:51:39 [notice] 1#1: start worker processes
+   2023/01/15 09:51:39 [notice] 1#1: start worker process 32
+   2023/01/15 09:51:39 [notice] 1#1: start worker process 33
+   [root@k8s-master test]#
+   [root@k8s-master test]# ll /data/pvc-910384b5-b5eb-4196-b6d3-876f9679ed05/
+   总用量 4
+   -rw-r--r-- 1 root root    0 1月  15 17:48 access.log
+   -rw-r--r-- 1 root root 1641 1月  15 17:52 error.log
+   [root@k8s-master test]# 
+      
+   #+END_SRC
+   可以看出宿主机和nfs服务器上该pvc下已经有nginx日志生成达到了目的。
+
 ** csc功能测试命令
    - 安装
      #+BEGIN_SRC sh
@@ -196,7 +442,6 @@ url = "/2022/12/22/k8s-sci-driver/"
      
      #+END_SRC
      emptyDir的位置应该位于运行pod的给定节点上的/var/lib/kubelet/pods/{podid}/volumes/kubernetes.io~empty-dir/中
-   
 
 * 参考
   【01】[[https://zhuanlan.zhihu.com/p/583032625][如何实现一个 Kubernetes CSI Driver]] 
