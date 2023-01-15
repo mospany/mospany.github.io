@@ -79,15 +79,75 @@
     
     
 
-<p><a id="orgf9b7a05"></a></p>
+<p><a id="orgbc92abe"></a></p>
 
 <h1 id="简介">简介</h1>
 
 <p>外部存储接入 Kubernetes 的方式主要有两种：In-Tree 和 Out-of-Tree。其中 In-Tree 是指存储驱动的源码都在 Kubernetes 代码库中，与 Kubernetes 一起发布、迭代、管理，这种方式灵活性较差，且门槛较高。Out-of-Tree 是指存储插件由第三方编写、发布、管理，作为一种扩展与 Kubernetes 配合使用。Out-of-Tree 主要有 FlexVolume 和 CSI 两种实现方式，其中，FlexVolume 因为其命令式的特点，不易维护和管理，从 Kubernetes v1.23 版本开始已被弃用。因此 CSI 已经成为 Kubernetes 存储扩展（ Out-of-Tree ）的唯一方式。</p>
 
+<p>在介绍CSI之前，先梳理一下kubernetes中使用存储有哪些步骤：<br />
+1、创建pv对象<br />
+2、存储服务器上创建一个volume<br />
+3、把创建的volume挂载到宿主机上<br />
+4、格式化volume<br />
+5、把格式化的volume mount到pod的volume目录<br />
+6、创建pvc对象并和pv对象绑定<br />
+7、pod使用pvc</p>
+
 <p>代码工程：<a href="https://github.com/mospany/nfscsi.git">https://github.com/mospany/nfscsi.git</a></p>
 
-<p><a id="orgf980b56"></a></p>
+<p><a id="org737ace4"></a></p>
+
+<h1 id="术语">术语</h1>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">缩写</th>
+<th scope="col" class="org-left">英文全称</th>
+<th scope="col" class="org-left">中文全称</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="org-left">pvc</td>
+<td class="org-left">PersistentVolumeClaim</td>
+<td class="org-left">持久卷声明</td>
+<td class="org-left">描述的是pod希望使用的持久化存储的属性</td>
+</tr>
+
+
+<tr>
+<td class="org-left">pv</td>
+<td class="org-left">PersistentVolume</td>
+<td class="org-left">持久卷</td>
+<td class="org-left">描述的是具体的持久化存储数据卷信息</td>
+</tr>
+
+
+<tr>
+<td class="org-left">storageClass</td>
+<td class="org-left">storageClass</td>
+<td class="org-left">存储类</td>
+<td class="org-left">创建pv的模板</td>
+</tr>
+</tbody>
+</table>
+
+<p><a id="orgb474f1e"></a></p>
 
 <h1 id="csi组成">CSI组成</h1>
 
@@ -101,7 +161,7 @@
 <li>粉色部分：node-driver-registrar、external-attacher、external-provisioner 组件是 Kubernetes 团队开发和维护的，被称为 External Components，它们都是以 sidecar 的形式与 Custom Components 配合使用的。</li>
 </ul>
 
-<p><a id="orge4bfb6f"></a></p>
+<p><a id="org8f67c97"></a></p>
 
 <h2 id="custom-components">Custom Components</h2>
 
@@ -110,106 +170,93 @@
 <ul>
 <li><p>Identity Service 顾名思义，主要用于对外暴露这个插件本身的信息，比如驱动的名称、驱动的能力等：</p>
 
-<pre><code>  service Identity {
-  rpc GetPluginInfo(GetPluginInfoRequest)
-    returns (GetPluginInfoResponse) {}
-
-  rpc GetPluginCapabilities(GetPluginCapabilitiesRequest)
-    returns (GetPluginCapabilitiesResponse) {}
-
-  rpc Probe (ProbeRequest)
-    returns (ProbeResponse) {}
+<pre><code>//github.com/container-storage-interface/spec/lib/go/csi/csi.pb.go
+type IdentityServer interface {
+    GetPluginInfo(context.Context, *GetPluginInfoRequest) (*GetPluginInfoResponse, error)
+    GetPluginCapabilities(context.Context, *GetPluginCapabilitiesRequest) (*GetPluginCapabilitiesResponse, error)
+    Probe(context.Context, *ProbeRequest) (*ProbeResponse, error)
 }
 </code></pre></li>
 
 <li><p>Controller Service 主要定义一些 无需在宿主机上执行的操作，这也是与下文的 Node Service 最根本的区别。以 CreateVolume 为例，k8s 通过调用该方法创建底层存储。比如底层使用了某云供应商的云硬盘服务，开发者在 CreateVolume 方法实现中应该调用云硬盘服务的创建 / 订购云硬盘的 API，调用 API 这个操作是不需要在特定宿主机上执行的。</p>
 
-<pre><code>  service Controller {
-  rpc CreateVolume (CreateVolumeRequest)
-    returns (CreateVolumeResponse) {}
-
-  rpc DeleteVolume (DeleteVolumeRequest)
-    returns (DeleteVolumeResponse) {}
-
-  rpc ControllerPublishVolume (ControllerPublishVolumeRequest)
-    returns (ControllerPublishVolumeResponse) {}
-
-  rpc ControllerUnpublishVolume (ControllerUnpublishVolumeRequest)
-    returns (ControllerUnpublishVolumeResponse) {}
-
-  rpc ValidateVolumeCapabilities (ValidateVolumeCapabilitiesRequest)
-    returns (ValidateVolumeCapabilitiesResponse) {}
-
-  rpc ListVolumes (ListVolumesRequest)
-    returns (ListVolumesResponse) {}
-
-  rpc GetCapacity (GetCapacityRequest)
-    returns (GetCapacityResponse) {}
-
-  rpc ControllerGetCapabilities (ControllerGetCapabilitiesRequest)
-    returns (ControllerGetCapabilitiesResponse) {}
-
-  rpc CreateSnapshot (CreateSnapshotRequest)
-    returns (CreateSnapshotResponse) {}
-
-  rpc DeleteSnapshot (DeleteSnapshotRequest)
-    returns (DeleteSnapshotResponse) {}
-
-  rpc ListSnapshots (ListSnapshotsRequest)
-    returns (ListSnapshotsResponse) {}
-
-  rpc ControllerExpandVolume (ControllerExpandVolumeRequest)
-    returns (ControllerExpandVolumeResponse) {}
-
-  rpc ControllerGetVolume (ControllerGetVolumeRequest)
-    returns (ControllerGetVolumeResponse) {
-        option (alpha_method) = true;
-    }
+<pre><code>// github.com/container-storage-interface/spec/lib/go/csi/csi.pb.go
+type ControllerServer interface {
+    CreateVolume(context.Context, *CreateVolumeRequest) (*CreateVolumeResponse, error)
+    DeleteVolume(context.Context, *DeleteVolumeRequest) (*DeleteVolumeResponse, error)
+    ControllerPublishVolume(context.Context, *ControllerPublishVolumeRequest) (*ControllerPublishVolumeResponse, error)
+    ControllerUnpublishVolume(context.Context, *ControllerUnpublishVolumeRequest) (*ControllerUnpublishVolumeResponse, error)
+    ValidateVolumeCapabilities(context.Context, *ValidateVolumeCapabilitiesRequest) (*ValidateVolumeCapabilitiesResponse, error)
+    ListVolumes(context.Context, *ListVolumesRequest) (*ListVolumesResponse, error)
+    GetCapacity(context.Context, *GetCapacityRequest) (*GetCapacityResponse, error)
+    ControllerGetCapabilities(context.Context, *ControllerGetCapabilitiesRequest) (*ControllerGetCapabilitiesResponse, error)
+    CreateSnapshot(context.Context, *CreateSnapshotRequest) (*CreateSnapshotResponse, error)
+    DeleteSnapshot(context.Context, *DeleteSnapshotRequest) (*DeleteSnapshotResponse, error)
+    ListSnapshots(context.Context, *ListSnapshotsRequest) (*ListSnapshotsResponse, error)
+    ControllerExpandVolume(context.Context, *ControllerExpandVolumeRequest) (*ControllerExpandVolumeResponse, error)
+    ControllerGetVolume(context.Context, *ControllerGetVolumeRequest) (*ControllerGetVolumeResponse, error)
 }
 </code></pre></li>
 
 <li><p>Node Service 定义了 需要在宿主机上执行的操作，比如：mount、unmount。在前面的部署架构图中，Node Service 使用 Daemonset 的方式部署，也是为了确保 Node Service 会被运行在每个节点，以便执行诸如 mount 之类的指令。</p>
 
-<pre><code>  service Node {
-  rpc NodeStageVolume (NodeStageVolumeRequest)
-    returns (NodeStageVolumeResponse) {}
-
-  rpc NodeUnstageVolume (NodeUnstageVolumeRequest)
-    returns (NodeUnstageVolumeResponse) {}
-
-  rpc NodePublishVolume (NodePublishVolumeRequest)
-    returns (NodePublishVolumeResponse) {}
-
-  rpc NodeUnpublishVolume (NodeUnpublishVolumeRequest)
-    returns (NodeUnpublishVolumeResponse) {}
-
-  rpc NodeGetVolumeStats (NodeGetVolumeStatsRequest)
-    returns (NodeGetVolumeStatsResponse) {}
-
-  rpc NodeExpandVolume(NodeExpandVolumeRequest)
-    returns (NodeExpandVolumeResponse) {}
-
-  rpc NodeGetCapabilities (NodeGetCapabilitiesRequest)
-    returns (NodeGetCapabilitiesResponse) {}
-
-  rpc NodeGetInfo (NodeGetInfoRequest)
-    returns (NodeGetInfoResponse) {}
+<pre><code>// github.com/container-storage-interface/spec/lib/go/csi/csi.pb.go
+type NodeServer interface {
+    NodeStageVolume(context.Context, *NodeStageVolumeRequest) (*NodeStageVolumeResponse, error)
+    NodeUnstageVolume(context.Context, *NodeUnstageVolumeRequest) (*NodeUnstageVolumeResponse, error)
+    NodePublishVolume(context.Context, *NodePublishVolumeRequest) (*NodePublishVolumeResponse, error)
+    NodeUnpublishVolume(context.Context, *NodeUnpublishVolumeRequest) (*NodeUnpublishVolumeResponse, error)
+    NodeGetVolumeStats(context.Context, *NodeGetVolumeStatsRequest) (*NodeGetVolumeStatsResponse, error)
+    NodeExpandVolume(context.Context, *NodeExpandVolumeRequest) (*NodeExpandVolumeResponse, error)
+    NodeGetCapabilities(context.Context, *NodeGetCapabilitiesRequest) (*NodeGetCapabilitiesResponse, error)
+    NodeGetInfo(context.Context, *NodeGetInfoRequest) (*NodeGetInfoResponse, error)
 }
 </code></pre></li>
 </ul>
 
-<p><a id="org6b47984"></a></p>
+<p><a id="orgded1bc7"></a></p>
+
+<h1 id="原理">原理</h1>
+
+<p><img src="http://blog.mospan.cn/post/img/k8s/csi/nfs-csi.png" alt="img" /><br />
+1、首先肯定是要在一个进程里编程实现前面提到的三个gRPC服务对应的方法，例如IdentityServer下的三个方法、ControllerServer下的CreateVolume/DeleteVolume方法以及NodeServer下的NodePublishVolume/NodeUnpublishVolume方法等，并以unix sock的方式提供gRPC服务（后文会用到），并打包成镜像；</p>
+
+<p>2、把node-driver-registrar和CSI服务作为两个容器放到一个pod里，这样node-driver-registrar服务就可以用unix sock的方式访问CSI进程里的gRPC服务并且向kubelet注册；</p>
+
+<p>3、node-driver-registrar完成注册后，后续的Mount/Unmount等操作kubelet会直接通过unix sock访问CSI。这里有两层含义：第一层含义是kubelet会直接通过unix sock访问CSI，因此CSI需要用hostPath的方式把自己unix sock文件暴露；第二层含义是kubelet直接调用CSI服务，这意味着node-driver-registrar和CSI的这个pod应该是daemonSet形式部署的；</p>
+
+<p>4、把external-provisioner和CSI服务作为两个容器放到一个pod里，去实现Dynamic Provisioning功能。因为Dynamic Provisioning设计创建卷和删除卷，因此这个pod应该看做是有状态的，在部署上通常是带有选举的deployment部署或者副本数为1的statefulSet部署（如果需要Attach/Detach功能，也可以再加个容器把external-attacher放到这个pod中）。</p>
+
+<p><a id="org6858bc9"></a></p>
+
+<h2 id="csi注册流程">CSI注册流程</h2>
+
+<p><img src="http://blog.mospan.cn/post/img/k8s/csi/csi-reg.png" alt="img" /><br />
+相关的步骤释义如下：</p>
+
+<p>1、kubelet启动后基于fsnotify监听/var/lib/kubelet/plugins_registry目录；<br />
+2、node-driver-registrar启动通过启动参数中配置的CSI进程的sock文件，调CSI进程的GetPluginInfo方法获取CSI插件名称；<br />
+3、node-driver-registrar启动后在/var/lib/kubelet/plugins_registry目录下创建自己的sock文件{csiName}-reg.sock；<br />
+4、kubelet的watcher监听到/var/lib/kubelet/plugins_registry目录下有sock文件创建，把该sock文件信息存入内存中的desiredStateOfWorld对象中；<br />
+5、kubelet中有个reconciler协程周期性的检查desiredStateOfWorld对象和actualStateOfWorld对象中的数据差异，发现有新的CSI插件需要执行注册过程；<br />
+6、reconciler通过/var/lib/kubelet/plugins_registry/{csiName}-reg.sock，调用node-driver-registrar下的GetInfo方法获取CSI插件的名称和CSI进程的sock文件路径等信息；<br />
+7、reconciler通过上一步拿到的CSI进程sock文件，调用CSI进程下NodeGetInfo方法获取一些数据用于后续的Node和CSINode对象；<br />
+8、组装数据调apiServer接口更新本节点对应的Node对象的annotation；<br />
+9、组装数据调apiServer接口创建/更新对应的CSINode对象；<br />
+10、reconciler通过/var/lib/kubelet/plugins_registry/{csiName}-reg.sock，调用node-driver-registrar的NotifyRegistrationStatus方法，告知其注册结果。</p>
+
+<p><a id="org7d7dd1a"></a></p>
 
 <h1 id="nfs搭建">NFS搭建</h1>
 
 <p>由于实现CSI需要一个后端存储，Linux提供NFS功能可以免费搭建一个NSC存储功能用来验证。<br />
 搭建办法详见: <a href="http://blog.mospan.cn/2023/01/15/aliyun-ecs-install-nfs/">CentOS7 下安装和配置 NFS</a></p>
 
-<p><a id="org2947427"></a></p>
+<p><a id="orgb59c148"></a></p>
 
 <h1 id="部署">部署</h1>
 
-<p><a id="org26bd247"></a></p>
+<p><a id="org8db7bdc"></a></p>
 
 <h2 id="部署node">部署node</h2>
 
@@ -332,7 +379,7 @@ spec:
 
 <p>到这里我们成功完成并验证了CSI的注册。</p>
 
-<p><a id="org86d9423"></a></p>
+<p><a id="orgad7ad48"></a></p>
 
 <h2 id="部署provisioner">部署provisioner</h2>
 
@@ -358,7 +405,7 @@ kube-system   nfs-csi-provisioner-6f7db46646-77lqv       2/2     Running   0    
 [root@k8s-master deploy]#
 </code></pre>
 
-<p><a id="org240f30a"></a></p>
+<p><a id="orgea2d449"></a></p>
 
 <h3 id="创建pvc">创建PVC</h3>
 
@@ -415,15 +462,15 @@ drwxr-xr-x 2 root root 4096 1月   8 22:22 pvc-7115a52d-ba4f-4571-adbc-25e71941c
 
 <p>可以看出创建pvc时自动绑定pv成功。</p>
 
-<p><a id="org554cd60"></a></p>
+<p><a id="orgc723d93"></a></p>
 
 <h3 id="删除pvc">删除PVC</h3>
 
-<p><a id="org90a6e15"></a></p>
+<p><a id="org1c73bb2"></a></p>
 
 <h1 id="测试">测试</h1>
 
-<p><a id="org9983855"></a></p>
+<p><a id="org5680352"></a></p>
 
 <h2 id="验证pod使用csi">验证POD使用CSI</h2>
 
@@ -488,7 +535,7 @@ default       test-nginx-sci-pod                         1/1     Running   0    
 
 <p>可以看出宿主机和nfs服务器上该pvc下已经有nginx日志生成达到了目的。</p>
 
-<p><a id="orgbad0ad7"></a></p>
+<p><a id="org6a186f0"></a></p>
 
 <h2 id="csc功能测试命令">csc功能测试命令</h2>
 
@@ -545,7 +592,7 @@ Use &quot;csc controller -h,--help&quot; for more information
 <p>emptyDir的位置应该位于运行pod的给定节点上的/var/lib/kubelet/pods/{podid}/volumes/kubernetes.io~empty-dir/中</p></li>
 </ul>
 
-<p><a id="orgec74f0c"></a></p>
+<p><a id="org13eaa94"></a></p>
 
 <h1 id="参考">参考</h1>
 
