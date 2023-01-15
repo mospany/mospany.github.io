@@ -248,7 +248,7 @@ test
             <guid>http://mospany.github.io/2022/12/22/k8s-sci-driver/</guid>
             <description>
 
-&lt;p&gt;&lt;a id=&#34;orgbc92abe&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org3f75c1c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;简介&#34;&gt;简介&lt;/h1&gt;
 
@@ -265,7 +265,7 @@ test
 
 &lt;p&gt;代码工程：&lt;a href=&#34;https://github.com/mospany/nfscsi.git&#34;&gt;https://github.com/mospany/nfscsi.git&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org737ace4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orga5011fc&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;术语&#34;&gt;术语&lt;/h1&gt;
 
@@ -316,7 +316,7 @@ test
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgb474f1e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org20530b7&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;csi组成&#34;&gt;CSI组成&lt;/h1&gt;
 
@@ -330,7 +330,7 @@ test
 &lt;li&gt;粉色部分：node-driver-registrar、external-attacher、external-provisioner 组件是 Kubernetes 团队开发和维护的，被称为 External Components，它们都是以 sidecar 的形式与 Custom Components 配合使用的。&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a id=&#34;org8f67c97&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orga3ae62a&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;custom-components&#34;&gt;Custom Components&lt;/h2&gt;
 
@@ -383,7 +383,7 @@ type NodeServer interface {
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgded1bc7&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org7bc93bd&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;原理&#34;&gt;原理&lt;/h1&gt;
 
@@ -396,7 +396,7 @@ type NodeServer interface {
 
 &lt;p&gt;4、把external-provisioner和CSI服务作为两个容器放到一个pod里，去实现Dynamic Provisioning功能。因为Dynamic Provisioning设计创建卷和删除卷，因此这个pod应该看做是有状态的，在部署上通常是带有选举的deployment部署或者副本数为1的statefulSet部署（如果需要Attach/Detach功能，也可以再加个容器把external-attacher放到这个pod中）。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org6858bc9&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org953691d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;csi注册流程&#34;&gt;CSI注册流程&lt;/h2&gt;
 
@@ -414,18 +414,18 @@ type NodeServer interface {
 9、组装数据调apiServer接口创建/更新对应的CSINode对象；&lt;br /&gt;
 10、reconciler通过/var/lib/kubelet/plugins_registry/{csiName}-reg.sock，调用node-driver-registrar的NotifyRegistrationStatus方法，告知其注册结果。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org7d7dd1a&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org34e354f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;nfs搭建&#34;&gt;NFS搭建&lt;/h1&gt;
 
 &lt;p&gt;由于实现CSI需要一个后端存储，Linux提供NFS功能可以免费搭建一个NSC存储功能用来验证。&lt;br /&gt;
 搭建办法详见: &lt;a href=&#34;http://blog.mospan.cn/2023/01/15/aliyun-ecs-install-nfs/&#34;&gt;CentOS7 下安装和配置 NFS&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgb59c148&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgaf35c61&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;部署&#34;&gt;部署&lt;/h1&gt;
 
-&lt;p&gt;&lt;a id=&#34;org8db7bdc&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org82b326f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;部署node&#34;&gt;部署node&lt;/h2&gt;
 
@@ -548,11 +548,29 @@ spec:
 
 &lt;p&gt;到这里我们成功完成并验证了CSI的注册。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgad7ad48&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[root@k8s-master deploy]# k logs -n kube-system nfs-csi-node-vxkc8  nfs-csi
+2023/01/15 08:33:22 driverName: nfscsi, version: N/A, nodeID: k8s-master
+2023/01/15 08:33:22 grpc server start
+2023/01/15 08:33:23 GetPluginInfo request
+2023/01/15 08:33:23 NodeGetInfo request
+2023/01/15 09:42:25 NodeGetCapabilities request
+2023/01/15 09:42:25 NodeGetCapabilities request
+2023/01/15 09:42:25 NodeGetCapabilities request
+2023/01/15 09:42:25 NodeGetCapabilities request
+2023/01/15 09:42:25 NodePublishVolume request
+2023/01/15 09:42:25 source: 127.0.0.1:/data/pvc-910384b5-b5eb-4196-b6d3-876f9679ed05, targetPath: /var/lib/kubelet/pods/e86fa053-7d1b-4330-a6f2-555d350b45e9/volumes/kubernetes.io~csi/pvc-910384b5-b5eb-4196-b6d3-876f9679ed05/mount, options: []
+2023/01/15 09:43:20 NodeGetCapabilities request
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;当POD执行CreateVolume是将调用nodeService里的NodePublishVolume方法进行mount操作，即把nfs里的pvc-子目录mount到宿主机pod目录卷下。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgccab5fd&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;部署provisioner&#34;&gt;部署provisioner&lt;/h2&gt;
 
 &lt;p&gt;Dynamic Provisioning原理：所谓的Dynamic Provisioning，其实就是创建pvc后会自动创建卷和pv，并把pv和pvc绑定&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/csi/provisioner-follow.jpg&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;部署运行:&lt;/p&gt;
 
@@ -574,7 +592,7 @@ kube-system   nfs-csi-provisioner-6f7db46646-77lqv       2/2     Running   0    
 [root@k8s-master deploy]#
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgea2d449&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgbd2779f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;创建pvc&#34;&gt;创建PVC&lt;/h3&gt;
 
@@ -631,15 +649,17 @@ drwxr-xr-x 2 root root 4096 1月   8 22:22 pvc-7115a52d-ba4f-4571-adbc-25e71941c
 
 &lt;p&gt;可以看出创建pvc时自动绑定pv成功。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgc723d93&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org252c6f3&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;删除pvc&#34;&gt;删除PVC&lt;/h3&gt;
 
-&lt;p&gt;&lt;a id=&#34;org1c73bb2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;同理。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org20891ab&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;测试&#34;&gt;测试&lt;/h1&gt;
 
-&lt;p&gt;&lt;a id=&#34;org5680352&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgaaf51bd&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;验证pod使用csi&#34;&gt;验证POD使用CSI&lt;/h2&gt;
 
@@ -704,7 +724,7 @@ default       test-nginx-sci-pod                         1/1     Running   0    
 
 &lt;p&gt;可以看出宿主机和nfs服务器上该pvc下已经有nginx日志生成达到了目的。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org6a186f0&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orga9b7cb5&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;csc功能测试命令&#34;&gt;csc功能测试命令&lt;/h2&gt;
 
@@ -761,7 +781,7 @@ Use &amp;quot;csc controller -h,--help&amp;quot; for more information
 &lt;p&gt;emptyDir的位置应该位于运行pod的给定节点上的/var/lib/kubelet/pods/{podid}/volumes/kubernetes.io~empty-dir/中&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a id=&#34;org13eaa94&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;orgd2a986a&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;参考&#34;&gt;参考&lt;/h1&gt;
 
