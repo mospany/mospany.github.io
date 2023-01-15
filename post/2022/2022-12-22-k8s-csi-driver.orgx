@@ -240,10 +240,29 @@ url = "/2022/12/22/k8s-sci-driver/"
     
   #+END_SRC
   到这里我们成功完成并验证了CSI的注册。
+  #+BEGIN_SRC sh
+   [root@k8s-master deploy]# k logs -n kube-system nfs-csi-node-vxkc8  nfs-csi
+   2023/01/15 08:33:22 driverName: nfscsi, version: N/A, nodeID: k8s-master
+   2023/01/15 08:33:22 grpc server start
+   2023/01/15 08:33:23 GetPluginInfo request
+   2023/01/15 08:33:23 NodeGetInfo request
+   2023/01/15 09:42:25 NodeGetCapabilities request
+   2023/01/15 09:42:25 NodeGetCapabilities request
+   2023/01/15 09:42:25 NodeGetCapabilities request
+   2023/01/15 09:42:25 NodeGetCapabilities request
+   2023/01/15 09:42:25 NodePublishVolume request
+   2023/01/15 09:42:25 source: 127.0.0.1:/data/pvc-910384b5-b5eb-4196-b6d3-876f9679ed05, targetPath: /var/lib/kubelet/pods/e86fa053-7d1b-4330-a6f2-555d350b45e9/volumes/kubernetes.io~csi/pvc-910384b5-b5eb-4196-b6d3-876f9679ed05/mount, options: []
+   2023/01/15 09:43:20 NodeGetCapabilities request
+  
+  #+END_SRC
+  当POD执行CreateVolume是将调用nodeService里的NodePublishVolume方法进行mount操作，即把nfs里的pvc-子目录mount到宿主机pod目录卷下。
+  
 
 ** 部署provisioner
    Dynamic Provisioning原理：所谓的Dynamic Provisioning，其实就是创建pvc后会自动创建卷和pv，并把pv和pvc绑定
     
+   [[http://blog.mospan.cn/post/img/k8s/csi/provisioner-follow.jpg]]
+
    部署运行:
    #+BEGIN_SRC sh
    [root@k8s-master deploy]# kubectl apply -f provisioner.yaml
