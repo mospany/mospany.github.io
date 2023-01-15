@@ -5,7 +5,240 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Thu, 22 Dec 2022 22:21:36 CST</updated>
+        <updated>Sun, 15 Jan 2023 10:44:29 CST</updated>
+        
+        <item>
+            <title>CentOS7 下安装和配置 NFS</title>
+            <link>http://mospany.github.io/2023/01/15/aliyun-ecs-install-nfs/</link>
+            <pubDate>Sun, 15 Jan 2023 10:44:29 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://mospany.github.io/2023/01/15/aliyun-ecs-install-nfs/</guid>
+            <description>
+
+&lt;p&gt;&lt;a id=&#34;org629d3e2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;简介&#34;&gt;简介&lt;/h1&gt;
+
+&lt;p&gt;NFS（Network File System，网络文件系统）是当前主流异构平台共享文件系统之一。主要应用在UNIX环境下。最早是由Sun Microsystems开发，现在能够支持在不同类型的系统之间通过网络进行文件共享，广泛应用在FreeBSD、SCO、Solaris等异构操作系统平台，允许一个系统在网络上与他人共享目录和文件。通过使用NFS，用户和程序可以像访问本地文件一样访问远端系统上的文件，使得每个计算机的节点能够像使用本地资源一样方便地使用网上资源。换言之，NFS可用于不同类型计算机、操作系统、网络架构和传输协议运行环境中的网络文件远程访问和共享。&lt;/p&gt;
+
+&lt;p&gt;NFS的工作原理是使用客户端/服务器架构，由一个客户端程序和服务器程序组成。服务器程序向其他计算机提供对文件系统的访问，其过程称为输出。NFS客户端程序对共享文件系统进行访问时，把它们从NFS服务器中“输送”出来。文件通常以块为单位进行传输。其大小是8KB（虽然它可能会将操作分成更小尺寸的分片）。NFS传输协议用于服务器和客户机之间文件访问和共享的通信，从而使客户机远程地访问保存在存储设备上的数据。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org043eb1b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;服务端搭建&#34;&gt;服务端搭建&lt;/h1&gt;
+
+&lt;p&gt;由于实现CSI需要一个后端存储，Linux提供NFS功能可以免费搭建一个NSC存储功能用来验证。&lt;br /&gt;
+搭建办法详见: &lt;a href=&#34;https://www.codeleading.com/article/35162638950/&#34;&gt;阿里云服务器 CentOS7 下安装和配置 NFS&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org31fb10d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;服务端安装&#34;&gt;服务端安装&lt;/h2&gt;
+
+&lt;p&gt;使用 yum 安装 NFS 安装包。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;yum install nfs-utils -y 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org768e380&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;服务端配置&#34;&gt;服务端配置&lt;/h2&gt;
+
+&lt;p&gt;设置 NFS 服务开机启动&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# systemctl enable rpcbind
+[root@k8s-master ~]# systemctl enable nfs
+[root@k8s-master ~]#
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org79e8e0b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;配置共享目录&#34;&gt;配置共享目录&lt;/h2&gt;
+
+&lt;p&gt;服务启动之后，我们在服务端配置一个共享目录&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# mkdir /data
+[root@k8s-master ~]# chmod 755 /data
+[root@k8s-master ~]#
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;根据这个目录，相应配置导出目录&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;vim /etc/exports
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;添加如下配置&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;/data/     *(rw,sync,no_root_squash,no_all_squash)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;data: 共享目录位置。&lt;br /&gt;
+192.168.0.0/24: 客户端 IP 范围，* 代表所有，即没有限制（我在实验中会设置为*）。&lt;br /&gt;
+rw: 权限设置，可读可写。&lt;br /&gt;
+sync: 同步共享目录。&lt;br /&gt;
+no_root_squash: 可以使用 root 授权。&lt;br /&gt;
+no_all_squash: 可以使用普通用户授权。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orge7422da&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;启动-nfs-服务&#34;&gt;启动 NFS 服务&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# systemctl start rpcbind
+[root@k8s-master ~]# systemctl start nfs
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org2db5bbe&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;防火墙需要打开-rpc-bind-和-nfs-的服务&#34;&gt;防火墙需要打开 rpc-bind 和 nfs 的服务&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# firewall-cmd --zone=public --permanent --add-service={rpc-bind,mountd,nfs}
+FirewallD is not running
+[root@k8s-master ~]# firewall-cmd --reload
+FirewallD is not running
+[root@k8s-master ~]#
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org9febc6e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;检查&#34;&gt;检查&lt;/h2&gt;
+
+&lt;p&gt;可以检查一下本地的共享目录&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# showmount -e localhost
+Export list for localhost:
+/data *
+[root@k8s-master ~]#
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这样，服务端就配置好了。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgbfea31c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;查看端口&#34;&gt;查看端口&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# rpcinfo -p localhost
+program vers proto   port  service
+ 100000    4   tcp    111  portmapper
+ 100000    3   tcp    111  portmapper
+ 100000    2   tcp    111  portmapper
+ 100000    4   udp    111  portmapper
+ 100000    3   udp    111  portmapper
+ 100000    2   udp    111  portmapper
+ 100005    1   udp  20048  mountd
+ 100005    1   tcp  20048  mountd
+ 100005    2   udp  20048  mountd
+ 100024    1   udp  54689  status
+ 100005    2   tcp  20048  mountd
+ 100024    1   tcp  46564  status
+ 100005    3   udp  20048  mountd
+ 100005    3   tcp  20048  mountd
+ 100003    3   tcp   2049  nfs
+ 100003    4   tcp   2049  nfs
+ 100227    3   tcp   2049  nfs_acl
+ 100003    3   udp   2049  nfs
+ 100003    4   udp   2049  nfs
+ 100227    3   udp   2049  nfs_acl
+ 100021    1   udp  40110  nlockmgr
+ 100021    3   udp  40110  nlockmgr
+ 100021    4   udp  40110  nlockmgr
+ 100021    1   tcp  33742  nlockmgr
+ 100021    3   tcp  33742  nlockmgr
+ 100021    4   tcp  33742  nlockmgr
+ [root@k8s-master ~]#
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;orga16c2a2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;客户端连接-nfs&#34;&gt;客户端连接 NFS&lt;/h1&gt;
+
+&lt;p&gt;&lt;a id=&#34;orge9dc5a1&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;在客户端创建目录&#34;&gt;在客户端创建目录&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# mkdir -p /mnt/nfs-data/
+[root@k8s-master ~]#
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgce10511&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;挂载&#34;&gt;挂载&lt;/h2&gt;
+
+&lt;p&gt;为了测试方便， 服务端和客户端均在同一台服务器上。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# mount -t nfs 127.0.0.1:/data /mnt/nfs-data
+[root@k8s-master ~]#
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;挂载之后，可以使用 mount 命令查看一下&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# mount | grep nfs
+nfsd on /proc/fs/nfsd type nfsd (rw,relatime)
+sunrpc on /var/lib/nfs/rpc_pipefs type rpc_pipefs (rw,relatime)
+127.0.0.1:/data on /mnt/nfs-data type nfs4 (rw,relatime,vers=4.1,rsize=524288,wsize=524288,namlen=255,hard,proto=tcp,timeo=600,retrans=2,sec=sys,clientaddr=127.0.0.1,local_lock=none,addr=127.0.0.1)
+[root@k8s-master ~]#
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这说明已经挂载成功了。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;orgc315b27&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;测试nfs&#34;&gt;测试NFS&lt;/h1&gt;
+
+&lt;p&gt;测试一下，在客户端向共享目录创建一个文件&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# echo test &amp;gt; /mnt/nfs-data/bbb.txt
+[root@k8s-master ~]#
+[root@k8s-master ~]#
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;之后取 NFS 服务端查看一下&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# echo test &amp;gt; /mnt/nfs-data/bbb.txt
+[root@k8s-master ~]#
+[root@k8s-master ~]# cat /data/bbb.txt
+test
+[root@k8s-master ~]# 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可以看到，共享目录已经写入了。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org6f32303&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;客户端自动挂载&#34;&gt;客户端自动挂载&lt;/h1&gt;
+
+&lt;p&gt;自动挂载很常用，客户端设置一下即可。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ vim /etc/fstab
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;在结尾添加类似如下配置&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# cat /etc/fstab
+
+ #
+ # /etc/fstab
+ # Created by anaconda on Thu Jul 11 02:52:01 2019
+ #
+ # Accessible filesystems, by reference, are maintained under &#39;/dev/disk&#39;
+ # See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info
+ #
+ UUID=1114fe9e-2309-4580-b183-d778e6d97397 /                       ext4    defaults        1 1
+ 127.0.0.1:/data     /mnt/nfs-data                   nfs     defaults        0 0
+ [root@k8s-master ~]#
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;由于修改了 /etc/fstab，需要重新加载 systemctl。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# systemctl daemon-reload
+[root@k8s-master ~]#
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a id=&#34;org284ecce&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;参考&#34;&gt;参考&lt;/h1&gt;
+
+&lt;p&gt;【01】&lt;a href=&#34;https://www.codeleading.com/article/35162638950/&#34;&gt;阿里云服务器 CentOS7 下安装和配置 NFS&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
         
         <item>
             <title>K8S项目实践(05): 动手实现CSI驱动</title>
@@ -4914,104 +5147,6 @@ DNS报文如上图所示，其他左图为报文完整格式，后图区域数�
 &lt;h1 id=&#34;小结&#34;&gt;小结&lt;/h1&gt;
 
 &lt;p&gt;区块链是一个比较新也比较复杂的技术系统，本着学习与分享的小学生心态，有些理解和认知不足在所难免，欢迎指正，大家一起学习，再次提醒&amp;rdquo;反对炒币、投资有风险、入市须谨慎&amp;rdquo;, 多多花时间研究其背后的技术或支持有价值有潜力的应用团队，让更多的区块链应用做到科技普惠。&lt;/p&gt;
-</description>
-        </item>
-        
-        <item>
-            <title>从《习总：加快区块链发展》中我们如何应对</title>
-            <link>http://mospany.github.io/2019/10/25/learn-blockchain-view/</link>
-            <pubDate>Fri, 25 Oct 2019 14:06:08 CST</pubDate>
-            <author>Mospan</author>
-            <guid>http://mospany.github.io/2019/10/25/learn-blockchain-view/</guid>
-            <description>
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/learn-blockchain-view/main.jpg&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org4daa5cd&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;引言&#34;&gt;引言&lt;/h1&gt;
-
-&lt;p&gt;今天一则《习总：加快推动区块链产业创新发展》新闻在圈内炸开了锅， 让曾经炽手可热现在却处于寒冬时期的区块链行业又看到了曙光， 让从业人员可以光明正大的说自己这几年是做区块链的。&lt;br /&gt;
-区块链在前两年很多人见面都谈区块链， 不谈都感觉自己快融不进去马上到来的价值互联网， 随着没有现象级应用落地和资本寒冬伴随的几次大裁员大洗礼，这一行业又慢慢淡出视野谁都觉得技术是好的但不知道春天什么时候到来， 很多公司倒闭很多人转行，随着鼓励政策一出，让我们浅析下政策悟出什么并如何准备和应对。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgc8e6388&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;区块链的诞生&#34;&gt;区块链的诞生&lt;/h1&gt;
-
-&lt;p&gt;十年前，2018年10月31日，一个化名为中本聪的人发布了一份标题为《比特币：一个点对点电子现金系统》（Bitcoin: A Peer-to-Peer Electronic Cash System）的白皮书。随后2009年1月3日，比特币系统开始运行。转眼十年间，比特币经历了非同寻常的跌宕起伏，虽然仍在遭受质疑，但它依然还在。随后在此基础上诞生了很多币，人们开始背后的技术&amp;#x2013;区块链，发现这个技术适用于很多行业，认为是继TCP/IP之后最伟大的发明，将带来天翻地覆的变革。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org36f7a78&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;主要应用场景&#34;&gt;主要应用场景&lt;/h1&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/learn-blockchain-view/use.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;数字货币：货币数字化将杜绝了假币、容易丢失、容易损坏特性，由于数字货币是经过一定区块链算法生成将可以抵制通货膨胀导致的资本贬值和交易不可篡改而导致的抵赖行为。&lt;/li&gt;
-&lt;li&gt;跨境支付: 现在跨境支付需要很多金融公司等经过多天的运算和转账才能成功，如果运用区块链技术产生的币(如：比特币)只需要几分钟就可以完成，大大加快了速度与减少成本。&lt;/li&gt;
-&lt;li&gt;信息共享：保持各个节点的数据一致性的，利用区块链的不可篡改和共识机制，可构建其一条安全可靠的信息共享通道。&lt;/li&gt;
-&lt;li&gt;版权保护: 可以利用于音乐、著作等的版权保护，区块链的去中心化存储，保证没有一家机构可以任意篡改数据。&lt;/li&gt;
-&lt;li&gt;物流链：商品从生产商到消费者手中，需要经历多个环节，每个环节都写入区块链，具有可溯源防止假货。&lt;/li&gt;
-&lt;li&gt;&amp;#x2026;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a id=&#34;org9b18b3b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;人物与机构&#34;&gt;人物与机构&lt;/h1&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/learn-blockchain-view/people.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;两年前的区块链行业也曾经盛极一时，也诞生了很多大人物与公司机构，例如：&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;中本聪：比特币&amp;amp;区块链之父， 手握100万比特币, 比特币最高单价2万美元左右。&lt;/li&gt;
-&lt;li&gt;V神：以太坊的创始人V神，推出了智能合约技术，以太坊被认为是区块链2.0.&lt;/li&gt;
-&lt;li&gt;李笑来：原新东方名师，自称“中国比特币首富”，《通往财富自由之路》作者。&lt;/li&gt;
-&lt;li&gt;吴忌寒：比特大陆联合创始人，研发出矿机曾经占领全球70%以上的市场， 用了三四年时间估值高达300多亿美元。&lt;/li&gt;
-&lt;li&gt;何一： 曾经的币圈一姐。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a id=&#34;org3218f75&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;本质与发展&#34;&gt;本质与发展&lt;/h1&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/learn-blockchain-view/develop.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;区块链短期看技术、中期看应用、长期改造社会，技术主要包含解决了拜占庭将军问题的共识机制，去中心化、分布式一致性和信用的建立。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/learn-blockchain-view/tech1.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org4e41416&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;数字货币&#34;&gt;数字货币&lt;/h1&gt;
-
-&lt;p&gt;数字货币在区块链技术上发行， 具有交易成本低、高度匿名性和易分割特性，去中心化便于交易的特点，可存储在冷热钱包中。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/learn-blockchain-view/coin.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orga459b73&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;区块链技术&#34;&gt;区块链技术&lt;/h1&gt;
-
-&lt;p&gt;区块链中大量使用了密码学保证了资产安全，利用了默克尔树支持了轻量级验证，使得节点存储量可以非常小。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/learn-blockchain-view/crypto.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org4a3bd54&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;城市生态图&#34;&gt;城市生态图&lt;/h1&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/learn-blockchain-view/invest-bj.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;以北京为例，曾经出现了大量以区块链为中心的投资机构、公司、资讯服务、社区平台与工具等。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/2019/learn-blockchain-view/company.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgd779c09&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;小结&#34;&gt;小结&lt;/h1&gt;
-
-&lt;p&gt;区块链是个要技术有技术，要场景有场景，希望在国家政策推动下曾经风靡一时的现象能再回来，出现很多现象级应用改善现有社会，作为普通人的我们可以有钱出钱有力出力， 投资好可以高回报，有技术出力研发出有用好用的产品， 让互联网和资本走出寒冬， 大环境变好后至少大家好找工作赚到钱不更好么？&lt;/p&gt;
 </description>
         </item>
         

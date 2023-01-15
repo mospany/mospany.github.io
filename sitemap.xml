@@ -2,13 +2,54 @@
     
     <url>
         <loc>http://mospany.github.io/tags/</loc>
-        <lastmod>2022-12-22T22:21:36+08:00</lastmod>
+        <lastmod>2023-01-15T10:44:29+08:00</lastmod>
         <priority>0</priority>
     </url>
     
     <url>
         <loc>http://mospany.github.io/categories/</loc>
-        <lastmod>2022-12-22T22:21:36+08:00</lastmod>
+        <lastmod>2023-01-15T10:44:29+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/2023/01/15/aliyun-ecs-install-nfs/</loc>
+        <lastmod>2023-01-15T10:44:29+08:00</lastmod>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/linux/</loc>
+        <lastmod>2023-01-15T10:44:29+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/post/</loc>
+        <lastmod>2023-01-15T10:44:29+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/</loc>
+        <lastmod>2023-01-15T10:44:29+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/</loc>
+        <lastmod>2023-01-15T10:44:29+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/%E5%AD%98%E5%82%A8/</loc>
+        <lastmod>2023-01-15T10:44:29+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/</loc>
+        <lastmod>2023-01-15T10:44:29+08:00</lastmod>
         <priority>0</priority>
     </url>
     
@@ -21,30 +62,6 @@
     <url>
         <loc>http://mospany.github.io/2022/12/22/k8s-sci-driver/</loc>
         <lastmod>2022-12-22T22:21:36+08:00</lastmod>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/post/</loc>
-        <lastmod>2022-12-22T22:21:36+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/</loc>
-        <lastmod>2022-12-22T22:21:36+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/</loc>
-        <lastmod>2022-12-22T22:21:36+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/</loc>
-        <lastmod>2022-12-22T22:21:36+08:00</lastmod>
-        <priority>0</priority>
     </url>
     
     <url>

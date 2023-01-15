@@ -1,0 +1,210 @@
++++
+#+OPTIONS: \n:t
+toc = true
+categories = ["技术文章"]
+date = "2023-01-15T10:44:29+08:00"
+description = ""
+keywords = ["Linux","存储"]
+tags = ["Linux","存储"]
+title = "CentOS7 下安装和配置 NFS"
+url = "/2023/01/15/aliyun-ecs-install-nfs/"
+
++++
+
+* 简介
+  NFS（Network File System，网络文件系统）是当前主流异构平台共享文件系统之一。主要应用在UNIX环境下。最早是由Sun Microsystems开发，现在能够支持在不同类型的系统之间通过网络进行文件共享，广泛应用在FreeBSD、SCO、Solaris等异构操作系统平台，允许一个系统在网络上与他人共享目录和文件。通过使用NFS，用户和程序可以像访问本地文件一样访问远端系统上的文件，使得每个计算机的节点能够像使用本地资源一样方便地使用网上资源。换言之，NFS可用于不同类型计算机、操作系统、网络架构和传输协议运行环境中的网络文件远程访问和共享。  
+
+  NFS的工作原理是使用客户端/服务器架构，由一个客户端程序和服务器程序组成。服务器程序向其他计算机提供对文件系统的访问，其过程称为输出。NFS客户端程序对共享文件系统进行访问时，把它们从NFS服务器中“输送”出来。文件通常以块为单位进行传输。其大小是8KB（虽然它可能会将操作分成更小尺寸的分片）。NFS传输协议用于服务器和客户机之间文件访问和共享的通信，从而使客户机远程地访问保存在存储设备上的数据。
+
+* 服务端搭建
+  由于实现CSI需要一个后端存储，Linux提供NFS功能可以免费搭建一个NSC存储功能用来验证。
+  搭建办法详见: [[https://www.codeleading.com/article/35162638950/][阿里云服务器 CentOS7 下安装和配置 NFS]]
+** 服务端安装
+  使用 yum 安装 NFS 安装包。
+  #+BEGIN_SRC sh
+  yum install nfs-utils -y 
+  #+END_SRC
+
+** 服务端配置
+   设置 NFS 服务开机启动
+   #+BEGIN_SRC sh
+   [root@k8s-master ~]# systemctl enable rpcbind
+   [root@k8s-master ~]# systemctl enable nfs
+   [root@k8s-master ~]#
+   
+   #+END_SRC
+
+** 配置共享目录
+   服务启动之后，我们在服务端配置一个共享目录
+   #+BEGIN_SRC sh
+   [root@k8s-master ~]# mkdir /data
+   [root@k8s-master ~]# chmod 755 /data
+   [root@k8s-master ~]#
+   
+   #+END_SRC
+
+   根据这个目录，相应配置导出目录
+   #+BEGIN_SRC sh
+   vim /etc/exports
+   
+   #+END_SRC
+
+   添加如下配置
+   #+BEGIN_SRC sh
+   /data/     *(rw,sync,no_root_squash,no_all_squash)
+   
+   #+END_SRC
+
+   data: 共享目录位置。
+   192.168.0.0/24: 客户端 IP 范围，* 代表所有，即没有限制（我在实验中会设置为*）。
+   rw: 权限设置，可读可写。
+   sync: 同步共享目录。
+   no_root_squash: 可以使用 root 授权。
+   no_all_squash: 可以使用普通用户授权。
+
+** 启动 NFS 服务
+   #+BEGIN_SRC sh
+   [root@k8s-master ~]# systemctl start rpcbind
+   [root@k8s-master ~]# systemctl start nfs
+   
+   #+END_SRC
+
+** 防火墙需要打开 rpc-bind 和 nfs 的服务
+   #+BEGIN_SRC sh
+   [root@k8s-master ~]# firewall-cmd --zone=public --permanent --add-service={rpc-bind,mountd,nfs}
+   FirewallD is not running
+   [root@k8s-master ~]# firewall-cmd --reload
+   FirewallD is not running
+   [root@k8s-master ~]#
+   
+   #+END_SRC
+
+** 检查
+   可以检查一下本地的共享目录
+   #+BEGIN_SRC sh
+   [root@k8s-master ~]# showmount -e localhost
+   Export list for localhost:
+   /data *
+   [root@k8s-master ~]#
+   
+   #+END_SRC
+
+   这样，服务端就配置好了。
+
+** 查看端口
+   #+BEGIN_SRC sh
+   [root@k8s-master ~]# rpcinfo -p localhost
+   program vers proto   port  service
+    100000    4   tcp    111  portmapper
+    100000    3   tcp    111  portmapper
+    100000    2   tcp    111  portmapper
+    100000    4   udp    111  portmapper
+    100000    3   udp    111  portmapper
+    100000    2   udp    111  portmapper
+    100005    1   udp  20048  mountd
+    100005    1   tcp  20048  mountd
+    100005    2   udp  20048  mountd
+    100024    1   udp  54689  status
+    100005    2   tcp  20048  mountd
+    100024    1   tcp  46564  status
+    100005    3   udp  20048  mountd
+    100005    3   tcp  20048  mountd
+    100003    3   tcp   2049  nfs
+    100003    4   tcp   2049  nfs
+    100227    3   tcp   2049  nfs_acl
+    100003    3   udp   2049  nfs
+    100003    4   udp   2049  nfs
+    100227    3   udp   2049  nfs_acl
+    100021    1   udp  40110  nlockmgr
+    100021    3   udp  40110  nlockmgr
+    100021    4   udp  40110  nlockmgr
+    100021    1   tcp  33742  nlockmgr
+    100021    3   tcp  33742  nlockmgr
+    100021    4   tcp  33742  nlockmgr
+    [root@k8s-master ~]#
+   
+   #+END_SRC 
+
+
+* 客户端连接 NFS
+** 在客户端创建目录
+  #+BEGIN_SRC sh
+  [root@k8s-master ~]# mkdir -p /mnt/nfs-data/
+  [root@k8s-master ~]#
+  
+  #+END_SRC
+
+** 挂载
+   为了测试方便， 服务端和客户端均在同一台服务器上。
+   #+BEGIN_SRC sh
+   [root@k8s-master ~]# mount -t nfs 127.0.0.1:/data /mnt/nfs-data
+   [root@k8s-master ~]#
+   
+   #+END_SRC
+   挂载之后，可以使用 mount 命令查看一下
+   #+BEGIN_SRC sh
+   [root@k8s-master ~]# mount | grep nfs
+   nfsd on /proc/fs/nfsd type nfsd (rw,relatime)
+   sunrpc on /var/lib/nfs/rpc_pipefs type rpc_pipefs (rw,relatime)
+   127.0.0.1:/data on /mnt/nfs-data type nfs4 (rw,relatime,vers=4.1,rsize=524288,wsize=524288,namlen=255,hard,proto=tcp,timeo=600,retrans=2,sec=sys,clientaddr=127.0.0.1,local_lock=none,addr=127.0.0.1)
+   [root@k8s-master ~]#
+   
+   #+END_SRC
+
+   这说明已经挂载成功了。
+
+* 测试NFS
+  测试一下，在客户端向共享目录创建一个文件
+  #+BEGIN_SRC sh
+  [root@k8s-master ~]# echo test > /mnt/nfs-data/bbb.txt
+  [root@k8s-master ~]#
+  [root@k8s-master ~]#
+  
+  #+END_SRC
+
+  之后取 NFS 服务端查看一下
+  #+BEGIN_SRC sh
+  [root@k8s-master ~]# echo test > /mnt/nfs-data/bbb.txt
+  [root@k8s-master ~]#
+  [root@k8s-master ~]# cat /data/bbb.txt
+  test
+  [root@k8s-master ~]# 
+  
+  #+END_SRC
+  可以看到，共享目录已经写入了。
+  
+
+* 客户端自动挂载
+  自动挂载很常用，客户端设置一下即可。
+  #+BEGIN_SRC sh
+  $ vim /etc/fstab
+  
+  #+END_SRC
+  在结尾添加类似如下配置
+  #+BEGIN_SRC sh
+  [root@k8s-master ~]# cat /etc/fstab
+
+   #
+   # /etc/fstab
+   # Created by anaconda on Thu Jul 11 02:52:01 2019
+   #
+   # Accessible filesystems, by reference, are maintained under '/dev/disk'
+   # See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info
+   #
+   UUID=1114fe9e-2309-4580-b183-d778e6d97397 /                       ext4    defaults        1 1
+   127.0.0.1:/data     /mnt/nfs-data                   nfs     defaults        0 0
+   [root@k8s-master ~]#
+  
+  #+END_SRC
+  由于修改了 /etc/fstab，需要重新加载 systemctl。
+  #+BEGIN_SRC sh
+  [root@k8s-master ~]# systemctl daemon-reload
+  [root@k8s-master ~]#
+  
+  #+END_SRC
+
+* 参考
+  【01】[[https://www.codeleading.com/article/35162638950/][阿里云服务器 CentOS7 下安装和配置 NFS]]
+  
+
+ 

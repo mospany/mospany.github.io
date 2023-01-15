@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>存储 on 墨斯潘園</title>
+    <link>http://mospany.github.io/tags/%E5%AD%98%E5%82%A8/</link>
+    <description>Recent content in 存储 on 墨斯潘園</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sun, 15 Jan 2023 10:44:29 +0800</lastBuildDate>
+    
+	<atom:link href="http://mospany.github.io/tags/%E5%AD%98%E5%82%A8/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>CentOS7 下安装和配置 NFS</title>
+      <link>http://mospany.github.io/2023/01/15/aliyun-ecs-install-nfs/</link>
+      <pubDate>Sun, 15 Jan 2023 10:44:29 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2023/01/15/aliyun-ecs-install-nfs/</guid>
+      <description>简介 NFS（Network File System，网络文件系统）是当前主流异构平台共享文件系统之一。主要应用在UNIX环境下。最早是由Sun Micr</description>
+    </item>
+    
+  </channel>
+</rss>

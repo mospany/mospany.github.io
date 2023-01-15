@@ -13,6 +13,8 @@ url = "/2022/12/22/k8s-sci-driver/"
 * 简介
   外部存储接入 Kubernetes 的方式主要有两种：In-Tree 和 Out-of-Tree。其中 In-Tree 是指存储驱动的源码都在 Kubernetes 代码库中，与 Kubernetes 一起发布、迭代、管理，这种方式灵活性较差，且门槛较高。Out-of-Tree 是指存储插件由第三方编写、发布、管理，作为一种扩展与 Kubernetes 配合使用。Out-of-Tree 主要有 FlexVolume 和 CSI 两种实现方式，其中，FlexVolume 因为其命令式的特点，不易维护和管理，从 Kubernetes v1.23 版本开始已被弃用。因此 CSI 已经成为 Kubernetes 存储扩展（ Out-of-Tree ）的唯一方式。
 
+  代码工程：https://github.com/mospany/nfscsi.git
+
 * CSI组成
    
    [[http://blog.mospan.cn/post/img/k8s/csi/csi-component.png]]
@@ -116,9 +118,92 @@ url = "/2022/12/22/k8s-sci-driver/"
   }
     #+END_SRC
 
+* NFS搭建
+  由于实现CSI需要一个后端存储，Linux提供NFS功能可以免费搭建一个NSC存储功能用来验证。
+  搭建办法详见: [[https://www.codeleading.com/article/35162638950/][阿里云服务器 CentOS7 下安装和配置 NFS]]
+  
+
+* 部署
+  进入代码工程中的deploy下运行命令`kubectl apply -f .`
+  #+BEGIN_SRC sh
+  
+  
+  #+END_SRC 
+  查看下运行日志和监听地址:
+
+  #+BEGIN_SRC sh
+  [root@k8s-master deploy]# kubectl logs hdls-controller-0 -c csi-plugin
+  I0105 12:21:54.144268       1 main.go:49] [/workspace/bin/csi-demo --endpoint=unix:///var/lib/csi/sockets/pluginproxy/csi.sock --nodeid=k8s-master]
+  I0105 12:21:54.144362       1 driver.go:49] Driver: hdls version  commit  date
+  I0105 12:21:54.144468       1 driver.go:63] endpoint: unix:///var/lib/csi/sockets/pluginproxy/csi.sock, scheme: unix, addr: /var/lib/csi/sockets/pluginproxy/csi.sock
+  I0105 12:21:54.144815       1 driver.go:86] Listening for connection on address: &net.UnixAddr{Name:"/var/lib/csi/sockets/pluginproxy/csi.sock", Net:"unix"}
+  [root@k8s-master deploy]# ll /var/lib/kubelet/csi-plugins/demo.csi.com/csi.sock
+  srwxr-xr-x 1 root root 0 1月   5 20:21 /var/lib/kubelet/csi-plugins/demo.csi.com/csi.sock
+  [root@k8s-master deploy]#
+  
+  #+END_SRC
 
 
+* 测试
+** csc功能测试命令
+   - 安装
+     #+BEGIN_SRC sh
+     go install -v  github.com/rexray/gocsi/csc@latest
+     
+     #+END_SRC
+     使用go env查看GOPATH, go install 的程序一般就放在第一个路径下的bin
+
+     把它拷贝到目标机上并加可执行权限。
+  
+   - 命令
+     #+BEGIN_SRC sh
+     [root@k8s-master csi-hdls]# ./csc
+     NAME
+         csc -- a command line container storage interface (CSI) client
+     
+     SYNOPSIS
+         csc [flags] CMD
+     
+     AVAILABLE COMMANDS
+         controller
+         identity
+         node
+     
+     Use "csc -h,--help" for more information
+     [root@k8s-master csi-hdls]# ./csc controller help
+     NAME
+         controller -- the csi controller service rpcs
+     
+     SYNOPSIS
+         csc controller [flags] CMD
+     
+     AVAILABLE COMMANDS
+         create-snapshot
+         create-volume
+         delete-snapshot
+         delete-volume
+         expand-volume
+         get-capabilities
+         get-capacity
+         list-snapshots
+         list-volumes
+         publish
+         unpublish
+         validate-volume-capabilities
+     
+     Use "csc controller -h,--help" for more information
+     [root@k8s-master csi-hdls]#
+     
+     #+END_SRC
+     emptyDir的位置应该位于运行pod的给定节点上的/var/lib/kubelet/pods/{podid}/volumes/kubernetes.io~empty-dir/中
+   
 
 * 参考
   【01】[[https://zhuanlan.zhihu.com/p/583032625][如何实现一个 Kubernetes CSI Driver]] 
   【02】[[https://zhuanlan.zhihu.com/p/539307741][Kubernetes CSI 驱动开发指南]]
+  【03】[[https://www.cnblogs.com/cxt618/p/15487359.html][gRPC详细入门介绍]]
+  【04】[[https://jishuin.proginn.com/p/763bfbd3890f][如何编写一个 CSI 插件]]
+  【05】[[http://www.noobyard.com/article/p-qgxfxmfi-nv.html][Kubernetes K8S之固定节点nodeName和nodeSelector调度详解]]
+  【06】[[https://www.modb.pro/db/523598][kubernetes CSI（下）]]
+  【07】[[https://www.codeleading.com/article/35162638950/][阿里云服务器 CentOS7 下安装和配置 NFS]]
+
