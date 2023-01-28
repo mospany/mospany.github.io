@@ -193,13 +193,13 @@
     </url>
     
     <url>
-        <loc>http://mospany.github.io/categories/%E8%81%8C%E5%9C%BA%E4%BA%BA%E7%94%9F/</loc>
+        <loc>http://mospany.github.io/tags/%E8%81%8C%E5%9C%BA%E4%BA%BA%E7%94%9F/</loc>
         <lastmod>2019-10-14T14:17:41+08:00</lastmod>
         <priority>0</priority>
     </url>
     
     <url>
-        <loc>http://mospany.github.io/tags/%E8%81%8C%E5%9C%BA%E4%BA%BA%E7%94%9F/</loc>
+        <loc>http://mospany.github.io/categories/%E8%81%8C%E5%9C%BA%E4%BA%BA%E7%94%9F/</loc>
         <lastmod>2019-10-14T14:17:41+08:00</lastmod>
         <priority>0</priority>
     </url>
@@ -291,13 +291,13 @@
     </url>
     
     <url>
-        <loc>http://mospany.github.io/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</loc>
+        <loc>http://mospany.github.io/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</loc>
         <lastmod>2017-03-07T19:13:23+08:00</lastmod>
         <priority>0</priority>
     </url>
     
     <url>
-        <loc>http://mospany.github.io/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</loc>
+        <loc>http://mospany.github.io/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</loc>
         <lastmod>2017-03-07T19:13:23+08:00</lastmod>
         <priority>0</priority>
     </url>
@@ -331,14 +331,14 @@
     </url>
     
     <url>
-        <loc>http://mospany.github.io/2016/09/06/dpdk-develop-notes/</loc>
-        <lastmod>2016-09-06T19:37:20+08:00</lastmod>
-    </url>
-    
-    <url>
         <loc>http://mospany.github.io/tags/dpdk/</loc>
         <lastmod>2016-09-06T19:37:20+08:00</lastmod>
         <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/2016/09/06/dpdk-develop-notes/</loc>
+        <lastmod>2016-09-06T19:37:20+08:00</lastmod>
     </url>
     
     <url>
@@ -451,13 +451,13 @@
     </url>
     
     <url>
-        <loc>http://mospany.github.io/categories/%E7%94%9F%E6%B4%BB%E8%AE%B0%E5%BD%95/</loc>
+        <loc>http://mospany.github.io/tags/%E7%94%9F%E6%B4%BB%E8%AE%B0%E5%BD%95/</loc>
         <lastmod>2016-01-26T08:28:37+08:00</lastmod>
         <priority>0</priority>
     </url>
     
     <url>
-        <loc>http://mospany.github.io/tags/%E7%94%9F%E6%B4%BB%E8%AE%B0%E5%BD%95/</loc>
+        <loc>http://mospany.github.io/categories/%E7%94%9F%E6%B4%BB%E8%AE%B0%E5%BD%95/</loc>
         <lastmod>2016-01-26T08:28:37+08:00</lastmod>
         <priority>0</priority>
     </url>
