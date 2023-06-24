@@ -15,33 +15,33 @@
             <guid>http://mospany.github.io/2023/06/23/how-about-install-newbing-and-chatgpt/</guid>
             <description>
 
-&lt;p&gt;&lt;a id=&#34;org49f1b76&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org5c16ff5&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;简介&#34;&gt;简介&lt;/h1&gt;
 
 &lt;p&gt;chatgpt在2022年开始爆发，随着越来越多的人在使用，于是也打算尝试安装使用。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org8e69294&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org53977af&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;chatgpt&#34;&gt;chatgpt&lt;/h2&gt;
 
 &lt;p&gt;ChatGPT是一种基于人工智能技术的聊天机器人，它可以与用户进行自然语言交互，回答用户的问题，提供有用的信息和建议，甚至玩一些有趣的游戏。ChatGPT是由OpenAI开发，使用了GPT（Generative Pre-trained Transformer）技术，这是一种具有强大生成能力的神经网络模型。ChatGPT通过学习海量的语言数据集来不断提高其对自然语言的理解能力，从而能够更好地理解和回答用户的问题。与其他聊天机器人相比，ChatGPT的对话流畅度和回答准确度都很高，因此备受用户欢迎。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org975894d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org292f1ea&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;newbing&#34;&gt;newbing&lt;/h2&gt;
 
 &lt;p&gt;必应chat是微软旗下的聊天机器人服务，它是基于必应AI开发的一款智能对话系统。必应chat可以理解自然语言，能够回答用户的问题、提供服务、开玩笑等，使得用户可以与机器人进行自然的对话。必应chat的功能包括天气查询、地图导航、音乐播放、闲聊聊天、计算数学问题等，可帮助用户解决生活中的各种疑问和问题。必应chat还支持多种语言，包括英语、中文、西班牙语、法语、德语等。使用必应chat，您可以轻松地与机器人进行互动，获得便捷的服务和娱乐体验。&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org3842afe&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org79da4ca&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;安装&#34;&gt;安装&lt;/h1&gt;
 
-&lt;p&gt;&lt;a id=&#34;org7880e28&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org8197e6e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;科学上网&#34;&gt;科学上网&lt;/h2&gt;
 
-&lt;p&gt;&lt;a id=&#34;org186f2aa&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org9014292&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;自由鲸&#34;&gt;自由鲸&lt;/h3&gt;
 
@@ -73,7 +73,7 @@
 &lt;p&gt;购买成功后将出现一堆节点列表，在用户中心里将出现订阅地址用做vpn客户端的链接信息。&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgbf74289&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org9d5fbb8&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;clash&#34;&gt;clash&lt;/h3&gt;
 
@@ -91,7 +91,7 @@
 &lt;li&gt;上面步骤完成后依然不行的话，就清空浏览器缓存然后重启浏览器或者电脑；或者直接新开一个无痕模式的窗口。&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a id=&#34;orge9522dd&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org208d97c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;pchat&#34;&gt;Pchat&lt;/h2&gt;
 
@@ -106,7 +106,7 @@
 试用期为14天。在试用期结束之前，您可以决定是否购买Pchat Pro的许可证。如果您决定购买，您将获得无限制的访问权限，并可以享受Pchat Pro提供的所有功能。&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a id=&#34;orgd762404&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org8b69e3f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;newbing-1&#34;&gt;newBing&lt;/h2&gt;
 
@@ -134,7 +134,20 @@
 &lt;p&gt;点击AI，就可以用bingChat了(不太正常，如跳转到国内bing后需清理cookies后重启浏览器)&lt;br /&gt;
 &lt;img src=&#34;http://blog.mospan.cn/post/img/chatgpt/newbing.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&#34;org48384ed&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;org554ec02&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;chatgpt-1&#34;&gt;chatgpt&lt;/h2&gt;
+
+&lt;p&gt;1、申请账号&lt;br /&gt;
+   某宝上购买账号&lt;/p&gt;
+
+&lt;p&gt;2、登录官网(需提前科学上网)&lt;br /&gt;
+   ChatGPT的官方网址： &lt;a href=&#34;https://chat.openai.com/auth/login&#34;&gt;https://chat.openai.com/auth/login&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;3、查询&lt;br /&gt;
+  &lt;img src=&#34;http://blog.mospan.cn/post/img/chatgpt/chatgpt.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;org415b7ac&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;h1 id=&#34;参考资料&#34;&gt;参考资料&lt;/h1&gt;
 
