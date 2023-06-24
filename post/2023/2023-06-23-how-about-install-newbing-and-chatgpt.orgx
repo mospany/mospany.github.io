@@ -1,0 +1,106 @@
++++
+#+OPTIONS: \n:t
+categories = ["技术文章"]
+date = "2023-06-23T17:36:37+08:00"
+description = ""
+keywords = ["",""]
+tags = ["",""]
+title = "如何安装使用newbing和chatgpt"
+url = "/2023/06/23/how-about-install-newbing-and-chatgpt/"
+
++++
+
+
+* 简介
+  chatgpt在2022年开始爆发，随着越来越多的人在使用，于是也打算尝试安装使用。
+
+** chatgpt
+   ChatGPT是一种基于人工智能技术的聊天机器人，它可以与用户进行自然语言交互，回答用户的问题，提供有用的信息和建议，甚至玩一些有趣的游戏。ChatGPT是由OpenAI开发，使用了GPT（Generative Pre-trained Transformer）技术，这是一种具有强大生成能力的神经网络模型。ChatGPT通过学习海量的语言数据集来不断提高其对自然语言的理解能力，从而能够更好地理解和回答用户的问题。与其他聊天机器人相比，ChatGPT的对话流畅度和回答准确度都很高，因此备受用户欢迎。
+
+** newbing
+   必应chat是微软旗下的聊天机器人服务，它是基于必应AI开发的一款智能对话系统。必应chat可以理解自然语言，能够回答用户的问题、提供服务、开玩笑等，使得用户可以与机器人进行自然的对话。必应chat的功能包括天气查询、地图导航、音乐播放、闲聊聊天、计算数学问题等，可帮助用户解决生活中的各种疑问和问题。必应chat还支持多种语言，包括英语、中文、西班牙语、法语、德语等。使用必应chat，您可以轻松地与机器人进行互动，获得便捷的服务和娱乐体验。
+
+* 安装
+** 科学上网
+*** 自由鲸
+    自由鲸 FreeWhale 是一家长期走中高端路线的 ShadowsocksR(SSR) 机场，也提供部分 V2Ray 线路，已经稳定运行多年。实际对比下来，它的性价比还是相当高的，线路又多，提供的流量也十分充足，主要推荐的套餐充分考虑了当前主流用户能够接受的价位，可以说是无可挑剔。
+
+**** 特点
+***** 封闭邀请机制
+
+     自由鲸 FreeWhale 需要邀请码才能注册成功，这样的注册机制一定程度确保了服务的稳定性。
+
+     如果需要邀请码，可以使用我的邀请码: 
+
+     也可以直接点击我的邀请链接，进入注册。
+
+***** 套餐便宜
+      
+      [[http://blog.mospan.cn/post/img/chatgpt/freewhale.png]]
+
+
+**** 使用
+     登录地址：https://www.freewhale.world/auth/register?code=XXXX
+     
+     选的是512G/360 天的套餐124元，相当于每月10元还算便宜。
+
+     购买成功后将出现一堆节点列表，在用户中心里将出现订阅地址用做vpn客户端的链接信息。
+
+*** clash
+      Clash是一款开源的多平台代理软件，支持 Windows、macOS、Linux、Android 等平台。Clash可以运行在本地并代理 HTTP、HTTPS、SOCKS5等协议，同时还支持 SS、V2Ray、Trojan 等协议，可以实现对于许多网站和应用的科学上网。Clash 的特点是支持多种协议，使用方便，功能强大，且更新频繁。Clash的开源代码托管在GitHub上，用户可以参与其开发和改进。
+
+      把freeWhale上面的订阅地址粘贴到clash的配置->托管配置->管理里， 配置名称写为xinjieCloud。
+      
+      [[http://blog.mospan.cn/post/img/chatgpt/clash-face.png]]
+
+      使用科学上网时，查看 ip 地址可能显示在国内，以下是解决办法:
+      - 一定挂全局模式 + 支持 OpenAI 的国家（目前中俄等国不支持，推荐北美、日本等国家）；
+      - 一定设置为系统代理 + 手动选择节点(DIRECT), 否则上不了外网。
+      - 上面步骤完成后依然不行的话，就清空浏览器缓存然后重启浏览器或者电脑；或者直接新开一个无痕模式的窗口。
+
+** Pchat
+   Pchat 是一款可以免费、简单易用的聊天机器人，翻墙后可以使用，不用做任何配置。它包括Pchat free版、Pchat Pro高级版本。
+   访问地址为：https://www.promptboom.com
+
+   [[http://blog.mospan.cn/post/img/chatgpt/pchat.png]]
+
+   - Pchat Free，一个由PromptBoom和OpenAI合作开发的AI助手。
+   - Pchat Pro，是Pchat免费版的高级版本。相比之下，Pchat免费版提供了基本的聊天功能，而Pchat Pro则包括更多的高级功能，例如语音和视频通话，自定义表情符号等等。此外，Pchat Pro还具有更高的智能和更好的性能，因为它采用了最先进的技术和算法。
+     试用期为14天。在试用期结束之前，您可以决定是否购买Pchat Pro的许可证。如果您决定购买，您将获得无限制的访问权限，并可以享受Pchat Pro提供的所有功能。
+
+** newBing 
+   微软 New Bing 是微软推出的全新搜索引擎，它使用了最新的人工智能技术和自然语言处理技术来提供更好的搜索结果和更智能的搜索体验。它可以帮助用户更快、更准确地找到他们需要的信息，并且能够根据用户的搜索历史和兴趣爱好提供更加个性化的搜索结果。
+
+   1、下载最新/已支持newbing的edge浏览器
+
+   2、设置bing4为默认搜索引擎
+      URL地址写为：https://www4.bing.com/search?q=%s&PC=U316&FROM=CHROMN
+      [[http://blog.mospan.cn/post/img/chatgpt/bing4-engine.png]]
+
+   3、设置外网DNS
+      选择openDNS
+      [[http://blog.mospan.cn/post/img/chatgpt/select-dns.png]]
+
+   4、禁止和清理cookies
+      禁止保存一些cn.bing.com或c.bing.com的cookies，免得老跳转到国内bing上。
+      [[http://blog.mospan.cn/post/img/chatgpt/forbiden-cookies.png]]
+
+   5、登录
+      新建标签页，把语言设置为非国内地区
+     [[http://blog.mospan.cn/post/img/chatgpt/newbing-index.png]]
+      登录账号，如我个人账号为: moshengping210@gmail.com
+
+     点击AI，就可以用bingChat了(不太正常，如跳转到国内bing后需清理cookies后重启浏览器)
+     [[http://blog.mospan.cn/post/img/chatgpt/newbing.png]]
+   
+* 参考资料
+  【01】 [[https://zhuanlan.zhihu.com/p/618495330][当前最新稳定访问NewBing方法（操作简单）]]
+  
+
+   
+
+
+   
+
+
+

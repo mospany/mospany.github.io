@@ -1,0 +1,71 @@
++++
+#+OPTIONS: \n:t
+categories = ["技术文章"]
+date = "2023-03-05T11:32:18+08:00"
+description = ""
+keywords = ["K8S","项目实践"]  
+tags = ["K8S","项目实践"]  
+title = "K8S项目实践(06): 动手实现webhook"  
+url = "/2023/03/05/k8s-webhook-example/"
+
++++
+
+* 简介
+  Webhook就是一种HTTP回调，用于在某种情况下执行某些动作，Webhook不是K8S独有的，很多场景下都可以进行Webhook，比如在提交完代码后调用一个Webhook自动构建docker镜像
+
+  K8S中提供了自定义资源类型和自定义控制器来扩展功能，还提供了动态准入控制，其实就是通过Webhook来实现准入控制，分为两种：验证性质的准入 Webhook （Validating Admission Webhook） 和 修改性质的准入 Webhook （Mutating Admission Webhook）
+
+  Admission Webhook有哪些使用场景？如下
+
+  - 在资源持久化到ETCD之前进行修改（Mutating Webhook），比如增加init Container或者sidecar Container
+  - 在资源持久化到ETCD之前进行校验（Validating Webhook），不满足条件的资源直接拒绝并给出相应信息
+  
+ 
+* 问题解决办法
+** error: unable to recognize "STDIN": no matches for kind "CertificateSigningRequest" in version "certificates.k8s.io/v1beta1"
+   当执行`bash webhook-create-signed-cert.sh`时出现如下错误：
+   #+BEGIN_QUOTE
+   error: unable to recognize "STDIN": no matches for kind "CertificateSigningRequest" in version "certificates.k8s.io/v1beta1"`
+   #+END_QUOTE
+   需修改webhook-create-signed-cert.sh相关内容为:
+   #+BEGIN_SRC sh
+   # create  server cert/key CSR and  send to k8s API
+   cat <<EOF | kubectl create -f -
+   apiVersion: certificates.k8s.io/v1
+   kind: CertificateSigningRequest
+   metadata:
+     name: ${csrName}
+   spec:
+     groups:
+     - system:authenticated
+     request: $(cat ${tmpdir}/server.csr | base64 | tr -d '\n')
+     signerName: kubernetes.io/kube-apiserver-client
+     usages:
+     - digital signature
+     - key encipherment
+     - client auth
+   EOF
+   
+   #+END_SRC
+
+   详见：[[https://bytemeta.vip/repo/morvencao/kube-sidecar-injector/issues/29][missing required field "signerName" #29]]
+
+** no matches for kind "ValidatingWebhookConfiguration" in version "admissionregistration.k8s.io/v1beta1"
+   当执行`kubectl apply -f validatingwebhook.yaml`时出现错误：
+   #+BEGIN_QUOTE
+   no matches for kind "ValidatingWebhookConfiguration" in version "admissionregistration.k8s.io/v1beta1"
+   #+END_QUOTE
+   需改为：
+   #+BEGIN_SRC yaml
+   admissionReviewVersions: ["v1","v1beta1"]
+   sideEffects: None
+   #+END_SRC
+
+   详见： [[https://kodekloud.com/community/t/pls-help-me-in-configuring-using-opa-in-minikbe/28428/5][Pls help me in configuring/using OPA in minikbe]]
+
+** x509: certificate specifies an incompatible key usage
+   
+
+
+* 参考资料
+  
