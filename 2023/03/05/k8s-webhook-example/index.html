@@ -3,18 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <base href="http://mospany.github.io/">
-  <title>pango设计与实现(02)--快速开始 - 墨斯潘園</title>
+  <title>K8S项目实践(06): 动手实现webhook - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
-  <meta name="keywords" content="hugo,pango,">
-  <meta name="description" content="主要描述了pango的编译、安装与典型使用">
+  <meta name="keywords" content="K8S,项目实践,">
+  <meta name="description" content="简介 Webhook就是一种HTTP回调，用于在某种情况下执行某些动作，Webhook不是K8S独有的，很多场景下都可以进行Webhook，比">
   <meta name="author" content="mospan">
-  <meta itemprop="name" content="pango设计与实现(02)--快速开始 - 墨斯潘園">
-  <meta itemprop="description" content="主要描述了pango的编译、安装与典型使用">
+  <meta itemprop="name" content="K8S项目实践(06): 动手实现webhook - 墨斯潘園">
+  <meta itemprop="description" content="简介 Webhook就是一种HTTP回调，用于在某种情况下执行某些动作，Webhook不是K8S独有的，很多场景下都可以进行Webhook，比">
   <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
-  <meta name="twitter:title" content="pango设计与实现(02)--快速开始 - 墨斯潘園" />
-  <meta name="twitter:description" content="主要描述了pango的编译、安装与典型使用" />
+  <meta name="twitter:title" content="K8S项目实践(06): 动手实现webhook - 墨斯潘園" />
+  
+  <meta name="twitter:description" content="">
   <link rel="shortcut icon" href="img/favicon.ico"/>
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png" />
@@ -62,7 +63,7 @@
 	<article itemprop="articleBody">
     <header class="article-info clearfix">
   <h1 itemprop="name">
-      <a href="http://mospany.github.io/2016/02/14/pango-development-quick-start/" title="pango设计与实现(02)--快速开始" itemprop="url">pango设计与实现(02)--快速开始</a>
+      <a href="http://mospany.github.io/2023/03/05/k8s-webhook-example/" title="K8S项目实践(06): 动手实现webhook" itemprop="url">K8S项目实践(06): 动手实现webhook</a>
   </h1>
   <p class="article-author">By 
     
@@ -70,7 +71,7 @@
     
   </p>
   <p class="article-time">
-    <time datetime="2016-02-14 16:57:25 &#43;0800 CST" itemprop="datePublished">2016年02月14日</time>
+    <time datetime="2023-03-05 11:32:18 &#43;0800 CST" itemprop="datePublished">2023年03月05日</time>
   </p>
 </header>
 
@@ -78,41 +79,233 @@
     
     
 
-<h1 id="安装">安装</h1>
+<p><a id="orgabac5c2"></a></p>
 
-<h2 id="安装前准备">安装前准备</h2>
+<h1 id="简介">简介</h1>
 
-<p>确保你的本地环境已经安装好如下软件：</p>
+<p>Webhook就是一种HTTP回调，用于在某种情况下执行某些动作，Webhook不是K8S独有的，很多场景下都可以进行Webhook，比如在提交完代码后调用一个Webhook自动构建docker镜像</p>
+
+<p>K8S中提供了自定义资源类型和自定义控制器来扩展功能，还提供了动态准入控制，其实就是通过Webhook来实现准入控制，分为两种：验证性质的准入 Webhook （Validating Admission Webhook） 和 修改性质的准入 Webhook （Mutating Admission Webhook）</p>
+
+<p>Admission Webhook有哪些使用场景？如下</p>
 
 <ul>
-<li>git.</li>
-<li>Go 1.4+</li>
+<li>在资源持久化到ETCD之前进行修改（Mutating Webhook），比如增加init Container或者sidecar Container</li>
+<li>在资源持久化到ETCD之前进行校验（Validating Webhook），不满足条件的资源直接拒绝并给出相应信息</li>
 </ul>
 
-<h2 id="源码安装">源码安装</h2>
+<p><a href="http://blog.mospan.cn/post/img/webhook/webhook.webp">http://blog.mospan.cn/post/img/webhook/webhook.webp</a></p>
 
-<h3 id="下载源码到本地">下载源码到本地</h3>
+<p>Webhook可以理解成Java Web开发中的Filter，每个请求都会经过Filter处理，从图中可以看到，先执行的是Mutating Webhook，它可以对资源进行修改，然后执行的是Validating Webhook，它可以拒绝或者接受请求，但是它不能修改请求。</p>
 
-<pre><code>   git clone https://github.com/mospany/pango.git
+<p>K8S中有已经实现了的Admission Webhook列表，详情参考每个准入控制器的作用是什么？</p>
+
+<p><a id="org5a64fe0"></a></p>
+
+<h1 id="示例原理">示例原理</h1>
+
+<p>我们以一个简单的Webhook作为例子，该Webhook会在创建Deployment资源的时候检查它是否有相应的标签，如果没有的话，则加上（Mutating Webhook），然后在检验它是否有相应的标签（Validating Webhook），有则创建该Deployment，否则拒绝并给出相应错误提示。</p>
+
+<p>所有代码都在：<br />
+git@github.com:mospany/admission-webhook-example.git</p>
+
+<p><a id="org02043ed"></a></p>
+
+<h1 id="验证">验证</h1>
+
+<p><a id="org122233e"></a></p>
+
+<h2 id="编译打包">编译打包</h2>
+
+<pre><code>cd admission-webhook-example/v1
+DOCKER_USER=mospany bash ./build
 </code></pre>
 
-<h3 id="设置好环境变量">设置好环境变量</h3>
+<p>它将生成镜像并上传到docker.io/mospany/admission-webhook-example:v1。<br />
+<img src="http://blog.mospan.cn/post/img/webhook/build.png" alt="img" /></p>
 
-<pre><code>   cd pango
-   export GOPATH=`pwd`
+<p><a id="org0aa6c11"></a></p>
+
+<h2 id="检查是否开启了动态准入控制">检查是否开启了动态准入控制</h2>
+
+<p>查看APIServer是否开启了MutatingAdmissionWebhook和ValidatingAdmissionWebhook</p>
+
+<pre><code># 获取apiserver pod名字
+apiserver_pod_name=`kubectl get --no-headers=true po -n kube-system | grep kube-apiserver | awk '{ print $1 }'`
+# 查看api server的启动参数plugin
+kubectl get po $apiserver_pod_name -n kube-system -o yaml | grep plugin
 </code></pre>
 
-<h3 id="编译">编译</h3>
+<p>如果输出如下，说明已经开启</p>
 
-<pre><code>   make
+<pre><code>- --enable-admission-plugins=NodeRestriction,MutatingAdmissionWebhook,ValidatingAdmissionWebhook
 </code></pre>
 
-<p>如果编译成功，将在当前目录下生成目标可执行二进制程序：pango</p>
+<p>否则，需要修改启动参数，请不然直接修改Pod的参数，这样修改不会成功，请修改配置文件/etc/kubernetes/manifests/kube-apiserver.yaml，加上相应的插件参数后保存，APIServer的Pod会监控该文件的变化，然后重新启动。<br />
+<img src="http://blog.mospan.cn/post/img/webhook/check-apiserver.png" alt="img" /></p>
 
-<h3 id="安装-1">安装</h3>
+<p><a id="orga56c5e4"></a></p>
 
-<pre><code>   make install
+<h2 id="创建rbac">创建RBAC</h2>
+
+<p>由于我们的webhook会对资源进行修改，所以需要单独给一个ServiceAccount，在K8S集群中直接创建即可</p>
+
+<pre><code>kubectl apply -f deployment/rbac.yaml 
 </code></pre>
+
+<p>效果如下：</p>
+
+<pre><code>[root@k8s-master deployment]# kubectl apply -f rbac.yaml
+serviceaccount/admission-webhook-example-sa unchanged
+clusterrole.rbac.authorization.k8s.io/admission-webhook-example-cr unchanged
+clusterrolebinding.rbac.authorization.k8s.io/admission-webhook-example-crb unchanged
+[root@k8s-master deployment]#
+</code></pre>
+
+<p><a id="org57c61b3"></a></p>
+
+<h2 id="证书认证">证书认证</h2>
+
+<p>K8S集群默认是HTTPS通信的，所以APiserver调用webhook的过程也是HTTPS的，所以需要进行证书认证，证书认证相当于是给Service的域名进行认证（Service后面会创建），将Service域名放到认证请求server.csr文件中，然后创建一个K8S证书签署请求资源CertificateSigningRequest，APIServer签署该证书后生成server-cert.pem，再将最初创建的私钥server-key.pem和签署好的证书server-cert.pem放到Secret中供Deployment调用，详细过程看脚本<br />
+webhook-create-signed-cert.sh</p>
+
+<p>认证很简单，执行该脚本即可，会创建一个名为admission-webhook-example-certs的Secret</p>
+
+<pre><code>./deployment/webhook-create-signed-cert.sh
+</code></pre>
+
+<p>这一步顺便把Service创建了，因为证书是给该Service的域名颁发的</p>
+
+<pre><code>kubectl apply -f deployment/service.yaml
+</code></pre>
+
+<p><a id="org9750af4"></a></p>
+
+<h2 id="部署deployment">部署Deployment</h2>
+
+<pre><code>kubectl  apply -f deployment.yaml 
+</code></pre>
+
+<p>稍等片刻如果有类似如下输出说明Pod已经运行</p>
+
+<pre><code>[root@k8s-master deployment]# kubectl  apply -f deployment.yaml
+deployment.apps/admission-webhook-example-deployment unchanged
+[root@k8s-master deployment]# kubectl  get pod -A -o wide | grep web
+default       admission-webhook-example-deployment-7dd75cffb6-24bhg   1/1     Running   2 (13d ago)    57d    10.244.235.217   k8s-master   &lt;none&gt;           &lt;none&gt;
+[root@k8s-master deployment]# kubectl  get pod -A  | grep web
+default       admission-webhook-example-deployment-7dd75cffb6-24bhg   1/1     Running   2 (13d ago)    57d
+[root@k8s-master deployment]#
+</code></pre>
+
+<p><a id="org7111e46"></a></p>
+
+<h2 id="部署validatingwebhook">部署ValidatingWebhook</h2>
+
+<p>首先包含一个namespaceSelector，表示此webhook只针对有admission-webhook-example标签的namespace生效，当然也可以去掉</p>
+
+<pre><code>namespaceSelector:
+   matchLabels:
+     admission-webhook-example: enabled
+</code></pre>
+
+<p>查看编排文件deployment/validatingwebhook.yaml，里面有一个占位符${CA_BUNDLE}</p>
+
+<pre><code>clientConfig:
+ service:
+ name: admission-webhook-example-svc
+ namespace: default
+ path: &quot;/validate&quot;  # Path是我们自己定义的
+ caBundle: ${CA_BUNDLE}
+</code></pre>
+
+<p>这个是什么呢？webhook是APIServer调用的，此时APIServer相当于是一个客服端，webhook是一个服务端，可以对比下平时上网，打开https网站时是谁在验证域名的证书？是内置在浏览器里面的根证书在做验证，所以这里的CA_BUNDLE就类似于APIServer调用webhook的根证书，它去验证webhook证书。</p>
+
+<p>所以先填充这个CA_BUNDLE后再执行</p>
+
+<pre><code># 填充占位符
+cat deployment/validatingwebhook.yaml | ./deployment/webhook-patch-ca-bundle.sh &gt; /tmp/validatingwebhook.yaml
+
+# 部署
+kubectl apply -f /tmp/validatingwebhook.yaml
+</code></pre>
+
+<p><a id="orge4b820e"></a></p>
+
+<h2 id="验证-1">验证</h2>
+
+<p>1、给default namespace添加label</p>
+
+<pre><code>kubectl label namespace default admission-webhook-example=enabled
+</code></pre>
+
+<p>2、部署sleep.yaml</p>
+
+<pre><code>kubectl apply -f deployment/sleep.yaml 
+</code></pre>
+
+<p><a id="org3ee59df"></a></p>
+
+<h1 id="faq">FAQ</h1>
+
+<p><a id="org896c547"></a></p>
+
+<h2 id="error-unable-to-recognize-stdin-no-matches-for-kind-certificatesigningrequest-in-version-certificates-k8s-io-v1beta1">error: unable to recognize &ldquo;STDIN&rdquo;: no matches for kind &ldquo;CertificateSigningRequest&rdquo; in version &ldquo;certificates.k8s.io/v1beta1&rdquo;</h2>
+
+<p>当执行`bash webhook-create-signed-cert.sh`时出现如下错误：</p>
+
+<blockquote>
+<p>error: unable to recognize &ldquo;STDIN&rdquo;: no matches for kind &ldquo;CertificateSigningRequest&rdquo; in version &ldquo;certificates.k8s.io/v1beta1&rdquo;`</p>
+</blockquote>
+
+<p>需修改webhook-create-signed-cert.sh相关内容为:</p>
+
+<pre><code># create  server cert/key CSR and  send to k8s API
+cat &lt;&lt;EOF | kubectl create -f -
+apiVersion: certificates.k8s.io/v1
+kind: CertificateSigningRequest
+metadata:
+  name: ${csrName}
+spec:
+  groups:
+  - system:authenticated
+  request: $(cat ${tmpdir}/server.csr | base64 | tr -d '\n')
+  signerName: kubernetes.io/kube-apiserver-client
+  usages:
+  - digital signature
+  - key encipherment
+  - client auth
+EOF
+</code></pre>
+
+<p>详见：<a href="https://bytemeta.vip/repo/morvencao/kube-sidecar-injector/issues/29">missing required field &ldquo;signerName&rdquo; #29</a></p>
+
+<p><a id="orga1e1728"></a></p>
+
+<h2 id="no-matches-for-kind-validatingwebhookconfiguration-in-version-admissionregistration-k8s-io-v1beta1">no matches for kind &ldquo;ValidatingWebhookConfiguration&rdquo; in version &ldquo;admissionregistration.k8s.io/v1beta1&rdquo;</h2>
+
+<p>当执行`kubectl apply -f validatingwebhook.yaml`时出现错误：</p>
+
+<blockquote>
+<p>no matches for kind &ldquo;ValidatingWebhookConfiguration&rdquo; in version &ldquo;admissionregistration.k8s.io/v1beta1&rdquo;</p>
+</blockquote>
+
+<p>需改为：</p>
+
+<pre><code>admissionReviewVersions: [&quot;v1&quot;,&quot;v1beta1&quot;]
+sideEffects: None
+</code></pre>
+
+<p>详见： <a href="https://kodekloud.com/community/t/pls-help-me-in-configuring-using-opa-in-minikbe/28428/5">Pls help me in configuring/using OPA in minikbe</a></p>
+
+<p><a id="orgc3c8eba"></a></p>
+
+<h2 id="x509-certificate-specifies-an-incompatible-key-usage">x509: certificate specifies an incompatible key usage</h2>
+
+<p><a id="orga94e650"></a></p>
+
+<h1 id="参考资料">参考资料</h1>
+
+<p>【01】<a href="https://zhuanlan.zhihu.com/p/404764407">从0到1开发K8S_Webhook最佳实践</a>]</p>
 
     <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
   <div style="float:right;margin-top:0px;">
@@ -125,7 +318,7 @@
   <div>
     <p style="margin-top:0px;">作者：<a target="_blank" href="http://blog.mospan.cn/">mospan</a>
       <br />微信关注：墨斯潘園
-      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2016/02/14/pango-development-quick-start/">http://mospany.github.io/2016/02/14/pango-development-quick-start/</a>
+      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2023/03/05/k8s-webhook-example/">http://mospany.github.io/2023/03/05/k8s-webhook-example/</a>
       <br />
       文章版权归本人所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
   </div>
@@ -139,9 +332,9 @@
 <div class="article-tags">
   <span></span>
   
-  <a href="/tags/hugo">hugo</a>
+  <a href="/tags/k8s">K8S</a>
   
-  <a href="/tags/pango">pango</a>
+  <a href="/tags/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5">项目实践</a>
   
 </div>
 
@@ -150,16 +343,16 @@
 <div class="article-categories">
   <span></span>
   
-  <a class="article-category-link" href="/categories/hugo">hugo</a>
+  <a class="article-category-link" href="/categories/k8s">K8S</a>
   
-  <a class="article-category-link" href="/categories/pango">pango</a>
+  <a class="article-category-link" href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5">项目实践</a>
   
 </div>
 
 
 
   <div class="article-share" id="share">
-    <div data-url="http://mospany.github.io/2016/02/14/pango-development-quick-start/" data-title="pango设计与实现(02)--快速开始" data-tsina="3833537679" class="share clearfix">
+    <div data-url="http://mospany.github.io/2023/03/05/k8s-webhook-example/" data-title="K8S项目实践(06): 动手实现webhook" data-tsina="3833537679" class="share clearfix">
     </div>
   </div>
 </footer>

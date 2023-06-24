@@ -21,6 +21,15 @@
     </item>
     
     <item>
+      <title>K8S项目实践(06): 动手实现webhook</title>
+      <link>http://mospany.github.io/2023/03/05/k8s-webhook-example/</link>
+      <pubDate>Sun, 05 Mar 2023 11:32:18 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2023/03/05/k8s-webhook-example/</guid>
+      <description>简介 Webhook就是一种HTTP回调，用于在某种情况下执行某些动作，Webhook不是K8S独有的，很多场景下都可以进行Webhook，比</description>
+    </item>
+    
+    <item>
       <title>CentOS7 下安装和配置 NFS</title>
       <link>http://mospany.github.io/2023/01/15/aliyun-ecs-install-nfs/</link>
       <pubDate>Sun, 15 Jan 2023 10:44:29 +0800</pubDate>

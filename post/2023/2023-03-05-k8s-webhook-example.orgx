@@ -20,8 +20,138 @@ url = "/2023/03/05/k8s-webhook-example/"
   - 在资源持久化到ETCD之前进行修改（Mutating Webhook），比如增加init Container或者sidecar Container
   - 在资源持久化到ETCD之前进行校验（Validating Webhook），不满足条件的资源直接拒绝并给出相应信息
   
+  [[http://blog.mospan.cn/post/img/webhook/webhook.webp]]
+
+  Webhook可以理解成Java Web开发中的Filter，每个请求都会经过Filter处理，从图中可以看到，先执行的是Mutating Webhook，它可以对资源进行修改，然后执行的是Validating Webhook，它可以拒绝或者接受请求，但是它不能修改请求。
+
+  K8S中有已经实现了的Admission Webhook列表，详情参考每个准入控制器的作用是什么？
+
+* 示例原理
+  我们以一个简单的Webhook作为例子，该Webhook会在创建Deployment资源的时候检查它是否有相应的标签，如果没有的话，则加上（Mutating Webhook），然后在检验它是否有相应的标签（Validating Webhook），有则创建该Deployment，否则拒绝并给出相应错误提示。
+   
+  所有代码都在：
+  git@github.com:mospany/admission-webhook-example.git
+
+* 验证
+** 编译打包
+   #+BEGIN_SRC sh
+   cd admission-webhook-example/v1
+   DOCKER_USER=mospany bash ./build
+   #+END_SRC
+   它将生成镜像并上传到docker.io/mospany/admission-webhook-example:v1。
+  [[http://blog.mospan.cn/post/img/webhook/build.png]]
+   
+
+** 检查是否开启了动态准入控制
+   查看APIServer是否开启了MutatingAdmissionWebhook和ValidatingAdmissionWebhook
+   #+BEGIN_SRC sh
+   # 获取apiserver pod名字
+   apiserver_pod_name=`kubectl get --no-headers=true po -n kube-system | grep kube-apiserver | awk '{ print $1 }'`
+   # 查看api server的启动参数plugin
+   kubectl get po $apiserver_pod_name -n kube-system -o yaml | grep plugin
+   
+   #+END_SRC
+   如果输出如下，说明已经开启
+   #+BEGIN_SRC sh
+   - --enable-admission-plugins=NodeRestriction,MutatingAdmissionWebhook,ValidatingAdmissionWebhook
+   #+END_SRC
+   否则，需要修改启动参数，请不然直接修改Pod的参数，这样修改不会成功，请修改配置文件/etc/kubernetes/manifests/kube-apiserver.yaml，加上相应的插件参数后保存，APIServer的Pod会监控该文件的变化，然后重新启动。
+  [[http://blog.mospan.cn/post/img/webhook/check-apiserver.png]]
+
+** 创建RBAC
+   由于我们的webhook会对资源进行修改，所以需要单独给一个ServiceAccount，在K8S集群中直接创建即可
+   #+BEGIN_SRC sh
+   kubectl apply -f deployment/rbac.yaml 
+   #+END_SRC
+   效果如下：
+   #+BEGIN_SRC sh
+   [root@k8s-master deployment]# kubectl apply -f rbac.yaml
+   serviceaccount/admission-webhook-example-sa unchanged
+   clusterrole.rbac.authorization.k8s.io/admission-webhook-example-cr unchanged
+   clusterrolebinding.rbac.authorization.k8s.io/admission-webhook-example-crb unchanged
+   [root@k8s-master deployment]#
+   
+   #+END_SRC
+   
+** 证书认证
+   K8S集群默认是HTTPS通信的，所以APiserver调用webhook的过程也是HTTPS的，所以需要进行证书认证，证书认证相当于是给Service的域名进行认证（Service后面会创建），将Service域名放到认证请求server.csr文件中，然后创建一个K8S证书签署请求资源CertificateSigningRequest，APIServer签署该证书后生成server-cert.pem，再将最初创建的私钥server-key.pem和签署好的证书server-cert.pem放到Secret中供Deployment调用，详细过程看脚本
+webhook-create-signed-cert.sh
+
+  认证很简单，执行该脚本即可，会创建一个名为admission-webhook-example-certs的Secret
+  #+BEGIN_SRC sh
+  ./deployment/webhook-create-signed-cert.sh
+  
+  #+END_SRC
+  这一步顺便把Service创建了，因为证书是给该Service的域名颁发的
+  #+BEGIN_SRC sh
+  kubectl apply -f deployment/service.yaml
+  
+  #+END_SRC
+
+** 部署Deployment
+   #+BEGIN_SRC sh
+   kubectl  apply -f deployment.yaml 
+   #+END_SRC
+   稍等片刻如果有类似如下输出说明Pod已经运行
+   #+BEGIN_SRC sh
+   [root@k8s-master deployment]# kubectl  apply -f deployment.yaml
+   deployment.apps/admission-webhook-example-deployment unchanged
+   [root@k8s-master deployment]# kubectl  get pod -A -o wide | grep web
+   default       admission-webhook-example-deployment-7dd75cffb6-24bhg   1/1     Running   2 (13d ago)    57d    10.244.235.217   k8s-master   <none>           <none>
+   [root@k8s-master deployment]# kubectl  get pod -A  | grep web
+   default       admission-webhook-example-deployment-7dd75cffb6-24bhg   1/1     Running   2 (13d ago)    57d
+   [root@k8s-master deployment]#
+   
+   #+END_SRC
+
+**  部署ValidatingWebhook
+   首先包含一个namespaceSelector，表示此webhook只针对有admission-webhook-example标签的namespace生效，当然也可以去掉
+   #+BEGIN_SRC yaml
+   namespaceSelector:
+      matchLabels:
+        admission-webhook-example: enabled
+   
+   #+END_SRC
+   查看编排文件deployment/validatingwebhook.yaml，里面有一个占位符${CA_BUNDLE}
+   #+BEGIN_SRC yaml
+   clientConfig:
+    service:
+    name: admission-webhook-example-svc
+    namespace: default
+    path: "/validate"  # Path是我们自己定义的
+    caBundle: ${CA_BUNDLE}
+   
+   #+END_SRC
+   这个是什么呢？webhook是APIServer调用的，此时APIServer相当于是一个客服端，webhook是一个服务端，可以对比下平时上网，打开https网站时是谁在验证域名的证书？是内置在浏览器里面的根证书在做验证，所以这里的CA_BUNDLE就类似于APIServer调用webhook的根证书，它去验证webhook证书。
+
+   所以先填充这个CA_BUNDLE后再执行
+   #+BEGIN_SRC sh
+   # 填充占位符
+   cat deployment/validatingwebhook.yaml | ./deployment/webhook-patch-ca-bundle.sh > /tmp/validatingwebhook.yaml
+
+   # 部署
+   kubectl apply -f /tmp/validatingwebhook.yaml
+   
+   #+END_SRC 
+
+** 验证
+   1、给default namespace添加label
+   #+BEGIN_SRC sh
+   kubectl label namespace default admission-webhook-example=enabled
+   
+   #+END_SRC
+
+   2、部署sleep.yaml
+   #+BEGIN_SRC sh
+   kubectl apply -f deployment/sleep.yaml 
+   
+   #+END_SRC
  
-* 问题解决办法
+
+  
+  
+ 
+* FAQ
 ** error: unable to recognize "STDIN": no matches for kind "CertificateSigningRequest" in version "certificates.k8s.io/v1beta1"
    当执行`bash webhook-create-signed-cert.sh`时出现如下错误：
    #+BEGIN_QUOTE
@@ -65,7 +195,8 @@ url = "/2023/03/05/k8s-webhook-example/"
 
 ** x509: certificate specifies an incompatible key usage
    
+   
 
 
 * 参考资料
-  
+  【01】[[https://zhuanlan.zhihu.com/p/404764407][从0到1开发K8S_Webhook最佳实践]]]
