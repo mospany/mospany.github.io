@@ -106,16 +106,6 @@
       
       
       <section class="post" itemscope itemprop="blogPost">
-    <a href="http://mospany.github.io/2016/02/14/pango-development-quick-start/" title="pango设计与实现(02)--快速开始" itemprop="url">
-    <h1 itemprop="name">pango设计与实现(02)--快速开始</h1>
-    <p itemprop="description">安装 安装前准备 确保你的本地环境已经安装好如下软件： git. Go 1.4+ 源码安装 下载源码到本地 git clone https://github.com/mospany/pango.git 设置好环境变量 cd pango export GOPATH=`pwd` 编译 make 如果编译成功，将在当前目录下</p>
-    <time datetime="2016-02-14 16:57:25 &#43;0800 CST" itemprop="datePublished">2016年02月14日</time>
-  </a>
-</section>
-
-      
-      
-      <section class="post" itemscope itemprop="blogPost">
     <a href="http://mospany.github.io/2016/02/14/pango-development-introduce/" title="pango设计与实现(01)--介绍" itemprop="url">
     <h1 itemprop="name">pango设计与实现(01)--介绍</h1>
     <p itemprop="description">概述 pango我个人发起的基于hugo的变种开源项目，是一个快速与灵活的静态网页生成器，使用GO语言开发。 主要基于如下目的： 巩固学习web前</p>
@@ -194,6 +184,31 @@
 </section>
 
       
+      
+      <section class="post" itemscope itemprop="blogPost">
+    <a href="http://mospany.github.io/post/2023/2023-12-03-pod-life-cycle/" title="" itemprop="url">
+    <h1 itemprop="name"></h1>
+    <p itemprop="description">Table of Contents  简介 pod状态  主要状态 其他状态  容器状态 kubelet状态  +
+toc = true
+categories = [&ldquo;技术文章&rdquo;]
+date = &ldquo;2023-12-03T10:42:05+08:00&rdquo;
+description = &ldquo;&rdquo;
+keywords = [&ldquo;K8S&rdquo;,&ldquo;云计算&rdquo;]
+tags = [&ldquo;K8S&rdquo;,&ldquo;云计算&rdquo;]
+title = &ldquo;K8S学习笔记(08): POD生命周期&rdquo;
+url = &ldquo;2023/12/03/pod-life-cycle&ldquo;
++
+
+简介 pod 遵循预定义的生命周期，起始于 Pending 阶段， 如果至少其中有一个主要容器正常启动，则进入 Running，之后取决于 Pod 中是否有容器以失败状态结束而进入 Succeeded 或者 Failed 阶段。
+
+pod状态 
+主要状态 Pod主要有以下几个状态, 定义在pkg/apis/core/types.go中：
+    状态 意义 描述     Pending 等待中 Pod已经被创建，但还没有完成调度，或者说有一个或多个镜像正处于从远程仓库下载的过程。处在这个阶段的Pod可能正在写数据到etcd中、调度、pull镜像或启动容器。   Running 运行中 该 Pod 已经绑定到了一个节点上，Pod 中所有的容器都已被创建。至少有一个容器正在运行，或者正处于启动或重启状态。   Succeeded 正常终止 Pod中的所有的容器已经正常的执行后退出，并且不会自动重启，一般会是在部署job的时候会出现。   Failed 异常停止 Pod 中的所有容器都已终止了，并且至少有一个容器是因为失败终止。也就是说，容器以非0状态退出或者被系统终止。   Unkonwn 未知状态 API Server无法正常获取到Pod对象的状态信息，通常是由于其无法与所在工作节点的kubelet通信所致。</p>
+    <time datetime="0001-01-01 00:00:00 &#43;0000 UTC" itemprop="datePublished">0001年01月01日</time>
+  </a>
+</section>
+
+      
       <nav id="page-nav" class="clearfix">
           
 
@@ -251,7 +266,7 @@
     
     <li><a href="http://mospany.github.io/categories/%e5%b7%a5%e5%85%b7%e4%bd%bf%e7%94%a8" title="工具使用">工具使用<sup>3</sup></a></li>
     
-    <li><a href="http://mospany.github.io/categories/%e6%8a%80%e6%9c%af%e6%96%87%e7%ab%a0" title="技术文章">技术文章<sup>43</sup></a></li>
+    <li><a href="http://mospany.github.io/categories/%e6%8a%80%e6%9c%af%e6%96%87%e7%ab%a0" title="技术文章">技术文章<sup>42</sup></a></li>
     
     <li><a href="http://mospany.github.io/categories/%e7%94%9f%e6%b4%bb%e8%ae%b0%e5%bd%95" title="生活记录">生活记录<sup>1</sup></a></li>
     
@@ -282,7 +297,7 @@
       
 			<li><a href="http://mospany.github.io/tags/ipv6" title="ipv6">ipv6<sup>2</sup></a></li>
       
-			<li><a href="http://mospany.github.io/tags/k8s" title="k8s">k8s<sup>14</sup></a></li>
+			<li><a href="http://mospany.github.io/tags/k8s" title="k8s">k8s<sup>13</sup></a></li>
       
 			<li><a href="http://mospany.github.io/tags/linux" title="linux">linux<sup>1</sup></a></li>
       
@@ -304,7 +319,7 @@
       
 			<li><a href="http://mospany.github.io/tags/yaml" title="yaml">yaml<sup>1</sup></a></li>
       
-			<li><a href="http://mospany.github.io/tags/%e4%ba%91%e8%ae%a1%e7%ae%97" title="云计算">云计算<sup>6</sup></a></li>
+			<li><a href="http://mospany.github.io/tags/%e4%ba%91%e8%ae%a1%e7%ae%97" title="云计算">云计算<sup>5</sup></a></li>
       
 			<li><a href="http://mospany.github.io/tags/%e4%ba%92%e8%81%94%e7%bd%91" title="互联网">互联网<sup>1</sup></a></li>
       
@@ -408,17 +423,12 @@
       
       
       <li class="archive-list-item">
-        <a class="archive-list-link" href="http://mospany.github.io/post/#2023-12">2023年12月</a><span class="archive-list-count">9</span>
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2023-06">2023年06月</a><span class="archive-list-count">7</span>
       </li>
       
       
       <li class="archive-list-item">
-        <a class="archive-list-link" href="http://mospany.github.io/post/#2023-06">2023年06月</a><span class="archive-list-count">1</span>
-      </li>
-      
-      
-      <li class="archive-list-item">
-        <a class="archive-list-link" href="http://mospany.github.io/post/#2023-03">2023年03月</a><span class="archive-list-count">2</span>
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2023-03">2023年03月</a><span class="archive-list-count">3</span>
       </li>
       
       
@@ -433,7 +443,7 @@
       
       
       <li class="archive-list-item">
-        <a class="archive-list-link" href="http://mospany.github.io/post/#2022-11">2022年11月</a><span class="archive-list-count">2</span>
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2022-11">2022年11月</a><span class="archive-list-count">3</span>
       </li>
       
       
@@ -509,6 +519,11 @@
       
       <li class="archive-list-item">
         <a class="archive-list-link" href="http://mospany.github.io/post/#2016-01">2016年01月</a><span class="archive-list-count">6</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#0001-01">0001年01月</a><span class="archive-list-count">1</span>
       </li>
       
     </ul>

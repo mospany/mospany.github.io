@@ -2,60 +2,49 @@
     
     <url>
         <loc>http://mospany.github.io/tags/</loc>
-        <lastmod>2023-12-03T10:42:05+08:00</lastmod>
+        <lastmod>2023-06-23T17:36:37+08:00</lastmod>
         <priority>0</priority>
     </url>
     
     <url>
         <loc>http://mospany.github.io/categories/</loc>
-        <lastmod>2023-12-03T10:42:05+08:00</lastmod>
+        <lastmod>2023-06-23T17:36:37+08:00</lastmod>
         <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/k8s/</loc>
-        <lastmod>2023-12-03T10:42:05+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/2023/12/03/pod-life-cycle/</loc>
-        <lastmod>2023-12-03T10:42:05+08:00</lastmod>
     </url>
     
     <url>
         <loc>http://mospany.github.io/post/</loc>
-        <lastmod>2023-12-03T10:42:05+08:00</lastmod>
+        <lastmod>2023-06-23T17:36:37+08:00</lastmod>
         <priority>0</priority>
     </url>
     
     <url>
         <loc>http://mospany.github.io/tags/</loc>
-        <lastmod>2023-12-03T10:42:05+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/%E4%BA%91%E8%AE%A1%E7%AE%97/</loc>
-        <lastmod>2023-12-03T10:42:05+08:00</lastmod>
+        <lastmod>2023-06-23T17:36:37+08:00</lastmod>
         <priority>0</priority>
     </url>
     
     <url>
         <loc>http://mospany.github.io/</loc>
-        <lastmod>2023-12-03T10:42:05+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/</loc>
-        <lastmod>2023-12-03T10:42:05+08:00</lastmod>
+        <lastmod>2023-06-23T17:36:37+08:00</lastmod>
         <priority>0</priority>
     </url>
     
     <url>
         <loc>http://mospany.github.io/2023/06/23/how-about-install-newbing-and-chatgpt/</loc>
         <lastmod>2023-06-23T17:36:37+08:00</lastmod>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/</loc>
+        <lastmod>2023-06-23T17:36:37+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/k8s/</loc>
+        <lastmod>2023-03-05T11:32:18+08:00</lastmod>
+        <priority>0</priority>
     </url>
     
     <url>
@@ -104,6 +93,12 @@
     <url>
         <loc>http://mospany.github.io/2022/11/22/k8s-practice-minicni/</loc>
         <lastmod>2022-11-22T22:42:55+08:00</lastmod>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/%E4%BA%91%E8%AE%A1%E7%AE%97/</loc>
+        <lastmod>2022-11-22T22:42:55+08:00</lastmod>
+        <priority>0</priority>
     </url>
     
     <url>
@@ -346,14 +341,14 @@
     </url>
     
     <url>
-        <loc>http://mospany.github.io/2016/09/06/dpdk-develop-notes/</loc>
-        <lastmod>2016-09-06T19:37:20+08:00</lastmod>
-    </url>
-    
-    <url>
         <loc>http://mospany.github.io/tags/dpdk/</loc>
         <lastmod>2016-09-06T19:37:20+08:00</lastmod>
         <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/2016/09/06/dpdk-develop-notes/</loc>
+        <lastmod>2016-09-06T19:37:20+08:00</lastmod>
     </url>
     
     <url>
@@ -495,6 +490,12 @@
     <url>
         <loc>http://mospany.github.io/about/</loc>
         <lastmod>2016-01-01T08:55:31+08:00</lastmod>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/post/2023/2023-12-03-pod-life-cycle/</loc>
+        <lastmod>0001-01-01T00:00:00+00:00</lastmod>
+        <priority>0</priority>
     </url>
     
 </urlset>

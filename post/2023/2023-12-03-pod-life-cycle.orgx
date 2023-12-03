@@ -1,11 +1,10 @@
 +++
 #+OPTIONS: \n:t
-toc = true
 categories = ["技术文章"]
 date = "2023-12-03T10:42:05+08:00"
 description = ""
-keywords = ["",""]
-tags = ["",""]
+keywords = ["K8S","云计算"]
+tags = ["K8S","云计算"]
 title = "K8S学习笔记(08): POD生命周期"
 url = "/2023/12/03/pod-life-cycle/"
 
@@ -18,7 +17,7 @@ url = "/2023/12/03/pod-life-cycle/"
 
 * pod状态
 ** 主要状态
-  Pod主要有以下几个状态：
+  Pod主要有以下几个状态, 定义在pkg/apis/core/types.go中：
   | 状态      | 意义     | 描述                                                                                                                                                   |
   |-----------+----------+--------------------------------------------------------------------------------------------------------------------------------------------------------|
   | Pending   | 等待中   | Pod已经被创建，但还没有完成调度，或者说有一个或多个镜像正处于从远程仓库下载的过程。处在这个阶段的Pod可能正在写数据到etcd中、调度、pull镜像或启动容器。 |
@@ -28,30 +27,42 @@ url = "/2023/12/03/pod-life-cycle/"
   | Unkonwn   | 未知状态 | API Server无法正常获取到Pod对象的状态信息，通常是由于其无法与所在工作节点的kubelet通信所致。                                                           |
   
 ** 其他状态
-  | 状态                                  | 描述                          |
-  |---------------------------------------+-------------------------------|
-  | CrashLoopBackOff                      | 容器退出，kubelet正在将它重启 |
-  | InvalidImageName                      | 无法解析镜像名称              |
-  | ImageInspectError                     | 无法校验镜像                  |
-  | ErrImageNeverPull                     | 策略禁止拉取镜像              |
-  | ImagePullBackOff                      | 正在重试拉取                  |
-  | RegistryUnavailable                   | 连接不到镜像中心              |
-  | ErrImagePull                          | 通用的拉取镜像出错            |
-  | CreateContainerConfigError            | 不能创建kubelet使用的容器配置 |
-  | CreateContainerError                  | 创建容器失败                  |
-  | m.internalLifecycle.PreStartContainer | 执行hook报错                  |
-  | RunContainerError                     | 启动容器失败                  |
-  | PostStartHookError                    | 执行hook报错                  |
-  | ContainersNotInitialized              | 容器没有初始化完毕            |
-  | ContainersNotRead                     | 容器没有准备完毕              |
-  | ContainerCreating                     | 容器创建中                    |
-  | PodInitializing                       | pod 初始化中                  |
-  | DockerDaemonNotReady                  | docker还没有完全启动          |
-  | NetworkPluginNotReady                 | 网络插件还没有完全启动        |
+  定义在pkg/kubelet/container/sync_result.go等。
+  | 状态                                  | 描述                                              |
+  |---------------------------------------+---------------------------------------------------|
+  | CrashLoopBackOff                      | 容器退出，kubelet正在将它重启                     |
+  | InvalidImageName                      | 无法解析镜像名称                                  |
+  | ImageInspectError                     | 无法校验镜像                                      |
+  | ErrImageNeverPull                     | 策略禁止拉取镜像                                  |
+  | ImagePullBackOff                      | 正在重试拉取                                      |
+  | RegistryUnavailable                   | 连接不到镜像中心                                  |
+  | ErrImagePull                          | 通用的拉取镜像出错                                |
+  | CreateContainerConfigError            | 不能创建kubelet使用的容器配置                     |
+  | CreateContainerError                  | 创建容器失败                                      |
+  | m.internalLifecycle.PreStartContainer | 执行hook报错                                      |
+  | RunContainerError                     | 启动容器失败                                      |
+  | PostStartHookError                    | 执行hook报错                                      |
+  | ContainersNotInitialized              | 容器没有初始化完毕                                |
+  | ContainersNotRead                     | 容器没有准备完毕                                  |
+  | ContainerCreating                     | 容器创建中                                        |
+  | PodInitializing                       | pod 初始化中                                      |
+  | DockerDaemonNotReady                  | docker还没有完全启动                              |
+  | NetworkPluginNotReady                 | 网络插件还没有完全启动                            |
+  | Unschedulable                         | Pod不能被调度， scheduler没有匹配到合适的node节点 |
+  | PodScheduled                          | pod正处于调度中                                   |
+  | Initialized                           | 所有pod中的初始化容器已经完成了                   |
 
   
+* 容器状态
+  | 状态       | 意义   | 描述                                                                                                       |
+  |------------+--------+------------------------------------------------------------------------------------------------------------|
+  | Waiting    | 等待   | 处于 Waiting 状态的容器仍在运行它完成启动所需要的操作                                                      |
+  | Running    | 运行中 | Running 状态表明容器正在执行状态并且没有问题发生。 如果配置了 postStart 回调，那么该回调已经执行且已完成。 |
+  | Terminated | 已终止 | 处于 Terminated 状态的容器已经开始执行并且或者正常结束或者因为某些原因失败。                               |
 
 
+* kubelet状态
+  
 
 
   

@@ -6,19 +6,10 @@
     <description>Recent content in Posts on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sun, 03 Dec 2023 10:42:05 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 23 Jun 2023 17:36:37 +0800</lastBuildDate>
     
 	<atom:link href="http://mospany.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
-    
-    <item>
-      <title>K8S学习笔记(08): POD生命周期</title>
-      <link>http://mospany.github.io/2023/12/03/pod-life-cycle/</link>
-      <pubDate>Sun, 03 Dec 2023 10:42:05 +0800</pubDate>
-      
-      <guid>http://mospany.github.io/2023/12/03/pod-life-cycle/</guid>
-      <description>简介 pod 遵循预定义的生命周期，起始于 Pending 阶段， 如果至少其中有一个主要容器正常启动，则进入 Running，之后取决于 Pod 中是否有容器以失败状态结束而</description>
-    </item>
     
     <item>
       <title>如何安装使用newbing和chatgpt</title>
@@ -441,6 +432,30 @@
       
       <guid>http://mospany.github.io/2016/01/24/my-blog-online/</guid>
       <description>原来的博客都是在CSDN与博客园里写的，都是按照模板进行编写，能自己自定义的比较少，没有自己的独立域名，用emacs/vim编写上面的博客不</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>http://mospany.github.io/post/2023/2023-12-03-pod-life-cycle/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://mospany.github.io/post/2023/2023-12-03-pod-life-cycle/</guid>
+      <description>Table of Contents  简介 pod状态  主要状态 其他状态  容器状态 kubelet状态  +
+toc = true
+categories = [&amp;ldquo;技术文章&amp;rdquo;]
+date = &amp;ldquo;2023-12-03T10:42:05+08:00&amp;rdquo;
+description = &amp;ldquo;&amp;rdquo;
+keywords = [&amp;ldquo;K8S&amp;rdquo;,&amp;ldquo;云计算&amp;rdquo;]
+tags = [&amp;ldquo;K8S&amp;rdquo;,&amp;ldquo;云计算&amp;rdquo;]
+title = &amp;ldquo;K8S学习笔记(08): POD生命周期&amp;rdquo;
+url = &amp;ldquo;2023/12/03/pod-life-cycle&amp;ldquo;
++
+
+简介 pod 遵循预定义的生命周期，起始于 Pending 阶段， 如果至少其中有一个主要容器正常启动，则进入 Running，之后取决于 Pod 中是否有容器以失败状态结束而进入 Succeeded 或者 Failed 阶段。
+
+pod状态 
+主要状态 Pod主要有以下几个状态, 定义在pkg/apis/core/types.go中：
+    状态 意义 描述     Pending 等待中 Pod已经被创建，但还没有完成调度，或者说有一个或多个镜像正处于从远程仓库下载的过程。处在这个阶段的Pod可能正在写数据到etcd中、调度、pull镜像或启动容器。   Running 运行中 该 Pod 已经绑定到了一个节点上，Pod 中所有的容器都已被创建。至少有一个容器正在运行，或者正处于启动或重启状态。   Succeeded 正常终止 Pod中的所有的容器已经正常的执行后退出，并且不会自动重启，一般会是在部署job的时候会出现。   Failed 异常停止 Pod 中的所有容器都已终止了，并且至少有一个容器是因为失败终止。也就是说，容器以非0状态退出或者被系统终止。   Unkonwn 未知状态 API Server无法正常获取到Pod对象的状态信息，通常是由于其无法与所在工作节点的kubelet通信所致。</description>
     </item>
     
   </channel>

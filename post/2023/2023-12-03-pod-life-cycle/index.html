@@ -3,17 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <base href="http://mospany.github.io/">
-  <title>K8S学习笔记(08): POD生命周期 - 墨斯潘園</title>
+  <title> - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
-  <meta name="keywords" content="K8S,云计算,">
-  <meta name="description" content="简介 pod 遵循预定义的生命周期，起始于 Pending 阶段， 如果至少其中有一个主要容器正常启动，则进入 Running，之后取决于 Pod 中是否有容器以失败状态结束而">
+  
+  <meta name="description" content="Table of Contents  简介 pod状态  主要状态 其他状态  容器状态 kubelet状态  &#43;
+toc = true
+categories = [&ldquo;技术文章&rdquo;]
+date = &ldquo;2023-12-03T10:42:05&#43;08:00&rdquo;
+description = &ldquo;&rdquo;
+keywords = [&ldquo;K8S&rdquo;,&ldquo;云计算&rdquo;]
+tags = [&ldquo;K8S&rdquo;,&ldquo;云计算&rdquo;]
+title = &ldquo;K8S学习笔记(08): POD生命周期&rdquo;
+url = &ldquo;2023/12/03/pod-life-cycle&ldquo;
+&#43;
+
+简介 pod 遵循预定义的生命周期，起始于 Pending 阶段， 如果至少其中有一个主要容器正常启动，则进入 Running，之后取决于 Pod 中是否有容器以失败状态结束而进入 Succeeded 或者 Failed 阶段。
+
+pod状态 
+主要状态 Pod主要有以下几个状态, 定义在pkg/apis/core/types.go中：
+    状态 意义 描述     Pending 等待中 Pod已经被创建，但还没有完成调度，或者说有一个或多个镜像正处于从远程仓库下载的过程。处在这个阶段的Pod可能正在写数据到etcd中、调度、pull镜像或启动容器。   Running 运行中 该 Pod 已经绑定到了一个节点上，Pod 中所有的容器都已被创建。至少有一个容器正在运行，或者正处于启动或重启状态。   Succeeded 正常终止 Pod中的所有的容器已经正常的执行后退出，并且不会自动重启，一般会是在部署job的时候会出现。   Failed 异常停止 Pod 中的所有容器都已终止了，并且至少有一个容器是因为失败终止。也就是说，容器以非0状态退出或者被系统终止。   Unkonwn 未知状态 API Server无法正常获取到Pod对象的状态信息，通常是由于其无法与所在工作节点的kubelet通信所致。">
   <meta name="author" content="mospan">
-  <meta itemprop="name" content="K8S学习笔记(08): POD生命周期 - 墨斯潘園">
-  <meta itemprop="description" content="简介 pod 遵循预定义的生命周期，起始于 Pending 阶段， 如果至少其中有一个主要容器正常启动，则进入 Running，之后取决于 Pod 中是否有容器以失败状态结束而">
+  <meta itemprop="name" content=" - 墨斯潘園">
+  <meta itemprop="description" content="Table of Contents  简介 pod状态  主要状态 其他状态  容器状态 kubelet状态  &#43;
+toc = true
+categories = [&ldquo;技术文章&rdquo;]
+date = &ldquo;2023-12-03T10:42:05&#43;08:00&rdquo;
+description = &ldquo;&rdquo;
+keywords = [&ldquo;K8S&rdquo;,&ldquo;云计算&rdquo;]
+tags = [&ldquo;K8S&rdquo;,&ldquo;云计算&rdquo;]
+title = &ldquo;K8S学习笔记(08): POD生命周期&rdquo;
+url = &ldquo;2023/12/03/pod-life-cycle&ldquo;
+&#43;
+
+简介 pod 遵循预定义的生命周期，起始于 Pending 阶段， 如果至少其中有一个主要容器正常启动，则进入 Running，之后取决于 Pod 中是否有容器以失败状态结束而进入 Succeeded 或者 Failed 阶段。
+
+pod状态 
+主要状态 Pod主要有以下几个状态, 定义在pkg/apis/core/types.go中：
+    状态 意义 描述     Pending 等待中 Pod已经被创建，但还没有完成调度，或者说有一个或多个镜像正处于从远程仓库下载的过程。处在这个阶段的Pod可能正在写数据到etcd中、调度、pull镜像或启动容器。   Running 运行中 该 Pod 已经绑定到了一个节点上，Pod 中所有的容器都已被创建。至少有一个容器正在运行，或者正处于启动或重启状态。   Succeeded 正常终止 Pod中的所有的容器已经正常的执行后退出，并且不会自动重启，一般会是在部署job的时候会出现。   Failed 异常停止 Pod 中的所有容器都已终止了，并且至少有一个容器是因为失败终止。也就是说，容器以非0状态退出或者被系统终止。   Unkonwn 未知状态 API Server无法正常获取到Pod对象的状态信息，通常是由于其无法与所在工作节点的kubelet通信所致。">
   <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
-  <meta name="twitter:title" content="K8S学习笔记(08): POD生命周期 - 墨斯潘園" />
+  <meta name="twitter:title" content=" - 墨斯潘園" />
   
   <meta name="twitter:description" content="">
   <link rel="shortcut icon" href="img/favicon.ico"/>
@@ -63,7 +93,7 @@
 	<article itemprop="articleBody">
     <header class="article-info clearfix">
   <h1 itemprop="name">
-      <a href="http://mospany.github.io/2023/12/03/pod-life-cycle/" title="K8S学习笔记(08): POD生命周期" itemprop="url">K8S学习笔记(08): POD生命周期</a>
+      <a href="http://mospany.github.io/post/2023/2023-12-03-pod-life-cycle/" title="" itemprop="url"></a>
   </h1>
   <p class="article-author">By 
     
@@ -71,7 +101,7 @@
     
   </p>
   <p class="article-time">
-    <time datetime="2023-12-03 10:42:05 &#43;0800 CST" itemprop="datePublished">2023年12月03日</time>
+    <time datetime="0001-01-01 00:00:00 &#43;0000 UTC" itemprop="datePublished">0001年01月01日</time>
   </p>
 </header>
 
@@ -79,21 +109,50 @@
     
     
 
-<p><a id="org6e2363b"></a></p>
+<h1 id="table-of-contents">Table of Contents</h1>
+
+<ol>
+<li><a href="#org8be3f28">简介</a></li>
+<li><a href="#org7e1bb3c">pod状态</a>
+
+<ol>
+<li><a href="#orgf5e473a">主要状态</a></li>
+<li><a href="#orgd61adfa">其他状态</a></li>
+</ol></li>
+<li><a href="#org502ffd3">容器状态</a></li>
+<li><a href="#org4e99763">kubelet状态</a></li>
+</ol>
+
+<p><del>+</del></p>
+
+<p>toc = true<br />
+categories = [&ldquo;技术文章&rdquo;]<br />
+date = &ldquo;2023-12-03T10:42:05+08:00&rdquo;<br />
+description = &ldquo;&rdquo;<br />
+keywords = [&ldquo;K8S&rdquo;,&ldquo;云计算&rdquo;]<br />
+tags = [&ldquo;K8S&rdquo;,&ldquo;云计算&rdquo;]<br />
+title = &ldquo;K8S学习笔记(08): POD生命周期&rdquo;<br />
+url = &ldquo;<em>2023/12/03/pod-life-cycle</em>&ldquo;</p>
+
+<p><del>+</del></p>
+
+<p><a id="org8be3f28"></a></p>
 
 <h1 id="简介">简介</h1>
 
 <p>pod 遵循预定义的生命周期，起始于 Pending 阶段， 如果至少其中有一个主要容器正常启动，则进入 Running，之后取决于 Pod 中是否有容器以失败状态结束而进入 Succeeded 或者 Failed 阶段。</p>
 
-<p><a id="org4365527"></a></p>
+<p><img src="http://blog.mospan.cn/post/img/k8s/pod/pod-status.png" alt="img" /></p>
+
+<p><a id="org7e1bb3c"></a></p>
 
 <h1 id="pod状态">pod状态</h1>
 
-<p><a id="orgb5c1a7e"></a></p>
+<p><a id="orgf5e473a"></a></p>
 
 <h2 id="主要状态">主要状态</h2>
 
-<p>Pod主要有以下几个状态：</p>
+<p>Pod主要有以下几个状态, 定义在pkg/apis/core/types.go中：</p>
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -150,9 +209,11 @@
 </tbody>
 </table>
 
-<p><a id="orgffcbe37"></a></p>
+<p><a id="orgd61adfa"></a></p>
 
 <h2 id="其他状态">其他状态</h2>
+
+<p>定义在pkg/kubelet/container/sync_result.go等。</p>
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -276,8 +337,75 @@
 <td class="org-left">NetworkPluginNotReady</td>
 <td class="org-left">网络插件还没有完全启动</td>
 </tr>
+
+
+<tr>
+<td class="org-left">Unschedulable</td>
+<td class="org-left">Pod不能被调度， scheduler没有匹配到合适的node节点</td>
+</tr>
+
+
+<tr>
+<td class="org-left">PodScheduled</td>
+<td class="org-left">pod正处于调度中</td>
+</tr>
+
+
+<tr>
+<td class="org-left">Initialized</td>
+<td class="org-left">所有pod中的初始化容器已经完成了</td>
+</tr>
 </tbody>
 </table>
+
+<p><a id="org502ffd3"></a></p>
+
+<h1 id="容器状态">容器状态</h1>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">状态</th>
+<th scope="col" class="org-left">意义</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="org-left">Waiting</td>
+<td class="org-left">等待</td>
+<td class="org-left">处于 Waiting 状态的容器仍在运行它完成启动所需要的操作</td>
+</tr>
+
+
+<tr>
+<td class="org-left">Running</td>
+<td class="org-left">运行中</td>
+<td class="org-left">Running 状态表明容器正在执行状态并且没有问题发生。 如果配置了 postStart 回调，那么该回调已经执行且已完成。</td>
+</tr>
+
+
+<tr>
+<td class="org-left">Terminated</td>
+<td class="org-left">已终止</td>
+<td class="org-left">处于 Terminated 状态的容器已经开始执行并且或者正常结束或者因为某些原因失败。</td>
+</tr>
+</tbody>
+</table>
+
+<p><a id="org4e99763"></a></p>
+
+<h1 id="kubelet状态">kubelet状态</h1>
 
     <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
   <div style="float:right;margin-top:0px;">
@@ -290,7 +418,7 @@
   <div>
     <p style="margin-top:0px;">作者：<a target="_blank" href="http://blog.mospan.cn/">mospan</a>
       <br />微信关注：墨斯潘園
-      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2023/12/03/pod-life-cycle/">http://mospany.github.io/2023/12/03/pod-life-cycle/</a>
+      <br />本文出处：<a target="_blank" href="http://mospany.github.io/post/2023/2023-12-03-pod-life-cycle/">http://mospany.github.io/post/2023/2023-12-03-pod-life-cycle/</a>
       <br />
       文章版权归本人所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
   </div>
@@ -301,30 +429,8 @@
   <footer class="article-footer clearfix">
   
 
-<div class="article-tags">
-  <span></span>
-  
-  <a href="/tags/k8s">K8S</a>
-  
-  <a href="/tags/%E4%BA%91%E8%AE%A1%E7%AE%97">云计算</a>
-  
-</div>
-
-
-
-<div class="article-categories">
-  <span></span>
-  
-  <a class="article-category-link" href="/categories/k8s">K8S</a>
-  
-  <a class="article-category-link" href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97">云计算</a>
-  
-</div>
-
-
-
   <div class="article-share" id="share">
-    <div data-url="http://mospany.github.io/2023/12/03/pod-life-cycle/" data-title="K8S学习笔记(08): POD生命周期" data-tsina="3833537679" class="share clearfix">
+    <div data-url="http://mospany.github.io/post/2023/2023-12-03-pod-life-cycle/" data-title="" data-tsina="3833537679" class="share clearfix">
     </div>
   </div>
 </footer>
@@ -367,7 +473,7 @@ gitment.render('git-comments')
     
     <li><a href="http://mospany.github.io/categories/%e5%b7%a5%e5%85%b7%e4%bd%bf%e7%94%a8" title="工具使用">工具使用<sup>3</sup></a></li>
     
-    <li><a href="http://mospany.github.io/categories/%e6%8a%80%e6%9c%af%e6%96%87%e7%ab%a0" title="技术文章">技术文章<sup>43</sup></a></li>
+    <li><a href="http://mospany.github.io/categories/%e6%8a%80%e6%9c%af%e6%96%87%e7%ab%a0" title="技术文章">技术文章<sup>42</sup></a></li>
     
     <li><a href="http://mospany.github.io/categories/%e7%94%9f%e6%b4%bb%e8%ae%b0%e5%bd%95" title="生活记录">生活记录<sup>1</sup></a></li>
     
@@ -398,7 +504,7 @@ gitment.render('git-comments')
       
 			<li><a href="http://mospany.github.io/tags/ipv6" title="ipv6">ipv6<sup>2</sup></a></li>
       
-			<li><a href="http://mospany.github.io/tags/k8s" title="k8s">k8s<sup>14</sup></a></li>
+			<li><a href="http://mospany.github.io/tags/k8s" title="k8s">k8s<sup>13</sup></a></li>
       
 			<li><a href="http://mospany.github.io/tags/linux" title="linux">linux<sup>1</sup></a></li>
       
@@ -420,7 +526,7 @@ gitment.render('git-comments')
       
 			<li><a href="http://mospany.github.io/tags/yaml" title="yaml">yaml<sup>1</sup></a></li>
       
-			<li><a href="http://mospany.github.io/tags/%e4%ba%91%e8%ae%a1%e7%ae%97" title="云计算">云计算<sup>6</sup></a></li>
+			<li><a href="http://mospany.github.io/tags/%e4%ba%91%e8%ae%a1%e7%ae%97" title="云计算">云计算<sup>5</sup></a></li>
       
 			<li><a href="http://mospany.github.io/tags/%e4%ba%92%e8%81%94%e7%bd%91" title="互联网">互联网<sup>1</sup></a></li>
       
@@ -524,17 +630,12 @@ gitment.render('git-comments')
       
       
       <li class="archive-list-item">
-        <a class="archive-list-link" href="http://mospany.github.io/post/#2023-12">2023年12月</a><span class="archive-list-count">9</span>
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2023-06">2023年06月</a><span class="archive-list-count">7</span>
       </li>
       
       
       <li class="archive-list-item">
-        <a class="archive-list-link" href="http://mospany.github.io/post/#2023-06">2023年06月</a><span class="archive-list-count">1</span>
-      </li>
-      
-      
-      <li class="archive-list-item">
-        <a class="archive-list-link" href="http://mospany.github.io/post/#2023-03">2023年03月</a><span class="archive-list-count">2</span>
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2023-03">2023年03月</a><span class="archive-list-count">3</span>
       </li>
       
       
@@ -549,7 +650,7 @@ gitment.render('git-comments')
       
       
       <li class="archive-list-item">
-        <a class="archive-list-link" href="http://mospany.github.io/post/#2022-11">2022年11月</a><span class="archive-list-count">2</span>
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2022-11">2022年11月</a><span class="archive-list-count">3</span>
       </li>
       
       
@@ -625,6 +726,11 @@ gitment.render('git-comments')
       
       <li class="archive-list-item">
         <a class="archive-list-link" href="http://mospany.github.io/post/#2016-01">2016年01月</a><span class="archive-list-count">6</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#0001-01">0001年01月</a><span class="archive-list-count">1</span>
       </li>
       
     </ul>
