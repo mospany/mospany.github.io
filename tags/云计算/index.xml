@@ -6,10 +6,19 @@
     <description>Recent content in 云计算 on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Tue, 22 Nov 2022 22:42:55 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 03 Dec 2023 10:42:05 +0800</lastBuildDate>
     
 	<atom:link href="http://mospany.github.io/tags/%E4%BA%91%E8%AE%A1%E7%AE%97/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>K8S学习笔记(08): POD生命周期</title>
+      <link>http://mospany.github.io/2023/12/03/pod-life-cycle/</link>
+      <pubDate>Sun, 03 Dec 2023 10:42:05 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2023/12/03/pod-life-cycle/</guid>
+      <description>简介 pod 遵循预定义的生命周期，起始于 Pending 阶段， 如果至少其中有一个主要容器正常启动，则进入 Running，之后取决于 Pod 中是否有容器以失败状态结束而</description>
+    </item>
     
     <item>
       <title>K8S项目实践(02): 动手实现minicni</title>

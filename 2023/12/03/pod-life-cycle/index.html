@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <base href="http://mospany.github.io/">
-  <title>vim - 墨斯潘園</title>
+  <title>K8S学习笔记(08): POD生命周期 - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
-  
-  <meta name="description" content="vim">
+  <meta name="keywords" content="K8S,云计算,">
+  <meta name="description" content="简介 pod 遵循预定义的生命周期，起始于 Pending 阶段， 如果至少其中有一个主要容器正常启动，则进入 Running，之后取决于 Pod 中是否有容器以失败状态结束而">
   <meta name="author" content="mospan">
-  <meta itemprop="name" content="vim - 墨斯潘園">
-  <meta itemprop="description" content="vim">
+  <meta itemprop="name" content="K8S学习笔记(08): POD生命周期 - 墨斯潘園">
+  <meta itemprop="description" content="简介 pod 遵循预定义的生命周期，起始于 Pending 阶段， 如果至少其中有一个主要容器正常启动，则进入 Running，之后取决于 Pod 中是否有容器以失败状态结束而">
   <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
-  <meta name="twitter:title" content="vim - 墨斯潘園" />
+  <meta name="twitter:title" content="K8S学习笔记(08): POD生命周期 - 墨斯潘園" />
   
   <meta name="twitter:description" content="">
   <link rel="shortcut icon" href="img/favicon.ico"/>
@@ -59,28 +59,302 @@
 
   </header>
   <div id="container">
-    <div id="main">
-      
-      
-      <h2 id="2019-10">2019-10</h2>
-      
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="http://mospany.github.io/2019/10/17/vim-in-emacs/" title="编辑器终结者: vim与emacs双剑合璧" itemprop="url">
-    <h1 itemprop="name">编辑器终结者: vim与emacs双剑合璧</h1>
-    <p itemprop="description">神器传说 在猿的世界里，流传着两大神器的传说： 一个是神的编辑器Emacs，另一个是编辑器之神Vim。 追求独步天下的高手为了得到它驾驭它，在江湖</p>
-    <time datetime="2019-10-17 13:54:40 &#43;0800 CST" itemprop="datePublished">2019年10月17日</time>
-  </a>
-</section>
+    <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody">
+    <header class="article-info clearfix">
+  <h1 itemprop="name">
+      <a href="http://mospany.github.io/2023/12/03/pod-life-cycle/" title="K8S学习笔记(08): POD生命周期" itemprop="url">K8S学习笔记(08): POD生命周期</a>
+  </h1>
+  <p class="article-author">By 
+    
+      <a href="http://blog.mospan.cn" title="mospan">mospan</a>
+    
+  </p>
+  <p class="article-time">
+    <time datetime="2023-12-03 10:42:05 &#43;0800 CST" itemprop="datePublished">2023年12月03日</time>
+  </p>
+</header>
 
-        
-      <nav id="page-nav" class="clearfix">
-          
+	<div class="article-content">
+    
+    
+
+<p><a id="org6e2363b"></a></p>
+
+<h1 id="简介">简介</h1>
+
+<p>pod 遵循预定义的生命周期，起始于 Pending 阶段， 如果至少其中有一个主要容器正常启动，则进入 Running，之后取决于 Pod 中是否有容器以失败状态结束而进入 Succeeded 或者 Failed 阶段。</p>
+
+<p><a id="org4365527"></a></p>
+
+<h1 id="pod状态">pod状态</h1>
+
+<p><a id="orgb5c1a7e"></a></p>
+
+<h2 id="主要状态">主要状态</h2>
+
+<p>Pod主要有以下几个状态：</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">状态</th>
+<th scope="col" class="org-left">意义</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="org-left">Pending</td>
+<td class="org-left">等待中</td>
+<td class="org-left">Pod已经被创建，但还没有完成调度，或者说有一个或多个镜像正处于从远程仓库下载的过程。处在这个阶段的Pod可能正在写数据到etcd中、调度、pull镜像或启动容器。</td>
+</tr>
+
+
+<tr>
+<td class="org-left">Running</td>
+<td class="org-left">运行中</td>
+<td class="org-left">该 Pod 已经绑定到了一个节点上，Pod 中所有的容器都已被创建。至少有一个容器正在运行，或者正处于启动或重启状态。</td>
+</tr>
+
+
+<tr>
+<td class="org-left">Succeeded</td>
+<td class="org-left">正常终止</td>
+<td class="org-left">Pod中的所有的容器已经正常的执行后退出，并且不会自动重启，一般会是在部署job的时候会出现。</td>
+</tr>
+
+
+<tr>
+<td class="org-left">Failed</td>
+<td class="org-left">异常停止</td>
+<td class="org-left">Pod 中的所有容器都已终止了，并且至少有一个容器是因为失败终止。也就是说，容器以非0状态退出或者被系统终止。</td>
+</tr>
+
+
+<tr>
+<td class="org-left">Unkonwn</td>
+<td class="org-left">未知状态</td>
+<td class="org-left">API Server无法正常获取到Pod对象的状态信息，通常是由于其无法与所在工作节点的kubelet通信所致。</td>
+</tr>
+</tbody>
+</table>
+
+<p><a id="orgffcbe37"></a></p>
+
+<h2 id="其他状态">其他状态</h2>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">状态</th>
+<th scope="col" class="org-left">描述</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="org-left">CrashLoopBackOff</td>
+<td class="org-left">容器退出，kubelet正在将它重启</td>
+</tr>
+
+
+<tr>
+<td class="org-left">InvalidImageName</td>
+<td class="org-left">无法解析镜像名称</td>
+</tr>
+
+
+<tr>
+<td class="org-left">ImageInspectError</td>
+<td class="org-left">无法校验镜像</td>
+</tr>
+
+
+<tr>
+<td class="org-left">ErrImageNeverPull</td>
+<td class="org-left">策略禁止拉取镜像</td>
+</tr>
+
+
+<tr>
+<td class="org-left">ImagePullBackOff</td>
+<td class="org-left">正在重试拉取</td>
+</tr>
+
+
+<tr>
+<td class="org-left">RegistryUnavailable</td>
+<td class="org-left">连接不到镜像中心</td>
+</tr>
+
+
+<tr>
+<td class="org-left">ErrImagePull</td>
+<td class="org-left">通用的拉取镜像出错</td>
+</tr>
+
+
+<tr>
+<td class="org-left">CreateContainerConfigError</td>
+<td class="org-left">不能创建kubelet使用的容器配置</td>
+</tr>
+
+
+<tr>
+<td class="org-left">CreateContainerError</td>
+<td class="org-left">创建容器失败</td>
+</tr>
+
+
+<tr>
+<td class="org-left">m.internalLifecycle.PreStartContainer</td>
+<td class="org-left">执行hook报错</td>
+</tr>
+
+
+<tr>
+<td class="org-left">RunContainerError</td>
+<td class="org-left">启动容器失败</td>
+</tr>
+
+
+<tr>
+<td class="org-left">PostStartHookError</td>
+<td class="org-left">执行hook报错</td>
+</tr>
+
+
+<tr>
+<td class="org-left">ContainersNotInitialized</td>
+<td class="org-left">容器没有初始化完毕</td>
+</tr>
+
+
+<tr>
+<td class="org-left">ContainersNotRead</td>
+<td class="org-left">容器没有准备完毕</td>
+</tr>
+
+
+<tr>
+<td class="org-left">ContainerCreating</td>
+<td class="org-left">容器创建中</td>
+</tr>
+
+
+<tr>
+<td class="org-left">PodInitializing</td>
+<td class="org-left">pod 初始化中</td>
+</tr>
+
+
+<tr>
+<td class="org-left">DockerDaemonNotReady</td>
+<td class="org-left">docker还没有完全启动</td>
+</tr>
+
+
+<tr>
+<td class="org-left">NetworkPluginNotReady</td>
+<td class="org-left">网络插件还没有完全启动</td>
+</tr>
+</tbody>
+</table>
+
+    <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+  <div style="float:right;margin-top:0px;">
+    <img src="/img/qrcode.jpg" width="129px" height="129px"/>
+    <div style="text-align:center;">微信扫一扫</div>
+  </div>
+  <div style="float:left;margin-top:0px;">
+    <img src="/img/rewardcode.jpg" width="129px" height="129px"/>
+  </div>
+  <div>
+    <p style="margin-top:0px;">作者：<a target="_blank" href="http://blog.mospan.cn/">mospan</a>
+      <br />微信关注：墨斯潘園
+      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2023/12/03/pod-life-cycle/">http://mospany.github.io/2023/12/03/pod-life-cycle/</a>
+      <br />
+      文章版权归本人所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+  </div>
+</div>
+
+
+	</div>
+  <footer class="article-footer clearfix">
+  
+
+<div class="article-tags">
+  <span></span>
+  
+  <a href="/tags/k8s">K8S</a>
+  
+  <a href="/tags/%E4%BA%91%E8%AE%A1%E7%AE%97">云计算</a>
+  
+</div>
 
 
 
-      </nav>
+<div class="article-categories">
+  <span></span>
+  
+  <a class="article-category-link" href="/categories/k8s">K8S</a>
+  
+  <a class="article-category-link" href="/categories/%E4%BA%91%E8%AE%A1%E7%AE%97">云计算</a>
+  
+</div>
+
+
+
+  <div class="article-share" id="share">
+    <div data-url="http://mospany.github.io/2023/12/03/pod-life-cycle/" data-title="K8S学习笔记(08): POD生命周期" data-tsina="3833537679" class="share clearfix">
     </div>
+  </div>
+</footer>
+
+	</article>
+  
+
+
+
+
+
+<div id="git-comments"></div>
+<link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
+<script src="https://billts.site/js/gitment.js"></script>
+<script>
+var gitment = new Gitment({
+  id: '<%= page.date %>',
+  owner: 'mospany',
+  repo: 'mospan-hugo-blog-gitment',
+  oauth: {
+    client_id: '0cafe299c964f0af2d1e',
+    client_secret: 'ec47ee9481210935a662298791c31da203694a8f',
+  },
+})
+gitment.render('git-comments')
+</script>    
+
+
+</div>
+
     <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
@@ -544,6 +818,38 @@ $(document).ready(function(){
 
 <script type="text/javascript">
 $(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
   var $this = $('.share'),
       url = $this.attr('data-url'),
       encodedUrl = encodeURIComponent(url),
@@ -570,6 +876,27 @@ $(document).ready(function(){
 });
 </script>
 
+
+<link rel="stylesheet" href="http://mospany.github.io/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="http://mospany.github.io/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
 
 
 
