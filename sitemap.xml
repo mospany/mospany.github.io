@@ -2,43 +2,66 @@
     
     <url>
         <loc>http://mospany.github.io/tags/</loc>
-        <lastmod>2023-06-23T17:36:37+08:00</lastmod>
+        <lastmod>2024-01-15T15:42:11+08:00</lastmod>
         <priority>0</priority>
     </url>
     
     <url>
         <loc>http://mospany.github.io/categories/</loc>
-        <lastmod>2023-06-23T17:36:37+08:00</lastmod>
+        <lastmod>2024-01-15T15:42:11+08:00</lastmod>
         <priority>0</priority>
     </url>
     
     <url>
         <loc>http://mospany.github.io/post/</loc>
-        <lastmod>2023-06-23T17:36:37+08:00</lastmod>
+        <lastmod>2024-01-15T15:42:11+08:00</lastmod>
         <priority>0</priority>
     </url>
     
     <url>
         <loc>http://mospany.github.io/tags/</loc>
-        <lastmod>2023-06-23T17:36:37+08:00</lastmod>
+        <lastmod>2024-01-15T15:42:11+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/2024/01/15/kubeadm-install-k8s/</loc>
+        <lastmod>2024-01-15T15:42:11+08:00</lastmod>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/</loc>
+        <lastmod>2024-01-15T15:42:11+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/%E4%BA%91%E8%AE%A1%E7%AE%97/</loc>
+        <lastmod>2024-01-15T15:42:11+08:00</lastmod>
         <priority>0</priority>
     </url>
     
     <url>
         <loc>http://mospany.github.io/</loc>
-        <lastmod>2023-06-23T17:36:37+08:00</lastmod>
+        <lastmod>2024-01-15T15:42:11+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/</loc>
+        <lastmod>2024-01-15T15:42:11+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/</loc>
+        <lastmod>2024-01-15T15:42:11+08:00</lastmod>
         <priority>0</priority>
     </url>
     
     <url>
         <loc>http://mospany.github.io/2023/06/23/how-about-install-newbing-and-chatgpt/</loc>
         <lastmod>2023-06-23T17:36:37+08:00</lastmod>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/</loc>
-        <lastmod>2023-06-23T17:36:37+08:00</lastmod>
-        <priority>0</priority>
     </url>
     
     <url>
@@ -96,12 +119,6 @@
     </url>
     
     <url>
-        <loc>http://mospany.github.io/tags/%E4%BA%91%E8%AE%A1%E7%AE%97/</loc>
-        <lastmod>2022-11-22T22:42:55+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
         <loc>http://mospany.github.io/2022/11/23/kubeadm-install-k8s/</loc>
         <lastmod>2022-11-22T20:58:52+08:00</lastmod>
     </url>
@@ -109,12 +126,6 @@
     <url>
         <loc>http://mospany.github.io/2022/10/18/k8s-service/</loc>
         <lastmod>2022-10-18T22:06:22+08:00</lastmod>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/</loc>
-        <lastmod>2022-10-18T22:06:22+08:00</lastmod>
-        <priority>0</priority>
     </url>
     
     <url>

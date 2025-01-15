@@ -6,10 +6,19 @@
     <description>Recent content in 技术文章 on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Fri, 23 Jun 2023 17:36:37 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 15 Jan 2024 15:42:11 +0800</lastBuildDate>
     
 	<atom:link href="http://mospany.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>kubeadm安装k8s集群(containerd版)</title>
+      <link>http://mospany.github.io/2024/01/15/kubeadm-install-k8s/</link>
+      <pubDate>Mon, 15 Jan 2024 15:42:11 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2024/01/15/kubeadm-install-k8s/</guid>
+      <description>规划 OS 配置 用途 aliOS(172.17.197.69) 2核(vCPU) 4GiB 5 Mbps k8s-master1 aliOS(172.17.197.68) 4核(vCPU) 10 GiB 5 Mbps GPU：NVIDIA T4/8 k8s-worker1 注：这是演示 k8s 集群安装的实验环境，配置较低，生产环</description>
+    </item>
     
     <item>
       <title>如何安装使用newbing和chatgpt</title>

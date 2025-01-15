@@ -5,7 +5,45 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Fri, 23 Jun 2023 17:36:37 CST</updated>
+        <updated>Mon, 15 Jan 2024 15:42:11 CST</updated>
+        
+        <item>
+            <title>kubeadm安装k8s集群(containerd版)</title>
+            <link>http://mospany.github.io/2024/01/15/kubeadm-install-k8s/</link>
+            <pubDate>Mon, 15 Jan 2024 15:42:11 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://mospany.github.io/2024/01/15/kubeadm-install-k8s/</guid>
+            <description>
+
+&lt;h1 id=&#34;规划&#34;&gt;规划&lt;/h1&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;OS&lt;/th&gt;
+&lt;th&gt;配置&lt;/th&gt;
+&lt;th&gt;用途&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;aliOS(172.17.197.69)&lt;/td&gt;
+&lt;td&gt;2核(vCPU) 4GiB 5 Mbps&lt;/td&gt;
+&lt;td&gt;k8s-master1&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;aliOS(172.17.197.68)&lt;/td&gt;
+&lt;td&gt;4核(vCPU) 10 GiB 5 Mbps GPU：NVIDIA T4/8&lt;/td&gt;
+&lt;td&gt;k8s-worker1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;strong&gt;注&lt;/strong&gt;：这是演示 k8s 集群安装的实验环境，配置较低，生产环境中我们的服务器配置至少都是 8C/16G 的基础配置。&lt;/p&gt;
+</description>
+        </item>
         
         <item>
             <title>如何安装使用newbing和chatgpt</title>
@@ -5560,36 +5598,6 @@ kubectl proxy
 &lt;li&gt;&lt;a href=&#34;https://jimmysong.io/kubernetes-handbook/concepts/&#34;&gt;Kubernetes 架构&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://github.com/0voice/k8s_awesome_document/blob/main/%25E6%2596%2587%25E7%25AB%25A0%25E7%25B2%25BE%25E9%2580%2589/%25E4%25B8%2580%25E6%2596%2587%25E4%25BA%2586%25E8%25A7%25A3%2520Kubernetes.md&#34;&gt;一文了解 Kubernetes.md&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
-</description>
-        </item>
-        
-        <item>
-            <title>K8S学习笔记(01): 目录</title>
-            <link>http://mospany.github.io/2022/09/10/k8s-study-toc/</link>
-            <pubDate>Sat, 10 Sep 2022 16:13:51 CST</pubDate>
-            <author>Mospan</author>
-            <guid>http://mospany.github.io/2022/09/10/k8s-study-toc/</guid>
-            <description>
-
-&lt;p&gt;&lt;a id=&#34;org184128e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;目录&#34;&gt;目录&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;org8d20da4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;k8s使用与原理&#34;&gt;K8S使用与原理&lt;/h2&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;a href=&#34;http://blog.mospan.cn/2022/09/10/k8s-study-toc/&#34;&gt;K8S学习笔记(01): 目录&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://blog.mospan.cn/2022/09/13/k8s-study-install-for-mac/&#34;&gt;K8S学习笔记(03): Mac系统安装k8s集群&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://blog.mospan.cn/2022/09/21/k8s-kubectl-all-cmd/&#34;&gt;K8S学习笔记(04): kubectl命令技巧大全&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgd60bd20&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;ppt内容&#34;&gt;PPT内容&lt;/h1&gt;
-
-&lt;p&gt;&lt;center&gt;&lt;embed src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-study-toc.pdf&#34; width=100% height=800&gt;&lt;/center&gt;&lt;/p&gt;
 </description>
         </item>
         
