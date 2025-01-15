@@ -15,7 +15,19 @@
             <guid>http://mospany.github.io/2024/01/15/kubeadm-install-k8s/</guid>
             <description>
 
-&lt;h1 id=&#34;规划&#34;&gt;规划&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#1-规划&#34;&gt;1. 规划&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#2-版本选择&#34;&gt;2. 版本选择&lt;/a&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#21-配置主机名&#34;&gt;2.1. 配置主机名&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#22-关闭防火墙&#34;&gt;2.2. 关闭防火墙&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#23-互做本地解析&#34;&gt;2.3. 互做本地解析&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#24-ssh-免密通信可选&#34;&gt;2.4. SSH 免密通信（可选）&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;1-规划&#34;&gt;1. 规划&lt;/h1&gt;
 
 &lt;table&gt;
 &lt;thead&gt;
@@ -23,6 +35,7 @@
 &lt;th&gt;OS&lt;/th&gt;
 &lt;th&gt;配置&lt;/th&gt;
 &lt;th&gt;用途&lt;/th&gt;
+&lt;th&gt;备注&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 
@@ -31,17 +44,81 @@
 &lt;td&gt;aliOS(172.17.197.69)&lt;/td&gt;
 &lt;td&gt;2核(vCPU) 4GiB 5 Mbps&lt;/td&gt;
 &lt;td&gt;k8s-master1&lt;/td&gt;
+&lt;td&gt;乌兰察布 可用区 C&lt;/td&gt;
 &lt;/tr&gt;
 
 &lt;tr&gt;
 &lt;td&gt;aliOS(172.17.197.68)&lt;/td&gt;
 &lt;td&gt;4核(vCPU) 10 GiB 5 Mbps GPU：NVIDIA T4/8&lt;/td&gt;
 &lt;td&gt;k8s-worker1&lt;/td&gt;
+&lt;td&gt;乌兰察布 可用区 C&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 
 &lt;p&gt;&lt;strong&gt;注&lt;/strong&gt;：这是演示 k8s 集群安装的实验环境，配置较低，生产环境中我们的服务器配置至少都是 8C/16G 的基础配置。&lt;/p&gt;
+
+&lt;h1 id=&#34;2-版本选择&#34;&gt;2. 版本选择&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Alibaba Cloud Linux 3.2104 LTS 64位
+&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;2-1-配置主机名&#34;&gt;2.1. 配置主机名&lt;/h2&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;所有节点执行&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;[root@k8s-master1 ~]# hostnamectl set-hostname k8s-master1
+[root@k8s-worker1 ~]# hostnamectl set-hostname k8s-worker1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;2-2-关闭防火墙&#34;&gt;2.2. 关闭防火墙&lt;/h2&gt;
+
+&lt;p&gt;所有节点执行&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt; # 关闭firewalld
+2  [root@k8s-master1 ~]# systemctl stop firewalld
+3  
+4  # 关闭selinux
+5  [root@k8s-master1 ~]# sed -i &#39;s/enforcing/disabled/&#39; /etc/selinux/config
+6  [root@k8s-master1 ~]# setenforce 0
+7   setenforce: SELinux is disabled
+8  [root@k8s-master1 ~]#
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&#34;2-3-互做本地解析&#34;&gt;2.3. 互做本地解析&lt;/h2&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;所有节点执行&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@k8s-master1 ~]# cat /etc/hosts
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+8.130.117.184 k8s-master1
+8.130.92.114  k8s-worker1
+[root@k8s-master1 ~]# 
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&#34;2-4-ssh-免密通信-可选&#34;&gt;2.4. SSH 免密通信（可选）&lt;/h2&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;master节点执行&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@k8s-master1 ~]# ssh-keygen
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;.images/2024-01-15-kubeadm-install-k8s/IMG_20250115-192630256.png&#34; alt=&#34;picture 0&#34; /&gt;&lt;br /&gt;
+互发公钥&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;[root@k8s-master1 ~]# ssh-copy-id root@k8s-worker1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;.images/2024-01-15-kubeadm-install-k8s/IMG_20250115-193004163.png&#34; alt=&#34;picture 1&#34; /&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
 </description>
         </item>
         

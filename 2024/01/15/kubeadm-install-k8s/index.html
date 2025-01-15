@@ -6,10 +6,10 @@
   <title>kubeadm安装k8s集群(containerd版) - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
   <meta name="keywords" content="K8S,containerd,">
-  <meta name="description" content="规划 OS 配置 用途 aliOS(172.17.197.69) 2核(vCPU) 4GiB 5 Mbps k8s-master1 aliOS(172.17.197.68) 4核(vCPU) 10 GiB 5 Mbps GPU：NVIDIA T4/8 k8s-worker1 注：这是演示 k8s 集群安装的实验环境，配置较低，生产环">
+  <meta name="description" content="1. 规划 2. 版本选择 2.1. 配置主机名 2.2. 关闭防火墙 2.3. 互做本地解析 2.4. SSH 免密通信（可选） 1. 规划 OS 配置 用途 备注 aliOS(172.17.197.69) 2核(vCPU) 4GiB 5 Mbps k8s-master1 乌兰察布 可用区 C aliOS(172.17.197.68) 4">
   <meta name="author" content="mospan">
   <meta itemprop="name" content="kubeadm安装k8s集群(containerd版) - 墨斯潘園">
-  <meta itemprop="description" content="规划 OS 配置 用途 aliOS(172.17.197.69) 2核(vCPU) 4GiB 5 Mbps k8s-master1 aliOS(172.17.197.68) 4核(vCPU) 10 GiB 5 Mbps GPU：NVIDIA T4/8 k8s-worker1 注：这是演示 k8s 集群安装的实验环境，配置较低，生产环">
+  <meta itemprop="description" content="1. 规划 2. 版本选择 2.1. 配置主机名 2.2. 关闭防火墙 2.3. 互做本地解析 2.4. SSH 免密通信（可选） 1. 规划 OS 配置 用途 备注 aliOS(172.17.197.69) 2核(vCPU) 4GiB 5 Mbps k8s-master1 乌兰察布 可用区 C aliOS(172.17.197.68) 4">
   <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
@@ -81,14 +81,33 @@
 			<strong class="toc-title">文章目录</strong>
       <nav id="TableOfContents">
 <ul>
-<li><a href="#规划">规划</a></li>
+<li><a href="#1-规划">1. 规划</a></li>
+<li><a href="#2-版本选择">2. 版本选择</a>
+<ul>
+<li><a href="#2-1-配置主机名">2.1. 配置主机名</a></li>
+<li><a href="#2-2-关闭防火墙">2.2. 关闭防火墙</a></li>
+<li><a href="#2-3-互做本地解析">2.3. 互做本地解析</a></li>
+<li><a href="#2-4-ssh-免密通信-可选">2.4. SSH 免密通信（可选）</a></li>
+</ul></li>
 </ul>
 </nav>
 		</div>
     
     
 
-<h1 id="规划">规划</h1>
+<ul>
+<li><a href="#1-规划">1. 规划</a></li>
+<li><a href="#2-版本选择">2. 版本选择</a>
+
+<ul>
+<li><a href="#21-配置主机名">2.1. 配置主机名</a></li>
+<li><a href="#22-关闭防火墙">2.2. 关闭防火墙</a></li>
+<li><a href="#23-互做本地解析">2.3. 互做本地解析</a></li>
+<li><a href="#24-ssh-免密通信可选">2.4. SSH 免密通信（可选）</a></li>
+</ul></li>
+</ul>
+
+<h1 id="1-规划">1. 规划</h1>
 
 <table>
 <thead>
@@ -96,6 +115,7 @@
 <th>OS</th>
 <th>配置</th>
 <th>用途</th>
+<th>备注</th>
 </tr>
 </thead>
 
@@ -104,17 +124,81 @@
 <td>aliOS(172.17.197.69)</td>
 <td>2核(vCPU) 4GiB 5 Mbps</td>
 <td>k8s-master1</td>
+<td>乌兰察布 可用区 C</td>
 </tr>
 
 <tr>
 <td>aliOS(172.17.197.68)</td>
 <td>4核(vCPU) 10 GiB 5 Mbps GPU：NVIDIA T4/8</td>
 <td>k8s-worker1</td>
+<td>乌兰察布 可用区 C</td>
 </tr>
 </tbody>
 </table>
 
 <p><strong>注</strong>：这是演示 k8s 集群安装的实验环境，配置较低，生产环境中我们的服务器配置至少都是 8C/16G 的基础配置。</p>
+
+<h1 id="2-版本选择">2. 版本选择</h1>
+
+<ul>
+<li>Alibaba Cloud Linux 3.2104 LTS 64位
+<br /></li>
+</ul>
+
+<h2 id="2-1-配置主机名">2.1. 配置主机名</h2>
+
+<blockquote>
+<p>所有节点执行</p>
+
+<pre><code class="language-bash">[root@k8s-master1 ~]# hostnamectl set-hostname k8s-master1
+[root@k8s-worker1 ~]# hostnamectl set-hostname k8s-worker1
+</code></pre>
+
+<h2 id="2-2-关闭防火墙">2.2. 关闭防火墙</h2>
+
+<p>所有节点执行</p>
+
+<pre><code class="language-bash"> # 关闭firewalld
+2  [root@k8s-master1 ~]# systemctl stop firewalld
+3  
+4  # 关闭selinux
+5  [root@k8s-master1 ~]# sed -i 's/enforcing/disabled/' /etc/selinux/config
+6  [root@k8s-master1 ~]# setenforce 0
+7   setenforce: SELinux is disabled
+8  [root@k8s-master1 ~]#
+</code></pre>
+</blockquote>
+
+<h2 id="2-3-互做本地解析">2.3. 互做本地解析</h2>
+
+<blockquote>
+<p>所有节点执行</p>
+
+<pre><code class="language-bash">root@k8s-master1 ~]# cat /etc/hosts
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+8.130.117.184 k8s-master1
+8.130.92.114  k8s-worker1
+[root@k8s-master1 ~]# 
+</code></pre>
+</blockquote>
+
+<h2 id="2-4-ssh-免密通信-可选">2.4. SSH 免密通信（可选）</h2>
+
+<blockquote>
+<p>master节点执行</p>
+
+<pre><code class="language-bash">root@k8s-master1 ~]# ssh-keygen
+</code></pre>
+
+<p><img src=".images/2024-01-15-kubeadm-install-k8s/IMG_20250115-192630256.png" alt="picture 0" /><br />
+互发公钥</p>
+
+<pre><code class="language-bash">[root@k8s-master1 ~]# ssh-copy-id root@k8s-worker1
+</code></pre>
+
+<p><img src=".images/2024-01-15-kubeadm-install-k8s/IMG_20250115-193004163.png" alt="picture 1" /></p>
+</blockquote>
 
     <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
   <div style="float:right;margin-top:0px;">
