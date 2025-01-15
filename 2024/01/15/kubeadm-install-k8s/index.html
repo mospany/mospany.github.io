@@ -6,10 +6,10 @@
   <title>kubeadm安装k8s集群(containerd版) - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
   <meta name="keywords" content="K8S,containerd,">
-  <meta name="description" content="1. 规划 2. 版本选择 2.1. 配置主机名 2.2. 关闭防火墙 2.3. 互做本地解析 2.4. SSH 免密通信（可选） 1. 规划 OS 配置 用途 备注 aliOS(172.17.197.69) 2核(vCPU) 4GiB 5 Mbps k8s-master1 乌兰察布 可用区 C aliOS(172.17.197.68) 4">
+  <meta name="description" content="1. 规划 2. 版本选择 2.1. 配置主机名 2.2. 关闭防火墙 2.3. 互做本地解析 2.4. SSH 免密通信（可选） 2.5. 加载 br_netfilter 模块 2.6. 允许 iptables 检查桥接流量 2.7. 关闭 swap 2.8. 安装 kubeadm、ku">
   <meta name="author" content="mospan">
   <meta itemprop="name" content="kubeadm安装k8s集群(containerd版) - 墨斯潘園">
-  <meta itemprop="description" content="1. 规划 2. 版本选择 2.1. 配置主机名 2.2. 关闭防火墙 2.3. 互做本地解析 2.4. SSH 免密通信（可选） 1. 规划 OS 配置 用途 备注 aliOS(172.17.197.69) 2核(vCPU) 4GiB 5 Mbps k8s-master1 乌兰察布 可用区 C aliOS(172.17.197.68) 4">
+  <meta itemprop="description" content="1. 规划 2. 版本选择 2.1. 配置主机名 2.2. 关闭防火墙 2.3. 互做本地解析 2.4. SSH 免密通信（可选） 2.5. 加载 br_netfilter 模块 2.6. 允许 iptables 检查桥接流量 2.7. 关闭 swap 2.8. 安装 kubeadm、ku">
   <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
@@ -88,6 +88,15 @@
 <li><a href="#2-2-关闭防火墙">2.2. 关闭防火墙</a></li>
 <li><a href="#2-3-互做本地解析">2.3. 互做本地解析</a></li>
 <li><a href="#2-4-ssh-免密通信-可选">2.4. SSH 免密通信（可选）</a></li>
+<li><a href="#2-5-加载-br-netfilter-模块">2.5. 加载 br_netfilter 模块</a></li>
+<li><a href="#2-6-允许-iptables-检查桥接流量">2.6. 允许 iptables 检查桥接流量</a></li>
+<li><a href="#2-7-关闭-swap">2.7. 关闭 swap</a></li>
+<li><a href="#2-8-安装-kubeadm-kubelet">2.8. 安装 kubeadm、kubelet</a>
+<ul>
+<li><a href="#添加-k8s-镜像源">添加 k8s 镜像源</a></li>
+<li><a href="#建立-k8s-yum-缓存">建立 k8s YUM 缓存</a></li>
+<li><a href="#安装-k8s-相关工具">安装 k8s 相关工具</a></li>
+</ul></li>
 </ul></li>
 </ul>
 </nav>
@@ -104,6 +113,10 @@
 <li><a href="#22-关闭防火墙">2.2. 关闭防火墙</a></li>
 <li><a href="#23-互做本地解析">2.3. 互做本地解析</a></li>
 <li><a href="#24-ssh-免密通信可选">2.4. SSH 免密通信（可选）</a></li>
+<li><a href="#25-加载-br_netfilter-模块">2.5. 加载 br_netfilter 模块</a></li>
+<li><a href="#26-允许-iptables-检查桥接流量">2.6. 允许 iptables 检查桥接流量</a></li>
+<li><a href="#27-关闭-swap">2.7. 关闭 swap</a></li>
+<li><a href="#28-安装-kubeadmkubelet">2.8. 安装 kubeadm、kubelet</a></li>
 </ul></li>
 </ul>
 
@@ -201,6 +214,121 @@
 </code></pre>
 
 <p><img src="post/2024/images/2024-01-15-kubeadm-install-k8s/IMG_20250115-193004163.png" alt="picture 1" /></p>
+
+<h2 id="2-5-加载-br-netfilter-模块">2.5. 加载 br_netfilter 模块</h2>
+
+<p>确保 br_netfilter 模块被加载
+&gt; 所有节点执行</p>
+
+<pre><code class="language-bash"># 加载模块
+root@k8s-master1 ~]# modprobe br_netfilter
+## 查看加载请看
+[root@k8s-master1 ~]# lsmod | grep br_netfilter
+br_netfilter           32768  0
+bridge                270336  1 br_netfilter
+
+# 永久生效
+[root@k8s-master1 ~]# cat &lt;&lt;EOF | tee /etc/modules-load.d/k8s.conf
+&gt; br_netfilter
+&gt; EOF
+br_netfilter
+[root@k8s-master1 ~]# 
+</code></pre>
+
+<h2 id="2-6-允许-iptables-检查桥接流量">2.6. 允许 iptables 检查桥接流量</h2>
+
+<blockquote>
+<p>所有节点执行</p>
+</blockquote>
+
+<pre><code class="language-bash">[root@k8s-master1 ~]# cat &lt;&lt;EOF | sudo tee /etc/sysctl.d/k8s.conf
+&gt; net.bridge.bridge-nf-call-ip6tables = 1
+&gt; net.bridge.bridge-nf-call-iptables = 1
+&gt; EOF
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+[root@k8s-master1 ~]# sysctl --system
+</code></pre>
+
+<h2 id="2-7-关闭-swap">2.7. 关闭 swap</h2>
+
+<blockquote>
+<p>所有节点执行</p>
+</blockquote>
+
+<pre><code class="language-bash"># 临时关闭
+[root@k8s-master1 ~]# swapoff -a
+
+# 永久关闭
+[root@k8s-master1 ~]# sed -ri 's/.*swap.*/#&amp;/' /etc/fstab
+</code></pre>
+
+<h2 id="2-8-安装-kubeadm-kubelet">2.8. 安装 kubeadm、kubelet</h2>
+
+<blockquote>
+<p>所有节点执行</p>
+</blockquote>
+
+<h3 id="添加-k8s-镜像源">添加 k8s 镜像源</h3>
+
+<blockquote>
+<p>地址： <a href="https://developer.aliyun.com/mirror/kubernetes?spm=a2c6h.13651102.0.0.1cd01b116JYQIn">https://developer.aliyun.com/mirror/kubernetes?spm=a2c6h.13651102.0.0.1cd01b116JYQIn</a></p>
+</blockquote>
+
+<pre><code class="language-bash">cat &lt;&lt;EOF | tee /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://mirrors.aliyun.com/kubernetes-new/core/stable/v1.28/rpm/
+enabled=1
+gpgcheck=1
+gpgkey=https://mirrors.aliyun.com/kubernetes-new/core/stable/v1.28/rpm/repodata/repomd.xml.key
+EOF
+setenforce 0
+yum install -y --nogpgcheck kubelet kubeadm kubectl
+systemctl enable kubelet &amp;&amp; systemctl start kubelet
+</code></pre>
+
+<h3 id="建立-k8s-yum-缓存">建立 k8s YUM 缓存</h3>
+
+<blockquote>
+<p>所有节点执行</p>
+</blockquote>
+
+<pre><code class="language-bash">[root@k8s-master1 ~]# yum makecache
+alinux3-os                                                                                       1.3 MB/s | 3.8 kB     00:00    
+alinux3-updates                                                                                  1.4 MB/s | 4.1 kB     00:00    
+alinux3-module                                                                                   354 kB/s | 4.2 kB     00:00    
+alinux3-plus                                                                                     645 kB/s | 3.0 kB     00:00    
+alinux3-powertools                                                                               598 kB/s | 3.0 kB     00:00    
+Extra Packages for Enterprise Linux 8 - x86_64                                                   1.8 MB/s | 4.4 kB     00:00    
+Extra Packages for Enterprise Linux Modular 8 - x86_64                                           620 kB/s | 3.0 kB     00:00    
+Kubernetes                                                                                        17 kB/s | 1.7 kB     00:00    
+Metadata cache created.
+[root@k8s-master1 ~]# 
+</code></pre>
+
+<h3 id="安装-k8s-相关工具">安装 k8s 相关工具</h3>
+
+<blockquote>
+<p>所有节点执行</p>
+</blockquote>
+
+<pre><code class="language-bash">[root@k8s-master1 ~]# yum list kubelet --showduplicates
+Last metadata expiration check: 0:01:46 ago on Wed 15 Jan 2025 10:55:44 PM CST.
+Installed Packages
+kubelet.x86_64                                           1.28.15-150500.1.1                                           @kubernetes
+Available Packages
+kubelet.aarch64                                          1.28.0-150500.1.1                                            kubernetes 
+kubelet.ppc64le                                          1.28.0-150500.1.1                                            kubernetes 
+kubelet.s390x                                            1.28.0-150500.1.1                                            kubernetes 
+kubelet.src                                              1.28.0-150500.1.1                                            kubernetes 
+kubelet.x86_64                                           1.28.0-150500.1.1                                            kubernetes 
+kubelet.aarch64                                          1.28.1-150500.1.1                                            kubernetes 
+kubelet.ppc64le                                          1.28.1-150500.1.1                                            kubernetes 
+kubelet.s390x                                            1.28.1-150500.1.1                                            kubernetes 
+kubelet.src                                              1.28.1-150500.1.1                                            kubernetes 
+.....
+</code></pre>
 
     <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
   <div style="float:right;margin-top:0px;">
