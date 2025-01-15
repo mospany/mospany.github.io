@@ -149,6 +149,7 @@
 
 <blockquote>
 <p>所有节点执行</p>
+</blockquote>
 
 <pre><code class="language-bash">[root@k8s-master1 ~]# hostnamectl set-hostname k8s-master1
 [root@k8s-worker1 ~]# hostnamectl set-hostname k8s-worker1
@@ -156,7 +157,9 @@
 
 <h2 id="2-2-关闭防火墙">2.2. 关闭防火墙</h2>
 
+<blockquote>
 <p>所有节点执行</p>
+</blockquote>
 
 <pre><code class="language-bash"> # 关闭firewalld
 2  [root@k8s-master1 ~]# systemctl stop firewalld
@@ -167,12 +170,12 @@
 7   setenforce: SELinux is disabled
 8  [root@k8s-master1 ~]#
 </code></pre>
-</blockquote>
 
 <h2 id="2-3-互做本地解析">2.3. 互做本地解析</h2>
 
 <blockquote>
 <p>所有节点执行</p>
+</blockquote>
 
 <pre><code class="language-bash">root@k8s-master1 ~]# cat /etc/hosts
 127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
@@ -181,24 +184,23 @@
 8.130.92.114  k8s-worker1
 [root@k8s-master1 ~]# 
 </code></pre>
-</blockquote>
 
 <h2 id="2-4-ssh-免密通信-可选">2.4. SSH 免密通信（可选）</h2>
 
 <blockquote>
 <p>master节点执行</p>
+</blockquote>
 
 <pre><code class="language-bash">root@k8s-master1 ~]# ssh-keygen
 </code></pre>
 
-<p><img src=".images/2024-01-15-kubeadm-install-k8s/IMG_20250115-192630256.png" alt="picture 0" /><br />
+<p><img src="post/2024/images/2024-01-15-kubeadm-install-k8s/IMG_20250115-192630256.png" alt="picture 0" /><br />
 互发公钥</p>
 
 <pre><code class="language-bash">[root@k8s-master1 ~]# ssh-copy-id root@k8s-worker1
 </code></pre>
 
-<p><img src=".images/2024-01-15-kubeadm-install-k8s/IMG_20250115-193004163.png" alt="picture 1" /></p>
-</blockquote>
+<p><img src="post/2024/images/2024-01-15-kubeadm-install-k8s/IMG_20250115-193004163.png" alt="picture 1" /></p>
 
     <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
   <div style="float:right;margin-top:0px;">
