@@ -15,50 +15,13 @@
             <guid>http://mospany.github.io/2024/01/15/kubeadm-install-k8s/</guid>
             <description>
 
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#1-规划&#34;&gt;1. 规划&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#2-版本选择&#34;&gt;2. 版本选择&lt;/a&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;#21-配置主机名&#34;&gt;2.1. 配置主机名&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#22-关闭防火墙&#34;&gt;2.2. 关闭防火墙&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#23-互做本地解析&#34;&gt;2.3. 互做本地解析&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#24-ssh-免密通信可选&#34;&gt;2.4. SSH 免密通信（可选）&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#25-加载-br_netfilter-模块&#34;&gt;2.5. 加载 br_netfilter 模块&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#26-允许-iptables-检查桥接流量&#34;&gt;2.6. 允许 iptables 检查桥接流量&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#27-关闭-swap&#34;&gt;2.7. 关闭 swap&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;#28-安装-kubeadmkubelet&#34;&gt;2.8. 安装 kubeadm、kubelet&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
 &lt;h1 id=&#34;1-规划&#34;&gt;1. 规划&lt;/h1&gt;
 
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;OS&lt;/th&gt;
-&lt;th&gt;配置&lt;/th&gt;
-&lt;th&gt;用途&lt;/th&gt;
-&lt;th&gt;备注&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;aliOS(172.17.197.69)&lt;/td&gt;
-&lt;td&gt;2核(vCPU) 4GiB 5 Mbps&lt;/td&gt;
-&lt;td&gt;k8s-master1&lt;/td&gt;
-&lt;td&gt;乌兰察布 可用区 C&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;aliOS(172.17.197.68)&lt;/td&gt;
-&lt;td&gt;4核(vCPU) 10 GiB 5 Mbps GPU：NVIDIA T4/8&lt;/td&gt;
-&lt;td&gt;k8s-worker1&lt;/td&gt;
-&lt;td&gt;乌兰察布 可用区 C&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
+&lt;p&gt;使用 kubeadm 安装 Kubernetes 集群并使用 containerd 作为容器运行时（container runtime）是一种常见的安装方法。
+| OS                   | 配置                                     | 用途        | 备注              |
+|&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;-|&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;|&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;-|&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;-|
+| aliOS(172.17.197.69) | 2核(vCPU) 4GiB 5 Mbps                    | k8s-master1 | 乌兰察布 可用区 C |
+| aliOS(172.17.197.68) | 4核(vCPU) 10 GiB 5 Mbps GPU：NVIDIA T4/8 | k8s-worker1 | 乌兰察布 可用区 C |&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;注&lt;/strong&gt;：这是演示 k8s 集群安装的实验环境，配置较低，生产环境中我们的服务器配置至少都是 8C/16G 的基础配置。&lt;/p&gt;
 
@@ -174,13 +137,80 @@ net.bridge.bridge-nf-call-iptables = 1
 [root@k8s-master1 ~]# sed -ri &#39;s/.*swap.*/#&amp;amp;/&#39; /etc/fstab
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;2-8-安装-kubeadm-kubelet&#34;&gt;2.8. 安装 kubeadm、kubelet&lt;/h2&gt;
+&lt;h2 id=&#34;2-8-安装ipset及ipvsadm&#34;&gt;2.8. 安装ipset及ipvsadm&lt;/h2&gt;
+
+&lt;p&gt;安装ipset及ipvsadm&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;[root@k8s-master1 ~]# dnf install -y ipset ipvsadm
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;配置ipvsadm模块加载方式，添加需要加载的模块&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ cat &amp;gt; /etc/sysconfig/modules/ipvs.modules &amp;lt;&amp;lt;EOF
+#!/bin/bash
+modprobe -- ip_vs
+modprobe -- ip_vs_rr
+modprobe -- ip_vs_wrr
+modprobe -- ip_vs_sh
+modprobe -- nf_conntrack
+EOF
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;授权、运行、检查是否加载&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ chmod 755 /etc/sysconfig/modules/ipvs.modules &amp;amp;&amp;amp; bash /etc/sysconfig/modules/ipvs.modules &amp;amp;&amp;amp; lsmod | grep -e ip_vs -e nf_conntrack
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;post/2024/images/2024-01-15-kubeadm-install-k8s/IMG_20250116-135626938.png&#34; alt=&#34;picture 2&#34; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;3-安装containerd&#34;&gt;3. 安装containerd&lt;/h1&gt;
 
 &lt;blockquote&gt;
 &lt;p&gt;所有节点执行&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;h3 id=&#34;添加-k8s-镜像源&#34;&gt;添加 k8s 镜像源&lt;/h3&gt;
+&lt;h2 id=&#34;3-1-安装-containerd&#34;&gt;3.1. 安装 containerd&lt;/h2&gt;
+
+&lt;p&gt;通过 yum 安装 containerd：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@k8s-master1 ~]# yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+Adding repo from: http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+[root@k8s-master1 ~]# yum install containerd -y
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;3-2-配置-containerd&#34;&gt;3.2. 配置 containerd&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ /usr/bin/containerd config default &amp;gt; /etc/containerd/config.toml
+$ sed -i &#39;s/SystemdCgroup = false/SystemdCgroup = true/g&#39; /etc/containerd/config.toml
+$ sed -i &#39;s/sandbox_image = &amp;quot;registry.k8s.io\/pause:3.6&amp;quot;/sandbox_image = &amp;quot;registry.aliyuncs.com\/google_containers\/pause:3.9&amp;quot;/g&#39; /etc/containerd/config.toml
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;注&lt;/strong&gt;： 记得确保配置修改成功，尤其是pause版本。&lt;/p&gt;
+
+&lt;h2 id=&#34;3-3-启动containerd&#34;&gt;3.3. 启动containerd&lt;/h2&gt;
+
+&lt;p&gt;启动并使 containerd 随系统启动：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@k8s-master1 ~]# sudo systemctl start containerd
+root@k8s-master1 ~]# sudo systemctl enable containerd
+root@k8s-master1 ~]# ps -ef | grep containerd
+root       37760       1  0 07:35 ?        00:00:00 /usr/bin/containerd
+root       37807   36202  0 07:35 pts/0    00:00:00 grep --color=auto containerd
+[root@k8s-master1 ~]#
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;说明containerd已启动成功。
+&lt;img src=&#34;post/2024/images/2024-01-15-kubeadm-install-k8s/IMG_20250116-160630369.png&#34; alt=&#34;picture 3&#34; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;4-安装-kubeadm-kubelet&#34;&gt;4. 安装 kubeadm、kubelet&lt;/h1&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;所有节点执行&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&#34;4-1-添加-k8s-镜像源&#34;&gt;4.1. 添加 k8s 镜像源&lt;/h2&gt;
 
 &lt;blockquote&gt;
 &lt;p&gt;地址： &lt;a href=&#34;https://developer.aliyun.com/mirror/kubernetes?spm=a2c6h.13651102.0.0.1cd01b116JYQIn&#34;&gt;https://developer.aliyun.com/mirror/kubernetes?spm=a2c6h.13651102.0.0.1cd01b116JYQIn&lt;/a&gt;&lt;/p&gt;
@@ -197,9 +227,10 @@ EOF
 setenforce 0
 yum install -y --nogpgcheck kubelet kubeadm kubectl
 systemctl enable kubelet &amp;amp;&amp;amp; systemctl start kubelet
+echo 1 &amp;gt; /proc/sys/net/ipv4/ip_forward
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;建立-k8s-yum-缓存&#34;&gt;建立 k8s YUM 缓存&lt;/h3&gt;
+&lt;h2 id=&#34;4-2-建立-k8s-yum-缓存&#34;&gt;4.2. 建立 k8s YUM 缓存&lt;/h2&gt;
 
 &lt;blockquote&gt;
 &lt;p&gt;所有节点执行&lt;/p&gt;
@@ -218,7 +249,7 @@ Metadata cache created.
 [root@k8s-master1 ~]# 
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;安装-k8s-相关工具&#34;&gt;安装 k8s 相关工具&lt;/h3&gt;
+&lt;h2 id=&#34;4-3-安装-k8s-相关工具&#34;&gt;4.3. 安装 k8s 相关工具&lt;/h2&gt;
 
 &lt;blockquote&gt;
 &lt;p&gt;所有节点执行&lt;/p&gt;
@@ -240,6 +271,291 @@ kubelet.s390x                                            1.28.1-150500.1.1      
 kubelet.src                                              1.28.1-150500.1.1                                            kubernetes 
 .....
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;设置crictl连接 containerd&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ crictl config --set runtime-endpoint=unix:///run/containerd/containerd.sock
+$ crictl images ls
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;设置kubectl命令自动补全：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;echo &#39;source &amp;lt;(kubectl completion bash)&#39; &amp;gt;&amp;gt; ~/.bashrc
+source ~/.bashrc
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;5-master节点&#34;&gt;5. master节点&lt;/h1&gt;
+
+&lt;h2 id=&#34;5-1-k8s-初始化&#34;&gt;5.1. k8s 初始化&lt;/h2&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Master 节点执行&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;strong&gt;注&lt;/strong&gt;：记得修改&amp;ndash;apiserver-advertise-address与&amp;ndash;kubernetes-version修改正确。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@k8s-master ~]# kubeadm init \
+  --apiserver-advertise-address=172.17.197.69 \
+  --image-repository registry.aliyuncs.com/google_containers \
+  --kubernetes-version v1.28.15 \
+  --service-cidr=10.96.0.0/12 \
+  --pod-network-cidr=10.244.0.0/16 \
+  --ignore-preflight-errors=all \
+  --cri-socket /var/run/containerd/containerd.sock
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;参数说明：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;   --apiserver-advertise-address  # 集群master地址
+   --image-repository             # 指定k8s镜像仓库地址
+   --kubernetes-version           # 指定K8s版本（与kubeadm、kubelet版本保持一致）
+   --service-cidr                 # Pod统一访问入口
+   --pod-network-cidr             # Pod网络（与CNI网络保持一致）
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;初始化后输出如下内容，说明成功。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;.....
+Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+Alternatively, if you are the root user, you can run:
+
+  export KUBECONFIG=/etc/kubernetes/admin.conf
+
+You should now deploy a pod network to the cluster.
+Run &amp;quot;kubectl apply -f [podnetwork].yaml&amp;quot; with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 172.17.197.69:6443 --token ipqfom.r9ltq4t3in53cd6w \
+        --discovery-token-ca-cert-hash sha256:0f01242802eae4b69408c34070a3ad8d017229faba9f8b30623ed1e9dd69d66c 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;5-2-根据输出提示创建相关文件&#34;&gt;5.2. 根据输出提示创建相关文件&lt;/h2&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;master节点上执行&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;[root@k8s-master ~]# mkdir -p $HOME/.kube
+[root@k8s-master ~]# cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+[root@k8s-master ~]# chown $(id -u):$(id -g) $HOME/.kube/config
+[root@k8s-master ~]#
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;5-3-查看-k8s-运行的容器&#34;&gt;5.3. 查看 k8s 运行的容器&lt;/h2&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;master节点上执行&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;[root@k8s-master1 ~]# kubectl  get pod -A -o wide
+NAMESPACE     NAME                                  READY   STATUS    RESTARTS   AGE   IP              NODE          NOMINATED NODE   READINESS GATES
+kube-system   coredns-66f779496c-lq5rj              0/1     Pending   0          26m   &amp;lt;none&amp;gt;          &amp;lt;none&amp;gt;        &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+kube-system   coredns-66f779496c-q5pxk              0/1     Pending   0          26m   &amp;lt;none&amp;gt;          &amp;lt;none&amp;gt;        &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+kube-system   etcd-k8s-master1                      1/1     Running   1          26m   172.17.197.69   k8s-master1   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+kube-system   kube-apiserver-k8s-master1            1/1     Running   1          26m   172.17.197.69   k8s-master1   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+kube-system   kube-controller-manager-k8s-master1   1/1     Running   1          26m   172.17.197.69   k8s-master1   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+kube-system   kube-proxy-88trd                      1/1     Running   0          26m   172.17.197.69   k8s-master1   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+kube-system   kube-scheduler-k8s-master1            1/1     Running   1          26m   172.17.197.69   k8s-master1   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+[root@k8s-master1 ~]# 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;5-4-查看-k8s-节点&#34;&gt;5.4. 查看 k8s 节点&lt;/h2&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;master节点上执行&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@k8s-master1 ~]# kubectl  get node -o wide
+NAME          STATUS     ROLES           AGE   VERSION    INTERNAL-IP     EXTERNAL-IP   OS-IMAGE                                              KERNEL-VERSION           CONTAINER-RUNTIME
+k8s-master1   NotReady   control-plane   36m   v1.28.15   172.17.197.69   &amp;lt;none&amp;gt;        Alibaba Cloud Linux 3.2104 U11 (OpenAnolis Edition)   5.10.134-18.al8.x86_64   containerd://1.6.32
+[root@k8s-master1 ~]# 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可看到当前只有 k8s-master 节点，而且状态是 NotReady（未就绪），因为我们还没有部署网络插件（kubectl apply -f [podnetwork].yaml），于是接着部署容器网络（CNI）。&lt;/p&gt;
+
+&lt;h2 id=&#34;5-5-容器网络-cni-部署&#34;&gt;5.5. 容器网络（CNI）部署&lt;/h2&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Master 节点执行&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;插件地址：&lt;a href=&#34;https://kubernetes.io/docs/concepts/cluster-administration/addons/&#34;&gt;https://kubernetes.io/docs/concepts/cluster-administration/addons/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;该地址在 k8s-master 初始化成功时打印出来。&lt;/p&gt;
+
+&lt;h3 id=&#34;选择一个主流的容器网络插件部署-calico&#34;&gt;选择一个主流的容器网络插件部署（Calico）&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&#34;post/2024/images/2024-01-15-kubeadm-install-k8s/IMG_20250116-164005909.png&#34; alt=&#34;picture 4&#34; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;下载yml文件&#34;&gt;下载yml文件&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;wget https://docs.projectcalico.org/manifests/calico.yaml --no-check-certificate 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;看看该yaml文件所需要启动的容器&#34;&gt;看看该yaml文件所需要启动的容器&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;[root@k8s-master1 install-k8s-cluster]# cat calico.yaml |grep image
+          image: docker.io/calico/cni:v3.25.0
+          imagePullPolicy: IfNotPresent
+          image: docker.io/calico/cni:v3.25.0
+          imagePullPolicy: IfNotPresent
+          image: docker.io/calico/node:v3.25.0
+          imagePullPolicy: IfNotPresent
+          image: docker.io/calico/node:v3.25.0
+          imagePullPolicy: IfNotPresent
+          image: docker.io/calico/kube-controllers:v3.25.0
+          imagePullPolicy: IfNotPresent
+[root@k8s-master1 install-k8s-cluster]# 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;修改为国内可下载镜像&#34;&gt;修改为国内可下载镜像&lt;/h3&gt;
+
+&lt;p&gt;使用docker.m.daocloud.io代替docker.io&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sed -i s/docker.io/docker.m.daocloud.io/g calico.yaml 
+$ cat calico.yaml | grep image
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;post/2024/images/2024-01-15-kubeadm-install-k8s/IMG_20250116-205457826.png&#34; alt=&#34;picture 5&#34; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;安装calico&#34;&gt;安装calico&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;[root@k8s-master1 calicodir]# kubectl  apply -f calico.yaml
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;post/2024/images/2024-01-15-kubeadm-install-k8s/IMG_20250116-205731350.png&#34; alt=&#34;picture 6&#34; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;查看pod和node状态正常&#34;&gt;查看pod和node状态正常&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;[root@k8s-master1 calicodir]# kubectl  get pod -A
+[root@k8s-master1 calicodir]# kubectl  get node
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;post/2024/images/2024-01-15-kubeadm-install-k8s/IMG_20250116-210017047.png&#34; alt=&#34;picture 7&#34; /&gt;&lt;br /&gt;
+可以看出pod已全部Running， node已变成Ready状态，说明master节点已安装成功完成。&lt;/p&gt;
+
+&lt;h1 id=&#34;6-worker-节点&#34;&gt;6. worker 节点&lt;/h1&gt;
+
+&lt;h2 id=&#34;6-1-worker-节点加入-k8s-集群&#34;&gt;6.1. worker 节点加入 k8s 集群&lt;/h2&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;所有 work 节点执行&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;复制k8s-master初始化屏幕输出的语句并在work节点执行&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@k8s-worker1 ~]# kubeadm join 172.17.197.69:6443 --token ipqfom.r9ltq4t3in53cd6w         --discovery-token-ca-cert-hash sha256:0f01242802eae4b69408c34070a3ad8d017229faba9f8b30623ed1e9dd69d66c
+[preflight] Running pre-flight checks
+        [WARNING FileExisting-tc]: tc not found in system path
+[preflight] Reading configuration from the cluster...
+[preflight] FYI: You can look at this config file with &#39;kubectl -n kube-system get cm kubeadm-config -o yaml&#39;
+[kubelet-start] Writing kubelet configuration to file &amp;quot;/var/lib/kubelet/config.yaml&amp;quot;
+[kubelet-start] Writing kubelet environment file with flags to file &amp;quot;/var/lib/kubelet/kubeadm-flags.env&amp;quot;
+[kubelet-start] Starting the kubelet
+[kubelet-start] Waiting for the kubelet to perform the TLS Bootstrap...
+
+This node has joined the cluster:
+* Certificate signing request was sent to apiserver and a response was received.
+* The Kubelet was informed of the new secure connection details.
+
+Run &#39;kubectl get nodes&#39; on the control-plane to see this node join the cluster.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;6-2-查询集群信息&#34;&gt;6.2. 查询集群信息&lt;/h2&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Master节点上执行&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;[root@k8s-master1 calicodir]# kubectl  get pod -A -o wide
+[root@k8s-master1 calicodir]# kubectl  get node -o wide
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;post/2024/images/2024-01-15-kubeadm-install-k8s/IMG_20250116-213420388.png&#34; alt=&#34;picture 8&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;查看crictl和ctr是否安装成功。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;[root@k8s-master1 calicodir]# crictl version
+[root@k8s-master1 calicodir]# ctr version
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;post/2024/images/2024-01-15-kubeadm-install-k8s/IMG_20250116-213647229.png&#34; alt=&#34;picture 9&#34; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;7-验证&#34;&gt;7. 验证&lt;/h1&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Master节点上执行&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;k8s 集群部署 nginx 服务，并通过浏览器进行访问验证。&lt;/p&gt;
+
+&lt;h2 id=&#34;7-1-创建pod&#34;&gt;7.1. 创建Pod&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;[root@k8s-master1 calicodir]# kubectl create deployment nginx --image=docker.m.daocloud.io/library/nginx:latest
+deployment.apps/nginx created
+[root@k8s-master1 calicodir]# kubectl expose deployment nginx --port=80 --type=NodePort
+service/nginx exposed
+[root@k8s-master1 calicodir]# kubectl  get all
+NAME                        READY   STATUS    RESTARTS   AGE
+pod/nginx-fbf584587-pp6ks   1/1     Running   0          2m45s
+
+NAME                 TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+service/kubernetes   ClusterIP   10.96.0.1       &amp;lt;none&amp;gt;        443/TCP        5h45m
+service/nginx        NodePort    10.110.34.104   &amp;lt;none&amp;gt;        80:30884/TCP   28s
+
+NAME                    READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/nginx   1/1     1            1           2m45s
+
+NAME                              DESIRED   CURRENT   READY   AGE
+replicaset.apps/nginx-fbf584587   1         1         1       2m45s
+[root@k8s-master1 calicodir]# 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;7-2-访问nginx&#34;&gt;7.2. 访问nginx&lt;/h2&gt;
+
+&lt;h3 id=&#34;curl访问&#34;&gt;curl访问&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;[root@k8s-master1 calicodir]# curl 10.110.34.104:80
+&amp;lt;!DOCTYPE html&amp;gt;
+&amp;lt;html&amp;gt;
+&amp;lt;head&amp;gt;
+&amp;lt;title&amp;gt;Welcome to nginx!&amp;lt;/title&amp;gt;
+&amp;lt;style&amp;gt;
+html { color-scheme: light dark; }
+body { width: 35em; margin: 0 auto;
+font-family: Tahoma, Verdana, Arial, sans-serif; }
+&amp;lt;/style&amp;gt;
+&amp;lt;/head&amp;gt;
+&amp;lt;body&amp;gt;
+&amp;lt;h1&amp;gt;Welcome to nginx!&amp;lt;/h1&amp;gt;
+&amp;lt;p&amp;gt;If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.&amp;lt;/p&amp;gt;
+
+&amp;lt;p&amp;gt;For online documentation and support please refer to
+&amp;lt;a href=&amp;quot;http://nginx.org/&amp;quot;&amp;gt;nginx.org&amp;lt;/a&amp;gt;.&amp;lt;br/&amp;gt;
+Commercial support is available at
+&amp;lt;a href=&amp;quot;http://nginx.com/&amp;quot;&amp;gt;nginx.com&amp;lt;/a&amp;gt;.&amp;lt;/p&amp;gt;
+
+&amp;lt;p&amp;gt;&amp;lt;em&amp;gt;Thank you for using nginx.&amp;lt;/em&amp;gt;&amp;lt;/p&amp;gt;
+&amp;lt;/body&amp;gt;
+&amp;lt;/html&amp;gt;
+[root@k8s-master1 calicodir]# 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;使用nodePort方式访问现象同上
+&lt;img src=&#34;post/2024/images/2024-01-15-kubeadm-install-k8s/IMG_20250116-220403508.png&#34; alt=&#34;picture 10&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;至此：kubeadm方式的k8s集群已经部署完成。&lt;/p&gt;
 </description>
         </item>
         
