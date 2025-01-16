@@ -13,6 +13,23 @@
     </url>
     
     <url>
+        <loc>http://mospany.github.io/categories/k8s/</loc>
+        <lastmod>2024-01-15T15:42:11+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/k8s/</loc>
+        <lastmod>2024-01-15T15:42:11+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/2024/01/15/kubeadm-install-k8s/</loc>
+        <lastmod>2024-01-15T15:42:11+08:00</lastmod>
+    </url>
+    
+    <url>
         <loc>http://mospany.github.io/post/</loc>
         <lastmod>2024-01-15T15:42:11+08:00</lastmod>
         <priority>0</priority>
@@ -22,11 +39,6 @@
         <loc>http://mospany.github.io/tags/</loc>
         <lastmod>2024-01-15T15:42:11+08:00</lastmod>
         <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/2024/01/15/kubeadm-install-k8s/</loc>
-        <lastmod>2024-01-15T15:42:11+08:00</lastmod>
     </url>
     
     <url>
@@ -48,25 +60,13 @@
     </url>
     
     <url>
-        <loc>http://mospany.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/</loc>
-        <lastmod>2024-01-15T15:42:11+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/</loc>
-        <lastmod>2024-01-15T15:42:11+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
         <loc>http://mospany.github.io/2023/06/23/how-about-install-newbing-and-chatgpt/</loc>
         <lastmod>2023-06-23T17:36:37+08:00</lastmod>
     </url>
     
     <url>
-        <loc>http://mospany.github.io/tags/k8s/</loc>
-        <lastmod>2023-03-05T11:32:18+08:00</lastmod>
+        <loc>http://mospany.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/</loc>
+        <lastmod>2023-06-23T17:36:37+08:00</lastmod>
         <priority>0</priority>
     </url>
     
@@ -126,6 +126,12 @@
     <url>
         <loc>http://mospany.github.io/2022/10/18/k8s-service/</loc>
         <lastmod>2022-10-18T22:06:22+08:00</lastmod>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/</loc>
+        <lastmod>2022-10-18T22:06:22+08:00</lastmod>
+        <priority>0</priority>
     </url>
     
     <url>
@@ -352,14 +358,14 @@
     </url>
     
     <url>
-        <loc>http://mospany.github.io/tags/dpdk/</loc>
+        <loc>http://mospany.github.io/2016/09/06/dpdk-develop-notes/</loc>
         <lastmod>2016-09-06T19:37:20+08:00</lastmod>
-        <priority>0</priority>
     </url>
     
     <url>
-        <loc>http://mospany.github.io/2016/09/06/dpdk-develop-notes/</loc>
+        <loc>http://mospany.github.io/tags/dpdk/</loc>
         <lastmod>2016-09-06T19:37:20+08:00</lastmod>
+        <priority>0</priority>
     </url>
     
     <url>

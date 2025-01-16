@@ -6,10 +6,19 @@
     <description>Recent content in K8S on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sun, 05 Mar 2023 11:32:18 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 15 Jan 2024 15:42:11 +0800</lastBuildDate>
     
 	<atom:link href="http://mospany.github.io/tags/k8s/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>K8S项目实践(07): kubeadm安装k8s集群(containerd版)</title>
+      <link>http://mospany.github.io/2024/01/15/kubeadm-install-k8s/</link>
+      <pubDate>Mon, 15 Jan 2024 15:42:11 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2024/01/15/kubeadm-install-k8s/</guid>
+      <description>1. 规划 使用 kubeadm 安装 Kubernetes 集群并使用 containerd 作为容器运行时（container runtime）是一种常见的安装方法。 OS 配置 用途 备注 aliOS(172.17.197.69) 2核(vCPU) 4GiB 5 Mbps</description>
+    </item>
     
     <item>
       <title>K8S项目实践(06): 动手实现webhook</title>
