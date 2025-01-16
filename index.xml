@@ -415,16 +415,16 @@ k8s-master1   NotReady   control-plane   36m   v1.28.15   172.17.197.69   &amp;l
 
 &lt;p&gt;该地址在 k8s-master 初始化成功时打印出来。&lt;/p&gt;
 
-&lt;h3 id=&#34;选择一个主流的容器网络插件部署-calico&#34;&gt;选择一个主流的容器网络插件部署（Calico）&lt;/h3&gt;
+&lt;h3 id=&#34;5-5-1-选择一个主流的容器网络插件部署-calico&#34;&gt;5.5.1. 选择一个主流的容器网络插件部署（Calico）&lt;/h3&gt;
 
 &lt;p&gt;&lt;img src=&#34;post/2024/images/2024-01-15-kubeadm-install-k8s/IMG_20250116-164005909.png&#34; alt=&#34;picture 4&#34; /&gt;&lt;/p&gt;
 
-&lt;h3 id=&#34;下载yml文件&#34;&gt;下载yml文件&lt;/h3&gt;
+&lt;h3 id=&#34;5-5-2-下载yml文件&#34;&gt;5.5.2. 下载yml文件&lt;/h3&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;wget https://docs.projectcalico.org/manifests/calico.yaml --no-check-certificate 
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;看看该yaml文件所需要启动的容器&#34;&gt;看看该yaml文件所需要启动的容器&lt;/h3&gt;
+&lt;h3 id=&#34;5-5-3-看看该yaml文件所需要启动的容器&#34;&gt;5.5.3. 看看该yaml文件所需要启动的容器&lt;/h3&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;[root@k8s-master1 install-k8s-cluster]# cat calico.yaml |grep image
           image: docker.io/calico/cni:v3.25.0
@@ -440,7 +440,7 @@ k8s-master1   NotReady   control-plane   36m   v1.28.15   172.17.197.69   &amp;l
 [root@k8s-master1 install-k8s-cluster]# 
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;修改为国内可下载镜像&#34;&gt;修改为国内可下载镜像&lt;/h3&gt;
+&lt;h3 id=&#34;5-5-4-修改为国内可下载镜像&#34;&gt;5.5.4. 修改为国内可下载镜像&lt;/h3&gt;
 
 &lt;p&gt;使用docker.m.daocloud.io代替docker.io&lt;/p&gt;
 
@@ -451,14 +451,14 @@ $ cat calico.yaml | grep image
 
 &lt;p&gt;&lt;img src=&#34;post/2024/images/2024-01-15-kubeadm-install-k8s/IMG_20250116-205457826.png&#34; alt=&#34;picture 5&#34; /&gt;&lt;/p&gt;
 
-&lt;h3 id=&#34;安装calico&#34;&gt;安装calico&lt;/h3&gt;
+&lt;h3 id=&#34;5-5-5-安装calico&#34;&gt;5.5.5. 安装calico&lt;/h3&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;[root@k8s-master1 calicodir]# kubectl  apply -f calico.yaml
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;&lt;img src=&#34;post/2024/images/2024-01-15-kubeadm-install-k8s/IMG_20250116-205731350.png&#34; alt=&#34;picture 6&#34; /&gt;&lt;/p&gt;
 
-&lt;h3 id=&#34;查看pod和node状态正常&#34;&gt;查看pod和node状态正常&lt;/h3&gt;
+&lt;h3 id=&#34;5-5-6-查看pod和node状态正常&#34;&gt;5.5.6. 查看pod和node状态正常&lt;/h3&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;[root@k8s-master1 calicodir]# kubectl  get pod -A
 [root@k8s-master1 calicodir]# kubectl  get node
@@ -546,7 +546,7 @@ replicaset.apps/nginx-fbf584587   1         1         1       2m45s
 
 &lt;h2 id=&#34;7-2-访问nginx&#34;&gt;7.2. 访问nginx&lt;/h2&gt;
 
-&lt;h3 id=&#34;curl访问&#34;&gt;curl访问&lt;/h3&gt;
+&lt;h3 id=&#34;7-2-1-curl访问&#34;&gt;7.2.1. curl访问&lt;/h3&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;[root@k8s-master1 calicodir]# curl 10.110.34.104:80
 &amp;lt;!DOCTYPE html&amp;gt;
