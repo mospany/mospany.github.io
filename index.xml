@@ -17,11 +17,34 @@
 
 &lt;h1 id=&#34;1-规划&#34;&gt;1. 规划&lt;/h1&gt;
 
-&lt;p&gt;使用 kubeadm 安装 Kubernetes 集群并使用 containerd 作为容器运行时（container runtime）是一种常见的安装方法。
-| OS                   | 配置                                     | 用途        | 备注              |
-|&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;-|&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;|&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;-|&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;-|
-| aliOS(172.17.197.69) | 2核(vCPU) 4GiB 5 Mbps                    | k8s-master1 | 乌兰察布 可用区 C |
-| aliOS(172.17.197.68) | 4核(vCPU) 10 GiB 5 Mbps GPU：NVIDIA T4/8 | k8s-worker1 | 乌兰察布 可用区 C |&lt;/p&gt;
+&lt;p&gt;使用 kubeadm 安装 Kubernetes 集群并使用 containerd 作为容器运行时（container runtime）是一种常见的安装方法。&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;OS&lt;/th&gt;
+&lt;th&gt;配置&lt;/th&gt;
+&lt;th&gt;用途&lt;/th&gt;
+&lt;th&gt;备注&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;aliOS(172.17.197.69)&lt;/td&gt;
+&lt;td&gt;2核(vCPU) 4GiB 5 Mbps&lt;/td&gt;
+&lt;td&gt;k8s-master1&lt;/td&gt;
+&lt;td&gt;乌兰察布 可用区 C&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;aliOS(172.17.197.68)&lt;/td&gt;
+&lt;td&gt;4核(vCPU) 10 GiB 5 Mbps GPU：NVIDIA T4/8&lt;/td&gt;
+&lt;td&gt;k8s-worker1&lt;/td&gt;
+&lt;td&gt;乌兰察布 可用区 C&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
 
 &lt;p&gt;&lt;strong&gt;注&lt;/strong&gt;：这是演示 k8s 集群安装的实验环境，配置较低，生产环境中我们的服务器配置至少都是 8C/16G 的基础配置。&lt;/p&gt;
 

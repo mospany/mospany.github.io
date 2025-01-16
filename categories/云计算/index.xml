@@ -17,7 +17,7 @@
       <pubDate>Mon, 15 Jan 2024 15:42:11 +0800</pubDate>
       
       <guid>http://mospany.github.io/2024/01/15/kubeadm-install-k8s/</guid>
-      <description>1. 规划 使用 kubeadm 安装 Kubernetes 集群并使用 containerd 作为容器运行时（container runtime）是一种常见的安装方法。 | OS | 配置 | 用途 | 备注 | |&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;-|&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;|&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;-|&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;-| | aliOS(172.17.197.69) | 2核(</description>
+      <description>1. 规划 使用 kubeadm 安装 Kubernetes 集群并使用 containerd 作为容器运行时（container runtime）是一种常见的安装方法。 OS 配置 用途 备注 aliOS(172.17.197.69) 2核(vCPU) 4GiB 5 Mbps</description>
     </item>
     
   </channel>

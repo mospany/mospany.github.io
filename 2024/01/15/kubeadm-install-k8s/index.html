@@ -6,10 +6,10 @@
   <title>kubeadm安装k8s集群(containerd版) - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
   <meta name="keywords" content="K8S,containerd,">
-  <meta name="description" content="1. 规划 使用 kubeadm 安装 Kubernetes 集群并使用 containerd 作为容器运行时（container runtime）是一种常见的安装方法。 | OS | 配置 | 用途 | 备注 | |&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-|&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;|&mdash;&mdash;&mdash;&mdash;-|&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-| | aliOS(172.17.197.69) | 2核(">
+  <meta name="description" content="1. 规划 使用 kubeadm 安装 Kubernetes 集群并使用 containerd 作为容器运行时（container runtime）是一种常见的安装方法。 OS 配置 用途 备注 aliOS(172.17.197.69) 2核(vCPU) 4GiB 5 Mbps">
   <meta name="author" content="mospan">
   <meta itemprop="name" content="kubeadm安装k8s集群(containerd版) - 墨斯潘園">
-  <meta itemprop="description" content="1. 规划 使用 kubeadm 安装 Kubernetes 集群并使用 containerd 作为容器运行时（container runtime）是一种常见的安装方法。 | OS | 配置 | 用途 | 备注 | |&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-|&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;|&mdash;&mdash;&mdash;&mdash;-|&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-| | aliOS(172.17.197.69) | 2核(">
+  <meta itemprop="description" content="1. 规划 使用 kubeadm 安装 Kubernetes 集群并使用 containerd 作为容器运行时（container runtime）是一种常见的安装方法。 OS 配置 用途 备注 aliOS(172.17.197.69) 2核(vCPU) 4GiB 5 Mbps">
   <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
@@ -81,11 +81,34 @@
 
 <h1 id="1-规划">1. 规划</h1>
 
-<p>使用 kubeadm 安装 Kubernetes 集群并使用 containerd 作为容器运行时（container runtime）是一种常见的安装方法。
-| OS                   | 配置                                     | 用途        | 备注              |
-|&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-|&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;|&mdash;&mdash;&mdash;&mdash;-|&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-|
-| aliOS(172.17.197.69) | 2核(vCPU) 4GiB 5 Mbps                    | k8s-master1 | 乌兰察布 可用区 C |
-| aliOS(172.17.197.68) | 4核(vCPU) 10 GiB 5 Mbps GPU：NVIDIA T4/8 | k8s-worker1 | 乌兰察布 可用区 C |</p>
+<p>使用 kubeadm 安装 Kubernetes 集群并使用 containerd 作为容器运行时（container runtime）是一种常见的安装方法。</p>
+
+<table>
+<thead>
+<tr>
+<th>OS</th>
+<th>配置</th>
+<th>用途</th>
+<th>备注</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>aliOS(172.17.197.69)</td>
+<td>2核(vCPU) 4GiB 5 Mbps</td>
+<td>k8s-master1</td>
+<td>乌兰察布 可用区 C</td>
+</tr>
+
+<tr>
+<td>aliOS(172.17.197.68)</td>
+<td>4核(vCPU) 10 GiB 5 Mbps GPU：NVIDIA T4/8</td>
+<td>k8s-worker1</td>
+<td>乌兰察布 可用区 C</td>
+</tr>
+</tbody>
+</table>
 
 <p><strong>注</strong>：这是演示 k8s 集群安装的实验环境，配置较低，生产环境中我们的服务器配置至少都是 8C/16G 的基础配置。</p>
 
