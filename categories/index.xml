@@ -6,15 +6,24 @@
     <description>Recent content in Categories on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Mon, 15 Jan 2024 15:42:11 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 17 Jan 2024 19:31:10 +0800</lastBuildDate>
     
 	<atom:link href="http://mospany.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>GPU</title>
+      <link>http://mospany.github.io/categories/gpu/</link>
+      <pubDate>Wed, 17 Jan 2024 19:31:10 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/categories/gpu/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>K8S</title>
       <link>http://mospany.github.io/categories/k8s/</link>
-      <pubDate>Mon, 15 Jan 2024 15:42:11 +0800</pubDate>
+      <pubDate>Wed, 17 Jan 2024 19:31:10 +0800</pubDate>
       
       <guid>http://mospany.github.io/categories/k8s/</guid>
       <description></description>
