@@ -8,7 +8,7 @@
         <updated>Wed, 17 Jan 2024 19:31:10 CST</updated>
         
         <item>
-            <title>K8S项目实践(08): 使用 GPU Operator搭建AI算力环境</title>
+            <title>K8S项目实践(09): 使用 GPU Operator搭建AI算力环境</title>
             <link>http://mospany.github.io/2024/01/17/gpu-operator/</link>
             <pubDate>Wed, 17 Jan 2024 19:31:10 CST</pubDate>
             <author>Mospan</author>
@@ -132,6 +132,32 @@ version.BuildInfo{Version:&amp;quot;v3.11.1&amp;quot;, GitCommit:&amp;quot;293b5
     &amp;amp;&amp;amp; helm repo update
 &lt;/code&gt;&lt;/pre&gt;
 
+&lt;h4 id=&#34;拉取chart包&#34;&gt;拉取chart包&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;helm pull nvidia/gpu-operator --version v24.9.1 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;将在本地生成gpu-operator-v24.9.1.tgz文件。&lt;/p&gt;
+
+&lt;h4 id=&#34;准备镜像&#34;&gt;准备镜像&lt;/h4&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;所有节点上执行&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;由于有些镜像国内不能直接访问，需从国内镜像地址拉取后再修改tag。
+1）拉取国内代理镜像：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;crictl pull swr.cn-north-4.myhuaweicloud.com/ddn-k8s/registry.k8s.io/nfd/node-feature-discovery:v0.16.6
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;2）修改镜像tag：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;
+
+ctr -n k8s.io image tag  swr.cn-north-4.myhuaweicloud.com/ddn-k8s/registry.k8s.io/nfd/node-feature-discovery:v0.16.6 registry.k8s.io/nfd/node-feature-discovery:v0.16.6 
+&lt;/code&gt;&lt;/pre&gt;
+
 &lt;h4 id=&#34;安装chart包&#34;&gt;安装chart包&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# 以默认配置安装
@@ -140,6 +166,218 @@ helm install --wait --generate-name \
     nvidia/gpu-operator --set nfd.enabled=false
 
 &lt;/code&gt;&lt;/pre&gt;
+</description>
+        </item>
+        
+        <item>
+            <title>K8S项目实践(08): 在ECS、Docker、K8s 等环境中使用 GPU</title>
+            <link>http://mospany.github.io/2024/01/16/gpu-on-k8s/</link>
+            <pubDate>Tue, 16 Jan 2024 19:31:10 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://mospany.github.io/2024/01/16/gpu-on-k8s/</guid>
+            <description>
+
+&lt;h1 id=&#34;1-引言&#34;&gt;1. 引言&lt;/h1&gt;
+
+&lt;p&gt;本文主要分享在不同环境，例如ECS、Docker 和 Kubernetes 等环境中如何使用 GPU。
+&lt;strong&gt;注&lt;/strong&gt;：由于没有物理机裸机，在阿里云上申请ECS也可满足学习使用。&lt;/p&gt;
+
+&lt;h1 id=&#34;2-规划&#34;&gt;2. 规划&lt;/h1&gt;
+
+&lt;p&gt;基于如下环境搭建：
+&lt;img src=&#34;post/2024/images/2024-01-17-gpu-operator/IMG_20250117-194645644.png&#34; alt=&#34;picture 0&#34; /&gt;&lt;br /&gt;
+查看worker节点GPU信息：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;[root@k8s-worker1 ~]# lspci | grep -i nvidia
+00:07.0 VGA compatible controller: NVIDIA Corporation TU104GL [Tesla T4] (rev a1)
+[root@k8s-worker1 ~]# 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;说明该worker节点有1张NVIDIA Tesla T4的GPU卡。&lt;/p&gt;
+
+&lt;h1 id=&#34;3-概述&#34;&gt;3. 概述&lt;/h1&gt;
+
+&lt;p&gt;仅以比较常见的 NVIDIA GPU 举例，系统为 Linux，对于其他厂家的 GPU 设备理论上流程都是一样的。&lt;/p&gt;
+
+&lt;p&gt;省流：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;对于ECS环境，只需要安装对应的 &lt;a href=&#34;https://help.aliyun.com/zh/egs/user-guide/installation-guideline-for-nvidia-drivers?spm=a2c4g.11186623.help-menu-155040.d_1_5_0.726f718evZrl7t&#34;&gt;GPU Driver&lt;/a&gt;（GPU计算型实例为Tesla驱动，GPU虚拟化型实例为GRID驱动） 以及 CUDA Toolkit 。&lt;/li&gt;
+&lt;li&gt;对应 Docker 环境，需要额外安装 nvidia-container-toolkit 并配置 docker 使用 nvidia runtime。&lt;/li&gt;
+&lt;li&gt;对应 k8s 环境，需要额外安装对应的 device-plugin 使得 kubelet 能够感知到节点上的 GPU 设备，以便 k8s 能够进行 GPU 管理。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;注：一般在 k8s 中使用都会直接使用 gpu-operator 方式进行安装，本文主要为了搞清各个组件的作用，因此进行手动安装。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;ps；下一篇分享下如何使用 gpu-operator 快速完成安装&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h1 id=&#34;4-ecs环境&#34;&gt;4. ECS环境&lt;/h1&gt;
+
+&lt;p&gt;裸机中要使用上 GPU 需要安装以下组件：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;GPU Driver&lt;/li&gt;
+&lt;li&gt;CUDA Toolkit
+二者的关系如 NVIDIA 官网上的这个图所示：&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&#34;post/2024/images/2024-01-16-gpu-on-k8s/IMG_20250120-152256220.png&#34; alt=&#34;picture 0&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;GPU Driver 包括了 GPU 驱动和 CUDA 驱动，CUDA Toolkit 则包含了 CUDA Runtime。&lt;/p&gt;
+
+&lt;p&gt;GPU 作为一个 PCIE 设备，只要安装好之后，在系统中就可以通过 lspci 命令查看到，先确认机器上是否有 GPU：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;[root@k8s-worker1 ~]# lspci | grep -i nvidia
+00:07.0 VGA compatible controller: NVIDIA Corporation TU104GL [Tesla T4] (rev a1)
+[root@k8s-worker1 ~]# 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;说明该worker节点有1张NVIDIA Tesla T4的GPU卡。&lt;/p&gt;
+
+&lt;h2 id=&#34;4-1-安装grid驱动&#34;&gt;4.1. 安装GRID驱动&lt;/h2&gt;
+
+&lt;p&gt;由于主机规格是ecs.sgn6i-vws-m2.xlarge，是虚拟化型规格，不能安装Tesla驱动的，需要安装grid驱动。
+安装Tesla驱动的话将会出现&lt;a href=&#34;#61-error-unable-to-load-the-kernel-module-nvidiako&#34;&gt;ERROR: Unable to load the kernel module &amp;lsquo;nvidia.ko&amp;rsquo;.&lt;/a&gt;错误安装失败。&lt;/p&gt;
+
+&lt;p&gt;安装步骤参考：&lt;a href=&#34;https://help.aliyun.com/zh/egs/user-guide/use-cloud-assistant-to-automatically-install-and-upgrade-grid-drivers?spm=a2c4g.11186623.help-menu-155040.d_1_5_2_1.65bd2ef7tthoW5&#34;&gt;在GPU虚拟化型实例中安装GRID驱动（Linux）&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;4-1-1-准备安装脚本&#34;&gt;4.1.1. 准备安装脚本&lt;/h3&gt;
+
+&lt;p&gt;install-grid.sh内容如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;#!/bin/bash
+if acs-plugin-manager --list --local | grep grid_driver_install &amp;gt; /dev/null 2&amp;gt;&amp;amp;1
+then
+            acs-plugin-manager --remove --plugin grid_driver_install
+fi
+
+acs-plugin-manager --exec --plugin grid_driver_install
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;4-1-2-安装grid&#34;&gt;4.1.2. 安装grid&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;[root@k8s-worker1 ~]# sh install-grid.sh 
+RemovePlugin success, plugin[grid_driver_install]
+INFO[0000] Starting environment pre-check               
+INFO[0000] environment pre-check done                   
+INFO[0000] Check gpu device present                     
+INFO[0000] Check gpu device present done                
+INFO[0000] current installed gird driver is, 470.239.06 
+INFO[0000] current installed gird driver is already SWL driver 
+[root@k8s-worker1 ~]# 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;4-1-3-验证&#34;&gt;4.1.3. 验证&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@k8s-worker1 ~]# nvidia-smi
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;运行成功，可看到有一张T4-2Q的GPU卡。
+&lt;img src=&#34;post/2024/images/2024-01-16-gpu-on-k8s/IMG_20250121-192347251.png&#34; alt=&#34;picture 6&#34; /&gt;&lt;br /&gt;
+至此，我们就安装好 GPU 驱动了，系统也能正常识别到 GPU。&lt;/p&gt;
+
+&lt;p&gt;这里显示的 CUDA 版本表示当前驱动最大支持的 CUDA 版本。&lt;/p&gt;
+
+&lt;h2 id=&#34;4-2-安装cuda&#34;&gt;4.2. 安装CUDA&lt;/h2&gt;
+
+&lt;h3 id=&#34;安装软件&#34;&gt;安装软件&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;wget https://developer.download.nvidia.com/compute/cuda/11.4.0/local_installers/cuda_11.4.0_470.42.01_linux.run
+sudo sh cuda_11.4.0_470.42.01_linux.run
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;由于已安装了GRID驱动，需取消cuda自带的驱动安装：
+&lt;img src=&#34;post/2024/images/2024-01-16-gpu-on-k8s/IMG_20250121-200338239.png&#34; alt=&#34;picture 7&#34; /&gt;&lt;br /&gt;
+01) 安装全部组件：
+&lt;img src=&#34;post/2024/images/2024-01-16-gpu-on-k8s/IMG_20250121-200453794.png&#34; alt=&#34;picture 8&#34; /&gt;&lt;br /&gt;
+02) 输出：
+&lt;img src=&#34;post/2024/images/2024-01-16-gpu-on-k8s/IMG_20250121-201735441.png&#34; alt=&#34;picture 9&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;03) 执行以下命令，重启GPU实例&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;reboot
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;04) 依次执行以下命令，配置CUDA环境变量。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;echo &#39;export PATH=/usr/local/cuda/bin:$PATH&#39; | sudo tee /etc/profile.d/cuda.sh
+source /etc/profile
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;05) 检查CUDA是否成功安装。&lt;/p&gt;
+
+&lt;p&gt;a) 执行nvcc -V命令，检查CUDA安装版本是否正确。
+   &lt;img src=&#34;post/2024/images/2024-01-16-gpu-on-k8s/IMG_20250121-202721754.png&#34; alt=&#34;picture 10&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;b) 依次执行以下命令，测试CUDA Samples，验证CUDA是否安装成功。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;    [root@k8s-worker1 ~]# cd /usr/local/cuda-11.4/extras/demo_suite/
+    [root@k8s-worker1 demo_suite]# ./deviceQuery  
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;如果返回结果显示Result=PASS，则表示CUDA安装成功。
+&lt;img src=&#34;post/2024/images/2024-01-16-gpu-on-k8s/IMG_20250121-203410971.png&#34; alt=&#34;picture 11&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;06) 测试
+我们使用一个简单的 Pytorch 程序来检测 GPU 和 CUDA 是否正常。&lt;/p&gt;
+
+&lt;p&gt;整个调用链大概是这样的：
+&lt;img src=&#34;post/2024/images/2024-01-16-gpu-on-k8s/IMG_20250121-204049273.png&#34; alt=&#34;picture 12&#34; /&gt;&lt;br /&gt;
+使用下面代码来测试能够正常使用， check_cuda_pytorch.py 内容如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import torch
+
+def check_cuda_with_pytorch():
+    &amp;quot;&amp;quot;&amp;quot;检查 PyTorch CUDA 环境是否正常工作&amp;quot;&amp;quot;&amp;quot;
+    try:
+        print(&amp;quot;检查 PyTorch CUDA 环境:&amp;quot;)
+        if torch.cuda.is_available():
+            print(f&amp;quot;CUDA 设备可用，当前 CUDA 版本是: {torch.version.cuda}&amp;quot;)
+            print(f&amp;quot;PyTorch 版本是: {torch.__version__}&amp;quot;)
+            print(f&amp;quot;检测到 {torch.cuda.device_count()} 个 CUDA 设备。&amp;quot;)
+            for i in range(torch.cuda.device_count()):
+                print(f&amp;quot;设备 {i}: {torch.cuda.get_device_name(i)}&amp;quot;)
+                print(f&amp;quot;设备 {i} 的显存总量: {torch.cuda.get_device_properties(i).total_memory / (1024 ** 3):.2f} GB&amp;quot;)
+                print(f&amp;quot;设备 {i} 的显存当前使用量: {torch.cuda.memory_allocated(i) / (1024 ** 3):.2f} GB&amp;quot;)
+                print(f&amp;quot;设备 {i} 的显存最大使用量: {torch.cuda.memory_reserved(i) / (1024 ** 3):.2f} GB&amp;quot;)
+        else:
+            print(&amp;quot;CUDA 设备不可用。&amp;quot;)
+    except Exception as e:
+        print(f&amp;quot;检查 PyTorch CUDA 环境时出现错误: {e}&amp;quot;)
+
+if __name__ == &amp;quot;__main__&amp;quot;:
+    check_cuda_with_pytorch()
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;先安装下 torch&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;python -m pip install torch
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;运行一下&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;python check_cuda_pytorch.py
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;正常输出应该是这样的：
+&lt;img src=&#34;post/2024/images/2024-01-16-gpu-on-k8s/IMG_20250121-210940440.png&#34; alt=&#34;picture 13&#34; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;5-参考资料&#34;&gt;5. 参考资料&lt;/h1&gt;
+
+&lt;p&gt;【01】&lt;a href=&#34;https://blog.csdn.net/Doudou_Mylove/article/details/114388633&#34;&gt;阿里云GPU服务器安装驱动（完整版）&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;【02】&lt;a href=&#34;https://help.aliyun.com/zh/egs/user-guide/install-a-gpu-driver-on-a-gpu-accelerated-compute-optimized-linux-instance?spm=a2c4g.11186623.help-menu-155040.d_1_5_1_1.6b70fb7cljEZnN&amp;amp;scm=20140722.H_163824._.OR_help-T_cn~zh-V_1&#34;&gt;在GPU计算型实例中手动安装Tesla驱动（Linux）&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;6-faq&#34;&gt;6. FAQ&lt;/h1&gt;
+
+&lt;h2 id=&#34;6-1-error-unable-to-load-the-kernel-module-nvidia-ko&#34;&gt;6.1. ERROR: Unable to load the kernel module &amp;lsquo;nvidia.ko&amp;rsquo;.&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&#34;post/2024/images/2024-01-16-gpu-on-k8s/IMG_20250120-155358481.png&#34; alt=&#34;picture 4&#34; /&gt;&lt;br /&gt;
+错误详情提示：
+&lt;img src=&#34;post/2024/images/2024-01-16-gpu-on-k8s/IMG_20250120-155501141.png&#34; alt=&#34;picture 5&#34; /&gt;&lt;/p&gt;
 </description>
         </item>
         
@@ -5934,142 +6172,6 @@ $ kubectl taint nodes foo dedicated=special-user:NoSchedule
 &lt;p&gt;【01】&lt;a href=&#34;https://kubernetes.io/docs/reference/kubectl/&#34;&gt;Kubectl 概览&lt;/a&gt;&lt;br /&gt;
 【02】&lt;a href=&#34;https://kubernetes.io/docs/reference/kubectl/jsonpath/&#34;&gt;JsonPath 手册&lt;/a&gt;&lt;br /&gt;
 【03】&lt;a href=&#34;https://kubernetes.io/docs/reference/kubectl/cheatsheet/&#34;&gt;Cheatsheet&lt;/a&gt;&lt;/p&gt;
-</description>
-        </item>
-        
-        <item>
-            <title>K8S学习笔记(03): Mac系统安装k8s集群</title>
-            <link>http://mospany.github.io/2022/09/13/k8s-study-install-for-mac/</link>
-            <pubDate>Tue, 13 Sep 2022 19:48:30 CST</pubDate>
-            <author>Mospan</author>
-            <guid>http://mospany.github.io/2022/09/13/k8s-study-install-for-mac/</guid>
-            <description>
-
-&lt;p&gt;&lt;a id=&#34;orgba0078b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;版本介绍&#34;&gt;版本介绍&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;org21778c4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;mac系统版本&#34;&gt;Mac系统版本&lt;/h2&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/macos-version.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgfd3ff14&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;docker-desktop-版本&#34;&gt;Docker Desktop 版本&lt;/h2&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/docker-version.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org75f453a&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;k8s-版本&#34;&gt;K8S 版本&lt;/h2&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/k8s-version.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org5708814&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;安装&#34;&gt;安装&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;orge5e2699&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;docker安装&#34;&gt;Docker安装&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code&gt;brew install -cask docker
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org42bc861&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;开机自启动k8s&#34;&gt;开机自启动K8S&lt;/h2&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/docker-startup-k8s.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;重启成功后查看K8S集群。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgd262c8d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;安装kubernetes-dashboard&#34;&gt;安装Kubernetes Dashboard&lt;/h2&gt;
-
-&lt;p&gt;命令如下：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.6.1/aio/deploy/recommended.yaml
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/k8s-dashboard-install.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;最新版本参考：&lt;a href=&#34;https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/&#34;&gt;https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/&lt;/a&gt;​&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgb628b73&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;创建sa登录token&#34;&gt;创建SA登录Token&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;# vim dashboard-adminuser.yaml
-
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: admin-user
-  namespace: kubernetes-dashboard
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: admin-user
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: cluster-admin
-subjects:
-- kind: ServiceAccount
-  name: admin-user
-  namespace: kubernetes-dashboard
-
-# kubectl create -f dashboard-adminuser.yaml
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgca914fe&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;绑定资源并获取登录token&#34;&gt;绑定资源并获取登录Token&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;kubectl create sa dashboard-admin -n kube-system
-kubectl create clusterrolebinding dashboard-admin --clusterrole=cluster-admin --serviceaccount=kube-system:dashboard-admin
-ADMIN_SECRET=$(kubectl get secrets -n kube-system | grep dashboard-admin | awk &#39;{print $1}&#39;)
-DASHBOARD_LOGIN_TOKEN=$(kubectl describe secret -n kube-system ${ADMIN_SECRET} | grep -E &#39;^token&#39; | awk &#39;{print $2}&#39;)
-echo $DASHBOARD_LOGIN_TOKEN
-kubectl proxy
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/k8s-dashboard-rbac.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;1、先创建服务账号dashboard-admin&lt;br /&gt;
-2、再把账号dashboard-admin绑定到集群角色cluster-admin上使其拥有集群的管理权限，cluster-admin 超级管理员，对集群所有权限,和linux下面root一样（在部署dashboard的时候，先创建sa，然后将sa绑定到角色cluster-admin，最后获取到token，这就使用了内置的cluster-admin ）。&lt;br /&gt;
-3、最后再获取该账号的secrets里的token做为登录。观察serviceAccount的创建，并创建一个相应的Secret 来允许API访问。&lt;br /&gt;
-4、使用kubectl proxy命令就可以使API server监听在本地的8001端口上，作用是建立一条通往API服务器的隧道，可以方便查看API服务器上的资源。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org498919d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;登录dashbaord&#34;&gt;登录dashbaord&lt;/h3&gt;
-
-&lt;p&gt;登录地址：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/configmap?namespace=default
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;注：上面URL的#号后面configmap为锚点，&lt;a href=&#34;https:kubernetes-dashboard&#34;&gt;https:kubernetes-dashboard&lt;/a&gt;: 为普通字符串&lt;/p&gt;
-
-&lt;p&gt;输入上面生成的token:&lt;br /&gt;
-&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/k8s-dashboard-login.png&#34; alt=&#34;img&#34; /&gt;&lt;br /&gt;
-登录成功界面如下：&lt;br /&gt;
-&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/k8s-install-for-mac/k8s-dashboard-main.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;参考资料&lt;br /&gt;
-【01】 &lt;a href=&#34;https://blog.csdn.net/a772304419/article/details/125482351&#34;&gt;k8s 内置cluster role（集群角色） cluster-admin、admin、 edit、 view的作用范围及区别&lt;/a&gt;&lt;br /&gt;
-【02】 &lt;a href=&#34;https://blog.csdn.net/m0_45406092/article/details/119890156&#34;&gt;kubectl proxy&lt;/a&gt;&lt;br /&gt;
-【03】 &lt;a href=&#34;https://blog.csdn.net/marvel__dead/article/details/78833921&#34;&gt;URL中“#”号的作用&lt;/a&gt;&lt;br /&gt;
-【04】 &lt;a href=&#34;https://blog.csdn.net/afz8572/article/details/101745100/&#34;&gt;mac上k8s学习踩坑&lt;/a&gt;&lt;br /&gt;
-【05】 &lt;a href=&#34;https://javajgs.com/archives/8386&#34;&gt;mac下安装kubeneters及zsh下配置自动补全&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
 </description>
         </item>
         

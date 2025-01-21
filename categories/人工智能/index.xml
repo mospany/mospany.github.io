@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>人工智能 on 墨斯潘園</title>
+    <link>http://mospany.github.io/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/</link>
+    <description>Recent content in 人工智能 on 墨斯潘園</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 17 Jan 2024 19:31:10 +0800</lastBuildDate>
+    
+	<atom:link href="http://mospany.github.io/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>K8S项目实践(09): 使用 GPU Operator搭建AI算力环境</title>
+      <link>http://mospany.github.io/2024/01/17/gpu-operator/</link>
+      <pubDate>Wed, 17 Jan 2024 19:31:10 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2024/01/17/gpu-operator/</guid>
+      <description>1. 引言 为了学习AI应用、算法与算力等技术，应用需跑在GPU卡上，需要在节点上安装 GPU Driver、Container Toolkit 等组件，当集群规模较大时</description>
+    </item>
+    
+    <item>
+      <title>K8S项目实践(08): 在ECS、Docker、K8s 等环境中使用 GPU</title>
+      <link>http://mospany.github.io/2024/01/16/gpu-on-k8s/</link>
+      <pubDate>Tue, 16 Jan 2024 19:31:10 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2024/01/16/gpu-on-k8s/</guid>
+      <description>1. 引言 本文主要分享在不同环境，例如ECS、Docker 和 Kubernetes 等环境中如何使用 GPU。 注：由于没有物理机裸机，在阿里云上申请ECS也可满足学习使</description>
+    </item>
+    
+  </channel>
+</rss>

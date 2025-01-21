@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <base href="http://mospany.github.io/">
-  <title>K8S项目实践(08): 使用 GPU Operator搭建AI算力环境 - 墨斯潘園</title>
+  <title>K8S项目实践(09): 使用 GPU Operator搭建AI算力环境 - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
   <meta name="keywords" content="K8S,GPU,">
   <meta name="description" content="1. 引言 为了学习AI应用、算法与算力等技术，应用需跑在GPU卡上，需要在节点上安装 GPU Driver、Container Toolkit 等组件，当集群规模较大时">
   <meta name="author" content="mospan">
-  <meta itemprop="name" content="K8S项目实践(08): 使用 GPU Operator搭建AI算力环境 - 墨斯潘園">
+  <meta itemprop="name" content="K8S项目实践(09): 使用 GPU Operator搭建AI算力环境 - 墨斯潘園">
   <meta itemprop="description" content="1. 引言 为了学习AI应用、算法与算力等技术，应用需跑在GPU卡上，需要在节点上安装 GPU Driver、Container Toolkit 等组件，当集群规模较大时">
   <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
-  <meta name="twitter:title" content="K8S项目实践(08): 使用 GPU Operator搭建AI算力环境 - 墨斯潘園" />
+  <meta name="twitter:title" content="K8S项目实践(09): 使用 GPU Operator搭建AI算力环境 - 墨斯潘園" />
   
   <meta name="twitter:description" content="">
   <link rel="shortcut icon" href="img/favicon.ico"/>
@@ -63,7 +63,7 @@
 	<article itemprop="articleBody">
     <header class="article-info clearfix">
   <h1 itemprop="name">
-      <a href="http://mospany.github.io/2024/01/17/gpu-operator/" title="K8S项目实践(08): 使用 GPU Operator搭建AI算力环境" itemprop="url">K8S项目实践(08): 使用 GPU Operator搭建AI算力环境</a>
+      <a href="http://mospany.github.io/2024/01/17/gpu-operator/" title="K8S项目实践(09): 使用 GPU Operator搭建AI算力环境" itemprop="url">K8S项目实践(09): 使用 GPU Operator搭建AI算力环境</a>
   </h1>
   <p class="article-author">By 
     
@@ -196,6 +196,32 @@ version.BuildInfo{Version:&quot;v3.11.1&quot;, GitCommit:&quot;293b50c65d4d56187
     &amp;&amp; helm repo update
 </code></pre>
 
+<h4 id="拉取chart包">拉取chart包</h4>
+
+<pre><code class="language-bash">helm pull nvidia/gpu-operator --version v24.9.1 
+</code></pre>
+
+<p>将在本地生成gpu-operator-v24.9.1.tgz文件。</p>
+
+<h4 id="准备镜像">准备镜像</h4>
+
+<blockquote>
+<p>所有节点上执行</p>
+</blockquote>
+
+<p>由于有些镜像国内不能直接访问，需从国内镜像地址拉取后再修改tag。
+1）拉取国内代理镜像：</p>
+
+<pre><code class="language-bash">crictl pull swr.cn-north-4.myhuaweicloud.com/ddn-k8s/registry.k8s.io/nfd/node-feature-discovery:v0.16.6
+</code></pre>
+
+<p>2）修改镜像tag：</p>
+
+<pre><code class="language-bash">
+
+ctr -n k8s.io image tag  swr.cn-north-4.myhuaweicloud.com/ddn-k8s/registry.k8s.io/nfd/node-feature-discovery:v0.16.6 registry.k8s.io/nfd/node-feature-discovery:v0.16.6 
+</code></pre>
+
 <h4 id="安装chart包">安装chart包</h4>
 
 <pre><code class="language-bash"># 以默认配置安装
@@ -250,7 +276,7 @@ helm install --wait --generate-name \
 
 
   <div class="article-share" id="share">
-    <div data-url="http://mospany.github.io/2024/01/17/gpu-operator/" data-title="K8S项目实践(08): 使用 GPU Operator搭建AI算力环境" data-tsina="3833537679" class="share clearfix">
+    <div data-url="http://mospany.github.io/2024/01/17/gpu-operator/" data-title="K8S项目实践(09): 使用 GPU Operator搭建AI算力环境" data-tsina="3833537679" class="share clearfix">
     </div>
   </div>
 </footer>
@@ -291,11 +317,11 @@ gitment.render('git-comments')
   <p class="asidetitle">分类</p>
   <ul>
     
-    <li><a href="http://mospany.github.io/categories/gpu" title="gpu">gpu<sup>1</sup></a></li>
+    <li><a href="http://mospany.github.io/categories/k8s" title="k8s">k8s<sup>1</sup></a></li>
     
-    <li><a href="http://mospany.github.io/categories/k8s" title="k8s">k8s<sup>2</sup></a></li>
+    <li><a href="http://mospany.github.io/categories/%e4%ba%91%e8%ae%a1%e7%ae%97" title="云计算">云计算<sup>3</sup></a></li>
     
-    <li><a href="http://mospany.github.io/categories/%e4%ba%91%e8%ae%a1%e7%ae%97" title="云计算">云计算<sup>1</sup></a></li>
+    <li><a href="http://mospany.github.io/categories/%e4%ba%ba%e5%b7%a5%e6%99%ba%e8%83%bd" title="人工智能">人工智能<sup>2</sup></a></li>
     
     <li><a href="http://mospany.github.io/categories/%e5%b7%a5%e5%85%b7%e4%bd%bf%e7%94%a8" title="工具使用">工具使用<sup>3</sup></a></li>
     
@@ -326,13 +352,13 @@ gitment.render('git-comments')
       
 			<li><a href="http://mospany.github.io/tags/emacs" title="emacs">emacs<sup>5</sup></a></li>
       
-			<li><a href="http://mospany.github.io/tags/gpu" title="gpu">gpu<sup>1</sup></a></li>
+			<li><a href="http://mospany.github.io/tags/gpu" title="gpu">gpu<sup>2</sup></a></li>
       
 			<li><a href="http://mospany.github.io/tags/hugo" title="hugo">hugo<sup>3</sup></a></li>
       
 			<li><a href="http://mospany.github.io/tags/ipv6" title="ipv6">ipv6<sup>2</sup></a></li>
       
-			<li><a href="http://mospany.github.io/tags/k8s" title="k8s">k8s<sup>15</sup></a></li>
+			<li><a href="http://mospany.github.io/tags/k8s" title="k8s">k8s<sup>16</sup></a></li>
       
 			<li><a href="http://mospany.github.io/tags/linux" title="linux">linux<sup>1</sup></a></li>
       
@@ -458,7 +484,7 @@ gitment.render('git-comments')
       
       
       <li class="archive-list-item">
-        <a class="archive-list-link" href="http://mospany.github.io/post/#2024-01">2024年01月</a><span class="archive-list-count">13</span>
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2024-01">2024年01月</a><span class="archive-list-count">14</span>
       </li>
       
       

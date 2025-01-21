@@ -12,29 +12,29 @@
     
     
     <item>
-      <title>GPU</title>
-      <link>http://mospany.github.io/categories/gpu/</link>
+      <title>云计算</title>
+      <link>http://mospany.github.io/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/</link>
       <pubDate>Wed, 17 Jan 2024 19:31:10 +0800</pubDate>
       
-      <guid>http://mospany.github.io/categories/gpu/</guid>
+      <guid>http://mospany.github.io/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>人工智能</title>
+      <link>http://mospany.github.io/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/</link>
+      <pubDate>Wed, 17 Jan 2024 19:31:10 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/</guid>
       <description></description>
     </item>
     
     <item>
       <title>K8S</title>
       <link>http://mospany.github.io/categories/k8s/</link>
-      <pubDate>Wed, 17 Jan 2024 19:31:10 +0800</pubDate>
-      
-      <guid>http://mospany.github.io/categories/k8s/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>云计算</title>
-      <link>http://mospany.github.io/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/</link>
       <pubDate>Mon, 15 Jan 2024 15:42:11 +0800</pubDate>
       
-      <guid>http://mospany.github.io/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/</guid>
+      <guid>http://mospany.github.io/categories/k8s/</guid>
       <description></description>
     </item>
     
