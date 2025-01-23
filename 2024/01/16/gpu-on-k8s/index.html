@@ -184,7 +184,7 @@ INFO[0000] current installed gird driver is already SWL driver
 
 <h2 id="4-2-安装cuda">4.2. 安装CUDA</h2>
 
-<h3 id="安装软件">安装软件</h3>
+<h3 id="4-2-1-安装软件">4.2.1. 安装软件</h3>
 
 <pre><code class="language-bash">wget https://developer.download.nvidia.com/compute/cuda/11.4.0/local_installers/cuda_11.4.0_470.42.01_linux.run
 sudo sh cuda_11.4.0_470.42.01_linux.run
@@ -267,15 +267,257 @@ if __name__ == &quot;__main__&quot;:
 <p>正常输出应该是这样的：
 <img src="post/2024/images/2024-01-16-gpu-on-k8s/IMG_20250121-210940440.png" alt="picture 13" /></p>
 
-<h1 id="5-参考资料">5. 参考资料</h1>
+<h2 id="4-3-更新cuda">4.3. 更新CUDA</h2>
+
+<p>由于有些应用需要更高级的版本的CUDA，需升级，如下升级为12.6版本。</p>
+
+<pre><code class="language-bash">sudo dnf config-manager --add-repo https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/cuda-rhel8.repo
+sudo dnf clean all
+sudo dnf -y install cuda-toolkit-12-6
+</code></pre>
+
+<p><img src="post/2024/images/2024-01-16-gpu-on-k8s/IMG_20250122-203151909.png" alt="picture 18" /><br />
+验证:
+<img src="post/2024/images/2024-01-16-gpu-on-k8s/IMG_20250122-203406637.png" alt="picture 19" /><br />
+说明12.6版本安装成功。
+<img src="post/2024/images/2024-01-16-gpu-on-k8s/IMG_20250122-213858800.png" alt="picture 20" /></p>
+
+<h1 id="5-docker环境">5. Docker环境</h1>
+
+<p>上一步中我们已经在裸机上安装了 GPU Driver，CUDA Toolkit 等工具，实现了在宿主机上使用 GPU。</p>
+
+<p>现在希望在 Docker 容器中使用 GPU，需要怎么处理呢?</p>
+
+<p>为了让 Docker 容器中也能使用 GPU，大致步骤如下：</p>
+
+<ol>
+<li>安装docker，已有则跳过这步骤。</li>
+<li>安装 nvidia-container-toolkit 组件</li>
+<li>docker 配置使用 nvidia-runtime</li>
+<li>启动容器时增加 &ndash;gpu 参数</li>
+</ol>
+
+<h2 id="5-1-docker安装">5.1. Docker安装</h2>
+
+<h3 id="5-1-1-安装必要的一些系统工具">5.1.1. 安装必要的一些系统工具</h3>
+
+<pre><code class="language-bash">sudo yum install -y yum-utils
+</code></pre>
+
+<h3 id="5-1-2-添加软件源信息">5.1.2. 添加软件源信息</h3>
+
+<pre><code class="language-bash">sudo yum install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+</code></pre>
+
+<h3 id="5-1-3-安装docker">5.1.3. 安装Docker</h3>
+
+<pre><code class="language-bash">sudo yum install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+</code></pre>
+
+<h3 id="5-1-4-开启docker服务">5.1.4. 开启Docker服务</h3>
+
+<pre><code class="language-bash">sudo service docker start
+</code></pre>
+
+<h3 id="5-1-5-验证">5.1.5. 验证</h3>
+
+<pre><code class="language-bash">root@k8s-worker1 pytorch]# docker version
+Client: Docker Engine - Community
+ Version:           26.1.3
+ API version:       1.45
+ Go version:        go1.21.10
+ Git commit:        b72abbb
+ Built:             Thu May 16 08:34:39 2024
+ OS/Arch:           linux/amd64
+ Context:           default
+
+Server: Docker Engine - Community
+ Engine:
+  Version:          26.1.3
+  API version:      1.45 (minimum version 1.24)
+  Go version:       go1.21.10
+  Git commit:       8e96db1
+  Built:            Thu May 16 08:33:34 2024
+  OS/Arch:          linux/amd64
+  Experimental:     false
+ containerd:
+  Version:          1.6.32
+  GitCommit:        8b3b7ca2e5ce38e8f31a34f35b2b68ceb8470d89
+ runc:
+  Version:          1.1.12
+  GitCommit:        v1.1.12-0-g51d5e94
+ docker-init:
+  Version:          0.19.0
+  GitCommit:        de40ad0
+[root@k8s-worker1 pytorch]# 
+</code></pre>
+
+<h2 id="5-2-安装-nvidia-container-toolkit">5.2. 安装 nvidia-container-toolkit</h2>
+
+<p>NVIDIA Container Toolkit 的主要作用是将 NVIDIA GPU 设备挂载到容器中。
+&gt;兼容生态系统中的任意容器运行时，docker、containerd、cri-o 等。</p>
+
+<p>NVIDIA 官方安装文档：<a href="https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html">nvidia-container-toolkit-install-guide</a></p>
+
+<p>ALIOS或centos安装命令如下：</p>
+
+<pre><code class="language-bash"># Configure the production repository:
+curl -s -L https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo | \
+sudo tee /etc/yum.repos.d/nvidia-container-toolkit.repo
+
+# Optionally, configure the repository to use experimental packages:
+sudo yum-config-manager --enable nvidia-container-toolkit-experimental
+
+#Install the NVIDIA Container Toolkit packages:
+sudo yum install -y nvidia-container-toolkit
+</code></pre>
+
+<p>安装成功如下：
+<img src="post/2024/images/2024-01-16-gpu-on-k8s/IMG_20250122-185247937.png" alt="picture 14" /></p>
+
+<h2 id="5-3-配置使用该-runtime">5.3. 配置使用该 runtime</h2>
+
+<p>支持 Docker, Containerd, CRI-O, Podman 等 CRI。
+&gt;具体见官方文档 <a href="https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html#configuration">container-toolkit#install-guide</a></p>
+
+<p>这里以 Docker 为例进行配置：
+旧版本需要手动在 /etc/docker/daemon.json 中增加配置，指定使用 nvidia 的 runtime。</p>
+
+<pre><code class="language-json">    &quot;runtimes&quot;: {
+        &quot;nvidia&quot;: {
+            &quot;args&quot;: [],
+            &quot;path&quot;: &quot;nvidia-container-runtime&quot;
+        }
+    }
+</code></pre>
+
+<p>新版 toolkit 带了一个nvidia-ctk 工具，执行以下命令即可一键配置然后重启docker：</p>
+
+<pre><code class="language-bash">sudo nvidia-ctk runtime configure --runtime=docker
+sudo systemctl restart docker
+</code></pre>
+
+<p><img src="post/2024/images/2024-01-16-gpu-on-k8s/IMG_20250122-191008933.png" alt="picture 15" /></p>
+
+<h2 id="5-4-验证">5.4. 验证</h2>
+
+<p>安装nvidia-container-toolkit 后，整个调用链如下：
+<img src="post/2024/images/2024-01-16-gpu-on-k8s/IMG_20250122-191407685.png" alt="picture 16" /></p>
+
+<p>调用链从 containerd –&gt; runC 变成 containerd –&gt; nvidia-container-runtime –&gt; runC 。</p>
+
+<p>然后 nvidia-container-runtime 在中间拦截了容器 spec，就可以把 gpu 相关配置添加进去，再传给 runC 的 spec 里面就包含 gpu 信息了。</p>
+
+<p>Docker 环境中的 CUDA 调用大概是这样的：
+<img src="post/2024/images/2024-01-16-gpu-on-k8s/IMG_20250122-191542185.png" alt="picture 17" /></p>
+
+<p>从图中可以看到，CUDA Toolkit 跑到容器里了，因此宿主机上不需要再安装 CUDA Toolkit。</p>
+
+<p>使用一个带 CUDA Toolkit 的镜像即可。</p>
+
+<p>最后我们启动一个 Docker 容器进行测试，其中命令中增加 &ndash;gpu参数来指定要分配给容器的 GPU。</p>
+
+<p>gpu 参数可选值：</p>
+
+<ul>
+<li>gpus all：表示将所有 GPU 都分配给该容器</li>
+<li>gpus &ldquo;device=<id>[,<id>&hellip;]&ldquo;：对于多 GPU 场景，可以通过 id 指定分配给容器的 GPU，例如 –gpu “device=0” 表示只分配 0 号 GPU 给该容器
+GPU 编号则是通过nvidia-smi 命令进行查看</li>
+</ul>
+
+<p>这里我们直接使用一个带 cuda 的镜像来测试，启动该容器并执行nvidia-smi 命令</p>
+
+<pre><code class="language-bash">[root@k8s-worker1 ~]# docker run --rm --gpus all  nvcr.io/nvidia/cuda:11.0.3-runtime-ubuntu20.04 nvidia-smi
+</code></pre>
+
+<p><img src="post/2024/images/2024-01-16-gpu-on-k8s/IMG_20250122-214303643.png" alt="picture 22" /><br />
+正常情况下应该是可以打印出容器中的 GPU 信息的。</p>
+
+<p><strong>注</strong>： 镜像需与grid驱动版本兼容，否则报错。</p>
+
+<h1 id="6-k8s环境">6. K8S环境</h1>
+
+<p>更进一步，在 k8s 环境中使用 GPU，则需要在集群中部署以下组件：</p>
+
+<ul>
+<li>gpu-device-plugin 用于管理 GPU，device-plugin 以 DaemonSet 方式运行到集群各个节点，以感知节点上的 GPU 设备，从而让 k8s 能够对节点上的 GPU 设备进行管理。</li>
+<li>gpu-exporter：用于监控 GPU</li>
+</ul>
+
+<p>各组件关系如下图所示：</p>
+
+<p><img src="post/2024/images/2024-01-16-gpu-on-k8s/IMG_20250122-215913188.png" alt="picture 23" /></p>
+
+<p>左图为手动安装的场景，只需要在集群中安装 device-plugin 和 监控即可使用。</p>
+
+<p>右图为使用 gpu-operotar 安装场景，本篇暂时忽略</p>
+
+<p>大致工作流程如下：</p>
+
+<ul>
+<li>每个节点的 kubelet 组件维护该节点的 GPU 设备状态（哪些已用，哪些未用）并定时报告给调度器，调度器知道每一个节点有多少张 GPU 卡可用。</li>
+<li>调度器为 pod 选择节点时，从符合条件的节点中选择一个节点。</li>
+<li>当 pod 调度到节点上后，kubelet 组件为 pod 分配 GPU 设备 ID，并将这些 ID 作为参数传递给 NVIDIA Device Plugin</li>
+<li>NVIDIA Device Plugin 将分配给该 pod 的容器的 GPU 设备 ID 写入到容器的环境变量 NVIDIA_VISIBLE_DEVICES中，然后将信息返回给 kubelet。</li>
+<li>kubelet 启动容器。</li>
+<li>NVIDIA Container Toolkit 检测容器的 spec 中存在环境变量 NVIDIA_VISIBLE_DEVICES，然后根据环境变量的值将 GPU 设备挂载到容器中。
+在 Docker 环境我们在启动容器时通过 &ndash;gpu 参数手动指定分配给容器的 GPU，k8s 环境则由 device-plugin 自行管理。</li>
+</ul>
+
+<h2 id="6-1-集群环境">6.1. 集群环境</h2>
+
+<p><img src="post/2024/images/2024-01-16-gpu-on-k8s/IMG_20250122-220923122.png" alt="picture 24" /></p>
+
+<h2 id="安装-device-plugin">安装 device-plugin</h2>
+
+<p>device-plugin 一般由对应的 GPU 厂家提供，比如 NVIDIA 的 <a href="https://github.com/NVIDIA/k8s-device-plugin">k8s-device-plugin</a></p>
+
+<p>安装其实很简单，将对应的 yaml apply 到集群即可。</p>
+
+<pre><code class="language-bash">kubectl create -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/v0.15.0/deployments/static/nvidia-device-plugin.yml
+</code></pre>
+
+<p>就像这样
+<img src="post/2024/images/2024-01-16-gpu-on-k8s/IMG_20250122-221359266.png" alt="picture 25" /></p>
+
+<p>device-plugin 启动之后，会感知节点上的 GPU 设备并上报给 kubelet，最终由 kubelet 提交到 kube-apiserver。</p>
+
+<p>因此我们可以在 Node 可分配资源中看到 GPU，就像这样：
+<img src="post/2024/images/2024-01-16-gpu-on-k8s/IMG_20250122-221933864.png" alt="picture 26" /><br />
+可以看到，除了常见的 cpu、memory 之外，还有nvidia.com/gpu, 这个就是 GPU 资源，数量为 0，应该为1，错误原因待查。
+<img src="post/2024/images/2024-01-16-gpu-on-k8s/IMG_20250123-095336709.png" alt="picture 27" /></p>
+
+<h2 id="安装-gpu-监控">安装 GPU 监控</h2>
+
+<p>除此之外，如果你需要监控集群 GPU 资源使用情况，你可能还需要安装 DCCM exporter 结合 Prometheus 输出 GPU 资源监控信息。</p>
+
+<p>安装略。</p>
+
+<h1 id="小结">小结</h1>
+
+<p>本文主要分享了在ECS、Docker 环境、k8s 环境中如何使用 GPU。</p>
+
+<ul>
+<li><p>对于ECS环境，只需要安装对应的 GPU Driver 即可。</p></li>
+
+<li><p>对应 Docker 环境，需要额外安装 nvidia-container-toolkit 并配置 docker 使用 nvidia runtime。</p></li>
+
+<li><p>对应 k8s 环境，需要额外安装对应的 device-plugin 使得 kubelet 能够感知到节点上的 GPU 设备，以便 k8s 能够进行 GPU 管理。</p></li>
+</ul>
+
+<p>现在一般都是在 k8s 环境中使用，为了简化安装步骤， NVIDIA 也提供了 gpu-operator来简化安装部署，后续分享一下如何使用 gpu-operator来快速安装。</p>
+
+<h1 id="7-参考资料">7. 参考资料</h1>
 
 <p>【01】<a href="https://blog.csdn.net/Doudou_Mylove/article/details/114388633">阿里云GPU服务器安装驱动（完整版）</a></p>
 
 <p>【02】<a href="https://help.aliyun.com/zh/egs/user-guide/install-a-gpu-driver-on-a-gpu-accelerated-compute-optimized-linux-instance?spm=a2c4g.11186623.help-menu-155040.d_1_5_1_1.6b70fb7cljEZnN&amp;scm=20140722.H_163824._.OR_help-T_cn~zh-V_1">在GPU计算型实例中手动安装Tesla驱动（Linux）</a></p>
 
-<h1 id="6-faq">6. FAQ</h1>
+<p>【03】<a href="https://help.aliyun.com/zh/egs/user-guide/use-cloud-assistant-to-automatically-install-and-upgrade-grid-drivers?spm=a2c4g.11186623.help-menu-155040.d_1_5_2_1.660551bd3LBP63">在GPU虚拟化型实例中安装GRID驱动（Linux）</a></p>
 
-<h2 id="6-1-error-unable-to-load-the-kernel-module-nvidia-ko">6.1. ERROR: Unable to load the kernel module &lsquo;nvidia.ko&rsquo;.</h2>
+<h1 id="8-faq">8. FAQ</h1>
+
+<h2 id="8-1-error-unable-to-load-the-kernel-module-nvidia-ko">8.1. ERROR: Unable to load the kernel module &lsquo;nvidia.ko&rsquo;.</h2>
 
 <p><img src="post/2024/images/2024-01-16-gpu-on-k8s/IMG_20250120-155358481.png" alt="picture 4" /><br />
 错误详情提示：
