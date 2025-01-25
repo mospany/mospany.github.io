@@ -1,0 +1,1525 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <base href="http://mospany.github.io/">
+  <title>K8S项目实践(10): device-plugin原理到实现 - 墨斯潘園</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+  <meta name="keywords" content="K8S,GPU,">
+  <meta name="description" content="本文主要分析 k8s 中的 device-plugin 机制工作原理，并通过实现一个简单的 device-plugin 来加深理解。 1. 背景 默认情况下，k8s 中的 Pod 只能申请 CPU 和 Memory 这两种资源，就像下面这样： resources:">
+  <meta name="author" content="mospan">
+  <meta itemprop="name" content="K8S项目实践(10): device-plugin原理到实现 - 墨斯潘園">
+  <meta itemprop="description" content="本文主要分析 k8s 中的 device-plugin 机制工作原理，并通过实现一个简单的 device-plugin 来加深理解。 1. 背景 默认情况下，k8s 中的 Pod 只能申请 CPU 和 Memory 这两种资源，就像下面这样： resources:">
+  <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@mospan" />
+  <meta name="twitter:title" content="K8S项目实践(10): device-plugin原理到实现 - 墨斯潘園" />
+  
+  <meta name="twitter:description" content="">
+  <link rel="shortcut icon" href="img/favicon.ico"/>
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png" />
+  <link rel="stylesheet" href="highlight/styles/github.css">
+  <script src="highlight/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <link rel="stylesheet" href="font/hack/css/hack.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <div>
+  
+  <div id="imglogo">
+    <a href="http://mospany.github.io/"><img src="http://mospany.github.io/img/logo.jpg" alt="墨斯潘園" title="墨斯潘園"/></a>
+  </div>
+  
+  <div id="textlogo">
+    <h1 class="site-name"><a href="http://mospany.github.io/" title="墨斯潘園">墨斯潘園</a></h1>
+    <h2 class="blog-motto">技术改变生活，学习成就未来</h2>
+  </div>
+  <div class="navbar"><a class="navbutton navmobile" href="#" title="menu"></a></div>
+  <nav class="animated">
+    <ul>
+      
+      <li><a href="/">首页</a></li> 
+      
+      <li><a href="/about">关于</a></li> 
+      
+      <li>
+        <form class="search" method="get" action="https://www.google.com/search">
+          <div>
+            <input type="text" id="search" name="q" placeholder="搜索">
+          </div>
+        </form>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+  </header>
+  <div id="container">
+    <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody">
+    <header class="article-info clearfix">
+  <h1 itemprop="name">
+      <a href="http://mospany.github.io/2024/01/24/device-plugin/" title="K8S项目实践(10): device-plugin原理到实现" itemprop="url">K8S项目实践(10): device-plugin原理到实现</a>
+  </h1>
+  <p class="article-author">By 
+    
+      <a href="http://blog.mospan.cn" title="mospan">mospan</a>
+    
+  </p>
+  <p class="article-time">
+    <time datetime="2024-01-24 19:31:10 &#43;0800 CST" itemprop="datePublished">2024年01月24日</time>
+  </p>
+</header>
+
+	<div class="article-content">
+    
+    
+
+<p>本文主要分析 k8s 中的 device-plugin 机制工作原理，并通过实现一个简单的 device-plugin 来加深理解。</p>
+
+<h1 id="1-背景">1. 背景</h1>
+
+<p>默认情况下，k8s 中的 Pod 只能申请 CPU 和 Memory 这两种资源，就像下面这样：</p>
+
+<pre><code class="language-yaml">resources:
+  requests:
+    memory: &quot;1024Mi&quot;
+    cpu: &quot;100m&quot;
+  limits:
+    memory: &quot;2048Mi&quot;
+    cpu: &quot;200m&quot;
+</code></pre>
+
+<p>随着 AI 热度越来越高，更多的业务 Pod 需要申请 GPU 资源，<a href="http://127.0.0.1:1313/2024/01/16/gpu-on-k8s/">在ECS、Docker、K8s 等环境中使用 GPU</a>中我们分析了如何在 k8s 环境中使用 GPU，就是靠 Device Plugin 机制，通过该机制使得 k8s 能感知到节点上的 GPU 资源，就像原生的 CPU 和 Memory 资源一样使用。</p>
+
+<p>实际上在早期，K8s 也提供了一种名为 alpha.kubernetes.io/nvidia-gpu 的资源来支持 NVIDIA GPU，不过后面也发现了很多问题，每增加一种资源都要修改 k8s 核心代码，k8s 社区压力山大。于是在 1.8 版本引入了 device plugin 机制，通过插件形式来接入其他资源，设备厂家只需要开发对应的 xxx-device-plugin 就可以将资源接入到 k8s 了。</p>
+
+<blockquote>
+<p>ps：类似的还有引入 CSI 让存储插件从 Kubernetes 内部（in-tree）代码库中分离出来，改为独立的、可插拔的外部组件（out-of-tree），还有 CRI、CNI 等等，这里的 Device Plugin 也能算作其中的一种。</p>
+</blockquote>
+
+<p>Device Plugin 有两层含义，下文中根据语义自行区分：</p>
+
+<ul>
+<li>首先它可以代表 k8s 中的 Device Plugin framework</li>
+<li>其次也可以代表厂家的具体实现，比如 NVIDIA/k8s-device-plugin，就是用于接入 NVIDIA GPU 资源的 Device Plugin 实现</li>
+</ul>
+
+<h1 id="2-原理">2. 原理</h1>
+
+<p>Device Plugin 的工作原理其实不复杂，可以分为 插件注册 和 kubelet 调用插件两部分。</p>
+
+<ul>
+<li>插件注册：DevicePlugin 启动时会想节点上的 Kubelet 发起注册，这样 Kubelet就可以感知到该插件的存在了</li>
+<li>kubelet 调用插件：注册完成后，当有 Pod 申请对于资源时，kubelet 就会调用该插件 API 实现具体功能
+如 k8s 官网上的图所示：
+<img src="post/2024/images/2024-01-24-device-plugin/IMG_20250124-111704478.png" alt="picture 0" /><br /></li>
+</ul>
+
+<h2 id="2-1-kubelet-部分">2.1. Kubelet 部分</h2>
+
+<p>为了提供该功能，Kubelet 新增了一个 Registration gRPC service:</p>
+
+<pre><code class="language-go">service Registration {
+	rpc Register(RegisterRequest) returns (Empty) {}
+}
+</code></pre>
+
+<p>device plugin 可以调用该接口向 Kubelet 进行注册，注册接口需要提供三个参数：</p>
+
+<ul>
+<li>device plugin 对应的 unix socket 名字：后续 kubelet 根据名称找到对应的 unix socket，并向插件发起调用</li>
+<li>device plugin 调 API version：用于区分不同版本的插件</li>
+<li>device plugin 提供的 ResourceName：遇到不能处理的资源申请时(CPU和Memory之外的资源)，Kubelet 就会根据申请的资源名称来匹配对应的插件</li>
+</ul>
+
+<blockquote>
+<p>ResourceName 需要按照vendor-domain/resourcetype 格式，例如nvidia.com/gpu。</p>
+</blockquote>
+
+<h2 id="2-2-device-plugin-部分">2.2. device plugin 部分</h2>
+
+<p>要进行设备管理，device plugin 插件需要实现以下接口：</p>
+
+<ul>
+<li>GetDevicePluginOptions：这个接口用于获取设备插件的信息，可以在其返回的响应中指定一些设备插件的配置选项，可以看做是插件的元数据</li>
+<li>ListAndWatch：该接口用于列出可用的设备并持续监视这些设备的状态变化。</li>
+<li>GetPreferredAllocation：将分配偏好信息提供给 device plugin,以便 device plugin 在分配时可以做出更好的选择</li>
+<li>Allocate：该接口用于向设备插件请求分配指定数量的设备资源。</li>
+<li>PreStartContainer： 该接口在容器启动之前调用，用于配置容器使用的设备资源。</li>
+</ul>
+
+<blockquote>
+<p>只有 ListAndWatch 和 Allocate 两个接口是必须的，其他都是可以选的。</p>
+</blockquote>
+
+<h2 id="2-3-工作流程">2.3. 工作流程</h2>
+
+<p>一般所有的 Device Plugin 实现最终都会以 Pod 形式运行在 k8s 集群中，又因为需要管理所有节点，因此都会以 DaemonSet 方式部署。</p>
+
+<p>device plugin 启动之后第一步就是向 Kubelet 注册，让 Kubelet 知道有一个新的设备接入了。</p>
+
+<p>为了能够调用 Kubelet 的 Register 接口，Device Plugin Pod 会将宿主机上的 kubelet.sock 文件(unix socket)挂载到容器中，通过 kubelet.sock 文件发起调用以实现注册。</p>
+
+<p>集群部署后，Kubelet 就会启动，</p>
+
+<ol>
+<li><p>Kubelet 启动 Registration gRPC 服务（kubelet.sock），提供 Register 接口</p></li>
+
+<li><p>device-plugin 启动后，通过 kubelet.sock 调用 Register 接口，向 Kubelet 进行注册，注册信息包括 device plugin 的 unix socket，API Version，ResourceName</p></li>
+
+<li><p>注册成功后，Kubelet 通过 device-plugin 的 unix socket 向 device plugin 调用 ListAndWatch， 获取当前节点上的资源</p></li>
+
+<li><p>Kubelet 向 api-server 更新节点状态来记录上一步中发现的资源</p></li>
+</ol>
+
+<blockquote>
+<p>此时 kubelet get node -oyaml 就能查看到 Node 对象的 Capacity 中多了对应的资源</p>
+</blockquote>
+
+<ol>
+<li>用户创建 Pod 并申请该资源，调度完成后，对应节点上的 kubelet 调用 device plugin 的 Allocate 接口进行资源分配
+<br /></li>
+</ol>
+
+<p>大致如下：
+<img src="post/2024/images/2024-01-24-device-plugin/IMG_20250124-141629596.png" alt="picture 1" /></p>
+
+<h1 id="3-实现">3. 实现</h1>
+
+<blockquote>
+<p>源码：<a href="https://github.com/mospany/i-device-plugin">https://github.com/mospany/i-device-plugin</a></p>
+</blockquote>
+
+<p>device plugin 实现大致分为三部分：</p>
+
+<p>1）启动时向 Kubelet 发起注册
+   - 注意监控 kubelet 的重启，一般是使用 fsnotify 类似的库监控 kubelet.sock 的重新创建事件。如果 kubelet.sock 重新创建了，则认为 kubelet 是重启了，那么需要重新注册
+2）gRPC Server：主要是实现 ListAndWatch 和 Allocate两个方法</p>
+
+<h2 id="3-1-实现-grpc-server">3.1. 实现 gRPC Server</h2>
+
+<p>简单起见，这里只实现了ListAndWatch 和 Allocate 这两个必须的方法。</p>
+
+<blockquote>
+<p>对 gRPC 不熟悉的童鞋可以看下这个 –&gt; <a href="https://www.lixueduan.com/tags/grpc/">gRPC 系列教程</a></p>
+</blockquote>
+
+<h3 id="3-1-1-listandwatch">3.1.1. ListAndWatch</h3>
+
+<p>这是一个 gRPC 的 Stream 方法，建立长连接，可以持续向 Kubelet 发送设备的信息。</p>
+
+<pre><code class="language-go">// ListAndWatch returns a stream of List of Devices
+// Whenever a Device state change or a Device disappears, ListAndWatch
+// returns the new list
+func (c *GopherDevicePlugin) ListAndWatch(_ *pluginapi.Empty, srv pluginapi.DevicePlugin_ListAndWatchServer) error {
+	devs := c.dm.Devices()
+	klog.Infof(&quot;find devices [%s]&quot;, String(devs))
+
+	err := srv.Send(&amp;pluginapi.ListAndWatchResponse{Devices: devs})
+	if err != nil {
+		return errors.WithMessage(err, &quot;send device failed&quot;)
+	}
+
+	klog.Infoln(&quot;waiting for device update&quot;)
+	for range c.dm.notify {
+		devs = c.dm.Devices()
+		klog.Infof(&quot;device update,new device list [%s]&quot;, String(devs))
+		_ = srv.Send(&amp;pluginapi.ListAndWatchResponse{Devices: devs})
+	}
+	return nil
+}
+</code></pre>
+
+<p>发现设备的部分代码如下：</p>
+
+<pre><code class="language-go">// List all device
+func (d *DeviceMonitor) List() error {
+	err := filepath.Walk(d.path, func(path string, info fs.FileInfo, err error) error {
+		if info.IsDir() {
+			klog.Infof(&quot;%s is dir,skip&quot;, path)
+			return nil
+		}
+
+		d.devices[info.Name()] = &amp;pluginapi.Device{
+			ID:     info.Name(),
+			Health: pluginapi.Healthy,
+		}
+		return nil
+	})
+
+	return errors.WithMessagef(err, &quot;walk [%s] failed&quot;, d.path)
+}
+</code></pre>
+
+<p>很简单，就是遍历查看 /etc/gophers 目录下的所有文件，每个文件都会当做一个设备。</p>
+
+<p>然后再启动一个 Goroutine 监控设备的变化,即/etc/gophers 目录下文件有变化时通过 chan 发送通知,将最新的设备信息发送给 Kubelet。</p>
+
+<pre><code class="language-go">// Watch device change
+func (d *DeviceMonitor) Watch() error {
+	klog.Infoln(&quot;watching devices&quot;)
+
+	w, err := fsnotify.NewWatcher()
+	if err != nil {
+		return errors.WithMessage(err, &quot;new watcher failed&quot;)
+	}
+	defer w.Close()
+
+	errChan := make(chan error)
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				errChan &lt;- fmt.Errorf(&quot;device watcher panic:%v&quot;, r)
+			}
+		}()
+		for {
+			select {
+			case event, ok := &lt;-w.Events:
+				if !ok {
+					continue
+				}
+				klog.Infof(&quot;fsnotify device event: %s %s&quot;, event.Name, event.Op.String())
+
+				if event.Op == fsnotify.Create {
+					dev := path.Base(event.Name)
+					d.devices[dev] = &amp;pluginapi.Device{
+						ID:     dev,
+						Health: pluginapi.Healthy,
+					}
+					d.notify &lt;- struct{}{}
+					klog.Infof(&quot;find new device [%s]&quot;, dev)
+				} else if event.Op&amp;fsnotify.Remove == fsnotify.Remove {
+					dev := path.Base(event.Name)
+					delete(d.devices, dev)
+					d.notify &lt;- struct{}{}
+					klog.Infof(&quot;device [%s] removed&quot;, dev)
+				}
+
+			case err, ok := &lt;-w.Errors:
+				if !ok {
+					continue
+				}
+				klog.Errorf(&quot;fsnotify watch device failed:%v&quot;, err)
+			}
+		}
+	}()
+
+	err = w.Add(d.path)
+	if err != nil {
+		return fmt.Errorf(&quot;watch device error:%v&quot;, err)
+	}
+
+	return &lt;-errChan
+}
+</code></pre>
+
+<h3 id="3-1-2-allocate">3.1.2. Allocate</h3>
+
+<p>Allocate 则是需要告知 kubelet 怎么将设备分配给容器，这里实现比较简单，就是在对应容器中增加一个环境变量，Gopher=$deviceId</p>
+
+<pre><code class="language-go">// Allocate is called during container creation so that the Device
+// Plugin can run device specific operations and instruct Kubelet
+// of the steps to make the Device available in the container
+func (c *GopherDevicePlugin) Allocate(_ context.Context, reqs *pluginapi.AllocateRequest) (*pluginapi.AllocateResponse, error) {
+	ret := &amp;pluginapi.AllocateResponse{}
+	for _, req := range reqs.ContainerRequests {
+		klog.Infof(&quot;[Allocate] received request: %v&quot;, strings.Join(req.DevicesIDs, &quot;,&quot;))
+		resp := pluginapi.ContainerAllocateResponse{
+			Envs: map[string]string{
+				&quot;Gopher&quot;: strings.Join(req.DevicesIDs, &quot;,&quot;),
+			},
+		}
+		ret.ContainerResponses = append(ret.ContainerResponses, &amp;resp)
+	}
+	return ret, nil
+}
+</code></pre>
+
+<p>简单看一下 NVIDIA 的 device plugin 是怎么实现 Allocate 的。</p>
+
+<pre><code class="language-go">// Allocate which return list of devices.
+func (plugin *NvidiaDevicePlugin) Allocate(ctx context.Context, reqs *pluginapi.AllocateRequest) (*pluginapi.AllocateResponse, error) {
+	responses := pluginapi.AllocateResponse{}
+	for _, req := range reqs.ContainerRequests {
+		if err := plugin.rm.ValidateRequest(req.DevicesIDs); err != nil {
+			return nil, fmt.Errorf(&quot;invalid allocation request for %q: %w&quot;, plugin.rm.Resource(), err)
+		}
+		response, err := plugin.getAllocateResponse(req.DevicesIDs)
+		if err != nil {
+			return nil, fmt.Errorf(&quot;failed to get allocate response: %v&quot;, err)
+		}
+		responses.ContainerResponses = append(responses.ContainerResponses, response)
+	}
+
+	return &amp;responses, nil
+}
+</code></pre>
+
+<p>核心其实是这个方法：</p>
+
+<pre><code class="language-go">// updateResponseForDeviceListEnvvar sets the environment variable for the requested devices.
+func (plugin *NvidiaDevicePlugin) updateResponseForDeviceListEnvvar(response *pluginapi.ContainerAllocateResponse, deviceIDs ...string) {
+	response.Envs[plugin.deviceListEnvvar] = strings.Join(deviceIDs, &quot;,&quot;)
+}
+</code></pre>
+
+<p>给容器添加了一个环境变量，value 为设备 id，具体 deviceID 提供了两种测量，可能是编号或者 uuid</p>
+
+<pre><code class="language-go">const (
+	DeviceIDStrategyUUID  = &quot;uuid&quot;
+	DeviceIDStrategyIndex = &quot;index&quot;
+)
+</code></pre>
+
+<p>key 是一个变量 plugin.deviceListEnvvar，初始化如下:</p>
+
+<pre><code class="language-go">	plugin := NvidiaDevicePlugin{
+		deviceListEnvvar:     &quot;NVIDIA_VISIBLE_DEVICES&quot;,
+		socket:               pluginPath + &quot;.sock&quot;,
+	  // ...
+	}
+</code></pre>
+
+<p>也就是说 NVIDIA 这个 device plugin 实现 Allocate 主要就是给容器增加了环境变量，例如：</p>
+
+<pre><code class="language-bash">NVIDIA_VISIBLE_DEVICES=GPU-03f69c50-207a-2038-9b45-23cac89cb67d
+</code></pre>
+
+<p>或者</p>
+
+<pre><code class="language-bash">NVIDIA_VISIBLE_DEVICES=1,2
+</code></pre>
+
+<p>在文章 <a href="http://blog.mospan.cn/2024/01/17/gpu-operator/">使用 GPU Operator搭建AI算力环境</a>, 提到 GPU Operator 会使用 NVIDIA Container Toolit Installer 安装 NVIDIA Container Toolit。</p>
+
+<p>这个 NVIDIA Container Toolit 的作用就是添加对 GPU 的支持，也包括了识别 NVIDIA_VISIBLE_DEVICES 这个环境变量，然后将对应设备挂载到容器里。</p>
+
+<p>除此之外还会把设备挂载到容器里：</p>
+
+<pre><code class="language-go">func (plugin *NvidiaDevicePlugin) apiDeviceSpecs(devRoot string, ids []string) []*pluginapi.DeviceSpec {
+	optional := map[string]bool{
+		&quot;/dev/nvidiactl&quot;:        true,
+		&quot;/dev/nvidia-uvm&quot;:       true,
+		&quot;/dev/nvidia-uvm-tools&quot;: true,
+		&quot;/dev/nvidia-modeset&quot;:   true,
+	}
+
+	paths := plugin.rm.GetDevicePaths(ids)
+
+	var specs []*pluginapi.DeviceSpec
+	for _, p := range paths {
+		if optional[p] {
+			if _, err := os.Stat(p); err != nil {
+				continue
+			}
+		}
+		spec := &amp;pluginapi.DeviceSpec{
+			ContainerPath: p,
+			HostPath:      filepath.Join(devRoot, p),
+			Permissions:   &quot;rw&quot;,
+		}
+		specs = append(specs, spec)
+	}
+
+	return specs
+}
+</code></pre>
+
+<p>核心为：</p>
+
+<pre><code class="language-go">		spec := &amp;pluginapi.DeviceSpec{
+			ContainerPath: p,
+			HostPath:      filepath.Join(devRoot, p),
+			Permissions:   &quot;rw&quot;,
+		}
+</code></pre>
+
+<p>这里指定了设备在宿主机上的 Path 和挂载到容器之后的 Path，后续就可以根据这些信息进行设备挂载了。</p>
+
+<p>实际上 device plugin 提供了多种方法来完成设备分配，实现时只需要根据具体情况选择其中一种即可：</p>
+
+<ul>
+<li>Env: 设备插件可以通过环境变量将设备的相关信息传递给容器。这种方式通常用于将设备的配置信息、路径或其他参数传递给容器中的应用程序。</li>
+<li>Mounts: 设备插件通过挂载设备到容器的文件系统中，使容器能够直接访问设备。这个方法适用于需要直接与硬件设备交互的情况，例如 GPU、网络设备、块存储等。</li>
+<li>Devices: 设备插件可以通过 Devices 字段将设备直接映射到容器。此方法允许设备被显式地添加到容器中，类似于 Linux 中的 &ndash;device 选项。</li>
+<li>Annotations: 设备插件还可以使用注解来提供额外的信息，供调度器使用。注解通常不会直接影响容器的行为，而是为 Kubernetes 调度器提供信息，帮助调度器做出更合适的决策。</li>
+<li>CDIDevices: CDI（Container Device Interface）是一种 Kubernetes API 扩展，允许设备插件通过 CDI 标准进行设备分配。通过 CDI，Kubernetes 可以更容易地管理和调度设备，如 GPU、FPGA、网络卡等。
+比如 nvidia device plugin 在实现时就同时使用了 Env 和 Devices 方式。</li>
+</ul>
+
+<p>又比如 <a href="https://github.com/Deep-Spark/ix-device-plugin/blob/master/pkg/dpm/plugin.go#L144-L156">ix-device-plugin</a> 就是用的 Devices 方式,直接指定分配给容器的设备在宿主机的位置，以及要挂载到容器中的位置：</p>
+
+<pre><code class="language-go">func (p *iluvatarDevicePlugin) allocateDevicesByDeviceID(hostminor uint, num int) *pluginapi.DeviceSpec {
+	var device pluginapi.DeviceSpec
+
+	hostPathPrefix := &quot;/dev/&quot;
+	containerPathPrefix := &quot;/dev/&quot;
+
+	// Expose the device node for iluvatar pod.
+	device.HostPath = hostPathPrefix + deviceName + strconv.Itoa(int(hostminor))
+	device.ContainerPath = containerPathPrefix + deviceName + strconv.Itoa(num)
+	device.Permissions = &quot;rw&quot;
+
+	return &amp;device
+}
+</code></pre>
+
+<h3 id="3-1-3-其他方法">3.1.3. 其他方法</h3>
+
+<pre><code class="language-go">// GetDevicePluginOptions returns options to be communicated with Device
+// Manager
+func (c *GopherDevicePlugin) GetDevicePluginOptions(_ context.Context, _ *pluginapi.Empty) (*pluginapi.DevicePluginOptions, error) {
+	return &amp;pluginapi.DevicePluginOptions{PreStartRequired: true}, nil
+}
+
+// GetPreferredAllocation returns a preferred set of devices to allocate
+// from a list of available ones. The resulting preferred allocation is not
+// guaranteed to be the allocation ultimately performed by the
+// devicemanager. It is only designed to help the devicemanager make a more
+// informed allocation decision when possible.
+func (c *GopherDevicePlugin) GetPreferredAllocation(_ context.Context, _ *pluginapi.PreferredAllocationRequest) (*pluginapi.PreferredAllocationResponse, error) {
+	return &amp;pluginapi.PreferredAllocationResponse{}, nil
+}
+
+// PreStartContainer is called, if indicated by Device Plugin during registeration phase,
+// before each container start. Device plugin can run device specific operations
+// such as reseting the device before making devices available to the container
+func (c *GopherDevicePlugin) PreStartContainer(_ context.Context, _ *pluginapi.PreStartContainerRequest) (*pluginapi.PreStartContainerResponse, error) {
+	return &amp;pluginapi.PreStartContainerResponse{}, nil
+}
+</code></pre>
+
+<h2 id="3-2-向-kubelet-进行注册">3.2. 向 Kubelet 进行注册</h2>
+
+<p>注册也是很简单，调用 deviceplugin 提供的 RegisterRequest 方法即可。</p>
+
+<pre><code class="language-go">// Register registers the device plugin for the given resourceName with Kubelet.
+func (c *GopherDevicePlugin) Register() error {
+	conn, err := connect(pluginapi.KubeletSocket, common.ConnectTimeout)
+	if err != nil {
+		return errors.WithMessagef(err, &quot;connect to %s failed&quot;, pluginapi.KubeletSocket)
+	}
+	defer conn.Close()
+
+	client := pluginapi.NewRegistrationClient(conn)
+	reqt := &amp;pluginapi.RegisterRequest{
+		Version:      pluginapi.Version,
+		Endpoint:     path.Base(common.DeviceSocket),
+		ResourceName: common.ResourceName,
+	}
+
+	_, err = client.Register(context.Background(), reqt)
+	if err != nil {
+		return errors.WithMessage(err, &quot;register to kubelet failed&quot;)
+	}
+	return nil
+}
+</code></pre>
+
+<h2 id="3-3-监控-kubelet-sock-状态">3.3. 监控 kubelet.sock 状态</h2>
+
+<p>使用 fsnotify 库监控 kubelet.sock 文件状态，通过 kubelet.sock 文件的变化来判断 kubelet 是否重启，当 kubelet 重启后 device plugin 也需要重启，然后注册到新的 kubelet.sock。</p>
+
+<pre><code class="language-go">// WatchKubelet restart device plugin when kubelet restarted
+func WatchKubelet(stop chan&lt;- struct{}) error {
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		return errors.WithMessage(err, &quot;Unable to create fsnotify watcher&quot;)
+	}
+	defer watcher.Close()
+
+	go func() {
+		// Start listening for events.
+		for {
+			select {
+			case event, ok := &lt;-watcher.Events:
+				if !ok {
+					continue
+				}
+				klog.Infof(&quot;fsnotify events: %s %v&quot;, event.Name, event.Op.String())
+				if event.Name == pluginapi.KubeletSocket &amp;&amp; event.Op == fsnotify.Create {
+					klog.Warning(&quot;inotify: kubelet.sock created, restarting.&quot;)
+					stop &lt;- struct{}{}
+				}
+			case err, ok := &lt;-watcher.Errors:
+				if !ok {
+					continue
+				}
+				klog.Errorf(&quot;fsnotify failed restarting,detail:%v&quot;, err)
+			}
+		}
+	}()
+
+	// watch kubelet.sock
+	err = watcher.Add(pluginapi.KubeletSocket)
+	if err != nil {
+		return errors.WithMessagef(err, &quot;Unable to add path %s to watcher&quot;, pluginapi.KubeletSocket)
+	}
+	return nil
+}
+</code></pre>
+
+<blockquote>
+<p>为什么需要重新注册</p>
+</blockquote>
+
+<p>因为Kubelet 中使用一个 map 来存储注册的插件，因此每次 Kubelet 重启都会丢失，所以我们在实现 device plugin 时就要监控 Kubelet 重启状态并重新注册。</p>
+
+<p>Kubelet Register 方法 实现如下：</p>
+
+<pre><code class="language-go">// /pkg/kubelet/cm/devicemanager/plugin/v1beta1/server.go#L143-L165
+func (s *server) Register(ctx context.Context, r *api.RegisterRequest) (*api.Empty, error) {
+	klog.InfoS(&quot;Got registration request from device plugin with resource&quot;, &quot;resourceName&quot;, r.ResourceName)
+	metrics.DevicePluginRegistrationCount.WithLabelValues(r.ResourceName).Inc()
+
+	if !s.isVersionCompatibleWithPlugin(r.Version) {
+		err := fmt.Errorf(errUnsupportedVersion, r.Version, api.SupportedVersions)
+		klog.InfoS(&quot;Bad registration request from device plugin with resource&quot;, &quot;resourceName&quot;, r.ResourceName, &quot;err&quot;, err)
+		return &amp;api.Empty{}, err
+	}
+
+	if !v1helper.IsExtendedResourceName(core.ResourceName(r.ResourceName)) {
+		err := fmt.Errorf(errInvalidResourceName, r.ResourceName)
+		klog.InfoS(&quot;Bad registration request from device plugin&quot;, &quot;err&quot;, err)
+		return &amp;api.Empty{}, err
+	}
+
+	if err := s.connectClient(r.ResourceName, filepath.Join(s.socketDir, r.Endpoint)); err != nil {
+		klog.InfoS(&quot;Error connecting to device plugin client&quot;, &quot;err&quot;, err)
+		return &amp;api.Empty{}, err
+	}
+
+	return &amp;api.Empty{}, nil
+}
+</code></pre>
+
+<p>核心在 connectClient 方法：</p>
+
+<pre><code class="language-go">func (s *server) connectClient(name string, socketPath string) error {
+	c := NewPluginClient(name, socketPath, s.chandler)
+
+	s.registerClient(name, c)
+	if err := c.Connect(); err != nil {
+		s.deregisterClient(name)
+		klog.ErrorS(err, &quot;Failed to connect to new client&quot;, &quot;resource&quot;, name)
+		return err
+	}
+
+	go func() {
+		s.runClient(name, c)
+	}()
+
+	return nil
+}
+</code></pre>
+
+<p>怎么保存这个 client 的呢?</p>
+
+<pre><code class="language-go">func (s *server) registerClient(name string, c Client) {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
+	s.clients[name] = c
+	klog.V(2).InfoS(&quot;Registered client&quot;, &quot;name&quot;, name)
+}
+</code></pre>
+
+<p>定义如下：</p>
+
+<pre><code class="language-go">type server struct {
+	socketName string
+	socketDir  string
+	mutex      sync.Mutex
+	wg         sync.WaitGroup
+	grpc       *grpc.Server
+	rhandler   RegistrationHandler
+	chandler   ClientHandler
+	clients    map[string]Client // 使用 map 存储，并为持久化
+}
+</code></pre>
+
+<h2 id="3-4-main-go">3.4. main.go</h2>
+
+<p>main 方法分为三个部分：</p>
+
+<p>1) 启动 gRPC 服务
+2) 向 Kubelet 进行注册
+3) 监控 kubelet.sock 状态</p>
+
+<pre><code class="language-go">func main() {
+	klog.Infof(&quot;device plugin starting&quot;)
+	dp := device_plugin.NewGopherDevicePlugin()
+	go dp.Run()
+
+	// register when device plugin start
+	if err := dp.Register(); err != nil {
+		klog.Fatalf(&quot;register to kubelet failed: %v&quot;, err)
+	}
+
+	// watch kubelet.sock,when kubelet restart,exit device plugin,then will restart by DaemonSet
+	stop := make(chan struct{})
+	err := utils.WatchKubelet(stop)
+	if err != nil {
+		klog.Fatalf(&quot;start to kubelet failed: %v&quot;, err)
+	}
+
+	&lt;-stop
+	klog.Infof(&quot;kubelet restart,exiting&quot;)
+}
+</code></pre>
+
+<h1 id="4-测试">4. 测试</h1>
+
+<h2 id="4-1-编译">4.1. 编译</h2>
+
+<pre><code class="language-bash">git clone git@github.com:mospany/i-device-plugin.git
+cd i-device-plugin
+make build-image
+</code></pre>
+
+<p><img src="post/2024/images/2024-01-24-device-plugin/IMG_20250125-200208751.png" alt="picture 2" /></p>
+
+<h2 id="4-2-打包镜像">4.2. 打包镜像</h2>
+
+<p>由于国内不能直接访问hub.docker.io了，需本地导入。</p>
+
+<pre><code class="language-bash">docker save mospany/i-device-plugin:latest -o i-device-plugin_latest.tar
+</code></pre>
+
+<p>将在本地目录下生成i-device-plugin_latest.tar。</p>
+
+<h2 id="4-3-导入镜像">4.3. 导入镜像</h2>
+
+<p>将编译机上生成的镜像上传到目标worker上，再导入。</p>
+
+<pre><code class="language-bash">ctr -n k8s.io image import i-device-plugin_latest.tar 
+</code></pre>
+
+<p>查看</p>
+
+<pre><code class="language-bash">root@k8s-worker1 img]# crictl images | grep i-device
+docker.io/mospany/i-device-plugin                                                     latest                             5954f214c8b06       23.5MB
+[root@k8s-worker1 img]# 
+</code></pre>
+
+<h2 id="4-4-部署">4.4. 部署</h2>
+
+<p>首先是部署 i-device-plugin，一般使用 DaemonSet 方式部署，完整 yaml 如下：</p>
+
+<pre><code class="language-yaml">apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: i-device-plugin
+  namespace: kube-system
+  labels:
+    app: i-device-plugin
+spec:
+  selector:
+    matchLabels:
+      app: i-device-plugin
+  template:
+    metadata:
+      labels:
+        app: i-device-plugin
+    spec:
+      containers:
+        - name: i-device-plugin
+          image: mospany/i-device-plugin:latest
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              cpu: &quot;1&quot;
+              memory: &quot;512Mi&quot;
+            requests:
+              cpu: &quot;0.1&quot;
+              memory: &quot;128Mi&quot;
+          volumeMounts:
+            - name: device-plugin
+              mountPath: /var/lib/kubelet/device-plugins
+            - name: gophers
+              mountPath: /etc/gophers
+      volumes:
+        - name: device-plugin
+          hostPath:
+            path: /var/lib/kubelet/device-plugins
+        - name: gophers
+          hostPath:
+            path: /etc/gophers
+
+</code></pre>
+
+<p>以 hostPath 方式将用到的两个目录挂载到 Pod 里：
+<img src="post/2024/images/2024-01-24-device-plugin/IMG_20250125-214446131.png" alt="picture 3" /></p>
+
+<ul>
+<li>/var/lib/kubelet/device-plugins：请求 kubelet.sock 发起调用，同时将 device-plugin gRPC 服务的 sock 文件写入该目录供 kubelet 调用</li>
+<li>/etc/gophers：在该 Demo 中，把 /etc/gophers 目录下的文件作为设备，因此需要将其挂载到 Pod 里。</li>
+</ul>
+
+<p>使用kubectl进行apply下yaml文件，确保 i-device-plugin 已经启动。
+<img src="post/2024/images/2024-01-24-device-plugin/IMG_20250125-214524956.png" alt="picture 4" /></p>
+
+<h2 id="4-5-初始化">4.5. 初始化</h2>
+
+<p>在该 Demo 中，把 /etc/gophers 目录下的文件作为设备，因此我们只需要到 /etc/gophers 目录下创建文件，模拟有新的设备接入即可。</p>
+
+<pre><code class="language-bash">mkdir /etc/gophers
+
+touch /etc/gophers/g1
+</code></pre>
+
+<p>查看 device plugin 日志
+<img src="post/2024/images/2024-01-24-device-plugin/IMG_20250125-214911049.png" alt="picture 5" /></p>
+
+<p>可以看到，已经感知到新增的设备了。</p>
+
+<p>不出意外的话可以在 node 上看到新资源了</p>
+
+<p><img src="post/2024/images/2024-01-24-device-plugin/IMG_20250125-215648627.png" alt="picture 6" /></p>
+
+<p>果然，node capacity 中新增了lixueduan.com/gopher: &ldquo;1&rdquo;， 代表创建了2个设备：/etc/gophers/g1和/etc/gophers/g2。</p>
+
+<h2 id="4-6-创建测试-pod">4.6. 创建测试 Pod</h2>
+
+<p>接下来创建一个 Pod 申请该资源试试</p>
+
+<pre><code class="language-yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: gopher-pod
+spec:
+  containers:
+  - name: gopher-container
+    image: docker.m.daocloud.io/busybox
+    command: [&quot;sh&quot;, &quot;-c&quot;, &quot;echo Hello, Kubernetes! &amp;&amp; sleep 3600&quot;]
+    resources:
+      requests:
+        lixueduan.com/gopher: &quot;1&quot;
+      limits:
+        lixueduan.com/gopher: &quot;1&quot;
+</code></pre>
+
+<p>Pod 启动成功</p>
+
+<pre><code class="language-bash">[root@k8s-master1 yaml]# kubectl  get pod -A | grep gopher
+default        gopher-pod                                                        1/1     Running     0               4m18s
+[root@k8s-master1 yaml]# 
+</code></pre>
+
+<p>之前分配设备是添加 Gopher=xxx 这个环境变量，现在看下是否正常分配</p>
+
+<pre><code class="language-bash">[root@k8s-master1 yaml]# kubectl  exec -ti gopher-pod -- env | grep -i goph
+HOSTNAME=gopher-pod
+Gopher=g2
+[root@k8s-master1 yaml]# 
+</code></pre>
+
+<p>ok,环境变量存在，可以看到分配给该 Pod 的设备是 g2。</p>
+
+<h1 id="5-小结">5. 小结</h1>
+
+<p>本文主要分析了 k8s 中的 Device Plugin 机制的工作原理，并实现了一个简单的 <strong>i-device-plugin</strong>来进一步加深理解。</p>
+
+<p>Device Plugin 的工作原理其实不复杂，可以分为 插件注册 和 kubelet 调用插件两部分：</p>
+
+<ul>
+<li>插件注册：DevicePlugin 启动时会想节点上的 Kubelet 发起注册，这样 Kubelet 就可以感知到该插件的存在了</li>
+<li>kubelet 调用插件：注册完成后，当有 Pod 申请对于资源时，kubelet 就会调用该插件 API 实现具体功能</li>
+</ul>
+
+<p><img src="post/2024/images/2024-01-24-device-plugin/IMG_20250125-223139774.png" alt="picture 7" /></p>
+
+<p>以下是总结的几个常见问题：</p>
+
+<p>1）device plugin 是怎么感知节点上的设备的？</p>
+
+<ul>
+<li>一般设备都会在 /dev/ 目录下，比如 NVIDIA GPU 就是 /dev/nvidia0、/dev/nvidia1 这样，不过具体逻辑还是得硬件厂商自己实现</li>
+<li>然后 device plugin 会以 DaemonSet 方式部署到所有节点，因此能发现每个节点上的设备
+<img src="post/2024/images/2024-01-24-device-plugin/IMG_20250125-223501456.png" alt="picture 8" /><br /></li>
+</ul>
+
+<p>2）device plugin Allocate 方法怎么实现分配设备给容器的？
+&gt; 需要注意一点：Allocate 方法并没有真正将设备分配给容器，因为这个时候甚至都还没创建容器，只是在该方法中可以通过 Env、Mounts、Devices、Annotations、CDIDevices 等不同形式来传递 要将那些设备分配给该容器 这个信息给后续组件。</p>
+
+<p>这些信息传给 Kubelet，然后 Kubelet 通过 CRI 调用 Runtime（Docker/Containerd 等等）真正开始创建容器。</p>
+
+<p>比如 NVIDIA 在 Allocate 中就传递了 NVIDIA_VISIBLE_DEVICES 这个 Env，然后自己实现了 nvidia-container-runtime，该 runtime 就可以根据该 Env 知道要把哪个 GPU 分配给容器，然后修改容器的 OCI Spec，最终 runC(或者其他实现)真正创建容器时就会按照这个描述去处理。</p>
+
+<p>又比如 ix-device-plugin 就是用的 Devices 方式,直接指定分配给容器的设备在宿主机的位置，以及要挂载到容器中的位置，这样就不需要实现自己的 container-runtime 了，runC 创建容器时也能把对应设备分配给容器。</p>
+
+<p>这样又引出一个小问题，既然天数(ix-device-plugin)这个实现只用 Devices 就能正常运行，那为什么 NVIDIA 实现了 Devices 又实现了一个 Env？</p>
+
+<p>其实这个 Env 的实现是为了兼容非 k8s 环境，比如 Docker 环境：</p>
+
+<p>nvidia 可以在启动容器时指定 GPU</p>
+
+<pre><code class="language-bash"># --gpus
+docker run --gpus device=0 -it tensorflow/tensorflow:latest-gpu bash
+# 或者环境变量 NVIDIA_VISIBLE_DEVICES
+docker run -e NVIDIA_VISIBLE_DEVICES=0 -it tensorflow/tensorflow:latest-gpu bash
+</code></pre>
+
+<p>而天数则不行，就像这样：</p>
+
+<pre><code class="language-bash">sudo docker run --shm-size=&quot;32g&quot; -it -v /usr/src:/usr/src -v /lib/modules:/lib/modules -v /dev:/dev --privileged --cap-add=ALL --pid=host corex:4.0.1
+</code></pre>
+
+<p>可以看到，需要自己使用 -v 将相关文件挂载进容器才能使用，nvidia-container-runtime 实则是将这部分进行了封装简化，用户只需要传一个参数即可。</p>
+
+<p>3）为什么 device plugin 要 Watch Kubelet 状态，当 Kubelet 重启后 device plugin 也要跟着重启。</p>
+
+<p>这个问题实际上可以翻译为：为什么 Kubelet 重启后，device plugin 需要重新向 Kubelet 注册？</p>
+
+<p>因为 device plugin 的注册信息 Kubelet 是存在内存中的，使用 Go 中的 Map 结构进行存储。重启后就会丢失，因此各个 device plugin 都需要重新注册。</p>
+
+<p>至于为什么 device plugin 一般也会跟着重启，是因为 device plugin 在启动时会调用因此注册接口，因此感知到 Kubelet 重启了，直接让 device plugin 退出即可，然后 DaemonSet 会重新拉起 Pod，这样启动后自动调用注册接口。</p>
+
+<h1 id="6-参考">6. 参考</h1>
+
+<p>【01】<a href="https://www.lixueduan.com/posts/kubernetes/21-device-plugin/">Kubernetes教程(二一)&mdash;自定义资源支持：K8s Device Plugin 从原理到实现</a></p>
+
+    <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+  <div style="float:right;margin-top:0px;">
+    <img src="/img/qrcode.jpg" width="129px" height="129px"/>
+    <div style="text-align:center;">微信扫一扫</div>
+  </div>
+  <div style="float:left;margin-top:0px;">
+    <img src="/img/rewardcode.jpg" width="129px" height="129px"/>
+  </div>
+  <div>
+    <p style="margin-top:0px;">作者：<a target="_blank" href="http://blog.mospan.cn/">mospan</a>
+      <br />微信关注：墨斯潘園
+      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2024/01/24/device-plugin/">http://mospany.github.io/2024/01/24/device-plugin/</a>
+      <br />
+      文章版权归本人所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+  </div>
+</div>
+
+
+	</div>
+  <footer class="article-footer clearfix">
+  
+
+<div class="article-tags">
+  <span></span>
+  
+  <a href="/tags/k8s">K8S</a>
+  
+  <a href="/tags/gpu">GPU</a>
+  
+</div>
+
+
+
+<div class="article-categories">
+  <span></span>
+  
+  <a class="article-category-link" href="/categories/k8s">K8S</a>
+  
+  <a class="article-category-link" href="/categories/gpu">GPU</a>
+  
+</div>
+
+
+
+  <div class="article-share" id="share">
+    <div data-url="http://mospany.github.io/2024/01/24/device-plugin/" data-title="K8S项目实践(10): device-plugin原理到实现" data-tsina="3833537679" class="share clearfix">
+    </div>
+  </div>
+</footer>
+
+	</article>
+  
+
+
+
+
+
+<div id="git-comments"></div>
+<link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
+<script src="https://billts.site/js/gitment.js"></script>
+<script>
+var gitment = new Gitment({
+  id: '<%= page.date %>',
+  owner: 'mospany',
+  repo: 'mospan-hugo-blog-gitment',
+  oauth: {
+    client_id: '0cafe299c964f0af2d1e',
+    client_secret: 'ec47ee9481210935a662298791c31da203694a8f',
+  },
+})
+gitment.render('git-comments')
+</script>    
+
+
+</div>
+
+    <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+  
+
+<div class="categorieslist">
+  <p class="asidetitle">分类</p>
+  <ul>
+    
+    <li><a href="http://mospany.github.io/categories/k8s" title="k8s">k8s<sup>1</sup></a></li>
+    
+    <li><a href="http://mospany.github.io/categories/%e4%ba%91%e8%ae%a1%e7%ae%97" title="云计算">云计算<sup>4</sup></a></li>
+    
+    <li><a href="http://mospany.github.io/categories/%e4%ba%ba%e5%b7%a5%e6%99%ba%e8%83%bd" title="人工智能">人工智能<sup>3</sup></a></li>
+    
+    <li><a href="http://mospany.github.io/categories/%e5%b7%a5%e5%85%b7%e4%bd%bf%e7%94%a8" title="工具使用">工具使用<sup>3</sup></a></li>
+    
+    <li><a href="http://mospany.github.io/categories/%e6%8a%80%e6%9c%af%e6%96%87%e7%ab%a0" title="技术文章">技术文章<sup>42</sup></a></li>
+    
+    <li><a href="http://mospany.github.io/categories/%e7%94%9f%e6%b4%bb%e8%ae%b0%e5%bd%95" title="生活记录">生活记录<sup>1</sup></a></li>
+    
+    <li><a href="http://mospany.github.io/categories/%e8%81%8c%e5%9c%ba%e4%ba%ba%e7%94%9f" title="职场人生">职场人生<sup>1</sup></a></li>
+    
+    <li><a href="http://mospany.github.io/categories/%e8%af%bb%e4%b9%a6%e7%ac%94%e8%ae%b0" title="读书笔记">读书笔记<sup>2</sup></a></li>
+    
+  </ul>
+</div>
+
+
+
+  
+
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+      
+			<li><a href="http://mospany.github.io/tags/" title=""><sup>6</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/dns" title="dns">dns<sup>2</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/dpdk" title="dpdk">dpdk<sup>2</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/emacs" title="emacs">emacs<sup>5</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/gpu" title="gpu">gpu<sup>3</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/hugo" title="hugo">hugo<sup>3</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/ipv6" title="ipv6">ipv6<sup>2</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/k8s" title="k8s">k8s<sup>17</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/linux" title="linux">linux<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/openresty" title="openresty">openresty<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/org-mode" title="org-mode">org-mode<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/pango" title="pango">pango<sup>2</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/redis" title="redis">redis<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/spacemacs" title="spacemacs">spacemacs<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/vim" title="vim">vim<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/vue" title="vue">vue<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/xns" title="xns">xns<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/yaml" title="yaml">yaml<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e4%ba%91%e8%ae%a1%e7%ae%97" title="云计算">云计算<sup>6</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e4%ba%92%e8%81%94%e7%bd%91" title="互联网">互联网<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e5%89%8d%e7%ab%af" title="前端">前端<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e5%8d%9a%e5%ae%a2" title="博客">博客<sup>7</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e5%ad%98%e5%82%a8" title="存储">存储<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e5%b7%a5%e5%85%b7" title="工具">工具<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e5%be%ae%e4%bf%a1" title="微信">微信<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e6%8a%80%e6%9c%af%e6%96%87%e7%ab%a0" title="技术文章">技术文章<sup>2</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e6%9e%b6%e6%9e%84" title="架构">架构<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e7%8b%ac%e7%ab%8b" title="独立">独立<sup>3</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e7%94%9f%e6%b4%bb%e8%ae%b0%e5%bd%95" title="生活记录">生活记录<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e8%81%8c%e5%9c%ba%e4%ba%ba%e7%94%9f" title="职场人生">职场人生<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e8%af%bb%e4%b9%a6%e7%ac%94%e8%ae%b0" title="读书笔记">读书笔记<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e9%82%ae%e7%ae%b1" title="邮箱">邮箱<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e9%9d%a2%e8%af%95" title="面试">面试<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e9%a1%b9%e7%9b%ae%e5%ae%9e%e8%b7%b5" title="项目实践">项目实践<sup>4</sup></a></li>
+      
+		</ul>
+</div>
+
+
+
+    <div class="linkslist">
+  <p class="asidetitle">我的关注</p>
+    <ul>
+          <li>
+            	<a href="http://www.csdn.net/" target="_blank" title="中国软件开发网(CSDN)">中国软件开发网(CSDN)</a>
+          </li>
+          <li>
+            	<a href="http://www.golangtc.com/" target="_blank" title="Golang中国">Golang中国</a>
+          </li>
+          <li>
+            	<a href="http://blog.qiniu.com/" target="_blank" title="七牛团队博客">七牛团队博客</a>
+          </li>
+          <li>
+            	<a href="http://csrd.aliapp.com/" target="_blank" title="阿里核心系统团队博客">阿里核心系统团队博客</a>
+          </li>
+          <li>
+            	<a href="http://coolshell.cn/" target="_blank" title="酷壳－陈浩">酷壳－陈浩</a>
+          </li>
+          <li>
+            	<a href="http://www.ruanyifeng.com/blog/" target="_blank" title="阮一峰的网络日志">阮一峰的网络日志</a>
+          </li>
+          <li>
+            	<a href="https://blog.dandyweng.com/" target="_blank" title="homeschooler－翁天信的博客">homeschooler－翁天信的博客</a>
+          </li>
+          <li>
+            	<a href="http://www.jeffjade.com/" target="_blank" title="晚晴幽草轩">晚晴幽草轩</a>
+          </li>
+          <li>
+            	<a href="https://nicejade.github.io/index.html" target="_blank" title="天意人间舫">天意人间舫</a>
+          </li>
+    </ul>
+</div>
+
+    <div class="linkslist">
+  <p class="asidetitle">在线书籍</p>
+    <ul>
+          <li>
+            	<a href="https://docs.ruanjiadeng.com/gopl-zh/index.html" target="_blank" title="Go语言圣经（中文版）">Go语言圣经（中文版）</a>
+          </li>
+          <li>
+            	<a href="http://studygolang.com/pkgdoc" target="_blank" title="Go语言标准库">Go语言标准库</a>
+          </li>
+          <li>
+            	<a href="http://www.w3school.com.cn/" target="_blank" title="w3school 在线教程">w3school 在线教程</a>
+          </li>
+    </ul>
+</div>
+
+    <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+          <li>
+            	<a href="http://www.cloudxns.net/" target="_blank" title="CloudXNS官网">CloudXNS官网</a>
+          </li>
+          <li>
+            	<a href="http://www.chinatesters.com/" target="_blank" title="华夏评测师家园">华夏评测师家园</a>
+          </li>
+    </ul>
+</div>
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle">归档</p>
+    <ul class="archive-list">
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2024-01">2024年01月</a><span class="archive-list-count">15</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2023-06">2023年06月</a><span class="archive-list-count">2</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2023-03">2023年03月</a><span class="archive-list-count">2</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2023-01">2023年01月</a><span class="archive-list-count">3</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2022-12">2022年12月</a><span class="archive-list-count">3</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2022-11">2022年11月</a><span class="archive-list-count">2</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2022-10">2022年10月</a><span class="archive-list-count">2</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2022-09">2022年09月</a><span class="archive-list-count">7</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2019-11">2019年11月</a><span class="archive-list-count">3</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2019-10">2019年10月</a><span class="archive-list-count">8</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2019-08">2019年08月</a><span class="archive-list-count">4</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2019-02">2019年02月</a><span class="archive-list-count">3</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2018-02">2018年02月</a><span class="archive-list-count">3</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2017-08">2017年08月</a><span class="archive-list-count">4</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2017-07">2017年07月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2017-03">2017年03月</a><span class="archive-list-count">8</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-09">2016年09月</a><span class="archive-list-count">2</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-05">2016年05月</a><span class="archive-list-count">4</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-03">2016年03月</a><span class="archive-list-count">5</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-02">2016年02月</a><span class="archive-list-count">11</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-01">2016年01月</a><span class="archive-list-count">6</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#0001-01">0001年01月</a><span class="archive-list-count">1</span>
+      </li>
+      
+    </ul>
+
+  </div>
+
+
+  
+
+<div class="tagcloudlist">
+  <p class="asidetitle">标签云</p>
+  <div class="tagcloudlist clearfix">
+    
+    <a href="http://mospany.github.io/tags/" style="font-size: 12px;"></a>
+    
+    <a href="http://mospany.github.io/tags/dns" style="font-size: 12px;">dns</a>
+    
+    <a href="http://mospany.github.io/tags/dpdk" style="font-size: 12px;">dpdk</a>
+    
+    <a href="http://mospany.github.io/tags/emacs" style="font-size: 12px;">emacs</a>
+    
+    <a href="http://mospany.github.io/tags/gpu" style="font-size: 12px;">gpu</a>
+    
+    <a href="http://mospany.github.io/tags/hugo" style="font-size: 12px;">hugo</a>
+    
+    <a href="http://mospany.github.io/tags/ipv6" style="font-size: 12px;">ipv6</a>
+    
+    <a href="http://mospany.github.io/tags/k8s" style="font-size: 12px;">k8s</a>
+    
+    <a href="http://mospany.github.io/tags/linux" style="font-size: 12px;">linux</a>
+    
+    <a href="http://mospany.github.io/tags/openresty" style="font-size: 12px;">openresty</a>
+    
+    <a href="http://mospany.github.io/tags/org-mode" style="font-size: 12px;">org-mode</a>
+    
+    <a href="http://mospany.github.io/tags/pango" style="font-size: 12px;">pango</a>
+    
+    <a href="http://mospany.github.io/tags/redis" style="font-size: 12px;">redis</a>
+    
+    <a href="http://mospany.github.io/tags/spacemacs" style="font-size: 12px;">spacemacs</a>
+    
+    <a href="http://mospany.github.io/tags/vim" style="font-size: 12px;">vim</a>
+    
+    <a href="http://mospany.github.io/tags/vue" style="font-size: 12px;">vue</a>
+    
+    <a href="http://mospany.github.io/tags/xns" style="font-size: 12px;">xns</a>
+    
+    <a href="http://mospany.github.io/tags/yaml" style="font-size: 12px;">yaml</a>
+    
+    <a href="http://mospany.github.io/tags/%e4%ba%91%e8%ae%a1%e7%ae%97" style="font-size: 12px;">云计算</a>
+    
+    <a href="http://mospany.github.io/tags/%e4%ba%92%e8%81%94%e7%bd%91" style="font-size: 12px;">互联网</a>
+    
+    <a href="http://mospany.github.io/tags/%e5%89%8d%e7%ab%af" style="font-size: 12px;">前端</a>
+    
+    <a href="http://mospany.github.io/tags/%e5%8d%9a%e5%ae%a2" style="font-size: 12px;">博客</a>
+    
+    <a href="http://mospany.github.io/tags/%e5%ad%98%e5%82%a8" style="font-size: 12px;">存储</a>
+    
+    <a href="http://mospany.github.io/tags/%e5%b7%a5%e5%85%b7" style="font-size: 12px;">工具</a>
+    
+    <a href="http://mospany.github.io/tags/%e5%be%ae%e4%bf%a1" style="font-size: 12px;">微信</a>
+    
+    <a href="http://mospany.github.io/tags/%e6%8a%80%e6%9c%af%e6%96%87%e7%ab%a0" style="font-size: 12px;">技术文章</a>
+    
+    <a href="http://mospany.github.io/tags/%e6%9e%b6%e6%9e%84" style="font-size: 12px;">架构</a>
+    
+    <a href="http://mospany.github.io/tags/%e7%8b%ac%e7%ab%8b" style="font-size: 12px;">独立</a>
+    
+    <a href="http://mospany.github.io/tags/%e7%94%9f%e6%b4%bb%e8%ae%b0%e5%bd%95" style="font-size: 12px;">生活记录</a>
+    
+    <a href="http://mospany.github.io/tags/%e8%81%8c%e5%9c%ba%e4%ba%ba%e7%94%9f" style="font-size: 12px;">职场人生</a>
+    
+    <a href="http://mospany.github.io/tags/%e8%af%bb%e4%b9%a6%e7%ac%94%e8%ae%b0" style="font-size: 12px;">读书笔记</a>
+    
+    <a href="http://mospany.github.io/tags/%e9%82%ae%e7%ae%b1" style="font-size: 12px;">邮箱</a>
+    
+    <a href="http://mospany.github.io/tags/%e9%9d%a2%e8%af%95" style="font-size: 12px;">面试</a>
+    
+    <a href="http://mospany.github.io/tags/%e9%a1%b9%e7%9b%ae%e5%ae%9e%e8%b7%b5" style="font-size: 12px;">项目实践</a>
+    
+  </div>
+</div>
+
+
+
+  
+</aside>
+</div>
+
+  </div>
+  <footer><div id="footer" >
+  
+  <div class="line">
+    <span></span>
+    <div style='background:no-repeat url("http://mospany.github.io/img/author.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  <div class="line">
+    <div style='background:no-repeat url("http://mospany.github.io/img/qiniu_logo.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  <div class="line">
+    <div style='background:no-repeat url("http://mospany.github.io/img/fastweb_logo.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  <div class="line">
+    <div style='background:no-repeat url("http://mospany.github.io/img/leadsec_logo.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  <div class="line">
+    <div style='background:no-repeat url("http://mospany.github.io/img/raisecom_logo.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  <div class="line">
+    <div style='background:no-repeat url("http://mospany.github.io/img/jbt_logo.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  
+  
+  <div class="social-font clearfix">
+    
+    <a href="http://weibo.com/mospan" target="_blank" title="weibo"></a>
+    
+    
+    <a href="https://twitter.com/mospan" target="_blank" title="twitter"></a>
+    
+    
+    <a href="https://github.com/mospany" target="_blank" title="github"></a>
+    
+    
+    <a href="https://www.facebook.com/mospan" target="_blank" title="facebook"></a>
+    
+    
+    <a href="https://www.linkedin.com/mospan" target="_blank" title="linkedin"></a>
+    
+  </div>
+  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/mospany/mospan-hugo-blog/tree/master/themes/hugo-panman-theme" target="_blank" title="hugo-panman-theme">hugo-panman-theme</a> © 2025
+    
+    <a href="http://mospany.github.io/" target="_blank" title="mospan">mospan</a>
+    
+  </p>
+</div>
+</footer>
+  <script src="http://mospany.github.io/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+done = false;
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  $('form.search').on('submit', function (event) {
+    if (false === done) {
+      event.preventDefault();
+      var orgVal = $(this).find('#search').val();
+      $(this).find('#search').val('site:http:\/\/mospany.github.io\/ ' + orgVal);
+      done = true;
+      $(this).submit();
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});
+</script>
+
+
+<link rel="stylesheet" href="http://mospany.github.io/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="http://mospany.github.io/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+
+</body>
+</html>

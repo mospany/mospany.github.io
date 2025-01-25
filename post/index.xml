@@ -6,10 +6,19 @@
     <description>Recent content in Posts on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Wed, 17 Jan 2024 19:31:10 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 24 Jan 2024 19:31:10 +0800</lastBuildDate>
     
 	<atom:link href="http://mospany.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>K8S项目实践(10): device-plugin原理到实现</title>
+      <link>http://mospany.github.io/2024/01/24/device-plugin/</link>
+      <pubDate>Wed, 24 Jan 2024 19:31:10 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2024/01/24/device-plugin/</guid>
+      <description>本文主要分析 k8s 中的 device-plugin 机制工作原理，并通过实现一个简单的 device-plugin 来加深理解。 1. 背景 默认情况下，k8s 中的 Pod 只能申请 CPU 和 Memory 这两种资源，就像下面这样： resources:</description>
+    </item>
     
     <item>
       <title>K8S项目实践(09): 使用 GPU Operator搭建AI算力环境</title>

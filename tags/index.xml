@@ -6,7 +6,7 @@
     <description>Recent content in Tags on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Wed, 17 Jan 2024 19:31:10 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 24 Jan 2024 19:31:10 +0800</lastBuildDate>
     
 	<atom:link href="http://mospany.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +14,7 @@
     <item>
       <title></title>
       <link>http://mospany.github.io/tags/</link>
-      <pubDate>Wed, 17 Jan 2024 19:31:10 +0800</pubDate>
+      <pubDate>Wed, 24 Jan 2024 19:31:10 +0800</pubDate>
       
       <guid>http://mospany.github.io/tags/</guid>
       <description></description>
@@ -23,7 +23,7 @@
     <item>
       <title>GPU</title>
       <link>http://mospany.github.io/tags/gpu/</link>
-      <pubDate>Wed, 17 Jan 2024 19:31:10 +0800</pubDate>
+      <pubDate>Wed, 24 Jan 2024 19:31:10 +0800</pubDate>
       
       <guid>http://mospany.github.io/tags/gpu/</guid>
       <description></description>
@@ -32,7 +32,7 @@
     <item>
       <title>K8S</title>
       <link>http://mospany.github.io/tags/k8s/</link>
-      <pubDate>Wed, 17 Jan 2024 19:31:10 +0800</pubDate>
+      <pubDate>Wed, 24 Jan 2024 19:31:10 +0800</pubDate>
       
       <guid>http://mospany.github.io/tags/k8s/</guid>
       <description></description>
@@ -228,7 +228,7 @@
     </item>
     
     <item>
-      <title>dpdk</title>
+      <title>DPDK</title>
       <link>http://mospany.github.io/tags/dpdk/</link>
       <pubDate>Tue, 06 Sep 2016 19:37:20 +0800</pubDate>
       
