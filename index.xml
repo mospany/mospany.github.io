@@ -5,7 +5,1152 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Wed, 24 Jan 2024 19:31:10 CST</updated>
+        <updated>Sat, 27 Jan 2024 19:31:10 CST</updated>
+        
+        <item>
+            <title>K8S项目实践(11): Pod 是如何使用到 GPU 的及源码分析</title>
+            <link>http://mospany.github.io/2024/01/27/pod-use-gpu/</link>
+            <pubDate>Sat, 27 Jan 2024 19:31:10 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://mospany.github.io/2024/01/27/pod-use-gpu/</guid>
+            <description>
+
+&lt;p&gt;本文主要分析了在 K8s 中创建一个 Pod 并申请 GPU 资源，最终该 Pod 时怎么能够使用 GPU 的，具体的实现原理，以及 device plugin、nvidia-container-toolkit 相关源码分析。&lt;/p&gt;
+
+&lt;h1 id=&#34;1-概述&#34;&gt;1. 概述&lt;/h1&gt;
+
+&lt;p&gt;这篇文章则是将整个流程连起来做一个简单分析，即：宿主机上的 GPU 是怎么能够被 K8s 中的 Pod 使用的。&lt;/p&gt;
+
+&lt;p&gt;可以分为以下两部分：&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;k8s 是如何感知到 GPU 的&lt;/li&gt;
+&lt;li&gt;GPU 是如何分配给 Pod 的&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h1 id=&#34;2-工作流程&#34;&gt;2. 工作流程&lt;/h1&gt;
+
+&lt;p&gt;这部分主要分享一下 NVIDIA 的 device-plugin 以及 nvidia-container-toolkit 的工作流程，以及二者是怎么配合的。&lt;/p&gt;
+
+&lt;h2 id=&#34;2-1-k8s-是如何感知到-gpu-的&#34;&gt;2.1. k8s 是如何感知到 GPU 的&lt;/h2&gt;
+
+&lt;p&gt;NVIDIA 实现了&lt;a href=&#34;https://github.com/NVIDIA/k8s-device-plugin&#34;&gt;NVIDIA/k8s-device-plugin&lt;/a&gt; 来使得节点上的 GPU 能够被 k8s 感知到。&lt;/p&gt;
+
+&lt;p&gt;这个 device plugin 主要做两件事：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;1）检测节点上的 GPU 设备并上报给 Kubelet，再由 Kubelet 更新节点信息时提交到 kube-apiserver。
+
+&lt;ul&gt;
+&lt;li&gt;这样 k8s 就知道每个节点上有多少 GPU 了，后续 Pod 申请 GPU 时就会往有 GPU 资源的节点上调度。&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;2）Pod 申请 GPU 时，为对应容器添加一个NVIDIA_VISIBLE_DEVICES环境变量，后续底层 Runtime 在真正创建容器时就能根据这些信息把 GPU 挂载到容器中
+
+&lt;ul&gt;
+&lt;li&gt;例如添加环境变量：NVIDIA_VISIBLE_DEVICES=GPU-03f69c50-207a-2038-9b45-23cac89cb67d
+&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;NVIDIA 这个 device plugin 比较复杂，支持多种策略，device plugin 提供的 env、mounts、device 以及 annotations 等方式它都做了支持，在部署时可以通过 DEVICE_LIST_STRATEGY 环境变量进行指定，不过默认还是用的 env。&lt;/p&gt;
+
+&lt;p&gt;另外DEVICE_ID_STRATEGY 默认也是 uuid，因此在 Pod 中看到的 NVIDIA_VISIBLE_DEVICES 就不是 Docker 环境中常见的 0,1,2 这种编号了，而是 GPU 设备对应的 UUID。&lt;/p&gt;
+
+&lt;h2 id=&#34;2-2-gpu-是如何分配给-pod-的&#34;&gt;2.2. GPU 是如何分配给 Pod 的&lt;/h2&gt;
+
+&lt;p&gt;NVIDIA 提供了 nvidia-container-toolkit 来处理如何将 GPU 分配给容器的问题。&lt;/p&gt;
+
+&lt;p&gt;核心组件有以下三个：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;nvidia-container-runtime&lt;/li&gt;
+&lt;li&gt;nvidia-container-runtime-hook&lt;/li&gt;
+&lt;li&gt;nvidia-container-cli&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;首先需要将 docker/containerd 的 runtime 设置为nvidia-container-runtime，此后整个调用链就变成这样了：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;post/2024/images/2024-01-27-pod-use-gpu/IMG_20250127-192425835.png&#34; alt=&#34;picture 0&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;接下来就具体分析每个组件的作用。&lt;/p&gt;
+
+&lt;h3 id=&#34;2-2-1-nvidia-container-runtime&#34;&gt;2.2.1. nvidia-container-runtime&lt;/h3&gt;
+
+&lt;p&gt;nvidia-container-runtime 的作用就是负责在容器启动之前，将 nvidia-container-runtime-hook 注入到 prestart hook。
+&amp;gt; 小知识：docker/containerd 都是高级 Runtime，runC 则是低级 Runtime。不同层级 Runtime 通过 OCI Spec 进行交互。&lt;/p&gt;
+
+&lt;p&gt;也就是说 docker 调用 runC 创建容器时，会把 docker 收到的信息解析，组装成 OCI Spec，然后在往下传递。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;而 nvidia-container-runtime 的作用就是修改容器 Spec，往里面添加一个 prestart hook，这个 hook 就是 nvidia-container-runtime-hook 。&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;这样 runC 根据 Spec 启动容器时就会执行该 hook，即执行 nvidia-container-runtime-hook。&lt;/p&gt;
+
+&lt;p&gt;也就是说 nvidia-container-runtime 其实没有任何逻辑，真正的逻辑都在 nvidia-container-runtime-hook 中。&lt;/p&gt;
+
+&lt;h3 id=&#34;2-2-2-nvidia-container-runtime-hook&#34;&gt;2.2.2. nvidia-container-runtime-hook&lt;/h3&gt;
+
+&lt;p&gt;nvidia-container-runtime-hook 包含了给容器分配 GPU 的核心逻辑，主要分为两部分：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;1）从容器 Spec 的 mounts 和 env 中解析 GPU 信息
+
+&lt;ul&gt;
+&lt;li&gt;mounts 对应前面 device plugin 中设置的 Mount 和 Device，env 则对应 Env&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;2）调用 nvidia-container-cli configure 命令，保证容器内可以使用被指定的 GPU 以及对应能力
+
+&lt;ul&gt;
+&lt;li&gt;也就是说nvidia-container-runtime-hook 最终还是调用 nvidia-container-cli 来实现的给容器分配 GPU 能力的。
+&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;2-2-3-nvidia-container-cli&#34;&gt;2.2.3. nvidia-container-cli&lt;/h3&gt;
+
+&lt;p&gt;nvidia-container-cli 是一个命令行工具，用于配置 Linux 容器对 GPU 硬件的使用。&lt;/p&gt;
+
+&lt;p&gt;提供了三个命令&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;list: 打印 nvidia 驱动库及路径&lt;/li&gt;
+&lt;li&gt;info: 打印所有Nvidia GPU设备&lt;/li&gt;
+&lt;li&gt;configure： 进入给定进程的命名空间，执行必要操作保证容器内可以使用被指定的 GPU 以及对应能力（指定 NVIDIA 驱动库）
+&lt;img src=&#34;post/2024/images/2024-01-27-pod-use-gpu/IMG_20250130-215950804.png&#34; alt=&#34;picture 3&#34; /&gt;&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;一般主要使用 configure 命令，它将 NVIDIA GPU Driver、CUDA Driver 等 驱动库的 so 文件 和 GPU 设备信息， 通过文件挂载的方式映射到容器中。&lt;/p&gt;
+
+&lt;h2 id=&#34;2-3-小结&#34;&gt;2.3. 小结&lt;/h2&gt;
+
+&lt;p&gt;整个流程如下：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;1）device plugin 上报节点上的 GPU 信息&lt;/li&gt;
+&lt;li&gt;2）用户创建 Pod，在 resources.rquest 中申请 GPU，Scheduler 根据各节点 GPU 资源情况，将 Pod 调度到一个有足够 GPU 的节点&lt;/li&gt;
+&lt;li&gt;3）DevicePlugin 根据 Pod 中申请的 GPU 资源，为容器添加 Env 和 Devices 配置
+
+&lt;ul&gt;
+&lt;li&gt;例如添加环境变量：NVIDIA_VISIBLE_DEVICES=GPU-03f69c50-207a-2038-9b45-23cac89cb67d&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;4）docker / containerd 启动容器&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;由于配置了 nvidia-container-runtime,因此会使用 nvidia-container-runtime 来创建容器&lt;/li&gt;
+&lt;li&gt;nvidia-container-runtime 额外做了一件事：将 nvidia-container-runtime-hook 作为 prestart hook 添加到容器 spec 中，然后就将容器 spec 信息往后传给 runC 了。&lt;/li&gt;
+&lt;li&gt;runC 创建容器前会调用 prestart hook，其中就包括了上一步添加的 nvidia-container-runtime-hook，该 hook 主要做两件事：
+
+&lt;ul&gt;
+&lt;li&gt;从容器 Spec 的 mounts 或者 env 中解析 GPU 信息&lt;/li&gt;
+&lt;li&gt;调用 nvidia-container-cli configure 命令，将 NVIDIA 的 GPU Driver、CUDA Driver 等库文件挂载进容器，保证容器内可以使用被指定的 GPU以及对应能力
+以上就是在 k8s 中使用 NVIDIA GPU 的流程，简单来说就是：&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;1）device plugin 中根据 pod 申请的 GPU 资源分配 GPU，并以 ENV 环境变量方式添加到容器上。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;2）nvidia-container-toolkit 则根据该 Env 拿到要分配给该容器的 GPU 最终把相关文件挂载到容器里
+当然并不是只有这一种实现方法，比如天数的 ix-device-plugin 实现中就没有提供自己的 container-toolkit，只在 device plugin 中通过 Device 指定要挂载哪些设备,这样容器启动时也会把这些设备挂载到容器中：&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;func (p *iluvatarDevicePlugin) allocateDevicesByDeviceID(hostminor uint, num int) *pluginapi.DeviceSpec {
+	var device pluginapi.DeviceSpec
+
+	hostPathPrefix := &amp;quot;/dev/&amp;quot;
+	containerPathPrefix := &amp;quot;/dev/&amp;quot;
+
+	// Expose the device node for iluvatar pod.
+	device.HostPath = hostPathPrefix + deviceName + strconv.Itoa(int(hostminor))
+	device.ContainerPath = containerPathPrefix + deviceName + strconv.Itoa(num)
+	device.Permissions = &amp;quot;rw&amp;quot;
+
+	return &amp;amp;device
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;不过由于没有挂载驱动进去，因此需要容器内自带驱动才行。&lt;/p&gt;
+
+&lt;p&gt;至此，已经分析了 k8s 创建 Pod 使用 GPU 的整个流程及大致原理，接下来简单分析下相关组件源码。&lt;/p&gt;
+
+&lt;h1 id=&#34;3-device-plugin-源码分析&#34;&gt;3. device plugin 源码分析&lt;/h1&gt;
+
+&lt;p&gt;NVIDIA GPU 对应的 device plugin 叫做：&lt;a href=&#34;https://github.com/NVIDIA/k8s-device-plugin&#34;&gt;NVIDIA/k8s-device-plugin&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;3-1-allocate-方法&#34;&gt;3.1. Allocate 方法&lt;/h2&gt;
+
+&lt;p&gt;主要看为容器分配资源的 Allocate 方法&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;// https://github.com/NVIDIA/k8s-device-plugin/blob/main/internal/plugin/server.go#L319-L332
+
+// Allocate which return list of devices.
+func (plugin *NvidiaDevicePlugin) Allocate(ctx context.Context, reqs *pluginapi.AllocateRequest) (*pluginapi.AllocateResponse, error) {
+        responses := pluginapi.AllocateResponse{}
+        for _, req := range reqs.ContainerRequests {
+                if err := plugin.rm.ValidateRequest(req.DevicesIDs); err != nil {
+                        return nil, fmt.Errorf(&amp;quot;invalid allocation request for %q: %w&amp;quot;, plugin.rm.Resource(), err)
+                }
+                response, err := plugin.getAllocateResponse(req.DevicesIDs)
+                if err != nil {
+                        return nil, fmt.Errorf(&amp;quot;failed to get allocate response: %v&amp;quot;, err)
+                }
+                responses.ContainerResponses = append(responses.ContainerResponses, response)
+        }
+
+        return &amp;amp;responses, nil
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;核心逻辑在 getAllocateResponse 中：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;func (plugin *NvidiaDevicePlugin) getAllocateResponse(requestIds []string) (*pluginapi.ContainerAllocateResponse, error) {
+	deviceIDs := plugin.deviceIDsFromAnnotatedDeviceIDs(requestIds)
+
+	// Create an empty response that will be updated as required below.
+	response := &amp;amp;pluginapi.ContainerAllocateResponse{
+		Envs: make(map[string]string),
+	}
+	if plugin.deviceListStrategies.AnyCDIEnabled() {
+		responseID := uuid.New().String()
+		if err := plugin.updateResponseForCDI(response, responseID, deviceIDs...); err != nil {
+			return nil, fmt.Errorf(&amp;quot;failed to get allocate response for CDI: %v&amp;quot;, err)
+		}
+	}
+	if plugin.config.Sharing.SharingStrategy() == spec.SharingStrategyMPS {
+		plugin.updateResponseForMPS(response)
+	}
+
+	// The following modifications are only made if at least one non-CDI device
+	// list strategy is selected.
+	if plugin.deviceListStrategies.AllCDIEnabled() {
+		return response, nil
+	}
+
+	if plugin.deviceListStrategies.Includes(spec.DeviceListStrategyEnvvar) {
+		plugin.updateResponseForDeviceListEnvvar(response, deviceIDs...)
+	}
+	if plugin.deviceListStrategies.Includes(spec.DeviceListStrategyVolumeMounts) {
+		plugin.updateResponseForDeviceMounts(response, deviceIDs...)
+	}
+	if *plugin.config.Flags.Plugin.PassDeviceSpecs {
+		response.Devices = append(response.Devices, plugin.apiDeviceSpecs(*plugin.config.Flags.NvidiaDevRoot, requestIds)...)
+	}
+	if *plugin.config.Flags.GDSEnabled {
+		response.Envs[&amp;quot;NVIDIA_GDS&amp;quot;] = &amp;quot;enabled&amp;quot;
+	}
+	if *plugin.config.Flags.MOFEDEnabled {
+		response.Envs[&amp;quot;NVIDIA_MOFED&amp;quot;] = &amp;quot;enabled&amp;quot;
+	}
+	return response, nil
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可以看到，根据不同 flag 以及策略分为不同的设置方式&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;// Constants to represent the various device list strategies
+const (
+	DeviceListStrategyEnvvar         = &amp;quot;envvar&amp;quot;
+	DeviceListStrategyVolumeMounts   = &amp;quot;volume-mounts&amp;quot;
+	DeviceListStrategyCDIAnnotations = &amp;quot;cdi-annotations&amp;quot;
+	DeviceListStrategyCDICRI         = &amp;quot;cdi-cri&amp;quot;
+)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;东西比较多，我们主要看设置 Env 的策略&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;if plugin.deviceListStrategies.Includes(spec.DeviceListStrategyEnvvar) {
+    plugin.updateResponseForDeviceListEnvvar(response, deviceIDs...)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;核心如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;// updateResponseForDeviceListEnvvar sets the environment variable for the requested devices.
+func (plugin *NvidiaDevicePlugin) updateResponseForDeviceListEnvvar(response *pluginapi.ContainerAllocateResponse, deviceIDs ...string) {
+        response.Envs[plugin.deviceListEnvvar] = strings.Join(deviceIDs, &amp;quot;,&amp;quot;)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可以看到，逻辑很简单，就是给容器添加了一个环境变量，value 为设备 id，具体 deviceID 提供了两种策略，可以是编号或者 uuid&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;const (
+        DeviceIDStrategyUUID  = &amp;quot;uuid&amp;quot;
+        DeviceIDStrategyIndex = &amp;quot;index&amp;quot;
+)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;key 是一个变量 plugin.deviceListEnvvar，初始化如下:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;        plugin := NvidiaDevicePlugin{
+                deviceListEnvvar:     &amp;quot;NVIDIA_VISIBLE_DEVICES&amp;quot;,
+                socket:               pluginPath + &amp;quot;.sock&amp;quot;,
+          // ...
+        }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;也就是说 NVIDIA 这个 device plugin 实现 Allocate 主要就是给容器增加了环境变量，例如：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;NVIDIA_VISIBLE_DEVICES=GPU-03f69c50-207a-2038-9b45-23cac89cb67d
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;或者&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;NVIDIA_VISIBLE_DEVICES=1,2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;3-2-小结&#34;&gt;3.2. 小结&lt;/h2&gt;
+
+&lt;p&gt;NVIDIA device plugin 核心逻辑就是给容器添加NVIDIA_VISIBLE_DEVICES 环境变量，告知后续组件，需要给该组件分配 GPU。&lt;/p&gt;
+
+&lt;p&gt;比如当我们仅使用 Docker 时就可以在启动容器时指定 GPU，&amp;ndash;gpus flag 和 NVIDIA_VISIBLE_DEVICES 环境变量效果一致。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# --gpus
+docker run --gpus device=0 -it tensorflow/tensorflow:latest-gpu bash
+# 或者环境变量 NVIDIA_VISIBLE_DEVICES
+docker run -e NVIDIA_VISIBLE_DEVICES=0 -it tensorflow/tensorflow:latest-gpu bash
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;至于为什么添加了NVIDIA_VISIBLE_DEVICES 环境变量就会给该容器分配 GPU，就是接下来的 nvidi-container-toolkit 组件实现的。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;nvidia 在 device plugin 中也使用NVIDIA_VISIBLE_DEVICES 环境变量正好能够兼容 nvidia-container-toolkit。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h1 id=&#34;4-nvidia-container-toolkit-源码分析&#34;&gt;4. nvidia-container-toolkit 源码分析&lt;/h1&gt;
+
+&lt;p&gt;这部分我们主要分析，为什么添加了NVIDIA_VISIBLE_DEVICES 环境变量就会给该容器分配 GPU，nvidia-container-toolkit 中做了哪些处理。&lt;/p&gt;
+
+&lt;p&gt;nvidia-container-toolkit 包含以下 3 个部分：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;1）&lt;a href=&#34;https://github.com/NVIDIA/nvidia-container-toolkit/tree/main/cmd/nvidia-container-runtime&#34;&gt;nvidia-container-runtime&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;2）&lt;a href=&#34;https://github.com/NVIDIA/nvidia-container-toolkit/tree/main/cmd/nvidia-container-runtime-hook&#34;&gt;nvidia-container-runtime-hook&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;3）&lt;a href=&#34;https://github.com/NVIDIA/libnvidia-container/tree/master/src/cli&#34;&gt;nvidia-container-cli&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;4-1-nvidia-container-runtime&#34;&gt;4.1. nvidia-container-runtime&lt;/h2&gt;
+
+&lt;p&gt;nvidia-container-runtime 可以看做是一个 docker/containerd 的底层 runtime（类似 runC），在模块在创建容器的整个调用链中处在如下位置：
+&lt;img src=&#34;post/2024/images/2024-01-27-pod-use-gpu/IMG_20250128-155337940.png&#34; alt=&#34;picture 1&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;它只做一件事，就是在容器启动之前，将 nvidia-container-runtime-hook 注入到 prestart hook。
+&amp;gt; 以修改容器 Spec 的方式添加一个 prestart hook 进去&lt;/p&gt;
+
+&lt;p&gt;这样，后续 runC 使用容器 Spec 创建容器时就会执行该 prestart hook。&lt;/p&gt;
+
+&lt;p&gt;简单分析下源码，首先是启动命令：&lt;a href=&#34;https://github.com/NVIDIA/nvidia-container-toolkit/blob/main/cmd/nvidia-container-runtime/main.go&#34;&gt;nvidia-container-runtime/main.go&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;就是 New 了一个 nvidia runtime 对象，并执行其 Run 方法。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;// https://github.com/NVIDIA/nvidia-container-toolkit/blob/main/cmd/nvidia-container-runtime/main.go#L9-L15
+
+import (
+    &amp;quot;os&amp;quot;
+
+    &amp;quot;github.com/NVIDIA/nvidia-container-toolkit/internal/runtime&amp;quot;
+)
+
+func main() {
+    r := runtime.New()
+    err := r.Run(os.Args)
+    if err != nil {
+       os.Exit(1)
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;具体的 New 方法也很简单，返回的是一个名为 Interface 的 Interface，包含一个 Run 方法&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;// https://github.com/NVIDIA/nvidia-containertoolkit/blob/main/internal/runtime/api.go#L17-L26
+
+type rt struct {
+    logger       *Logger
+    modeOverride string
+}
+
+// Interface is the interface for the runtime library.
+type Interface interface {
+    Run([]string) error
+}
+func New(opts ...Option) Interface {
+    r := rt{}
+    for _, opt := range opts {
+       opt(&amp;amp;r)
+    }
+    if r.logger == nil {
+       r.logger = NewLogger()
+    }
+    return &amp;amp;r
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Run 方法具体实现如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;// https://github.com/NVIDIA/nvidia-container-toolkit/blob/main/internal/runtime/runtime.go#L34-L91
+
+// Run is an entry point that allows for idiomatic handling of errors
+// when calling from the main function.
+func (r rt) Run(argv []string) (rerr error) {
+    defer func() {
+       if rerr != nil {
+          r.logger.Errorf(&amp;quot;%v&amp;quot;, rerr)
+       }
+    }()
+
+    printVersion := hasVersionFlag(argv)
+    if printVersion {
+       fmt.Printf(&amp;quot;%v version %v\n&amp;quot;, &amp;quot;NVIDIA Container Runtime&amp;quot;, info.GetVersionString(fmt.Sprintf(&amp;quot;spec: %v&amp;quot;, specs.Version)))
+    }
+
+    cfg, err := config.GetConfig()
+    if err != nil {
+       return fmt.Errorf(&amp;quot;error loading config: %v&amp;quot;, err)
+    }
+    r.logger.Update(
+       cfg.NVIDIAContainerRuntimeConfig.DebugFilePath,
+       cfg.NVIDIAContainerRuntimeConfig.LogLevel,
+       argv,
+    )
+    defer func() {
+       if rerr != nil {
+          r.logger.Errorf(&amp;quot;%v&amp;quot;, rerr)
+       }
+       if err := r.logger.Reset(); err != nil {
+          rerr = errors.Join(rerr, fmt.Errorf(&amp;quot;failed to reset logger: %v&amp;quot;, err))
+       }
+    }()
+
+    // We apply some config updates here to ensure that the config is valid in
+    // all cases.
+    if r.modeOverride != &amp;quot;&amp;quot; {
+       cfg.NVIDIAContainerRuntimeConfig.Mode = r.modeOverride
+    }
+    //nolint:staticcheck  // TODO(elezar): We should swith the nvidia-container-runtime from using nvidia-ctk to using nvidia-cdi-hook.
+    cfg.NVIDIACTKConfig.Path = config.ResolveNVIDIACTKPath(&amp;amp;logger.NullLogger{}, cfg.NVIDIACTKConfig.Path)
+    cfg.NVIDIAContainerRuntimeHookConfig.Path = config.ResolveNVIDIAContainerRuntimeHookPath(&amp;amp;logger.NullLogger{}, cfg.NVIDIAContainerRuntimeHookConfig.Path)
+
+    // Log the config at Trace to allow for debugging if required.
+    r.logger.Tracef(&amp;quot;Running with config: %+v&amp;quot;, cfg)
+
+    driver := root.New(
+       root.WithLogger(r.logger),
+       root.WithDriverRoot(cfg.NVIDIAContainerCLIConfig.Root),
+    )
+
+    r.logger.Tracef(&amp;quot;Command line arguments: %v&amp;quot;, argv)
+    runtime, err := newNVIDIAContainerRuntime(r.logger, cfg, argv, driver)
+    if err != nil {
+       return fmt.Errorf(&amp;quot;failed to create NVIDIA Container Runtime: %v&amp;quot;, err)
+    }
+
+    if printVersion {
+       fmt.Print(&amp;quot;\n&amp;quot;)
+    }
+    return runtime.Exec(argv)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;核心部分：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;runtime, err := newNVIDIAContainerRuntime(r.logger, cfg, argv, driver)
+if err != nil {
+   return fmt.Errorf(&amp;quot;failed to create NVIDIA Container Runtime: %v&amp;quot;, err)
+}
+
+if printVersion {
+   fmt.Print(&amp;quot;\n&amp;quot;)
+}
+return runtime.Exec(argv)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;继续查看 newNVIDIAContainerRuntime 实现&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;// https://github.com/NVIDIA/nvidia-container-toolkit/blob/main/internal/runtime/runtime_factory.go#L32-L62
+
+// newNVIDIAContainerRuntime is a factory method that constructs a runtime based on the selected configuration and specified logger
+func newNVIDIAContainerRuntime(logger logger.Interface, cfg *config.Config, argv []string, driver *root.Driver) (oci.Runtime, error) {
+    lowLevelRuntime, err := oci.NewLowLevelRuntime(logger, cfg.NVIDIAContainerRuntimeConfig.Runtimes)
+    if err != nil {
+       return nil, fmt.Errorf(&amp;quot;error constructing low-level runtime: %v&amp;quot;, err)
+    }
+
+    logger.Tracef(&amp;quot;Using low-level runtime %v&amp;quot;, lowLevelRuntime.String())
+    if !oci.HasCreateSubcommand(argv) {
+       logger.Tracef(&amp;quot;Skipping modifier for non-create subcommand&amp;quot;)
+       return lowLevelRuntime, nil
+    }
+
+    ociSpec, err := oci.NewSpec(logger, argv)
+    if err != nil {
+       return nil, fmt.Errorf(&amp;quot;error constructing OCI specification: %v&amp;quot;, err)
+    }
+
+    specModifier, err := newSpecModifier(logger, cfg, ociSpec, driver)
+    if err != nil {
+       return nil, fmt.Errorf(&amp;quot;failed to construct OCI spec modifier: %v&amp;quot;, err)
+    }
+
+    // Create the wrapping runtime with the specified modifier.
+    r := oci.NewModifyingRuntimeWrapper(
+       logger,
+       lowLevelRuntime,
+       ociSpec,
+       specModifier,
+    )
+
+    return r, nil
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;暂时只需要关注 specModifier 这个对象,就是它在修改容器的 spec 以添加 hook&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;// newSpecModifier is a factory method that creates constructs an OCI spec modifer based on the provided config.
+func newSpecModifier(logger logger.Interface, cfg *config.Config, ociSpec oci.Spec, driver *root.Driver) (oci.SpecModifier, error) {
+    rawSpec, err := ociSpec.Load()
+    if err != nil {
+       return nil, fmt.Errorf(&amp;quot;failed to load OCI spec: %v&amp;quot;, err)
+    }
+
+    image, err := image.NewCUDAImageFromSpec(rawSpec)
+    if err != nil {
+       return nil, err
+    }
+
+    mode := info.ResolveAutoMode(logger, cfg.NVIDIAContainerRuntimeConfig.Mode, image)
+    modeModifier, err := newModeModifier(logger, mode, cfg, ociSpec, image)
+    if err != nil {
+       return nil, err
+    }
+    // For CDI mode we make no additional modifications.
+    if mode == &amp;quot;cdi&amp;quot; {
+       return modeModifier, nil
+    }
+
+    graphicsModifier, err := modifier.NewGraphicsModifier(logger, cfg, image, driver)
+    if err != nil {
+       return nil, err
+    }
+
+    featureModifier, err := modifier.NewFeatureGatedModifier(logger, cfg, image)
+    if err != nil {
+       return nil, err
+    }
+
+    modifiers := modifier.Merge(
+       modeModifier,
+       graphicsModifier,
+       featureModifier,
+    )
+    return modifiers, nil
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;修改 hook 的 modifier 在 newModeModifier 里面&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;func newModeModifier(logger logger.Interface, mode string, cfg *config.Config, ociSpec oci.Spec, image image.CUDA) (oci.SpecModifier, error) {
+    switch mode {
+    case &amp;quot;legacy&amp;quot;:
+       return modifier.NewStableRuntimeModifier(logger, cfg.NVIDIAContainerRuntimeHookConfig.Path), nil
+    case &amp;quot;csv&amp;quot;:
+       return modifier.NewCSVModifier(logger, cfg, image)
+    case &amp;quot;cdi&amp;quot;:
+       return modifier.NewCDIModifier(logger, cfg, ociSpec)
+    }
+
+    return nil, fmt.Errorf(&amp;quot;invalid runtime mode: %v&amp;quot;, cfg.NVIDIAContainerRuntimeConfig.Mode)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;具体为 stableRuntimeModifier：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;func (m stableRuntimeModifier) Modify(spec *specs.Spec) error {
+    // If an NVIDIA Container Runtime Hook already exists, we don&#39;t make any modifications to the spec.
+    if spec.Hooks != nil {
+       for _, hook := range spec.Hooks.Prestart {
+          hook := hook
+          if isNVIDIAContainerRuntimeHook(&amp;amp;hook) {
+             m.logger.Infof(&amp;quot;Existing nvidia prestart hook (%v) found in OCI spec&amp;quot;, hook.Path)
+             return nil
+          }
+       }
+    }
+
+    path := m.nvidiaContainerRuntimeHookPath
+    m.logger.Infof(&amp;quot;Using prestart hook path: %v&amp;quot;, path)
+    args := []string{filepath.Base(path)}
+    if spec.Hooks == nil {
+       spec.Hooks = &amp;amp;specs.Hooks{}
+    }
+    spec.Hooks.Prestart = append(spec.Hooks.Prestart, specs.Hook{
+       Path: path,
+       Args: append(args, &amp;quot;prestart&amp;quot;),
+    })
+
+    return nil
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;核心部分：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;path := m.nvidiaContainerRuntimeHookPath
+spec.Hooks.Prestart = append(spec.Hooks.Prestart, specs.Hook{
+   Path: path,
+   Args: append(args, &amp;quot;prestart&amp;quot;),
+})
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可以看到，最终就是添加了一个 prestart hook，hook 的 path 就是 nvidia-container-runtime-hook 这个二进制文件的位置。&lt;/p&gt;
+
+&lt;p&gt;至此，nvidia-container-runtime 的工作就完成了，容器真正启动时，底层 runtime（比如 runC）检测到容器的 Spec 中有这个 hook 就会去执行了，最终 nvidia-container-runtime-hook 就会被运行了。&lt;/p&gt;
+
+&lt;h2 id=&#34;4-2-nvidia-container-runtime-hook&#34;&gt;4.2. nvidia-container-runtime-hook&lt;/h2&gt;
+
+&lt;p&gt;该组件则是 nvidia-container-toolkit 中的核心，所有的逻辑都在这里面实现。&lt;/p&gt;
+
+&lt;p&gt;主要做两件事：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;1）从容器的 env 中解析 GPU 信息&lt;/li&gt;
+&lt;li&gt;2）调用 nvidia-container-cli configure 命令，挂载相关文件，保证容器内可以使用被指定的GPU以及对应能力
+也是先从启动命令看起：&lt;a href=&#34;https://github.com/NVIDIA/nvidia-container-toolkit/blob/main/cmd/nvidia-container-runtime-hook/main.go&#34;&gt;nvidia-container-runtime-hook/main.go&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;switch args[0] {
+case &amp;quot;prestart&amp;quot;:
+    doPrestart()
+    os.Exit(0)
+case &amp;quot;poststart&amp;quot;:
+    fallthrough
+case &amp;quot;poststop&amp;quot;:
+    os.Exit(0)
+default:
+    flag.Usage()
+    os.Exit(2)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;我们是添加的 prestart hook，因此会走 prestart 分支 执行doPrestart()方法。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;func doPrestart() {
+    var err error
+
+    defer exit()
+    log.SetFlags(0)
+
+    hook, err := getHookConfig()
+    if err != nil || hook == nil {
+       log.Panicln(&amp;quot;error getting hook config:&amp;quot;, err)
+    }
+    cli := hook.NVIDIAContainerCLIConfig
+
+    container := getContainerConfig(*hook)
+    nvidia := container.Nvidia
+    if nvidia == nil {
+       // Not a GPU container, nothing to do.
+       return
+    }
+
+    if !hook.NVIDIAContainerRuntimeHookConfig.SkipModeDetection &amp;amp;&amp;amp; info.ResolveAutoMode(&amp;amp;logInterceptor{}, hook.NVIDIAContainerRuntimeConfig.Mode, container.Image) != &amp;quot;legacy&amp;quot; {
+       log.Panicln(&amp;quot;invoking the NVIDIA Container Runtime Hook directly (e.g. specifying the docker --gpus flag) is not supported. Please use the NVIDIA Container Runtime (e.g. specify the --runtime=nvidia flag) instead.&amp;quot;)
+    }
+
+    rootfs := getRootfsPath(container)
+
+    args := []string{getCLIPath(cli)}
+    if cli.Root != &amp;quot;&amp;quot; {
+       args = append(args, fmt.Sprintf(&amp;quot;--root=%s&amp;quot;, cli.Root))
+    }
+    if cli.LoadKmods {
+       args = append(args, &amp;quot;--load-kmods&amp;quot;)
+    }
+    if cli.NoPivot {
+       args = append(args, &amp;quot;--no-pivot&amp;quot;)
+    }
+    if *debugflag {
+       args = append(args, &amp;quot;--debug=/dev/stderr&amp;quot;)
+    } else if cli.Debug != &amp;quot;&amp;quot; {
+       args = append(args, fmt.Sprintf(&amp;quot;--debug=%s&amp;quot;, cli.Debug))
+    }
+    if cli.Ldcache != &amp;quot;&amp;quot; {
+       args = append(args, fmt.Sprintf(&amp;quot;--ldcache=%s&amp;quot;, cli.Ldcache))
+    }
+    if cli.User != &amp;quot;&amp;quot; {
+       args = append(args, fmt.Sprintf(&amp;quot;--user=%s&amp;quot;, cli.User))
+    }
+    args = append(args, &amp;quot;configure&amp;quot;)
+
+    if ldconfigPath := cli.NormalizeLDConfigPath(); ldconfigPath != &amp;quot;&amp;quot; {
+       args = append(args, fmt.Sprintf(&amp;quot;--ldconfig=%s&amp;quot;, ldconfigPath))
+    }
+    if cli.NoCgroups {
+       args = append(args, &amp;quot;--no-cgroups&amp;quot;)
+    }
+    if len(nvidia.Devices) &amp;gt; 0 {
+       args = append(args, fmt.Sprintf(&amp;quot;--device=%s&amp;quot;, nvidia.Devices))
+    }
+    if len(nvidia.MigConfigDevices) &amp;gt; 0 {
+       args = append(args, fmt.Sprintf(&amp;quot;--mig-config=%s&amp;quot;, nvidia.MigConfigDevices))
+    }
+    if len(nvidia.MigMonitorDevices) &amp;gt; 0 {
+       args = append(args, fmt.Sprintf(&amp;quot;--mig-monitor=%s&amp;quot;, nvidia.MigMonitorDevices))
+    }
+    if len(nvidia.ImexChannels) &amp;gt; 0 {
+       args = append(args, fmt.Sprintf(&amp;quot;--imex-channel=%s&amp;quot;, nvidia.ImexChannels))
+    }
+
+    for _, cap := range strings.Split(nvidia.DriverCapabilities, &amp;quot;,&amp;quot;) {
+       if len(cap) == 0 {
+          break
+       }
+       args = append(args, capabilityToCLI(cap))
+    }
+
+    for _, req := range nvidia.Requirements {
+       args = append(args, fmt.Sprintf(&amp;quot;--require=%s&amp;quot;, req))
+    }
+
+    args = append(args, fmt.Sprintf(&amp;quot;--pid=%s&amp;quot;, strconv.FormatUint(uint64(container.Pid), 10)))
+    args = append(args, rootfs)
+
+    env := append(os.Environ(), cli.Environment...)
+    //nolint:gosec // TODO: Can we harden this so that there is less risk of command injection?
+    err = syscall.Exec(args[0], args, env)
+    log.Panicln(&amp;quot;exec failed:&amp;quot;, err)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;我们只需要关注下面这个就行&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;args := []string{getCLIPath(cli)}
+container := getContainerConfig(*hook)
+err = syscall.Exec(args[0], args, env)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;一个是 getContainerConfig 解析容器配置 ，另一个就是 exec 真正开始执行命令。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;这里执行的命令其实就是 nvidia-container-cli&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&#34;4-2-1-getcontainerconfig&#34;&gt;4.2.1. getContainerConfig&lt;/h3&gt;
+
+&lt;p&gt;这部分就是解析 Env 拿到要分配给该容器的 GPU，如果没有 NVIDIA_VISIBLE_DEVICES 环境变量就不会做任何事情。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;func getContainerConfig(hook HookConfig) (config containerConfig) {
+    var h HookState
+    d := json.NewDecoder(os.Stdin)
+    if err := d.Decode(&amp;amp;h); err != nil {
+       log.Panicln(&amp;quot;could not decode container state:&amp;quot;, err)
+    }
+
+    b := h.Bundle
+    if len(b) == 0 {
+       b = h.BundlePath
+    }
+
+    s := loadSpec(path.Join(b, &amp;quot;config.json&amp;quot;))
+
+    image, err := image.New(
+       image.WithEnv(s.Process.Env),
+       image.WithDisableRequire(hook.DisableRequire),
+    )
+    if err != nil {
+       log.Panicln(err)
+    }
+
+    privileged := isPrivileged(s)
+    return containerConfig{
+       Pid:    h.Pid,
+       Rootfs: s.Root.Path,
+       Image:  image,
+       Nvidia: getNvidiaConfig(&amp;amp;hook, image, s.Mounts, privileged),
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;构建了一个 image 对象，注意这里把 ENV 也传进去了&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;之前说了需要给容器分配什么 GPU 是通过 NVIDIA_VISIBLE_DEVICES 环境变量指定的&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;image, err := image.New(
+    image.WithEnv(s.Process.Env),
+    image.WithDisableRequire(hook.DisableRequire),
+)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;然后解析配置&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;func getNvidiaConfig(hookConfig *HookConfig, image image.CUDA, mounts []Mount, privileged bool) *nvidiaConfig {
+    legacyImage := image.IsLegacy()
+
+    var devices string
+    if d := getDevices(hookConfig, image, mounts, privileged); d != nil {
+       devices = *d
+    } else {
+       // &#39;nil&#39; devices means this is not a GPU container.
+       return nil
+    }
+
+    var migConfigDevices string
+    if d := getMigConfigDevices(image); d != nil {
+       migConfigDevices = *d
+    }
+    if !privileged &amp;amp;&amp;amp; migConfigDevices != &amp;quot;&amp;quot; {
+       log.Panicln(&amp;quot;cannot set MIG_CONFIG_DEVICES in non privileged container&amp;quot;)
+    }
+
+    var migMonitorDevices string
+    if d := getMigMonitorDevices(image); d != nil {
+       migMonitorDevices = *d
+    }
+    if !privileged &amp;amp;&amp;amp; migMonitorDevices != &amp;quot;&amp;quot; {
+       log.Panicln(&amp;quot;cannot set MIG_MONITOR_DEVICES in non privileged container&amp;quot;)
+    }
+
+    var imexChannels string
+    if c := getImexChannels(image); c != nil {
+       imexChannels = *c
+    }
+
+    driverCapabilities := hookConfig.getDriverCapabilities(image, legacyImage).String()
+
+    requirements, err := image.GetRequirements()
+    if err != nil {
+       log.Panicln(&amp;quot;failed to get requirements&amp;quot;, err)
+    }
+
+    return &amp;amp;nvidiaConfig{
+       Devices:            devices,
+       MigConfigDevices:   migConfigDevices,
+       MigMonitorDevices:  migMonitorDevices,
+       ImexChannels:       imexChannels,
+       DriverCapabilities: driverCapabilities,
+       Requirements:       requirements,
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;核心是 getDevice，就是根据 Mounts 信息或者 Env 解析要分配给该容器的 GPU&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;func getDevices(hookConfig *HookConfig, image image.CUDA, mounts []Mount, privileged bool) *string {
+    // If enabled, try and get the device list from volume mounts first
+    if hookConfig.AcceptDeviceListAsVolumeMounts {
+       devices := getDevicesFromMounts(mounts)
+       if devices != nil {
+          return devices
+       }
+    }
+
+    // Fallback to reading from the environment variable if privileges are correct
+    devices := getDevicesFromEnvvar(image, hookConfig.getSwarmResourceEnvvars())
+    if devices == nil {
+       return nil
+    }
+    if privileged || hookConfig.AcceptEnvvarUnprivileged {
+       return devices
+    }
+
+    configName := hookConfig.getConfigOption(&amp;quot;AcceptEnvvarUnprivileged&amp;quot;)
+    log.Printf(&amp;quot;Ignoring devices specified in NVIDIA_VISIBLE_DEVICES (privileged=%v, %v=%v) &amp;quot;, privileged, configName, hookConfig.AcceptEnvvarUnprivileged)
+
+    return nil
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可以看到这里根据配置不同，提供了两种解析 devices 的方法：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;getDevicesFromMounts&lt;/li&gt;
+&lt;li&gt;getDevicesFromEnvvar
+这也就是为什么 nvidia device plugin 除了实现 Env 之外还实现了另外的方式，二者配置应该要对应才行。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;这里我们只关注 getDevicesFromEnvvar，从环境变量里解析 Device：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;envNVVisibleDevices     = &amp;quot;NVIDIA_VISIBLE_DEVICES&amp;quot;
+
+func getDevicesFromEnvvar(image image.CUDA, swarmResourceEnvvars []string) *string {
+	// We check if the image has at least one of the Swarm resource envvars defined and use this
+	// if specified.
+	var hasSwarmEnvvar bool
+	for _, envvar := range swarmResourceEnvvars {
+		if image.HasEnvvar(envvar) {
+			hasSwarmEnvvar = true
+			break
+		}
+	}
+
+	var devices []string
+	if hasSwarmEnvvar {
+		devices = image.DevicesFromEnvvars(swarmResourceEnvvars...).List()
+	} else {
+		devices = image.DevicesFromEnvvars(envNVVisibleDevices).List()
+	}
+
+	if len(devices) == 0 {
+		return nil
+	}
+
+	devicesString := strings.Join(devices, &amp;quot;,&amp;quot;)
+
+	return &amp;amp;devicesString
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;核心如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;devices = image.DevicesFromEnvvars(envNVVisibleDevices).List()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;从 image 里面提取NVIDIA_VISIBLE_DEVICES环境变量，至于这个 Env 是哪里来的，也是容器 Spec 中定义的，之前 image 是这样初始化的：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;s := loadSpec(path.Join(b, &amp;quot;config.json&amp;quot;))
+
+	image, err := image.New(
+		image.WithEnv(s.Process.Env), // 这里把容器 env 传给了 image 对象
+		image.WithDisableRequire(hook.DisableRequire),
+	)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;实际这里还有一个特殊逻辑：&lt;em&gt;如果没有设置 NVIDIA_VISIBLE_DEVICES环境变量，也没通过其他方式解析到 device 并且还是是一个 legacy image，那么默认使用全部 GPU。&lt;/em&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;// Environment variable unset with legacy image: default to &amp;quot;all&amp;quot;.
+if !isSet &amp;amp;&amp;amp; len(devices) == 0 &amp;amp;&amp;amp; i.IsLegacy() {
+  return NewVisibleDevices(&amp;quot;all&amp;quot;)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;那么什么算是 legacy image 呢：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;// IsLegacy returns whether the associated CUDA image is a &amp;quot;legacy&amp;quot; image. An
+// image is considered legacy if it has a CUDA_VERSION environment variable defined
+// and no NVIDIA_REQUIRE_CUDA environment variable defined.
+func (i CUDA) IsLegacy() bool {
+	legacyCudaVersion := i.env[envCUDAVersion]
+	cudaRequire := i.env[envNVRequireCUDA]
+	return len(legacyCudaVersion) &amp;gt; 0 &amp;amp;&amp;amp; len(cudaRequire) == 0
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这也就是为什么，有时候启动 Pod 并没有申请 GPU，但是 Pod 里面依旧可以看到所有 GPU，就是走了这个 legacy image 的分支逻辑。&lt;/p&gt;
+
+&lt;p&gt;至此，我们知道了这边 runtime 是怎么指定要把哪些 GPU 分配给容器了，接下来进入 Exec 逻辑。&lt;/p&gt;
+
+&lt;h3 id=&#34;4-2-2-exec&#34;&gt;4.2.2. Exec&lt;/h3&gt;
+
+&lt;p&gt;Exec 部分比较短，就是这两行代码：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;args := []string{getCLIPath(cli)}
+err = syscall.Exec(args[0], args, env)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;首先是 getCLIPath，用于寻找 nvidia-container-cli 工具的位置并作为第一个参数。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;func getCLIPath(config config.ContainerCLIConfig) string {
+    if config.Path != &amp;quot;&amp;quot; {
+       return config.Path
+    }
+
+    if err := os.Setenv(&amp;quot;PATH&amp;quot;, lookup.GetPath(config.Root)); err != nil {
+       log.Panicln(&amp;quot;couldn&#39;t set PATH variable:&amp;quot;, err)
+    }
+
+    path, err := exec.LookPath(&amp;quot;nvidia-container-cli&amp;quot;)
+    if err != nil {
+       log.Panicln(&amp;quot;couldn&#39;t find binary nvidia-container-cli in&amp;quot;, os.Getenv(&amp;quot;PATH&amp;quot;), &amp;quot;:&amp;quot;, err)
+    }
+    return path
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可以看到，如果单独配置了 cli 的位置参数就使用配置的位置，否则使用 LookPath 根据名字寻找。&lt;/p&gt;
+
+&lt;p&gt;然后是相关的参数&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;    args := []string{getCLIPath(cli)}
+    if cli.Root != &amp;quot;&amp;quot; {
+       args = append(args, fmt.Sprintf(&amp;quot;--root=%s&amp;quot;, cli.Root))
+    }
+    if cli.LoadKmods {
+       args = append(args, &amp;quot;--load-kmods&amp;quot;)
+    }
+    if cli.NoPivot {
+       args = append(args, &amp;quot;--no-pivot&amp;quot;)
+    }
+    if *debugflag {
+       args = append(args, &amp;quot;--debug=/dev/stderr&amp;quot;)
+    } else if cli.Debug != &amp;quot;&amp;quot; {
+       args = append(args, fmt.Sprintf(&amp;quot;--debug=%s&amp;quot;, cli.Debug))
+    }
+    if cli.Ldcache != &amp;quot;&amp;quot; {
+       args = append(args, fmt.Sprintf(&amp;quot;--ldcache=%s&amp;quot;, cli.Ldcache))
+    }
+    if cli.User != &amp;quot;&amp;quot; {
+       args = append(args, fmt.Sprintf(&amp;quot;--user=%s&amp;quot;, cli.User))
+    }
+    args = append(args, &amp;quot;configure&amp;quot;)
+
+    if ldconfigPath := cli.NormalizeLDConfigPath(); ldconfigPath != &amp;quot;&amp;quot; {
+       args = append(args, fmt.Sprintf(&amp;quot;--ldconfig=%s&amp;quot;, ldconfigPath))
+    }
+    if cli.NoCgroups {
+       args = append(args, &amp;quot;--no-cgroups&amp;quot;)
+    }
+    if len(nvidia.Devices) &amp;gt; 0 {
+       args = append(args, fmt.Sprintf(&amp;quot;--device=%s&amp;quot;, nvidia.Devices))
+    }
+    if len(nvidia.MigConfigDevices) &amp;gt; 0 {
+       args = append(args, fmt.Sprintf(&amp;quot;--mig-config=%s&amp;quot;, nvidia.MigConfigDevices))
+    }
+    if len(nvidia.MigMonitorDevices) &amp;gt; 0 {
+       args = append(args, fmt.Sprintf(&amp;quot;--mig-monitor=%s&amp;quot;, nvidia.MigMonitorDevices))
+    }
+    if len(nvidia.ImexChannels) &amp;gt; 0 {
+       args = append(args, fmt.Sprintf(&amp;quot;--imex-channel=%s&amp;quot;, nvidia.ImexChannels))
+    }
+
+    for _, cap := range strings.Split(nvidia.DriverCapabilities, &amp;quot;,&amp;quot;) {
+       if len(cap) == 0 {
+          break
+       }
+       args = append(args, capabilityToCLI(cap))
+    }
+
+    for _, req := range nvidia.Requirements {
+       args = append(args, fmt.Sprintf(&amp;quot;--require=%s&amp;quot;, req))
+    }
+
+    args = append(args, fmt.Sprintf(&amp;quot;--pid=%s&amp;quot;, strconv.FormatUint(uint64(container.Pid), 10)))
+    args = append(args, rootfs)
+
+    env := append(os.Environ(), cli.Environment...)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;其中&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;args = append(args, &amp;quot;configure&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;表示执行的是nvidia-container-cli configure 命令。&lt;/p&gt;
+
+&lt;p&gt;最后则是调用 syscall.Exec 真正开始执行命令&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;err = syscall.Exec(args[0], args, env)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;该命令具体在做什么呢，接着分析 nvidia-container-cli 实现。&lt;/p&gt;
+
+&lt;h2 id=&#34;4-3-nvidia-container-cli&#34;&gt;4.3. nvidia-container-cli&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/NVIDIA/libnvidia-container/tree/master/src/cli&#34;&gt;nvidia-container-cli&lt;/a&gt; 是一个 C 写的小工具，主要作用就是根据上执行命令时传递的参数，把GPU 设备及其相关依赖库挂载到容器中，使得容器能够正常使用 GPU 能力。&lt;/p&gt;
+
+&lt;p&gt;简单看下部分代码。&lt;/p&gt;
+
+&lt;p&gt;首先是驱动信息：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-c&#34;&gt;// https://github.com/NVIDIA/libnvidia-container/blob/master/src/cli/configure.c#L279-L288
+
+/* Query the driver and device information. */
+if (perm_set_capabilities(&amp;amp;err, CAP_EFFECTIVE, ecaps[NVC_INFO], ecaps_size(NVC_INFO)) &amp;lt; 0) {
+        warnx(&amp;quot;permission error: %s&amp;quot;, err.msg);
+        goto fail;
+}
+if ((drv = libnvc.driver_info_new(nvc, NULL)) == NULL ||
+    (dev = libnvc.device_info_new(nvc, NULL)) == NULL) {
+        warnx(&amp;quot;detection error: %s&amp;quot;, libnvc.error(nvc));
+        goto fail;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;nvc_driver_info_new()：获取 CUDA Driver 信息&lt;/li&gt;
+&lt;li&gt;nvc_device_info_new()：获取 GPU Drvier 信息
+&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;然后获取容器中可见的 GPU 列表&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-c&#34;&gt;// https://github.com/NVIDIA/libnvidia-container/blob/master/src/cli/configure.c#L308-L314
+
+        /* Select the visible GPU devices. */
+        if (dev-&amp;gt;ngpus &amp;gt; 0) {
+                if (select_devices(&amp;amp;err, ctx-&amp;gt;devices, dev, &amp;amp;devices) &amp;lt; 0) {
+                        warnx(&amp;quot;device error: %s&amp;quot;, err.msg);
+                        goto fail;
+                }
+        }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;最后则是将相关驱动挂载到容器里去：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-c&#34;&gt;// https://github.com/NVIDIA/libnvidia-container/blob/master/src/cli/configure.c#L362-L408
+
+/* Mount the driver, visible devices, mig-configs and mig-monitors. */
+if (perm_set_capabilities(&amp;amp;err, CAP_EFFECTIVE, ecaps[NVC_MOUNT], ecaps_size(NVC_MOUNT)) &amp;lt; 0) {
+        warnx(&amp;quot;permission error: %s&amp;quot;, err.msg);
+        goto fail;
+}
+if (libnvc.driver_mount(nvc, cnt, drv) &amp;lt; 0) {
+        warnx(&amp;quot;mount error: %s&amp;quot;, libnvc.error(nvc));
+        goto fail;
+}
+for (size_t i = 0; i &amp;lt; devices.ngpus; ++i) {
+        if (libnvc.device_mount(nvc, cnt, devices.gpus[i]) &amp;lt; 0) {
+                warnx(&amp;quot;mount error: %s&amp;quot;, libnvc.error(nvc));
+                goto fail;
+        }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;libnvidia-container是采用 linux c mount &amp;ndash;bind功能将 CUDA Driver Libraries/Binaries一个个挂载到容器里，而不是将整个目录挂载到容器中。&lt;/p&gt;
+
+&lt;p&gt;可通过NVIDIA_DRIVER_CAPABILITIES环境变量指定要挂载的 driver libraries/binaries。&lt;/p&gt;
+
+&lt;p&gt;例如：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;docker run -e NVIDIA_VISIBLE_DEVICES=0,1 -e NVIDIA_DRIVER_CAPABILITIES=compute,utility -it tensorflow/tensorflow:latest-gpu bash
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;指定NVIDIA_DRIVER_CAPABILITIES=compute,utility 就会把 compute 和 utility 相关的库挂载进去。&lt;/p&gt;
+
+&lt;p&gt;这样容器里就可以使用 GPU 了。&lt;/p&gt;
+
+&lt;p&gt;至此，相关源码就分析完成了。&lt;/p&gt;
+
+&lt;h1 id=&#34;5-小结&#34;&gt;5. 小结&lt;/h1&gt;
+
+&lt;p&gt;整个流程如下：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;1）device plugin 上报节点上的 GPU 信息&lt;/li&gt;
+&lt;li&gt;2）用户创建 Pod，在 resources.rquest 中申请 GPU，Scheduler 根据各节点 GPU 资源情况，将 Pod 调度到一个有足够 GPU 的节点&lt;/li&gt;
+&lt;li&gt;3）DevicePlugin 根据 Pod 中申请的 GPU 资源，为容器添加NVIDIA_VISIBLE_DEVICES环境变量
+ &amp;gt; 例如：NVIDIA_VISIBLE_DEVICES=GPU-03f69c50-207a-2038-9b45-23cac89cb67d&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;4）docker / containerd 启动容器&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;由于配置了 nvidia-container-runtime,因此会使用 nvidia-container-runtime 来创建容器&lt;/li&gt;
+&lt;li&gt;nvidia-container-runtime 额外做了一件事：将 nvidia-container-runtime-hook 作为 prestart hook 添加到容器 spec 中，然后就将容器 spec 信息往后传给 runC 了。&lt;/li&gt;
+&lt;li&gt;runC 创建容器前会调用 prestart hook，其中就包括了上一步添加的 nvidia-container-runtime-hook，该 hook 主要做两件事：
+
+&lt;ul&gt;
+&lt;li&gt;从容器 Spec 的 mounts 或者 env 中解析 GPU 信息&lt;/li&gt;
+&lt;li&gt;调用 nvidia-container-cli 命令，将 NVIDIA 的 GPU Driver、CUDA Driver 等库文件挂载进容器，保证容器内可以使用被指定的 GPU以及对应能力
+核心就是两个部分：&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;device plugin 根据 GPU 资源申请为容器添加 NVIDIA_VISIBLE_DEVICES环境变量&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;nvidia-container-toolkit 则是根据 NVIDIA_VISIBLE_DEVICES环境变量将 GPU、驱动等相关文件挂载到容器里。
+看源码同时顺带解决了一个，之前遇到过的问题：&lt;em&gt;为什么 Pod 明明没有申请 GPU，启动后也能看到所有 GPU？&lt;/em&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;这是因为 nvidia-container-toolkit 中存在特殊逻辑，没有设置 NVIDIA_VISIBLE_DEVICES环境变量，也没通过其他方式解析到 device 并且还是一个 legacy image，那么默认会返回all，即：NVIDIA_VISIBLE_DEVICES=all ，因此该 Pod 能看到全部 GPU。&lt;/p&gt;
+</description>
+        </item>
         
         <item>
             <title>K8S项目实践(10): device-plugin原理到实现</title>
@@ -6747,153 +7892,6 @@ default                cronjob-demo-27761067--1-9x5fn                  0/1     C
 10.&lt;a href=&#34;https://www.jianshu.com/p/cedf8c9d18f1&#34;&gt;k8s中statefulset资源类型的深入理解&lt;/a&gt;&lt;br /&gt;
 11.&lt;a href=&#34;https://copyfuture.com/blogs-details/202006012253389106o9ttg1qo5by175&#34;&gt;k8s job简介和访问&lt;/a&gt;&lt;br /&gt;
 12.&lt;a href=&#34;https://blog.csdn.net/m0_47288926/article/details/122819880&#34;&gt;k8s-HPA&lt;/a&gt;&lt;/p&gt;
-</description>
-        </item>
-        
-        <item>
-            <title>K8S学习笔记(05): yaml语法</title>
-            <link>http://mospany.github.io/2022/09/27/k8s-yaml/</link>
-            <pubDate>Tue, 27 Sep 2022 19:58:47 CST</pubDate>
-            <author>Mospan</author>
-            <guid>http://mospany.github.io/2022/09/27/k8s-yaml/</guid>
-            <description>
-
-&lt;p&gt;&lt;a id=&#34;orgfba5ff2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;k8s支持的文件格式&#34;&gt;k8s支持的文件格式&lt;/h1&gt;
-
-&lt;p&gt;Kubernetes支持YAML和JSON格式管理资源对象&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;JSON格式：主要用于api接口之间消息的传递&lt;/li&gt;
-&lt;li&gt;YAML格式：用于配置和管理，YAML是一种简洁的非标记性语言，内容格式人性化，较易读&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a id=&#34;org3c21164&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;yaml语言格式&#34;&gt;YAML语言格式&lt;/h1&gt;
-
-&lt;p&gt;● 大小写敏感&lt;br /&gt;
-● 使用缩进表示层级关系&lt;br /&gt;
-● 不支持Tab键制表符缩进，只使用空格缩进&lt;br /&gt;
-● 缩进的空格数目不重要，只要相同层级的元素左侧对齐即可，通常开头缩进两个空格&lt;br /&gt;
-● 符号字符后缩进一个空格，如冒号，逗号，短横杠（-）等&lt;br /&gt;
-● “&amp;#x2014;”表示YAML格式，一个文件的开始，用于分隔文件&lt;br /&gt;
-● “#”表示注释&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgd843414&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;编写资源配置清单&#34;&gt;编写资源配置清单&lt;/h1&gt;
-
-&lt;p&gt;[root@master test]# vim nginx-test.yaml&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;#指定api版本标签
-apiVersion: apps/v1
-#定义资源的类型/角色，deployment为副本控制器
-#此处资源类型可以是Deployment、Job、Ingress、Service等
-kind: Deployment
-#定义资源的元数据信息，比如资源的名称、namespace、标签等信息
-metadata:
-  #定义资源的名称，在同一个namespace空间中必须是唯一的
-  name: nginx-test
-  lables:
-    app: nginx
-#定义deployment资源需要的参数属性，诸如是否在容器失败时重新启动容器的属性
-spec:
-  #定义副本数量
-  replicas: 3
-  #定义标签选择器
-  selector:
-    #定义匹配标签
-    matchLabels:
-      #需与后面的.spec.template.metadata.labels定义的标签保持一致
-      app: nginx
-  #定义业务模板，如果有多个副本，所有副本的属性会按照模板的相关配置进行匹配
-  template:
-    metadata:
-      #定义Pod副本将使用的标签，需与前面的.spec.selector.matchLabels定义的标签保持一致
-      labels:
-        app: nginx
-    spec:
-      #定义容器属性
-      containers:
-      #定义一个容器名，一个-name:定义一个容器
-      - name: nginx
-        #定义容器使用的镜像以及版本
-        image: nginx:1.15.4
-        ports:
-        #定义容器对外的端口
-        - containerPort: 80
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org32111ee&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;创建service服务对外提供访问并测试&#34;&gt;创建service服务对外提供访问并测试&lt;/h1&gt;
-
-&lt;p&gt;[root@master test]# vim nginx-svc-test.yaml&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;apiVersion: v1
-kind: Service
-metadata:
-  name: nginx-svc
-  labels:
-    app: nginx
-spec:
-  type: NodePort
-  ports:
-  - port: 80
-    targetPort: 80
-  selector:
-    #此处定义的selector要与deployment所定义的selector相同
-    #service依靠标签选择器来检索提供服务的nodes
-    app: nginx
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org7f24d32&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;详解k8s中的port&#34;&gt;详解k8s中的port&lt;/h1&gt;
-
-&lt;p&gt;port是k8s集群内部访问service的端口，即通过clusterIP:port可以从Pod所在的Node上访问到service&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;nodePort&lt;br /&gt;
-nodePort是外部访问k8s集群中service的端口，通过nodeIP:nodePort可以从外部访问到某个service&lt;/li&gt;
-&lt;li&gt;targetPort&lt;br /&gt;
-targetPort是Pod的端口，从port或nodePort来的流量经过kube-proxy反向代理负载均衡转发到后端Pod的targetPort上，最后进入容器。&lt;/li&gt;
-&lt;li&gt;containerPort&lt;br /&gt;
-containerPort是Pod内部容器的端口，targetPort映射到containerPort。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgbae1b9d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;获取资源配置清单的总结&#34;&gt;获取资源配置清单的总结&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;没有相关资源，使用run命令&amp;#x2013;dry-run选项&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$ kubectl run dryrun-test --image=nginx --port=80 --replicas=3 --dry-run -o yaml &amp;gt; dryrun-test.yaml
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;已有相关资源，使用get命令&amp;#x2013;export选项&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$ kubectl get deploy dryrun-test --export -o yaml &amp;gt; export-test.yaml
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;注&lt;/strong&gt; ：&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;现在不推荐使用“ export”（从1.14版本开始，通常应该在1.18版本中消失（在changelog中找不到））&lt;/li&gt;
-&lt;li&gt;&amp;#x2013;dry-run is deprecated and can be replaced with &amp;#x2013;dry-run=client.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a id=&#34;org86e8206&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;参考资料&#34;&gt;参考资料&lt;/h1&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.escapelife.site/posts/8032061c.html&#34;&gt;Kubernetes之YAML语法&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
 </description>
         </item>
         

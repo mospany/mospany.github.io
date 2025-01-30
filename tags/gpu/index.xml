@@ -6,10 +6,19 @@
     <description>Recent content in GPU on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Wed, 24 Jan 2024 19:31:10 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 27 Jan 2024 19:31:10 +0800</lastBuildDate>
     
 	<atom:link href="http://mospany.github.io/tags/gpu/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>K8S项目实践(11): Pod 是如何使用到 GPU 的及源码分析</title>
+      <link>http://mospany.github.io/2024/01/27/pod-use-gpu/</link>
+      <pubDate>Sat, 27 Jan 2024 19:31:10 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2024/01/27/pod-use-gpu/</guid>
+      <description>本文主要分析了在 K8s 中创建一个 Pod 并申请 GPU 资源，最终该 Pod 时怎么能够使用 GPU 的，具体的实现原理，以及 device plugin、nvidia-container</description>
+    </item>
     
     <item>
       <title>K8S项目实践(10): device-plugin原理到实现</title>
