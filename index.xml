@@ -5,7 +5,649 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Sat, 27 Jan 2024 19:31:10 CST</updated>
+        <updated>Wed, 31 Jan 2024 19:31:10 CST</updated>
+        
+        <item>
+            <title>K8S项目实践(12): GPU共享方案Time Slicing</title>
+            <link>http://mospany.github.io/2024/01/31/gpu-time-slicing/</link>
+            <pubDate>Wed, 31 Jan 2024 19:31:10 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://mospany.github.io/2024/01/31/gpu-time-slicing/</guid>
+            <description>
+
+&lt;p&gt;本文主要分享 GPU 共享方案，包括如何安装、配置以及使用，最后通过分析源码了 TimeSlicing 的具体实现。通过配置 TimeSlicing 可以实现 Pod 共享一块物理 GPU(使用GRID GPU代替)，以提升资源利用率。&lt;/p&gt;
+
+&lt;h1 id=&#34;1-为什么需要-gpu-共享-切分等方案&#34;&gt;1. 为什么需要 GPU 共享、切分等方案？&lt;/h1&gt;
+
+&lt;p&gt;开始之前我们先思考一个问题，&lt;em&gt;为什么需要 GPU 共享、切分等方案?&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;或者说是另外一个问题：&lt;em&gt;明明直接在裸机环境使用，都可以多个进程共享 GPU，怎么到 k8s 环境就不行了。&lt;/em&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;1-1-资源感知&#34;&gt;1.1. 资源感知&lt;/h2&gt;
+
+&lt;p&gt;首先在 k8s 中资源是和节点绑定的，对于 GPU 资源，我们使用 NVIDIA 提供的 device-plugin 进行感知，并上报到 kube-apiserver,这样我们就能在 Node 对象上看到对应的资源了。&lt;/p&gt;
+
+&lt;p&gt;就像这样：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@liqivm:~# k describe node gpu01|grep Capacity -A 7
+Capacity:
+  cpu:                128
+  ephemeral-storage:  879000896Ki
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             1056457696Ki
+  nvidia.com/gpu:     8
+  pods:               110
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可以看到，该节点除了基础的 cpu、memory 之外，还有一个nvidia.com/gpu: 8 信息，表示该节点上有 8 个 GPU。&lt;/p&gt;
+
+&lt;h2 id=&#34;1-2-资源申请&#34;&gt;1.2. 资源申请&lt;/h2&gt;
+
+&lt;p&gt;然后我们就可以在创建 Pod 时申请对应的资源了，比如申请一个 GPU：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;apiVersion: v1
+kind: Pod
+metadata:
+  name: gpu-pod
+spec:
+  containers:
+  - name: gpu-container
+    image: nvidia/cuda:11.0-base   # 一个支持 GPU 的镜像
+    resources:
+      limits:
+        nvidia.com/gpu: 1          # 申请 1 个 GPU
+    command: [&amp;quot;nvidia-smi&amp;quot;]         # 示例命令，显示 GPU 的信息
+  restartPolicy: OnFailure
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;apply 该 yaml 之后，kube-scheduler 在调度该 Pod 时就会将其调度到一个拥有足够 GPU 资源的 Node 上。&lt;/p&gt;
+
+&lt;p&gt;同时该 Pod 申请的部分资源也会标记为已使用，不会在分配给其他 Pod。&lt;/p&gt;
+
+&lt;p&gt;到这里，问题的答案就已经很明显的。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;1）device-plugin 感知到节点上的物理 GPU 数量，上报到 kube-apiserver&lt;/li&gt;
+&lt;li&gt;2）kube-scheduler 调度 Pod 时会根据 pod 中的 Request 消耗对应资源&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;即：&lt;em&gt;Node 上的 GPU 资源被 Pod 申请之后，在 k8s 中就被标记为已消耗了，后续创建的 Pod 会因为资源不够导致无法调度。&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;实际上：可能 GPU 性能比较好，可以支持多个 Pod 共同使用，但是因为 k8s 中的调度限制导致多个 Pod 无法正常共享。&lt;/p&gt;
+
+&lt;p&gt;因此，我们才需要 GPU 共享、切分等方案。&lt;/p&gt;
+
+&lt;h1 id=&#34;2-什么是-time-slicing-方案&#34;&gt;2. 什么是 Time Slicing 方案&lt;/h1&gt;
+
+&lt;p&gt;NVIDIA 提供的 &lt;a href=&#34;https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/gpu-sharing.html&#34;&gt;Time-Slicing GPUs in Kubernetes&lt;/a&gt; 是一种通过 oversubscription(超额订阅) 来实现 GPU 共享的策略，这种策略能让多个任务在同一个 GPU 上进行，而不是每个任务都独占一个 GPU。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;虽然方案名称叫做 Time Slicing，但是device-plugin 的实现上和时间切片没有任何关系，实际上是一个 GPU 超卖方案。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&#34;2-1-为什么要叫time-slicing-时间片&#34;&gt;2.1. 为什么要叫Time Slicing(时间片)？&lt;/h2&gt;
+
+&lt;p&gt;虽然实现上只是 *oversubscription(超额订阅)*，但是名称中的 Time Slicing(时间片)指的是 GPU 本身的时间片调度。&lt;/p&gt;
+
+&lt;p&gt;例如：A、B、C 三个进程共享 GPU，三个进程同时把 CUDA 任务发射到 GPU 上去，GPU 并不会同时执行，而是采用时间片轮转调度的方式。&lt;/p&gt;
+
+&lt;p&gt;首先第一个时间片，A 任务被执行，接着第二个时间片，执行 B 任务，第三个时间片， C 任务将被执行。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;时间片是依次进行轮转调度的，分别执行A、B、C中的任务。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&#34;2-2-效果&#34;&gt;2.2. 效果&lt;/h2&gt;
+
+&lt;p&gt;比如节点上只有一个物理 GPU，正常安装 GPU Operator 之后，device plugin 检测到该节点上有 1 个 GPU，上报给 kubelet，然后 kubelet 更新到 kube-apiserver，我们就可以在 Node 对象上看到了：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@liqivm:~# k describe node gpu01|grep Capacity -A 7
+Capacity:
+  cpu:                128
+  ephemeral-storage:  879000896Ki
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             1056457696Ki
+  nvidia.com/gpu:     1
+  pods:               110
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;此时，创建一个 Pod 申请 1 个 GPU 之后，第二个 Pod 就无法使用了，因为 GPU 资源不足无法调度。&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;但是 Time Slicing 可以进行 oversubscription 设置，将 device-plugin 上报的 GPU 数量进行扩大。&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;比如将其数量放大 10 倍，device plugin 就会上报该节点有 1*10 = 10 个 GPU，最终 kube-apiserver 则会记录该节点有 10 个 GPU：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@liqivm:~# k describe node gpu01|grep Capacity -A 7
+Capacity:
+  cpu:                128
+  ephemeral-storage:  879000896Ki
+  hugepages-1Gi:      0
+  hugepages-2Mi:      0
+  memory:             1056457696Ki
+  nvidia.com/gpu:     10
+  pods:               110
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这样，就可以供 10 个 Pod 使用了。&lt;/p&gt;
+
+&lt;p&gt;当然了，Time Slicing 方案也有缺点：多个 Pod 之间没有内存或者故障隔离，完全的共享，能使用多少内存和算力全靠多个 Pod 自行竞争。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;ps：就和直接在宿主机上多个进程共享一个 GPU 基本一致&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h1 id=&#34;3-time-slicing-demo&#34;&gt;3. Time Slicing Demo&lt;/h1&gt;
+
+&lt;p&gt;Time Slicing 由于是 NVIDIA 的方案，因此使用起来比较简单，只需要在部署完成 GPU Operator 之后进行配置即可。&lt;/p&gt;
+
+&lt;p&gt;首先参考这篇文章完成 GPU Operator 的部署 –&amp;gt; GPU 环境搭建指南：&lt;a href=&#34;http://blog.mospan.cn/2024/01/17/gpu-operator/&#34;&gt;使用 GPU Operator搭建AI算力环境&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;然后即可开始配置 TimeSlicing。&lt;/p&gt;
+
+&lt;p&gt;整体配置分为以下 3 个步骤：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;1）创建 TimeSlicing 配置
+
+&lt;ul&gt;
+&lt;li&gt;根据官方文档描述，修改了 TimeSlicing 配置之后，device plugin Pod 不会自动重启，因此新的配置不会生效,需要手动重启对应 Pod。&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;2）修改集群策略开启 Time Slicing，并指定让 device-plugin 使用第一步中创建的配置
+
+&lt;ul&gt;
+&lt;li&gt;这里则是通过 Configmap 名称来指定&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;3）（可选）给要使用 GPU TimeSlicing 的节点打上对应 label，实现不同 Node 使用不同策略
+
+&lt;ul&gt;
+&lt;li&gt;比如不同节点上的 GPU 不同，那么可以根据 GPU 的算力或者内存情况设置不同的副本数以合理利用资源&lt;/li&gt;
+&lt;li&gt;如果都是统一 GPU，则使用集群级别的统一配置即可&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;3-1-配置开启-timeslicing&#34;&gt;3.1. 配置开启 TimeSlicing&lt;/h2&gt;
+
+&lt;h3 id=&#34;3-1-1-创建-timeslicing-配置&#34;&gt;3.1.1. 创建 TimeSlicing 配置&lt;/h3&gt;
+
+&lt;p&gt;使用一个单独的 Configmap 来存放 TimeSlicing 的配置。&lt;/p&gt;
+
+&lt;p&gt;这里使用集群级别的统一配置，配置文件 time-slicing-config-all.yaml 完整内容如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: time-slicing-config-all
+data:
+  any: |-
+    version: v1
+    flags:
+      migStrategy: none
+    sharing:
+      timeSlicing:
+        renameByDefault: false
+        failRequestsGreaterThanOne: false
+        resources:
+          - name: nvidia.com/gpu
+            replicas: 4    
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;具体配置含义参考官方文档：&lt;a href=&#34;https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/gpu-sharing.html#about-configuring-gpu-time-slicing&#34;&gt;about-configuring-gpu-time-slicing&lt;/a&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;data.&lt;key&gt;： 配置的名字，可以为不同 Node 设置单独配置，后续通过名称引用对应配置。
+
+&lt;ul&gt;
+&lt;li&gt;后续开启 TimeSlicing 时则根据 key 指定使用不同配置&lt;/li&gt;
+&lt;li&gt;这里我们使用集群统一配置，因此创建一个 key 即可&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;flags.migStrategy：配置开启时间片之后如何处理 MIG 设备，默认为 none&lt;/li&gt;
+&lt;li&gt;renameByDefault：是否对 GPU 资源改名。
+
+&lt;ul&gt;
+&lt;li&gt;设置为 true 之后，会使用&lt;resource-name&gt;.shared 替代原本的 &lt;resource-name&gt;。例如 nvidia.com/gpu 会变成 nvidia.com/gpu.shared ，显式告知使用者这是共享 GPU。&lt;/li&gt;
+&lt;li&gt;默认为 false，即不改资源类型名，不过 Node 上的 label 也会改，比如使用时间片之前是nvidia.com/gpu.product=Tesla-T4, 使用后就会变成nvidia.com/gpu.product=Tesla-T4-SHARED 这样依旧可以通过 nodeSelector 来限制 Pod 调度节点，来控制是否使用共享的 GPU&lt;/li&gt;
+&lt;li&gt;推荐使用 fasle 即可&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;failRequestsGreaterThanOne：开启后，当 Pod 请求 1 个以上的 shared GPU 时直接报错 UnexpectedAdmissionError。这个字段是通过报错的方式告诉使用者，请求多个 shared GPU 并不会增加 Pod 对该共享 GPU 的占用时间。&lt;/li&gt;
+&lt;li&gt;resources.name：要通过时间分片提供访问的资源类似，比如nvidia.com/gpu&lt;/li&gt;
+&lt;li&gt;resources.replicas：可共享访问的资源数量，比如这里指定的 4 也就是 1 个该类型的 GPU 可以供 4 个 Pod 共享访问，也就是最终 Pod 上看到的 GPU 数量是物理 GPU 数量的 4 倍。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;将配置 Apply 到 gpu-operator 所在的 namespace&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;kubectl create -n gpu-operator -f time-slicing-config-all.yaml
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;3-1-2-修改集群策略&#34;&gt;3.1.2. 修改集群策略&lt;/h3&gt;
+
+&lt;p&gt;修改clusterpolicies.nvidia.com/cluster-policy 对象，让 device plugin 使用上一步创建的配置。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;kubectl patch clusterpolicies.nvidia.com/cluster-policy \
+    -n gpu-operator --type merge \
+    -p &#39;{&amp;quot;spec&amp;quot;: {&amp;quot;devicePlugin&amp;quot;: {&amp;quot;config&amp;quot;: {&amp;quot;name&amp;quot;: &amp;quot;time-slicing-config-all&amp;quot;, &amp;quot;default&amp;quot;: &amp;quot;any&amp;quot;}}}}&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;name：time-slicing-config-all 指定了配置文件对应的 Configmap 名称&lt;/li&gt;
+&lt;li&gt;default：any：表示默认配置为这个 Configmap 中的 key 为 any 的配置
+修改后 gpu-feature-discovery 和 nvidia-device-plugin-daemonset pod 会重启，使用以下命令查看重启过程&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;kubectl get events -n gpu-operator --sort-by=&#39;.lastTimestamp&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;post/2024/images/2024-01-31-gpu-time-slicing/IMG_20250201-215925170.png&#34; alt=&#34;picture 0&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;3-2-验证-timeslicing-是否生效&#34;&gt;3.2. 验证 TimeSlicing 是否生效&lt;/h2&gt;
+
+&lt;h3 id=&#34;3-2-1-查看-node-上的-gpu-信息&#34;&gt;3.2.1. 查看 Node 上的 GPU 信息&lt;/h3&gt;
+
+&lt;p&gt;首先查看一下 Node 信息，确认 TimeSlicing 生效了&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;kubectl  describe node k8s-worker1 | grep Capacity -A20
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;post/2024/images/2024-01-31-gpu-time-slicing/IMG_20250201-221241899.png&#34; alt=&#34;picture 1&#34; /&gt;&lt;br /&gt;
+gpu为1*4=4显示成功。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;...
+Labels:
+                  nvidia.com/gpu.count=1
+                  nvidia.com/gpu.product=GRID-T4-2Q-SHARED
+                  nvidia.com/gpu.replicas=4
+Capacity:
+  nvidia.com/gpu: 4
+  ...
+Allocatable:
+  nvidia.com/gpu: 4
+  ...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;增加了几个 label，&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;nvidia.com/gpu.product=GRID-T4-2Q-SHARED&lt;/li&gt;
+&lt;li&gt;nvidia.com/gpu.replicas=4&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;根据nvidia.com/gpu.count=1 可知，节点上有 1 张 GPU，然后由于使用了时间片，且配置的nvidia.com/gpu.replicas=4 副本数为 4，因此最终节点上 device plugin 上报的 GPU 数量就是 1*4 = 4 个。&lt;/p&gt;
+
+&lt;h2 id=&#34;3-3-验证-gpu-能否正常使用&#34;&gt;3.3. 验证 GPU 能否正常使用&lt;/h2&gt;
+
+&lt;p&gt;创建一个 Deployment 来验证，GPU 能否正常使用。&lt;/p&gt;
+
+&lt;p&gt;这里副本数指定为 2，因为集群里只有 1 张 GPU，如果 TimeSlicing 未生效，那么有一个 Pod 肯定会应为拿不到 GPU 资源而 pending。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: time-slicing-verification
+  labels:
+    app: time-slicing-verification
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: time-slicing-verification
+  template:
+    metadata:
+      labels:
+        app: time-slicing-verification
+    spec:
+      tolerations:
+        - key: nvidia.com/gpu
+          operator: Exists
+          effect: NoSchedule
+      hostPID: true
+      containers:
+        - name: cuda-sample-vector-add
+          image: &amp;quot;nvcr.io/nvidia/k8s/cuda-sample:vectoradd-cuda10.2&amp;quot;
+          command: [&amp;quot;/bin/bash&amp;quot;, &amp;quot;-c&amp;quot;, &amp;quot;--&amp;quot;]
+          args:
+            - while true; do /tmp/vectorAdd; done
+          resources:
+           limits:
+             nvidia.com/gpu: 1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;会启动 2个 Pod，&lt;/p&gt;
+
+&lt;p&gt;查看情况
+&lt;img src=&#34;post/2024/images/2024-01-31-gpu-time-slicing/IMG_20250201-224915379.png&#34; alt=&#34;picture 2&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;2 个 Pod 都启动了，说明时间片时成功的。&lt;/p&gt;
+
+&lt;p&gt;随便查看一个 Pod 的日志&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@k8s-master1 timeSlicing]# kubectl logs time-slicing-verification-56487b549d-nqn6s 
+[Vector addition of 50000 elements]
+Copy input data from the host memory to the CUDA device
+CUDA kernel launch with 196 blocks of 256 threads
+Copy output data from the CUDA device to the host memory
+Test PASSED
+Done
+[Vector addition of 50000 elements]
+Copy input data from the host memory to the CUDA device
+CUDA kernel launch with 196 blocks of 256 threads
+Copy output data from the CUDA device to the host memory
+Test PASSED
+Done
+...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;有 Test PASSED 则说明成功了。&lt;/p&gt;
+
+&lt;p&gt;说明 TimeSlicing 配置生效了。&lt;/p&gt;
+
+&lt;h1 id=&#34;4-使用-node-级别的单独配置&#34;&gt;4. 使用 Node 级别的单独配置&lt;/h1&gt;
+
+&lt;p&gt;前面只创建了一个名称为 any 的配置，并在 clusterpolicy 中指明了使用该配置为默认配置，因此集群中的全部节点都会使用该配置来做时间片。&lt;/p&gt;
+
+&lt;p&gt;但是可能*集群中不同节点上的 GPU 型号不同*，因此需要共享分副本数可以调整，性能好的副本数就调大一点，性能差的就小一点。&lt;/p&gt;
+
+&lt;p&gt;本章主要记录怎么为不同的节点使用不同的配置。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;实际上是为不同的 GPU 准备不同的配置。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&#34;4-1-创建时间片配置&#34;&gt;4.1. 创建时间片配置&lt;/h2&gt;
+
+&lt;p&gt;同样的创建 TimeSlicing 配置，不过这次 Configmap 中写了两个配置，而且是以 GPU 型号命名的&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: time-slicing-config-fine
+data:
+  a100-40gb: |-
+    version: v1
+    flags:
+      migStrategy: mixed
+    sharing:
+      timeSlicing:
+        resources:
+        - name: nvidia.com/gpu
+          replicas: 8
+        - name: nvidia.com/mig-1g.5gb
+          replicas: 2
+        - name: nvidia.com/mig-2g.10gb
+          replicas: 2
+        - name: nvidia.com/mig-3g.20gb
+          replicas: 3
+        - name: nvidia.com/mig-7g.40gb
+          replicas: 7    
+  tesla-t4: |-
+    version: v1
+    flags:
+      migStrategy: none
+    sharing:
+      timeSlicing:
+        resources:
+        - name: nvidia.com/gpu
+          replicas: 5
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可以看到，分别对 A100 和 Tesla T4 这两种 GPU 做了配置。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;a100-40gb：A100 支持 MIG，因此增加了 MIG 部分的配置，若没有则指定为 none 即可
+
+&lt;ul&gt;
+&lt;li&gt;然后根据 MIG 实例分别指定不同的 replicas 数&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;tesla-t4：Tesla T4 GPU 性能比较差，因此 replicas 指定为 4 即可
+将配置 Apply 到 gpu-operator 所在的 namespace&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;kubectl  create -n gpu-operator -f time-slicing-config-fine.yaml 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;post/2024/images/2024-01-31-gpu-time-slicing/IMG_20250204-201203558.png&#34; alt=&#34;picture 3&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;4-2-修改集群策略&#34;&gt;4.2. 修改集群策略&lt;/h2&gt;
+
+&lt;p&gt;同样的，修改一下 cluster-policy 指定 device plugin 使用的 Configmap，这次与之前的区别在于，*这里没有指定 default 配置*。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;kubectl patch clusterpolicies.nvidia.com/cluster-policy \
+-n gpu-operator --type merge \
+-p &#39;{&amp;quot;spec&amp;quot;: {&amp;quot;devicePlugin&amp;quot;: {&amp;quot;config&amp;quot;: {&amp;quot;name&amp;quot;: &amp;quot;time-slicing-config-fine&amp;quot;}}}}&#39;
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;没有指定 default 时，device-plugin 则会根据 node 上的 label (nvidia.com/device-plugin.config)来获取要使用的配置。&lt;/p&gt;
+
+&lt;h2 id=&#34;4-3-为节点打-label&#34;&gt;4.3. 为节点打 label&lt;/h2&gt;
+
+&lt;p&gt;在节点上打上下面的 label，这样该节点上的 device plugin 就会根据该 label 的 value 来使用对应名字的配置了。&lt;/p&gt;
+
+&lt;p&gt;比如这里，就是有这个 label 的节点就使用名叫 tesla-t4 的配置。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;kubectl label node k8s-worker1 nvidia.com/device-plugin.config=tesla-t4
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;一般都是以 GPU 型号命名，然后给使用该 GPU 的节点都打上对应 label,这样便于查看。&lt;/p&gt;
+
+&lt;h2 id=&#34;4-4-验证&#34;&gt;4.4. 验证&lt;/h2&gt;
+
+&lt;p&gt;查看node节点gpu卡数是否已为5.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;kubectl  describe node k8s-worker1 | grep Capacity -A20
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&#34;post/2024/images/2024-01-31-gpu-time-slicing/IMG_20250204-203630774.png&#34; alt=&#34;picture 4&#34; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;5-关闭-timeslicing&#34;&gt;5. 关闭 TimeSlicing&lt;/h1&gt;
+
+&lt;p&gt;想关闭 TimeSlicing 配置也很简单，直接更新 集群策略 把 device plugin 下的 config 这一段去掉即可。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;  devicePlugin:
+    config:
+      default: any
+      name: time-slicing-config-fine
+    enabled: true
+    env:
+    - name: PASS_DEVICE_SPECS
+      value: &amp;quot;true&amp;quot;
+    - name: FAIL_ON_INIT_ERROR
+      value: &amp;quot;true&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;命令如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;kubectl patch clusterpolicies.nvidia.com/cluster-policy -n gpu-operator --type json -p &#39;[{&amp;quot;op&amp;quot;: &amp;quot;remove&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/spec/devicePlugin/config&amp;quot;}]&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;然后重启一下 device-plugin pod&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;kubectl rollout restart -n gpu-operator daemonset/nvidia-device-plugin-daemonset
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;不出意外的话就关掉了，再次查看 Pod 信息，GPU 就变成了物理 GPU 数量，说明关闭成功。
+&lt;img src=&#34;post/2024/images/2024-01-31-gpu-time-slicing/IMG_20250204-204613867.png&#34; alt=&#34;picture 5&#34; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;6-源码分析&#34;&gt;6. 源码分析&lt;/h1&gt;
+
+&lt;p&gt;简单看下源码，分析 TimeSlicing 是怎么实现的。&lt;/p&gt;
+
+&lt;p&gt;首先是 device-plugin 可以接收的配置&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;// api/config/v1/config.go#L32
+// Config is a versioned struct used to hold configuration information.
+type Config struct {
+	Version   string    `json:&amp;quot;version&amp;quot;             yaml:&amp;quot;version&amp;quot;`
+	Flags     Flags     `json:&amp;quot;flags,omitempty&amp;quot;     yaml:&amp;quot;flags,omitempty&amp;quot;`
+	Resources Resources `json:&amp;quot;resources,omitempty&amp;quot; yaml:&amp;quot;resources,omitempty&amp;quot;`
+	Sharing   Sharing   `json:&amp;quot;sharing,omitempty&amp;quot;   yaml:&amp;quot;sharing,omitempty&amp;quot;`
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这也就是我们在 clusterPolicy 中配置的：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: time-slicing-config-all
+data:
+  any: |-
+    version: v1
+    flags:
+      migStrategy: none
+    sharing:
+      timeSlicing:
+        renameByDefault: false
+        failRequestsGreaterThanOne: false
+        resources:
+          - name: nvidia.com/gpu
+            replicas: 4    
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这里我们关注 resources 中的 replicas 参数，正是这个参数定义了 oversubscription(超额订阅) 的额度。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;        resources:
+          - name: nvidia.com/gpu
+            replicas: 4
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;看下代码中是什么生效的&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;// internal/rm/device_map.go#L282
+
+// updateDeviceMapWithReplicas returns an updated map of resource names to devices with replica
+// information from the active replicated resources config.
+func updateDeviceMapWithReplicas(replicatedResources *spec.ReplicatedResources, oDevices DeviceMap) (DeviceMap, error) {
+	devices := make(DeviceMap)
+
+	// Begin by walking replicatedResources.Resources and building a map of just the resource names.
+	names := make(map[spec.ResourceName]bool)
+	for _, r := range replicatedResources.Resources {
+		names[r.Name] = true
+	}
+
+	// Copy over all devices from oDevices without a resource reference in TimeSlicing.Resources.
+	for r, ds := range oDevices {
+		if !names[r] {
+			devices[r] = ds
+		}
+	}
+
+	// Walk shared Resources and update devices in the device map as appropriate.
+	for _, resource := range replicatedResources.Resources {
+		r := resource
+		// Get the IDs of the devices we want to replicate from oDevices
+		ids, err := oDevices.getIDsOfDevicesToReplicate(&amp;amp;r)
+		if err != nil {
+			return nil, fmt.Errorf(&amp;quot;unable to get IDs of devices to replicate for &#39;%v&#39; resource: %v&amp;quot;, r.Name, err)
+		}
+		// Skip any resources not matched in oDevices
+		if len(ids) == 0 {
+			continue
+		}
+
+		// Add any devices we don&#39;t want replicated directly into the device map.
+		for _, d := range oDevices[r.Name].Difference(oDevices[r.Name].Subset(ids)) {
+			devices.insert(r.Name, d)
+		}
+
+		// Create replicated devices add them to the device map.
+		// Rename the resource for replicated devices as requested.
+		name := r.Name
+		if r.Rename != &amp;quot;&amp;quot; {
+			name = r.Rename
+		}
+		for _, id := range ids {
+			for i := 0; i &amp;lt; r.Replicas; i++ {
+				annotatedID := string(NewAnnotatedID(id, i))
+				replicatedDevice := *(oDevices[r.Name][id])
+				replicatedDevice.ID = annotatedID
+				replicatedDevice.Replicas = r.Replicas
+				devices.insert(name, &amp;amp;replicatedDevice)
+			}
+		}
+	}
+
+	return devices, nil
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;核心部分如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;for _, id := range ids {
+  for i := 0; i &amp;lt; r.Replicas; i++ {
+    annotatedID := string(NewAnnotatedID(id, i))
+    replicatedDevice := *(oDevices[r.Name][id])
+    replicatedDevice.ID = annotatedID
+    replicatedDevice.Replicas = r.Replicas
+    devices.insert(name, &amp;amp;replicatedDevice)
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可以看到，这里是双层 for 循环，对 device 数量进行了一个复制的操作，这样每张 GPU 都可以被使用 Replicas 次了。&lt;/p&gt;
+
+&lt;p&gt;其他属性都没变，只是把 deviceID 进行了处理，便于区分&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;// NewAnnotatedID creates a new AnnotatedID from an ID and a replica number.
+func NewAnnotatedID(id string, replica int) AnnotatedID {
+	return AnnotatedID(fmt.Sprintf(&amp;quot;%s::%d&amp;quot;, id, replica))
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;然后在真正挂载时则进行 split 拿到 id 和 replicas 信息&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;// Split splits a AnnotatedID into its ID and replica number parts.
+func (r AnnotatedID) Split() (string, int) {
+	split := strings.SplitN(string(r), &amp;quot;::&amp;quot;, 2)
+	if len(split) != 2 {
+		return string(r), 0
+	}
+	replica, _ := strconv.ParseInt(split[1], 10, 0)
+	return split[0], int(replica)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;至此，我们就分析完了 TimeSlicing 的具体实现，其实很简单，就是根据配置的 replicas 参数对 device plugin 感知到的设备进行复制，并在 DeviceID 使用特定格式进行标记便于区分。&lt;/p&gt;
+
+&lt;h1 id=&#34;7-小结&#34;&gt;7. 小结&lt;/h1&gt;
+
+&lt;p&gt;本文主要分享了 NVIDIA Time Slicing 这个 GPU 共享方案,包括即实现原理，以及配置和使用方式。&lt;/p&gt;
+
+&lt;p&gt;最后通过分析源码的方式探索了 TimeSlicing 的代码实现。&lt;/p&gt;
+
+&lt;h2 id=&#34;7-1-为什么需要-gpu-共享-切分&#34;&gt;7.1. 为什么需要 GPU 共享、切分？&lt;/h2&gt;
+
+&lt;p&gt;在 k8s 中使用默认 device plugin 时，GPU 资源和物理 GPU 是一一对应的，导致一个物理 GPU 被一个 Pod 申请后，其他 Pod 就无法使用了。&lt;/p&gt;
+
+&lt;p&gt;为了提高资源利用率，因此我们需要 GPU 共享、切分等方案。&lt;/p&gt;
+
+&lt;h2 id=&#34;7-2-什么是-timeslicing&#34;&gt;7.2. 什么是 TimeSlicing？&lt;/h2&gt;
+
+&lt;p&gt;TimeSlicing 是一种通过 oversubscription(超额订阅) 来实现 GPU 共享的策略，这种策略能让多个任务在同一个 GPU 上进行，而不是每个任务都独占一个 GPU。&lt;/p&gt;
+
+&lt;h2 id=&#34;7-3-如何开启-timeslicing&#34;&gt;7.3. 如何开启 TimeSlicing&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;1）创建 TimeSlicing 配置&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;可以是集群统一配置，也可以是 Node 级别的配置，主要根据不同节点上的 GPU 进行配置&lt;/li&gt;
+&lt;li&gt;如果集群中所有节点 GPU 型号都一致，则使用集群统一配置即可，若不一致则根据 节点上的 GPU 性能修改配置&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;2）修改 cluster-policy，增加 TimeSlicing 相关配置&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;作为这两个步骤之后，TimeSlicing 就开启了，再次查看 Node 信息时会发现 GPU 数量变多了。&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;7-4-timeslicing-实现原理&#34;&gt;7.4. TimeSlicing 实现原理&lt;/h2&gt;
+
+&lt;p&gt;根据配置的 replicas 参数对 device plugin 感知到的设备进行复制，并在 DeviceID 使用特定格式进行标记便于区分。&lt;/p&gt;
+</description>
+        </item>
         
         <item>
             <title>K8S项目实践(11): Pod 是如何使用到 GPU 的及源码分析</title>
@@ -6921,977 +7563,6 @@ Cgroup Driver: cgroupfs&lt;/p&gt;
 03.&lt;a href=&#34;https://blog.csdn.net/Deepexi_Date/article/details/111042410&#34;&gt;K8S的ServiceIP实现原理&lt;/a&gt;&lt;br /&gt;
 04.&lt;a href=&#34;http://t.zoukankan.com/fengdejiyixx-p-15568056.html&#34;&gt;http://t.zoukankan.com/fengdejiyixx-p-15568056.html&lt;/a&gt;&lt;br /&gt;
 05.&lt;a href=&#34;https://blog.csdn.net/qq_37369726/article/details/121785627&#34;&gt;kubernetes pod间通信,跨namespace互访&lt;/a&gt;&lt;/p&gt;
-</description>
-        </item>
-        
-        <item>
-            <title>K8S学习笔记(06): 资源</title>
-            <link>http://mospany.github.io/2022/09/28/resource/</link>
-            <pubDate>Wed, 28 Sep 2022 20:10:36 CST</pubDate>
-            <author>Mospan</author>
-            <guid>http://mospany.github.io/2022/09/28/resource/</guid>
-            <description>
-
-&lt;p&gt;&lt;a id=&#34;orge0656ad&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;简介&#34;&gt;简介&lt;/h1&gt;
-
-&lt;p&gt;k8s中所有的内容都抽象为资源， 资源实例化之后，叫做对象。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org32d4fb4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;资源类型介绍&#34;&gt;资源类型介绍&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;工作负载型资源对象（workload）：Pod，ReplicaSet，Deployment，StatefulSet，DaemonSet，Job，Cronjob &amp;#x2026;&lt;/li&gt;
-&lt;li&gt;服务发现及均衡资源对象：Service，Ingress &amp;#x2026;&lt;/li&gt;
-&lt;li&gt;配置与存储资源对象：Volume(存储卷)，CSI(容器存储接口,可以扩展各种各样的第三方存储卷)，ConfigMap，Secret，DownwardAPI&lt;/li&gt;
-&lt;li&gt;集群级资源：Namespace，Node，Role，ClusterRole，RoleBinding，ClusterRoleBinding&lt;/li&gt;
-&lt;li&gt;元数据型资源：HPA，PodTemplate，LimitRange&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a id=&#34;orga7470a7&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;工作负载资源&#34;&gt;工作负载资源&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;org78d773a&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;deployment&#34;&gt;Deployment&lt;/h2&gt;
-
-&lt;p&gt;为了更好地解决服务编排的问题，k8s在V1.2版本开始，引入了deployment控制器，值得一提的是，这种控制器并不直接管理pod，&lt;br /&gt;
-而是通过管理replicaset来间接管理pod，即：deployment管理replicaset，replicaset管理pod。所以deployment比replicaset的功能更强大。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/resource/deploy.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;deployment的主要功能有下面几个：&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;支持replicaset的所有功能&lt;/li&gt;
-&lt;li&gt;支持发布的停止、继续&lt;/li&gt;
-&lt;li&gt;支持版本的滚动更新和版本回退&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a id=&#34;org3b6bbe8&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;编写资源清单&#34;&gt;编写资源清单&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt; 1  $ cat test-deploy.yaml
- 2  apiVersion: apps/v1
- 3  kind: Deployment
- 4  metadata:
- 5    name: test-deployment
- 6    namespace: dev
- 7  spec:
- 8    replicas: 3
- 9    selector:
-10      matchLabels:
-11       app: nginx-pod
-12    template:
-13      metadata:
-14        labels:
-15          app: nginx-pod
-16      spec:
-17        containers:
-18        - name: nginx
-19          image: nginx:1.17.1
-20  
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org33be6c7&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;运行清单&#34;&gt;运行清单&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;$ k apply -f test-deploy.yaml
-deployment.apps/test-deployment created 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org1474d63&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;查看效果&#34;&gt;查看效果&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;$ k get deploy -A
-  NAMESPACE              NAME                           READY   UP-TO-DATE   AVAILABLE   AGE
-  dev                    test-deployment                3/3     3            3           94s
-  guestbook-system       guestbook-controller-manager   1/1     1            1           59d
-  kube-system            coredns                        2/2     2            2           63d
-  kubernetes-dashboard   dashboard-metrics-scraper      1/1     1            1           14d
-  kubernetes-dashboard   kubernetes-dashboard           1/1     1            1           14d
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;可以看出deploy已经运行成功，3副本已处于READY状态。&lt;/p&gt;
-
-&lt;p&gt;再查看它运行中的清单:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$ k get deploy -n dev test-deployment -o yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  annotations:
-    deployment.kubernetes.io/revision: &amp;quot;1&amp;quot;
-    kubectl.kubernetes.io/last-applied-configuration: |
-      {&amp;quot;apiVersion&amp;quot;:&amp;quot;apps/v1&amp;quot;,&amp;quot;kind&amp;quot;:&amp;quot;Deployment&amp;quot;,&amp;quot;metadata&amp;quot;:{&amp;quot;annotations&amp;quot;:{},&amp;quot;name&amp;quot;:&amp;quot;test-deployment&amp;quot;,&amp;quot;namespace&amp;quot;:&amp;quot;dev&amp;quot;},&amp;quot;spec&amp;quot;:{&amp;quot;replicas&amp;quot;:3,&amp;quot;selector&amp;quot;:{&amp;quot;matchLabels&amp;quot;:{&amp;quot;app&amp;quot;:&amp;quot;nginx-pod&amp;quot;}},&amp;quot;template&amp;quot;:{&amp;quot;metadata&amp;quot;:{&amp;quot;labels&amp;quot;:{&amp;quot;app&amp;quot;:&amp;quot;nginx-pod&amp;quot;}},&amp;quot;spec&amp;quot;:{&amp;quot;containers&amp;quot;:[{&amp;quot;image&amp;quot;:&amp;quot;nginx:1.17.1&amp;quot;,&amp;quot;name&amp;quot;:&amp;quot;nginx&amp;quot;}]}}}}
-  creationTimestamp: &amp;quot;2022-09-28T12:35:22Z&amp;quot;
-  generation: 1
-  name: test-deployment
-  namespace: dev
-  resourceVersion: &amp;quot;5045809&amp;quot;
-  uid: 40feb568-1343-4046-8708-7e1bf5e5c384
-spec:
-  #spec.progressDeadlineSeconds 是可选配置项，用来指定在系统报告Deployment的failed progressing一一表现为resource的状态中 type=Progressing 、 Status=False 、 Reason=ProgressDeadlineExceeded 前可以等待的Deployment进行的秒数。Deployment controller会继续重试该Deployment。未来，在实现了自动回滚后， deployment controller在观察到这种状态时就会自动回滚。
-  progressDeadlineSeconds: 600
-  #.spec.replicas 是可以选字段，指定期望的pod数量，默认是1。
-  replicas: 3
-  revisionHistoryLimit: 10
-  #.spec.selector是可选字段，用来指定 label selector ，圈定Deployment管理的pod范围。如果被指定， .spec.selector 必须匹配 .spec.template.metadata.labels，否则它将被API拒绝。如果.spec.selector 没有被指定， .spec.selector.matchLabels 默认是.spec.template.metadata.labels。在Pod的template跟.spec.template不同或者数量超过了.spec.replicas规定的数量的情况下，Deployment会杀掉label跟selector不同的Pod。
-  selector:
-    matchLabels:
-      app: nginx-pod
-  #.spec.strategy 指定新的Pod替换旧的Pod的策略。 .spec.strategy.type 可以是&amp;quot;Recreate&amp;quot;或者是&amp;quot;RollingUpdate&amp;quot;。&amp;quot;RollingUpdate&amp;quot;是默认值。
-  strategy:
-    rollingUpdate:
-      #spec.strategy.rollingUpdate.maxSurge 是可选配置项，用来指定可以超过期望的Pod数量的最大个数。该值可以是一个绝对值（例如5）或者是期望的Pod数量的百分比（例如10%）。当 MaxUnavailable 为0时该值不可以为0。通过百分比计算的绝对值向上取整。默认值是1。
-      maxSurge: 25%
-      #.spec.strategy.rollingUpdate.maxUnavailable 是可选配置项，用来指定在升级过程中不可用Pod的最大数量。该值可以是一个绝对值（例如5），也可以是期望Pod数量的百分比（例如10%）。通过计算百分比的绝对值向下取整。 如 果 .spec.strategy.rollingUpdate.maxSurge 为0时，这个值不可以为0。默认值是1。例如，该值设置成30%，启动rolling update后旧的ReplicatSet将会立即缩容到期望的Pod数量的70%。新的Pod ready后，随着新的ReplicaSet的扩容，旧的ReplicaSet会进一步缩容确保在升级的所有时刻可以用的Pod数量至少是期望Pod数量的70%。
-      maxUnavailable: 25%
-    #滚动更新，简单定义 更新期间pod最多有几个等。可以指定 maxUnavailable 和 maxSurge 来控制 rolling update 进程。
-    type: RollingUpdate
-  #.spec.template 是 .spec中唯一要求的字段。.spec.template 是 pod template. 它跟 Pod有一模一样的schema，除了它是嵌套的并且不需要apiVersion 和 kind字段。另外为了划分Pod的范围，Deployment中的pod template必须指定适当的label（不要跟其他controller重复了，参考selector）和适当的重启策略。.spec.template.spec.restartPolicy 可以设置为 Always , 如果不指定的话这就是默认配置。
-  template:
-    metadata:
-      creationTimestamp: null
-      labels:
-        app: nginx-pod
-    spec:
-      containers:
-      - image: nginx:1.17.1
-        imagePullPolicy: IfNotPresent
-        name: nginx
-        resources: {}
-        #terminationMessagePath 表示容器的异常终止消息的路径，默认在 /dev/termination-log 下。当容器退出时，可以通过容器的状态看到退出信息。
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
-      #“ClusterFirst“:如果DNS查询与配置好的默认集群域名前缀不匹配，则将查询请求转发到从节点继承而来，作为查询的上游服务器。
-      dnsPolicy: ClusterFirst
-      restartPolicy: Always
-      #spec:schedulername参数指定调度器的名字，可以为 pod 选择某个调度器进行调度
-      schedulerName: default-scheduler
-      #安全上下文（Security Context）定义 Pod 或 Container 的特权与访问控制设置。
-      securityContext: {}
-      terminationGracePeriodSeconds: 30
-status:
-  availableReplicas: 3
-  conditions:
-  - lastTransitionTime: &amp;quot;2022-09-28T12:35:25Z&amp;quot;
-    lastUpdateTime: &amp;quot;2022-09-28T12:35:25Z&amp;quot;
-    message: Deployment has minimum availability.
-    reason: MinimumReplicasAvailable
-    status: &amp;quot;True&amp;quot;
-    type: Available
-  - lastTransitionTime: &amp;quot;2022-09-28T12:35:22Z&amp;quot;
-    lastUpdateTime: &amp;quot;2022-09-28T12:35:25Z&amp;quot;
-    message: ReplicaSet &amp;quot;test-deployment-5d9c9b97bb&amp;quot; has successfully progressed.
-    reason: NewReplicaSetAvailable
-    status: &amp;quot;True&amp;quot;
-    type: Progressing
-  observedGeneration: 1
-  readyReplicas: 3
-  replicas: 3
-  updatedReplicas: 3
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org3fa900a&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;replicaset&#34;&gt;ReplicaSet&lt;/h2&gt;
-
-&lt;p&gt;ReplicaSet是kubernetes中的一种副本控制器，主要作用是控制由其管理的pod，使pod副本的数量始终维持在预设的个数。&lt;/p&gt;
-
-&lt;p&gt;kubernetes官方推荐不要直接使用ReplicaSet，用Deployments取而代之，Deployments是比ReplicaSet更高级的概念，它会管理ReplicaSet并提供很多其它有用的特性，最重要的是Deployments支持声明式更新，声明式更好相比于命令式更新的好处是不会丢失历史变更。总结起来就是：不要再直接使用ReplicaSet。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgfdcdb41&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;查看效果-1&#34;&gt;查看效果&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;$ k get rs -A
-NAMESPACE              NAME                                      DESIRED   CURRENT   READY   AGE
-dev                    test-deployment-5d9c9b97bb                3         3         3       23h
-guestbook-system       guestbook-controller-manager-84cd65964f   1         1         1       60d
-kube-system            coredns-78fcd69978                        2         2         2       64d
-kubernetes-dashboard   dashboard-metrics-scraper-7c857855d9      1         1         1       15d
-kubernetes-dashboard   kubernetes-dashboard-6b79449649           1         1         1       15d
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;查看清单：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$ k get rs -n dev test-deployment-5d9c9b97bb -o yaml
-apiVersion: apps/v1
-kind: ReplicaSet
-metadata:
-  annotations:
-    deployment.kubernetes.io/desired-replicas: &amp;quot;3&amp;quot;
-    deployment.kubernetes.io/max-replicas: &amp;quot;4&amp;quot;
-    deployment.kubernetes.io/revision: &amp;quot;1&amp;quot;
-  creationTimestamp: &amp;quot;2022-09-28T12:35:22Z&amp;quot;
-  generation: 1
-  labels:
-    app: nginx-pod
-    pod-template-hash: 5d9c9b97bb
-  name: test-deployment-5d9c9b97bb
-  namespace: dev
-  ownerReferences:
-  - apiVersion: apps/v1
-    #控制特定的从属对象是否可以阻止垃圾收集删除其所有者对象
-    blockOwnerDeletion: true
-    controller: true
-    kind: Deployment
-    name: test-deployment
-    uid: 40feb568-1343-4046-8708-7e1bf5e5c384
-  resourceVersion: &amp;quot;5045808&amp;quot;
-  uid: 1dc27f38-b2db-48a1-b76a-ad044e3da2d7
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: nginx-pod
-      pod-template-hash: 5d9c9b97bb
-  template:
-    metadata:
-      creationTimestamp: null
-      labels:
-        app: nginx-pod
-        pod-template-hash: 5d9c9b97bb
-    spec:
-      containers:
-      - image: nginx:1.17.1
-        imagePullPolicy: IfNotPresent
-        name: nginx
-        resources: {}
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
-      dnsPolicy: ClusterFirst
-      restartPolicy: Always
-      schedulerName: default-scheduler
-      securityContext: {}
-      terminationGracePeriodSeconds: 30
-status:
-  availableReplicas: 3
-  fullyLabeledReplicas: 3
-  observedGeneration: 1
-  readyReplicas: 3
-  replicas: 3
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org1c8a1ca&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;pod&#34;&gt;Pod&lt;/h2&gt;
-
-&lt;p&gt;Pod是kubernetes中最小的资源管理组件，Pod也是最小化运行容器化应用的资源对象。一个Pod代表着集群中运行的一个进程。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$ k get pod -A
-NAMESPACE              NAME                                            READY   STATUS    RESTARTS         AGE
-dev                    test-deployment-5d9c9b97bb-7hmqb                1/1     Running   0                23h
-dev                    test-deployment-5d9c9b97bb-bdwhq                1/1     Running   0                23h
-dev                    test-deployment-5d9c9b97bb-l9fj2                1/1     Running   0                23h
-guestbook-system       guestbook-controller-manager-84cd65964f-c2z8x   2/2     Running   184 (34h ago)    60d
-kube-system            coredns-78fcd69978-s52td                        1/1     Running   7 (11d ago)      64d
-kube-system            coredns-78fcd69978-z5fvx                        1/1     Running   7 (11d ago)      64d
-kube-system            etcd-docker-desktop                             1/1     Running   7 (11d ago)      64d
-kube-system            kube-apiserver-docker-desktop                   1/1     Running   7 (11d ago)      64d
-kube-system            kube-controller-manager-docker-desktop          1/1     Running   7 (11d ago)      64d
-kube-system            kube-proxy-b5954                                1/1     Running   7 (11d ago)      64d
-kube-system            kube-scheduler-docker-desktop                   1/1     Running   146 (34h ago)    64d
-kube-system            storage-provisioner                             1/1     Running   229 (34h ago)    64d
-kube-system            vpnkit-controller                               1/1     Running   4395 (17m ago)   64d
-kubernetes-dashboard   dashboard-metrics-scraper-7c857855d9-g4slf      1/1     Running   1 (11d ago)      15d
-kubernetes-dashboard   kubernetes-dashboard-6b79449649-lrnz8           1/1     Running   10 (3d10h ago)   15d
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;查看清单：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$ k get pod -n dev test-deployment-5d9c9b97bb-7hmqb -o yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  creationTimestamp: &amp;quot;2022-09-28T12:35:22Z&amp;quot;
-  generateName: test-deployment-5d9c9b97bb-
-  labels:
-    app: nginx-pod
-    pod-template-hash: 5d9c9b97bb
-  name: test-deployment-5d9c9b97bb-7hmqb
-  namespace: dev
-  ownerReferences:
-  - apiVersion: apps/v1
-    blockOwnerDeletion: true
-    controller: true
-    kind: ReplicaSet
-    name: test-deployment-5d9c9b97bb
-    uid: 1dc27f38-b2db-48a1-b76a-ad044e3da2d7
-  resourceVersion: &amp;quot;5045804&amp;quot;
-  uid: 06aeda67-ccaa-4715-ab1a-992ae409cd12
-spec:
-  containers:
-  - image: nginx:1.17.1
-    imagePullPolicy: IfNotPresent
-    name: nginx
-    resources: {}
-    terminationMessagePath: /dev/termination-log
-    terminationMessagePolicy: File
-    volumeMounts:
-    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
-      name: kube-api-access-sgghr
-      readOnly: true
-  dnsPolicy: ClusterFirst
-  enableServiceLinks: true
-  nodeName: docker-desktop
-  #优先级在普通的 pod 执行优先级的剔除是没什么问题的，但是在 job 控制器来运行的 pod 上就是一个灾难，如果 job 控制器运行的任务计划 pod 正在执行任务，此时因为集群节点的资源不够用导致 job 的 pod 被剔除集群节点，从而导致指定运行的任务被搁置，为了解决这个问题，可以在 PriorityClass 中设置属性 preemptionPolicy ，当它的值为 preemptionLowerPriorty（默认）时，则正常执行抢占策略（表示优先级低会被剔除）。如果将值设置为 Never 时则为默认不抢占，不会被剔除而是等待调度机会。
-  preemptionPolicy: PreemptLowerPriority
-  priority: 0
-  restartPolicy: Always
-  schedulerName: default-scheduler
-  securityContext: {}
-  serviceAccount: default
-  serviceAccountName: default
-  terminationGracePeriodSeconds: 30
-  tolerations:
-  - effect: NoExecute
-    key: node.kubernetes.io/not-ready
-    operator: Exists
-    tolerationSeconds: 300
-  - effect: NoExecute
-    key: node.kubernetes.io/unreachable
-    operator: Exists
-    tolerationSeconds: 300
-  volumes:
-  - name: kube-api-access-sgghr
-    projected:
-      defaultMode: 420
-      sources:
-      - serviceAccountToken:
-          expirationSeconds: 3607
-          path: token
-      - configMap:
-          items:
-          - key: ca.crt
-            path: ca.crt
-          name: kube-root-ca.crt
-      - downwardAPI:
-          items:
-          - fieldRef:
-              apiVersion: v1
-              fieldPath: metadata.namespace
-            path: namespace
-status:
-  conditions:
-  - lastProbeTime: null
-    lastTransitionTime: &amp;quot;2022-09-28T12:35:22Z&amp;quot;
-    status: &amp;quot;True&amp;quot;
-    type: Initialized
-  - lastProbeTime: null
-    lastTransitionTime: &amp;quot;2022-09-28T12:35:25Z&amp;quot;
-    status: &amp;quot;True&amp;quot;
-    type: Ready
-  - lastProbeTime: null
-    lastTransitionTime: &amp;quot;2022-09-28T12:35:25Z&amp;quot;
-    status: &amp;quot;True&amp;quot;
-    type: ContainersReady
-  - lastProbeTime: null
-    lastTransitionTime: &amp;quot;2022-09-28T12:35:22Z&amp;quot;
-    status: &amp;quot;True&amp;quot;
-    type: PodScheduled
-  containerStatuses:
-  - containerID: docker://1453a8ace21fbf107edd376e3357e7c9880afe6c67b2fdde535092bb8c654ddf
-    image: nginx:1.17.1
-    imageID: docker-pullable://nginx@sha256:b4b9b3eee194703fc2fa8afa5b7510c77ae70cfba567af1376a573a967c03dbb
-    lastState: {}
-    name: nginx
-    ready: true
-    restartCount: 0
-    started: true
-    state:
-      running:
-        startedAt: &amp;quot;2022-09-28T12:35:24Z&amp;quot;
-  hostIP: 192.168.65.4
-  phase: Running
-  podIP: 10.1.0.57
-  podIPs:
-  - ip: 10.1.0.57
-  qosClass: BestEffort
-  startTime: &amp;quot;2022-09-28T12:35:22Z&amp;quot; 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org4ffc8cc&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;statefulset&#34;&gt;Statefulset&lt;/h2&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgc4ecdec&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;应用场景&#34;&gt;应用场景&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;稳定的不共享持久化存储：即每个pod的存储资源是不共享的，且pod重新调度后还是能访问到相同的持久化数据，基于pvc实现。&lt;/li&gt;
-&lt;li&gt;稳定的网络标志：即pod重新调度后其PodName和HostName不变，且PodName和HostName是相同的，基于Headless Service来实现的。&lt;/li&gt;
-&lt;li&gt;有序部署，有序扩展：即pod是有顺序的，在部署或者扩展的时候是根据定义的顺序依次依序部署的（即从0到N-1,在下一个Pod运行之前所有之前的pod必都是Running状态或者Ready状态），是基于init containers来实现的。&lt;/li&gt;
-&lt;li&gt;有序收缩：在pod删除时是从最后一个依次往前删除，即从N-1到0.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;基于上面的特性，可以发现statefulset由以下几个部分组成：&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;用于定义网络标志（DNS domain）的headless service&lt;/li&gt;
-&lt;li&gt;用于**创建pvc的volumeClaimTemplates**&lt;/li&gt;
-&lt;li&gt;具体的statefulSet应用&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a id=&#34;org75c4d8e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;创建yaml文件示例&#34;&gt;创建yaml文件示例&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;apiVersion: v1
-kind: Service
-metadata:
-  name: nginx
-  labels:
-    app: nginx
-spec:
-  ports:
-  - port: 80
-    name: web
-  clusterIP: None                                 # 要点1，可以不用指定clusterIP
-  selector:
-    app: nginx
----
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: web
-spec:
-  serviceName: &amp;quot;nginx&amp;quot;                           # 要点2，指定serviceName名称
-  replicas: 2
-  selector:
-    matchLabels:
-      app: nginx
-  template:
-    metadata:
-      labels:
-        app: nginx
-    spec:
-      containers:
-      - name: nginx
-        image: nginx:alpine
-        ports:
-        - containerPort: 80
-          name: web
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org9af1bda&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;查看效果-2&#34;&gt;查看效果&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;# mosp @ mospdeMacBook-Pro in ~/study/myblog/mospan-hugo-blog on git:master x [17:35:39]
-$ k get sts -A
-NAMESPACE   NAME   READY   AGE
-default     web    3/3     24h
-
-# 可以看出StatefulSet不走ReplicalSet
-$ k get rs -A
-NAMESPACE              NAME                                      DESIRED   CURRENT   READY   AGE
-guestbook-system       guestbook-controller-manager-84cd65964f   1         1         1       63d
-kube-system            coredns-78fcd69978                        2         2         2       67d
-kubernetes-dashboard   dashboard-metrics-scraper-7c857855d9      1         1         1       19d
-kubernetes-dashboard   kubernetes-dashboard-6b79449649           1         1         1       19d
-
-# mosp @ mospdeMacBook-Pro in ~/study/myblog/mospan-hugo-blog on git:master x [11:11:00]
-$ k get svc -A
-NAMESPACE              NAME                                           TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                  AGE
-default                kubernetes                                     ClusterIP   10.96.0.1       &amp;lt;none&amp;gt;        443/TCP                  67d
-default                nginx                                          ClusterIP   None            &amp;lt;none&amp;gt;        80/TCP                   24h
-guestbook-system       guestbook-controller-manager-metrics-service   ClusterIP   10.107.190.68   &amp;lt;none&amp;gt;        8443/TCP                 63d
-kube-system            kube-dns                                       ClusterIP   10.96.0.10      &amp;lt;none&amp;gt;        53/UDP,53/TCP,9153/TCP   67d
-kubernetes-dashboard   dashboard-metrics-scraper                      ClusterIP   10.96.38.104    &amp;lt;none&amp;gt;        8000/TCP                 19d
-kubernetes-dashboard   kubernetes-dashboard                           ClusterIP   10.102.50.227   &amp;lt;none&amp;gt;        443/TCP                  19d
-
-# mosp @ mospdeMacBook-Pro in ~/study/myblog/mospan-hugo-blog on git:master x [11:11:13]
-$ k get pod -A
-NAMESPACE              NAME                                            READY   STATUS    RESTARTS         AGE
-default                web-0                                           1/1     Running   0                24h
-default                web-1                                           1/1     Running   0                24h
-default                web-2                                           1/1     Running   0                24h
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgad33d68&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;查看清单&#34;&gt;查看清单&lt;/h3&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;查看service&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$ k get svc nginx -n -o yaml
-apiVersion: v1
-kind: Service
-metadata:
-  annotations:
-    kubectl.kubernetes.io/last-applied-configuration: |
-      {&amp;quot;apiVersion&amp;quot;:&amp;quot;v1&amp;quot;,&amp;quot;kind&amp;quot;:&amp;quot;Service&amp;quot;,&amp;quot;metadata&amp;quot;:{&amp;quot;annotations&amp;quot;:{},&amp;quot;labels&amp;quot;:{&amp;quot;app&amp;quot;:&amp;quot;nginx&amp;quot;},&amp;quot;name&amp;quot;:&amp;quot;nginx&amp;quot;,&amp;quot;namespace&amp;quot;:&amp;quot;default&amp;quot;},&amp;quot;spec&amp;quot;:{&amp;quot;clusterIP&amp;quot;:&amp;quot;None&amp;quot;,&amp;quot;ports&amp;quot;:[{&amp;quot;name&amp;quot;:&amp;quot;web&amp;quot;,&amp;quot;port&amp;quot;:80}],&amp;quot;selector&amp;quot;:{&amp;quot;app&amp;quot;:&amp;quot;nginx&amp;quot;}}}
-  creationTimestamp: &amp;quot;2022-10-02T03:06:17Z&amp;quot;
-  labels:
-    app: nginx
-  name: nginx
-  namespace: default
-  resourceVersion: &amp;quot;5343708&amp;quot;
-  uid: ff6a9fb8-4abd-4fda-af08-6ecdf7695b5a
-spec:
-  clusterIP: None
-  clusterIPs:
-  - None
-  #kube-proxy 基于 spec.internalTrafficPolicy 的设置来过滤路由的目标服务端点。当它的值设为 Local 时，只选择节点本地的服务端点。当它的值设为 Cluster 或缺省时，则选择所有的服务端点。
-  internalTrafficPolicy: Cluster
-  ipFamilies:
-  - IPv4
-  #用spec.ipFamilyPolicy字段配置的，可设置为以下选项之一：
-  #SingleStack
-  #PreferDualStack
-  #RequireDualStack
-  #要使用双堆栈支持，你需要设置.spec.ipFamilyPolicy为PreferredDualStack或RequiredDualStack。此功能在Kubernetes中默认启用，还包括通过IPv4和IPv6地址的脱离集群出口路由。
-  ipFamilyPolicy: SingleStack
-  ports:
-  - name: web
-    port: 80
-    protocol: TCP
-    targetPort: 80
-  selector:
-    app: nginx
-  #使用svc.spec.sessionAffinity设置会话亲和性，默认是None。指定为ClientIP会使来自同一个Client IP的请求转发到同一个Pod上。
-  sessionAffinity: None
-  type: ClusterIP
-status:
-  loadBalancer: {}
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;查看StatefulSet&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt; 1  $ k get sts web -o yaml
- 2  apiVersion: apps/v1
- 3  kind: StatefulSet
- 4  metadata:
- 5    annotations:
- 6      kubectl.kubernetes.io/last-applied-configuration: |
- 7        {&amp;quot;apiVersion&amp;quot;:&amp;quot;apps/v1&amp;quot;,&amp;quot;kind&amp;quot;:&amp;quot;StatefulSet&amp;quot;,&amp;quot;metadata&amp;quot;:{&amp;quot;annotations&amp;quot;:{},&amp;quot;name&amp;quot;:&amp;quot;web&amp;quot;,&amp;quot;namespace&amp;quot;:&amp;quot;default&amp;quot;},&amp;quot;spec&amp;quot;:{&amp;quot;replicas&amp;quot;:3,&amp;quot;selector&amp;quot;:{&amp;quot;matchLabels&amp;quot;:{&amp;quot;app&amp;quot;:&amp;quot;nginx&amp;quot;}},&amp;quot;serviceName&amp;quot;:&amp;quot;nginx&amp;quot;,&amp;quot;template&amp;quot;:{&amp;quot;metadata&amp;quot;:{&amp;quot;labels&amp;quot;:{&amp;quot;app&amp;quot;:&amp;quot;nginx&amp;quot;}},&amp;quot;spec&amp;quot;:{&amp;quot;containers&amp;quot;:[{&amp;quot;image&amp;quot;:&amp;quot;nginx:alpine&amp;quot;,&amp;quot;name&amp;quot;:&amp;quot;nginx&amp;quot;,&amp;quot;ports&amp;quot;:[{&amp;quot;containerPort&amp;quot;:80,&amp;quot;name&amp;quot;:&amp;quot;web&amp;quot;}]}]}}}}
- 8    creationTimestamp: &amp;quot;2022-10-02T03:06:17Z&amp;quot;
- 9    generation: 1
-10    name: web
-11    namespace: default
-12    resourceVersion: &amp;quot;5343757&amp;quot;
-13    uid: b68fa0b0-ce5e-428c-b39e-b41956ddcc12
-14  spec:
-15    #pod管理策略,v1.7+可以通过.spec.podManagementPolicy设置pod的管理策略，支持以下俩中方式
-16    #OrderedReady:默认方式，按照pod的次序依次创建每个pod并等待ready之后才创建后面的pod。
-17    #Parallel：并行创建或删除pod，和deployment类型的pod一样。（不等待前面的pod ready就开始创建所有的pod）。
-18    podManagementPolicy: OrderedReady
-19    replicas: 3
-20    revisionHistoryLimit: 10
-21    selector:
-22      matchLabels:
-23        app: nginx
-24    serviceName: nginx
-25    template:
-26      metadata:
-27        creationTimestamp: null
-28        labels:
-29          app: nginx
-30      spec:
-31        containers:
-32        - image: nginx:alpine
-33          imagePullPolicy: IfNotPresent
-34          name: nginx
-35          ports:
-36          - containerPort: 80
-37            name: web
-38            protocol: TCP
-39          resources: {}
-40          terminationMessagePath: /dev/termination-log
-41          terminationMessagePolicy: File
-42        dnsPolicy: ClusterFirst
-43        restartPolicy: Always
-44        schedulerName: default-scheduler
-45        securityContext: {}
-46        terminationGracePeriodSeconds: 30
-47    updateStrategy:
-48      rollingUpdate:
-49        partition: 0
-50      type: RollingUpdate
-51  status:
-52    availableReplicas: 3
-53    collisionCount: 0
-54    currentReplicas: 3
-55    currentRevision: web-6d796b6548
-56    observedGeneration: 1
-57    readyReplicas: 3
-58    replicas: 3
-59    updateRevision: web-6d796b6548
-60    updatedReplicas: 3
-61  
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;查看Pod清单&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$ k get pod web-0 -o yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  creationTimestamp: &amp;quot;2022-10-02T03:06:17Z&amp;quot;
-  generateName: web-
-  labels:
-    app: nginx
-    controller-revision-hash: web-6d796b6548
-    statefulset.kubernetes.io/pod-name: web-0
-  name: web-0
-  namespace: default
-  ownerReferences:
-  - apiVersion: apps/v1
-    blockOwnerDeletion: true
-    controller: true
-    kind: StatefulSet
-    name: web
-    uid: b68fa0b0-ce5e-428c-b39e-b41956ddcc12
-  resourceVersion: &amp;quot;5343727&amp;quot;
-  uid: 04b8e1f1-eed1-493e-a9b3-3b0791eca087
-spec:
-  containers:
-  - image: nginx:alpine
-    imagePullPolicy: IfNotPresent
-    name: nginx
-    ports:
-    - containerPort: 80
-      name: web
-      protocol: TCP
-    resources: {}
-    terminationMessagePath: /dev/termination-log
-    terminationMessagePolicy: File
-    volumeMounts:
-    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
-      name: kube-api-access-v2xb5
-      readOnly: true
-  dnsPolicy: ClusterFirst
-  enableServiceLinks: true
-  hostname: web-0
-  nodeName: docker-desktop
-  preemptionPolicy: PreemptLowerPriority
-  priority: 0
-  restartPolicy: Always
-  schedulerName: default-scheduler
-  securityContext: {}
-  serviceAccount: default
-  serviceAccountName: default
-  subdomain: nginx
-  terminationGracePeriodSeconds: 30
-  tolerations:
-  - effect: NoExecute
-    key: node.kubernetes.io/not-ready
-    operator: Exists
-    tolerationSeconds: 300
-  - effect: NoExecute
-    key: node.kubernetes.io/unreachable
-    operator: Exists
-    tolerationSeconds: 300
-  volumes:
-  - name: kube-api-access-v2xb5
-    projected:
-      defaultMode: 420
-      sources:
-      - serviceAccountToken:
-          expirationSeconds: 3607
-          path: token
-      - configMap:
-          items:
-          - key: ca.crt
-            path: ca.crt
-          name: kube-root-ca.crt
-      - downwardAPI:
-          items:
-          - fieldRef:
-              apiVersion: v1
-              fieldPath: metadata.namespace
-            path: namespace
-status:
-  conditions:
-  - lastProbeTime: null
-    lastTransitionTime: &amp;quot;2022-10-02T03:06:17Z&amp;quot;
-    status: &amp;quot;True&amp;quot;
-    type: Initialized
-  - lastProbeTime: null
-    lastTransitionTime: &amp;quot;2022-10-02T03:06:18Z&amp;quot;
-    status: &amp;quot;True&amp;quot;
-    type: Ready
-  - lastProbeTime: null
-    lastTransitionTime: &amp;quot;2022-10-02T03:06:18Z&amp;quot;
-    status: &amp;quot;True&amp;quot;
-    type: ContainersReady
-  - lastProbeTime: null
-    lastTransitionTime: &amp;quot;2022-10-02T03:06:17Z&amp;quot;
-    status: &amp;quot;True&amp;quot;
-    type: PodScheduled
-  containerStatuses:
-  - containerID: docker://bd6e1b11a24457b4892fd83fb306ec2bac9adca1a280b079b9502a0672a9d521
-    image: nginx:alpine
-    imageID: docker-pullable://nginx@sha256:082f8c10bd47b6acc8ef15ae61ae45dd8fde0e9f389a8b5cb23c37408642bf5d
-    lastState: {}
-    name: nginx
-    ready: true
-    restartCount: 0
-    started: true
-    state:
-      running:
-        startedAt: &amp;quot;2022-10-02T03:06:18Z&amp;quot;
-  hostIP: 192.168.65.4
-  phase: Running
-  podIP: 10.1.0.72
-  podIPs:
-  - ip: 10.1.0.72
-  qosClass: BestEffort
-  startTime: &amp;quot;2022-10-02T03:06:17Z&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;a id=&#34;orga9c50ad&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;daemonset&#34;&gt;DaemonSet&lt;/h2&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgface580&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;作用及概念&#34;&gt;作用及概念&lt;/h3&gt;
-
-&lt;p&gt;DaemonSet确保集群中每个（部分）node运行一份po副本，当node加入集群时创建pod，当node离开集群时回收pod。&lt;/p&gt;
-
-&lt;p&gt;如果删除DaemonSet，其创建的所有pod也被删除， DaemonSet中的pod覆盖整个集群。&lt;/p&gt;
-
-&lt;p&gt;当需要在集群内每个node运行同一个pod，使用 DaemonSet是有价值的，以下是典型使用场景：&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;运行集群存储守护进程，如 glusterd、ceph&lt;/li&gt;
-&lt;li&gt;运行集群日志收集守护进程，如 fluent、 logstash&lt;/li&gt;
-&lt;li&gt;运行节点监控守护进程，如 Prometheus Node Exporter， collectd， Datadog agent，&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a id=&#34;org9260917&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;配置清单&#34;&gt;配置清单&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;$ cat daemonset-demo.yaml
-apiVersion: apps/v1
-kind: DaemonSet
-metadata:
-  name: deamonset-demo
-  namespace: default
-spec:
-  selector:
-    matchLabels:
-     app: nginx-ds
-  template:
-    metadata:
-      labels:
-        app: nginx-ds
-    spec:
-      containers:
-      - name: nginx
-        image: nginx:1.17.1
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org89256ec&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;查看效果-3&#34;&gt;查看效果&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;# mosp @ mospdeMacBook-Pro in ~/study/k8s/resource/daemonset [18:51:51]
-$ k get ds -A
-NAMESPACE     NAME             DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR            AGE
-default       deamonset-demo   1         1         1       1            1           &amp;lt;none&amp;gt;                   10m
-kube-system   kube-proxy       1         1         1       1            1           kubernetes.io/os=linux   68d
-
-# mosp @ mospdeMacBook-Pro in ~/study/k8s/resource/daemonset [18:53:22]
-$ k get rs -A
-NAMESPACE              NAME                                      DESIRED   CURRENT   READY   AGE
-guestbook-system       guestbook-controller-manager-84cd65964f   1         1         1       63d
-kube-system            coredns-78fcd69978                        2         2         2       68d
-kubernetes-dashboard   dashboard-metrics-scraper-7c857855d9      1         1         1       19d
-kubernetes-dashboard   kubernetes-dashboard-6b79449649           1         1         1       19d
-
-# mosp @ mospdeMacBook-Pro in ~/study/k8s/resource/daemonset [18:53:28]
-$ k get pod -A
-NAMESPACE              NAME                                            READY   STATUS    RESTARTS          AGE
-default                deamonset-demo-lbmmq                            1/1     Running   0                 10m
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org7a1d726&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;job&#34;&gt;Job&lt;/h2&gt;
-
-&lt;p&gt;&lt;a id=&#34;org1def512&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;作用及概念-1&#34;&gt;作用及概念&lt;/h3&gt;
-
-&lt;p&gt;详见：&lt;a href=&#34;https://blog.csdn.net/u012124304/article/details/107729972&#34;&gt;k8s Job详解&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org59a91b0&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;配置清单-1&#34;&gt;配置清单&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;$ cat job-demo.yaml
-
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: echo-time
-spec:
-  completions: 10 #任务个数
-  parallelism: 5 #并行数
-  backoffLimit: 2 #失败最多执行几次
-  template:
-    spec:
-      containers:
-      - name: echo-time
-        image: centos:latest
-        imagePullPolicy: IfNotPresent
-        command:
-        - /bin/bash
-        - &amp;quot;-c&amp;quot;
-        - &amp;quot;for i in `seq 1 100`;do echo $i: `date` &amp;amp;&amp;amp; sleep 1;done&amp;quot;
-      restartPolicy: OnFailure
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org2f3a615&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;查看效果-4&#34;&gt;查看效果&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;# mosp @ mospdeMacBook-Pro in ~/study/k8s/resource/job [20:17:06]
-$ k get job -A
-NAMESPACE   NAME        COMPLETIONS   DURATION   AGE
-default     echo-time   10/10         3m28s      5m40s
-
-# mosp @ mospdeMacBook-Pro in ~/study/k8s/resource/job [20:20:49]
-$ k get pod -A
-NAMESPACE              NAME                                            READY   STATUS      RESTARTS         AGE
-default                deamonset-demo-lbmmq                            1/1     Running     1 (9h ago)       5d1h
-default                echo-time--1-24lfm                              0/1     Completed   0                4m7s
-default                echo-time--1-5drjv                              0/1     Completed   0                4m9s
-default                echo-time--1-869rd                              0/1     Completed   0                4m7s
-default                echo-time--1-8fd7m                              0/1     Completed   0                4m9s
-default                echo-time--1-cqfjs                              0/1     Completed   0                5m52s
-default                echo-time--1-f276r                              0/1     Completed   0                5m52s
-default                echo-time--1-h4v9l                              0/1     Completed   0                5m52s
-default                echo-time--1-lx4ww                              0/1     Completed   0                5m52s
-default                echo-time--1-qd4kc                              0/1     Completed   0                4m8s
-default                echo-time--1-zfchg                              0/1     Completed   0                5m52s
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;每个Pod日志都能从1输出到100。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org6491cbd&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;cronjob&#34;&gt;cronJob&lt;/h2&gt;
-
-&lt;p&gt;&lt;a id=&#34;org6cd6fcb&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;作用及概念-2&#34;&gt;作用及概念&lt;/h3&gt;
-
-&lt;p&gt;CronJobs 对于创建周期性的、反复重复的任务很有用，例如执行数据备份或者发送邮件。 CronJobs 也可以用来计划在指定时间来执行的独立任务，例如计划当集群看起来很空闲时 执行某个 Job。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org63ce1b0&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;配置清单-2&#34;&gt;配置清单&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;$ cat cronjob-demo.yaml
-apiVersion: batch/v1
-kind: CronJob
-metadata:
-  name: cronjob-demo
-spec:
-  schedule: &amp;quot;*/1 * * * *&amp;quot;
-  jobTemplate:
-    spec:
-      template:
-        spec:
-          containers:
-          - name: cronjob-demo
-            image: busybox
-            imagePullPolicy: IfNotPresent
-            command:
-            - /bin/sh
-            - -c
-            - date; echo Hello from the Kubernetes cluster
-          restartPolicy: OnFailure
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org2e52734&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;查看效果-5&#34;&gt;查看效果&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;# mosp @ mospdeMacBook-Pro in ~/study/k8s/resource [20:27:32]
-$ k get cronjobs.batch -A
-NAMESPACE   NAME           SCHEDULE      SUSPEND   ACTIVE   LAST SCHEDULE   AGE
-default     cronjob-demo   */1 * * * *   False     0        40s             7m53s
-
-# mosp @ mospdeMacBook-Pro in ~/study/k8s/resource [20:27:40]
-$ k get pod -A
-NAMESPACE              NAME                                            READY   STATUS      RESTARTS         AGE
-default                cronjob-demo-27761065--1-bjdj7                  0/1     Completed   0                2m47s
-default                cronjob-demo-27761066--1-z9ttq                  0/1     Completed   0                107s
-default                cronjob-demo-27761067--1-9x5fn                  0/1     Completed   0                47s
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;通过观察发现，它只保留最新的3个pod，其他的将被删除掉免得占用资源。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org546b0d0&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;hpa&#34;&gt;HPA&lt;/h2&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgba6b263&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;作用及概念-3&#34;&gt;作用及概念&lt;/h3&gt;
-
-&lt;p&gt;&lt;a id=&#34;org278c786&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;label-annotation-selector&#34;&gt;Label&amp;amp;Annotation&amp;amp;Selector&lt;/h2&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgacecd12&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;label&#34;&gt;Label&lt;/h3&gt;
-
-&lt;p&gt;详见：&lt;a href=&#34;https://www.cnblogs.com/chuanzhang053/p/16351442.html&#34;&gt;k8s中label和label selector的基本概念及使用方法&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org1cb2230&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;annotation&#34;&gt;Annotation&lt;/h3&gt;
-
-&lt;p&gt;详见：&lt;a href=&#34;https://www.jianshu.com/p/21275c1c701c&#34;&gt;K8s Annotation（注解）&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org33a8552&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;selector&#34;&gt;Selector&lt;/h3&gt;
-
-&lt;p&gt;Label selector的使用场景:&lt;/p&gt;
-
-&lt;p&gt;1.kube-controller进程通过资源对象RC上定义的Label Selector来筛选要监控的Pod副本的数量，从而实现Pod副本的数量始终符合预期设定的全自动控制流程&lt;/p&gt;
-
-&lt;p&gt;2.kupe-proxy进程通过Service的Label Selector来选择对应的Pod，自动建立器每个Service到对应Pod的请求转发路由表，从而实现Service的智能负载均衡机制&lt;/p&gt;
-
-&lt;p&gt;3.通过对某些Node定义特定的Label,并且在Pod定义文件中使用NodeSelector这种标签调度策略，Kube-scheduler进程可以实现Pod定向调度的特性&lt;/p&gt;
-
-&lt;p&gt;详见: &lt;a href=&#34;https://blog.csdn.net/weixin_35673021/article/details/112946553&#34;&gt;k8s selector_k8s之Label与Selector&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org14788c6&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;参考资料&#34;&gt;参考资料&lt;/h1&gt;
-
-&lt;p&gt;1.&lt;a href=&#34;https://blog.51cto.com/u_15155091/2723613&#34;&gt;k8s之terminationMessagePath&lt;/a&gt;&lt;br /&gt;
-2.&lt;a href=&#34;https://blog.csdn.net/dkfajsldfsdfsd/article/details/81209150&#34;&gt;Kubernetes之DNS&lt;/a&gt;&lt;br /&gt;
-3.&lt;a href=&#34;https://www.jianshu.com/p/1f64a4694ace&#34;&gt;Kubernetes——调度器Scheduler&lt;/a&gt;&lt;br /&gt;
-4.&lt;a href=&#34;https://cloud.tencent.com/developer/article/1748675&#34;&gt;k8s之securityContext&lt;/a&gt;&lt;br /&gt;
-5.&lt;a href=&#34;https://www.jianshu.com/p/229ef1daf986&#34;&gt;Kubernetes的所有者和依赖&lt;/a&gt;&lt;br /&gt;
-6.&lt;a href=&#34;https://blog.csdn.net/qq_44079072/article/details/121144611&#34;&gt;k8s之pod详解&lt;/a&gt;&lt;br /&gt;
-7.&lt;a href=&#34;https://blog.csdn.net/weixin_45710286/article/details/125474671&#34;&gt;kubernetes 之 pod 调度策略（一）&lt;/a&gt;&lt;br /&gt;
-8.&lt;a href=&#34;https://www.jianshu.com/p/ebb8f0ba67f6&#34;&gt;污点（taints）和容忍度（tolerations）&lt;/a&gt;&lt;br /&gt;
-9.&lt;a href=&#34;https://www.oomspot.com//post/k8swangluomoxingfuwuneibuliuliangcelue&#34;&gt;k8s网络模型-服务内部流量策略&lt;/a&gt;&lt;br /&gt;
-10.&lt;a href=&#34;https://www.jianshu.com/p/cedf8c9d18f1&#34;&gt;k8s中statefulset资源类型的深入理解&lt;/a&gt;&lt;br /&gt;
-11.&lt;a href=&#34;https://copyfuture.com/blogs-details/202006012253389106o9ttg1qo5by175&#34;&gt;k8s job简介和访问&lt;/a&gt;&lt;br /&gt;
-12.&lt;a href=&#34;https://blog.csdn.net/m0_47288926/article/details/122819880&#34;&gt;k8s-HPA&lt;/a&gt;&lt;/p&gt;
 </description>
         </item>
         
