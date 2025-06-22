@@ -5,7 +5,275 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Wed, 31 Jan 2024 19:31:10 CST</updated>
+        <updated>Mon, 02 Jun 2025 16:29:28 CST</updated>
+        
+        <item>
+            <title>huggingface大模型文件构成</title>
+            <link>http://mospany.github.io/2025/06/02/huggingface-llm/</link>
+            <pubDate>Mon, 02 Jun 2025 16:29:28 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://mospany.github.io/2025/06/02/huggingface-llm/</guid>
+            <description>
+
+&lt;h1 id=&#34;简介&#34;&gt;简介&lt;/h1&gt;
+
+&lt;p&gt;Hugging Face 是一个机器学习社区平台，提供数万个预训练模型、数据集、API 与工具库，广泛应用于 NLP、CV、语音、强化学习、多模态等任务。&lt;/p&gt;
+
+&lt;p&gt;官方平台：🔗 &lt;a href=&#34;https://huggingface.co/&#34;&gt;https://huggingface.co/&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;核心组件&#34;&gt;核心组件&lt;/h1&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;组件名&lt;/th&gt;
+&lt;th&gt;简介&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;transformers&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;主力库，提供 NLP 预训练模型的加载与使用&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;datasets&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;高质量数据集管理、加载、预处理库&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;accelerate&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;简化多 GPU、TPU 的训练部署&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;diffusers&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;文生图、扩散模型的主要支持库&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;peft&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;轻量微调（LoRA、QLoRA 等）支持库&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;huggingface_hub&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;与 Hugging Face Hub 交互的 Python 工具库&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+</description>
+        </item>
+        
+        <item>
+            <title>vGPU方案HAMi(01): 实现细粒度 GPU 切分</title>
+            <link>http://mospany.github.io/2024/02/05/hami-vgpu-split/</link>
+            <pubDate>Mon, 05 Feb 2024 19:31:10 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://mospany.github.io/2024/02/05/hami-vgpu-split/</guid>
+            <description>
+
+&lt;p&gt;本文主要分享一个开源的 GPU 虚拟化方案：HAMi，包括如何安装、配置以及使用。&lt;/p&gt;
+
+&lt;p&gt;相比于上一篇分享的 TimeSlicing 方案，HAMi 除了 GPU 共享之外还可以实现 GPU core、memory 的限制，保证共享同一 GPU 的各个 Pod 都能拿到足够的资源。&lt;/p&gt;
+
+&lt;p&gt;本文主要对开源的 vGPU 方案 HAMi 的 GPU Core&amp;amp;Memory 隔离功能进行测试。&lt;/p&gt;
+
+&lt;h1 id=&#34;为什么需要-gpu-共享-切分等方案&#34;&gt;为什么需要 GPU 共享、切分等方案？&lt;/h1&gt;
+
+&lt;p&gt;开始之前我们先思考一个问题，&lt;em&gt;为什么需要 GPU 共享、切分等方案？&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;或者说是另外一个问题：&lt;em&gt;明明直接在裸机环境使用，都可以多个进程共享 GPU，怎么到 k8s 环境就不行了。&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;推荐阅读前面几篇文章：这两篇分享了如何在各个环境中使用 GPU，在 k8s 环境则推荐使用 NVIDIA 提供的 gpu-operator 快速部署环境。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://blog.mospan.cn/2024/01/16/gpu-on-k8s/&#34;&gt;K8S项目实践(08): 在ECS、Docker、K8s 等环境中使用 GPU&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://blog.mospan.cn/2024/01/17/gpu-operator/&#34;&gt;K8S项目实践(09): 使用 GPU Operator搭建AI算力环境&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;这两篇则分析了 device-plugin 原理以及在 K8s 中创建一个申请 GPU 的 Pod 后的一些列动作，最终该 Pod 是如何使用到 GPU 的。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://blog.mospan.cn/2024/01/24/device-plugin/&#34;&gt;K8S项目实践(10): device-plugin原理到实现&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://blog.mospan.cn/2024/01/27/pod-use-gpu/&#34;&gt;K8S项目实践(11): Pod 是如何使用到 GPU 的及源码分析&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;看完之后，大家应该就大致明白了。&lt;/p&gt;
+
+&lt;h2 id=&#34;资源感知&#34;&gt;资源感知&lt;/h2&gt;
+
+&lt;p&gt;首先在 k8s 中资源是和节点绑定的，对于 GPU 资源，我们使用 NVIDIA 提供的 device-plugin 进行感知，并上报到 kube-apiserver,这样我们就能在 Node 对象上看到对应的资源了。&lt;/p&gt;
+
+&lt;p&gt;就像这样：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;[root@k8s-master1 ~]# kubectl  describe node k8s-worker1 | grep Capacity: -A8
+Capacity:
+  cpu:                   4
+  ephemeral-storage:     123460788Ki
+  hugepages-1Gi:         0
+  hugepages-2Mi:         0
+  lixueduan.com/gopher:  2
+  memory:                9922140Ki
+  nvidia.com/gpu:        1
+  pods:                  110
+[root@k8s-master1 ~]# 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可以看到，该节点除了基础的 cpu、memory 之外，还有一个nvidia.com/gpu: 1 信息，表示该节点上有 1 个 GPU。&lt;/p&gt;
+
+&lt;h2 id=&#34;资源申请&#34;&gt;资源申请&lt;/h2&gt;
+
+&lt;p&gt;然后我们就可以在创建 Pod 时申请对应的资源了，比如申请一个 GPU：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;apiVersion: v1
+kind: Pod
+metadata:
+  name: cuda-vectoradd
+spec:
+  restartPolicy: OnFailure
+  containers:
+  - name: cuda-vectoradd
+    image: &amp;quot;nvcr.io/nvidia/k8s/cuda-sample:vectoradd-cuda10.2&amp;quot;
+    resources:
+      limits:
+        nvidia.com/gpu: 1
+    command: [&amp;quot;nvidia-smi&amp;quot;]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;apply 该 yaml 之后，kube-scheduler 在调度该 Pod 时就会将其调度到一个拥有足够 GPU 资源的 Node 上。&lt;/p&gt;
+
+&lt;p&gt;同时该 Pod 申请的部分资源也会标记为已使用，不会再分配给其他 Pod。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;post/20224/images/2024-02-05-hami-vgpu-split/IMG_20250205-100211174.png&#34; alt=&#34;picture 0&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;到这里，问题的答案就已经很明显的。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;1）device-plugin 感知到节点上的物理 GPU 数量，上报到 kube-apiserver&lt;/li&gt;
+&lt;li&gt;2）kube-scheduler 调度 Pod 时会根据 pod 中的 Request 消耗对应资源
+即：&lt;em&gt;Node 上的 GPU 资源被 Pod 申请之后，在 k8s 中就被标记为已消耗了，后续创建的 Pod 会因为资源不够导致无法调度。&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;实际上：可能 GPU 性能比较好，可以支持多个 Pod 共同使用，但是因为 k8s 中的调度限制导致多个 Pod 无法正常共享。&lt;/p&gt;
+
+&lt;p&gt;因此，我们才需要 GPU 共享、切分等方案。&lt;/p&gt;
+
+&lt;p&gt;上一篇文章&lt;a href=&#34;http://blog.mospan.cn/2024/01/31/gpu-time-slicing/&#34;&gt;K8S项目实践(12): GPU共享方案Time Slicing&lt;/a&gt;中给大家分享了一个 GPU 共享方案。&lt;/p&gt;
+
+&lt;p&gt;可以实现多个 Pod 共享同一个 GPU，但是存在一个问题：Pod 之间并未做任何隔离，每个 Pod 能用到多少 GPU core、memory 都靠竞争，可能会导致部分 Pod 占用大部分资源导致其他 Pod 无法正常使用的情况。&lt;/p&gt;
+
+&lt;p&gt;今天给大家分享一个开源的 vGPU 方案 &lt;a href=&#34;https://github.com/Project-HAMi/HAMi&#34;&gt;HAMi&lt;/a&gt;。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;ps：NVIDIA 也有自己的 vGPU 方案，但是需要 license&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h1 id=&#34;什么是-hami&#34;&gt;什么是 HAMi？&lt;/h1&gt;
+
+&lt;p&gt;HAMi 全称是：Heterogeneous AI Computing Virtualization Middleware，HAMi 给自己的定位或者希望是做一个异构算力虚拟化平台。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;原 第四范式 k8s-vgpu-scheduler, 这次改名 HAMi 同时也将核心的 vCUDA 库 libvgpu.so 也开源了。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;但是现在比较完善的是对 NVIDIA GPU 的 vGPU 方案，因此我们可以简单认为他就是一个 vGPU 方案。&lt;/p&gt;
+
+&lt;p&gt;整体架构如下：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;post/2024/images/2024-02-05-hami-vgpu-split/IMG_20250205-101305158.png&#34; alt=&#34;picture 1&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;可以看到组件还是比较多的，涉及到 Webhook、Scheduler、Device Plugin、HAMi-Core 等等。&lt;/p&gt;
+
+&lt;p&gt;这篇文章只讲使用，因此架构、原理就一笔带过，后续也会有相关文章,欢迎关注~。&lt;/p&gt;
+
+&lt;h2 id=&#34;特性&#34;&gt;特性&lt;/h2&gt;
+
+&lt;p&gt;使用 HAMi 最大的一个功能点就是可以实现 GPU 的细粒度的隔离，可以对 core 和 memory 使用 1% 级别的隔离。&lt;/p&gt;
+
+&lt;p&gt;具体如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;apiVersion: v1
+kind: Pod
+metadata:
+  name: gpu-pod
+spec:
+  containers:
+    - name: ubuntu-container
+      image: ubuntu:18.04
+      command: [&amp;quot;bash&amp;quot;, &amp;quot;-c&amp;quot;, &amp;quot;sleep 86400&amp;quot;]
+      resources:
+        limits:
+          nvidia.com/gpu: 1 # 请求1个vGPUs
+          nvidia.com/gpumem: 3000 # 每个vGPU申请3000m显存 （可选，整数类型）
+          nvidia.com/gpucores: 30 # 每个vGPU的算力为30%实际显卡的算力 （可选，整数类型）
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;nvidia.com/gpu：请求一个 GPU&lt;/li&gt;
+&lt;li&gt;nvidia.com/gpumem：只申请使用 3000M GPU Memory&lt;/li&gt;
+&lt;li&gt;nvidia.com/gpucores：申请使用 30% 的 GPU core，也就是该 Pod 只能使用到 30% 的算力
+相比于上文分享了 TimeSlicing 方案，HAMi 则是实现了 GPU core 和 memory 的隔离。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;在开源方案里面已经算是比较优秀的了。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&#34;特性-1&#34;&gt;特性&lt;/h2&gt;
+
+&lt;p&gt;HAMi 实现GPU core 和 memory 隔离、限制是使用的 vCUDA 方案，具体设计如下：
+&lt;img src=&#34;post/2024/images/2024-02-05-hami-vgpu-split/IMG_20250205-102943833.png&#34; alt=&#34;picture 2&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;HAMi 使用的是软件层面的 vCUDA 方案，对 NVIDIA 原生的 CUDA 驱动进行重写(libvgpu.so)，然后挂载到 Pod 中进行替换，然后在自己的实现的 CUDA 驱动中对 API 进行拦截，实现资源隔离以及限制的效果。&lt;/p&gt;
+
+&lt;p&gt;例如：原生 libvgpu.so 在进行内存分配时，只有在 GPU 内存真的用完的时候才会提示 CUDA OOM，但是对于 HAMi 实现的 libvgpu.so 来说，检测到 Pod 中使用的内存超过了 Resource 中的申请量就直接返回 OOM，从而实现资源的一个限制。&lt;/p&gt;
+
+&lt;p&gt;然后在执行 nvidia-smi 命令查看 GPU 信息时，也只返回 Pod Resource 中申请的资源，这样在查看时也进行隔离。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;ps：需要对 CUDA 和 NVML 的部分 API 拦截。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h1 id=&#34;hami-部署&#34;&gt;HAMi 部署&lt;/h1&gt;
+
+&lt;p&gt;HAMi 提供了 Helm Chart 安装也是比较简单的。&lt;/p&gt;
+
+&lt;h2 id=&#34;部署-gpu-operator&#34;&gt;部署 GPU Operator&lt;/h2&gt;
+
+&lt;p&gt;需要注意的是 HAMi 会依赖 NVIDIA 的那一套，因此推荐先部署 GPU-Operator。&lt;/p&gt;
+
+&lt;p&gt;参考这篇文章 –&amp;gt; &lt;a href=&#34;http://blog.mospan.cn/2024/01/17/gpu-operator/&#34;&gt;K8S项目实践(09): 使用 GPU Operator搭建AI算力环境&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;部署好 GPU Operator 之后在部署 HAMi。&lt;/p&gt;
+
+&lt;h2 id=&#34;准备镜像&#34;&gt;准备镜像&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;crictl pull ghcr.io/stackhpc/kube-webhook-certgen:v1.1.1
+
+ctr -n k8s.io image tag  ghcr.io/stackhpc/kube-webhook-certgen:v1.1.1  liangjw/kube-webhook-certgen:v1.1.1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;部署-hami&#34;&gt;部署 HAMi&lt;/h2&gt;
+
+&lt;p&gt;首先使用 helm 添加我们的 repo&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;helm repo add hami-charts https://project-hami.github.io/HAMi/
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;随后，使用下列指令获取集群服务端版本
+&amp;gt; 这里使用的是 v1.28.15版本&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;kubectl version
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;在安装过程中须根据集群服务端版本（上一条指令的结果）指定调度器镜像版本，例如集群服务端版本为 v1.28.5，则可以使用如下指令进行安装&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;helm install hami hami-charts/hami --set scheduler.kubeScheduler.imageTag=v1.28.5 -n kube-system
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;通过kubectl get pods指令看到 vgpu-device-plugin 与 vgpu-scheduler 两个pod 状态为Running 即为安装成功&lt;/p&gt;
+</description>
+        </item>
         
         <item>
             <title>K8S项目实践(12): GPU共享方案Time Slicing</title>
@@ -6763,806 +7031,6 @@ export CGO_ENABLED=“1”。&lt;br /&gt;
 【06】 &lt;a href=&#34;https://www.jianshu.com/p/75704eb30eff&#34;&gt;查看CNI中的veth pair&lt;/a&gt;&lt;br /&gt;
 【07】 &lt;a href=&#34;https://mp.weixin.qq.com/s/7t_MoZ0quJF50VoIwqvKyQ&#34;&gt;一文吃透 K8S 网络模型&lt;/a&gt;&lt;br /&gt;
 【08】 &lt;a href=&#34;https://blog.csdn.net/elihe2011/article/details/122926399&#34;&gt;K8S 网络CNI&lt;/a&gt;&lt;/p&gt;
-</description>
-        </item>
-        
-        <item>
-            <title>K8S项目实践(01): kubeadm安装K8S集群</title>
-            <link>http://mospany.github.io/2022/11/23/kubeadm-install-k8s/</link>
-            <pubDate>Tue, 22 Nov 2022 20:58:52 CST</pubDate>
-            <author>Mospan</author>
-            <guid>http://mospany.github.io/2022/11/23/kubeadm-install-k8s/</guid>
-            <description>
-
-&lt;p&gt;&lt;a id=&#34;org4f3c086&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;规划&#34;&gt;规划&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgfdfecef&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;服务配置&#34;&gt;服务配置&lt;/h2&gt;
-
-&lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
-
-
-&lt;colgroup&gt;
-&lt;col  class=&#34;org-left&#34; /&gt;
-
-&lt;col  class=&#34;org-left&#34; /&gt;
-
-&lt;col  class=&#34;org-left&#34; /&gt;
-&lt;/colgroup&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;OS&lt;/th&gt;
-&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;配置&lt;/th&gt;
-&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;用途&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;CentOS 7.6 (172.25.140.216)&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;2C4G&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;k8s-master&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;CentOS 7.6 (172.25.140.215)&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;2C4G&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;k8s-work1&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;CentOS 7.6 (172.25.140.214)&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;2C4G&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;k8s-work2&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;**注**：这是演示 k8s 集群安装的实验环境，配置较低，生产环境中我们的服务器配置至少都是 8C/16G 的基础配置。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgbfb1037&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;版本选择&#34;&gt;版本选择&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;CentOS：7.6&lt;/li&gt;
-&lt;li&gt;k8s组件版本：1.23.6&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a id=&#34;orge0cd109&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;一-服务器基础配置&#34;&gt;一、服务器基础配置&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgfbbc6fc&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;1-配置主机名&#34;&gt;1、 配置主机名&lt;/h2&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;所有节点执行&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@iZ8vbfafp7g52u8976flc0Z ~]# hostnamectl set-hostname k8s-master
-[root@iZ8vbfafp7g52u8976flc1Z ~]# hostnamectl set-hostname k8s-work1
-[root@iZ8vbfafp7g52u8976flc2Z ~]# hostnamectl set-hostname k8s-work2
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgec07355&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;2-关闭防火墙&#34;&gt;2、关闭防火墙&lt;/h2&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;所有节点执行&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;pre&gt;&lt;code&gt;1  # 关闭firewalld
-2  [root@k8s-master ~]# systemctl stop firewalld
-3  
-4  # 关闭selinux
-5  [root@k8s-master ~]# sed -i &#39;s/enforcing/disabled/&#39; /etc/selinux/config
-6  [root@k8s-master ~]# setenforce 0
-7   setenforce: SELinux is disabled
-8  [root@k8s-master ~]#
-9  
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org1b9a204&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;3-互做本地解析&#34;&gt;3、互做本地解析&lt;/h2&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;所有节点执行&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# cat /etc/hosts
-172.25.140.216 k8s-master
-172.25.140.215 k8s-work1
-172.25.140.214 k8s-work2
-
-[root@k8s-master ~]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgf3b9e1a&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;4-ssh-免密通信-可选&#34;&gt;4、SSH 免密通信（可选）&lt;/h2&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;所有节点执行&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# ssh-keygen
-  Generating public/private rsa key pair.
-  Enter file in which to save the key (/root/.ssh/id_rsa):
-  Enter passphrase (empty for no passphrase):
-  Enter same passphrase again:
-  Your identification has been saved in /root/.ssh/id_rsa.
-  Your public key has been saved in /root/.ssh/id_rsa.pub.
-  The key fingerprint is:
-  SHA256:s+JcU9ctsItBgDC+UwxgmFhnsQGpy9SELkEOx4Lmk/0 root@k8s-master
-  The key&#39;s randomart image is:
-  +---[RSA 2048]----+
-  |=*B+Oo ..        |
-  |X=o= *.  .       |
-  |+== o o   . .    |
-  |o* o o   .   + . |
-  |+.. +   S o o o .|
-  |..   E   + + . . |
-  |      . + . .    |
-  |     o o .       |
-  |      o          |
-  +----[SHA256]-----+
-  [root@k8s-master ~]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;所有节点执行（互发公钥）&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# ssh-copy-id root@k8s-work1
-  /usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: &amp;quot;/root/.ssh/id_rsa.pub&amp;quot;
-  The authenticity of host &#39;k8s-work1 (172.25.140.215)&#39; can&#39;t be established.
-  ECDSA key fingerprint is SHA256:BMN7TIKDbFKdG3v1TVHmy3i6BYm7TGS8Hsnu1F9+UkI.
-  ECDSA key fingerprint is MD5:71:60:e2:6c:38:e2:20:d8:9c:94:77:54:cb:10:33:32.
-  Are you sure you want to continue connecting (yes/no)? yes
-  /usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
-  /usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
-  root@k8s-work1&#39;s password:
-
-  Number of key(s) added: 1
-
-  Now try logging into the machine, with:   &amp;quot;ssh &#39;root@k8s-work1&#39;&amp;quot;
-  and check to make sure that only the key(s) you wanted were added.
-
-  [root@k8s-master ~]# ssh-copy-id root@k8s-work2
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org97fcb39&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;5-加载-br-netfilter-模块&#34;&gt;5、加载 br_netfilter 模块&lt;/h2&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;确保 br_netfilter 模块被加载&lt;br /&gt;
-所有节点执行&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;pre&gt;&lt;code&gt; 1  # 加载模块
- 2  [root@k8s-master ~]# modprobe br_netfilter
- 3  ## 查看加载请看
- 4  [root@k8s-master ~]# lsmod | grep br_netfilter
- 5  br_netfilter           22256  0
- 6  bridge                151336  1 br_netfilter
- 7  
- 8  # 永久生效
- 9  [root@k8s-master ~]# cat &amp;lt;&amp;lt;EOF | tee /etc/modules-load.d/k8s.conf
-10  &amp;gt; br_netfilter
-11  &amp;gt; EOF
-12  br_netfilter
-13  [root@k8s-master ~]#
-14  
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org6cf490e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;6-允许-iptables-检查桥接流量&#34;&gt;6、允许 iptables 检查桥接流量&lt;/h2&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;所有节点执行&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;pre&gt;&lt;code&gt; 1   [root@k8s-master ~]# cat &amp;lt;&amp;lt;EOF | sudo tee /etc/modules-load.d/k8s.conf
- 2   &amp;gt; br_netfilter
- 3   &amp;gt; EOF
- 4   br_netfilter
- 5   [root@k8s-master ~]# cat &amp;lt;&amp;lt;EOF | sudo tee /etc/sysctl.d/k8s.conf
- 6   &amp;gt; net.bridge.bridge-nf-call-ip6tables = 1
- 7   &amp;gt; net.bridge.bridge-nf-call-iptables = 1
- 8   &amp;gt; EOF
- 9   net.bridge.bridge-nf-call-ip6tables = 1
-10   net.bridge.bridge-nf-call-iptables = 1
-11  [root@k8s-master ~]# sudo sysctl --system
-12  
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org716427b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;7-关闭-swap&#34;&gt;7、关闭 swap&lt;/h2&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;所有节点执行&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;pre&gt;&lt;code&gt;1  # 临时关闭
-2  [root@k8s-master ~]# swapoff -a
-3  
-4  # 永久关闭
-5  [root@k8s-master ~]# sed -ri &#39;s/.*swap.*/#&amp;amp;/&#39; /etc/fstab
-6  
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;orga15d3fb&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;8-时间同步&#34;&gt;8、时间同步&lt;/h2&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;所有节点执行&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;pre&gt;&lt;code&gt;1  # 同步网络时间
-2  [root@k8s-master ~]# ntpdate time.nist.gov
-3  23 Nov 22:36:07 ntpdate[12307]: adjust time server 132.163.96.6 offset -0.009024 sec
-4  
-5  [root@k8s-master ~]#
-6  # 将网络时间写入硬件时间
-7  [root@k8s-master ~]# hwclock --systohc
-8  
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org7ff8672&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;9-安装-docker&#34;&gt;9、安装 Docker&lt;/h2&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;所有节点执行&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;1、使用 sudo 或 root 权限登录 Centos。&lt;/p&gt;
-
-&lt;p&gt;2、确保 yum 包更新到最新。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;sudo yum update
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;3、执行 Docker 安装脚本。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;curl -fsSL https://get.docker.com/ | sh 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;执行这个脚本会添加 docker.repo 源并安装 Docker。&lt;/p&gt;
-
-&lt;p&gt;4、启动 Docker 进程。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$ sudo service docker start
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;5、验证 docker 是否安装成功并在容器中执行一个测试的镜像。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;sudo docker run hello-world
-
-[root@k8s-master ~]# sudo docker run hello-world
-
-  Hello from Docker!
-  This message shows that your installation appears to be working correctly.
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;到此，docker 在 CentOS 系统的安装完成。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orge392402&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;10-安装-kubeadm-kubelet&#34;&gt;10、安装 kubeadm、kubelet&lt;/h2&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;所有节点执行&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;1、添加 k8s 镜像源&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;地址：&lt;a href=&#34;https://developer.aliyun.com/mirror/kubernetes?spm=a2c6h.13651102.0.0.1cd01b116JYQIn&#34;&gt;https://developer.aliyun.com/mirror/kubernetes?spm=a2c6h.13651102.0.0.1cd01b116JYQIn&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;pre&gt;&lt;code&gt; 1  [root@k8s-master ~]# cat &amp;lt;&amp;lt;EOF &amp;gt; /etc/yum.repos.d/kubernetes.repo
- 2  &amp;gt; [kubernetes]
- 3  &amp;gt; name=Kubernetes
- 4  &amp;gt; baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
- 5  &amp;gt; enabled=1
- 6  &amp;gt; gpgcheck=0
- 7  &amp;gt; repo_gpgcheck=0
- 8  &amp;gt; gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
- 9  &amp;gt; EOF
-10  [root@k8s-master ~]#
-11  
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;2、建立 k8s YUM 缓存&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt; 1  [root@k8s-master ~]# yum makecache
- 2  已加载插件：fastestmirror
- 3  Loading mirror speeds from cached hostfile
- 4  base                                                                                                                                                                                 | 3.6 kB  00:00:00
- 5  docker-ce-stable                                                                                                                                                                     | 3.5 kB  00:00:00
- 6  epel                                                                                                                                                                                 | 4.7 kB  00:00:00
- 7  extras                                                                                                                                                                               | 2.9 kB  00:00:00
- 8  updates                                                                                                                                                                              | 2.9 kB  00:00:00
- 9  元数据缓存已建立
-10  [root@k8s-master ~]#
-11  
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;3、安装 k8s 相关工具&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt; 1   # 查看可安装版本
- 2   [root@k8s-master ~]# yum list kubelet --showduplicates
- 3  
- 4   ...
- 5   ...
- 6   kubelet.x86_64                                           1.23.0-0                                             kubernetes
- 7   kubelet.x86_64                                           1.23.1-0                                             kubernetes
- 8   kubelet.x86_64                                           1.23.2-0                                             kubernetes
- 9   kubelet.x86_64                                           1.23.3-0                                             kubernetes
-10   kubelet.x86_64                                           1.23.4-0                                             kubernetes
-11   kubelet.x86_64                                           1.23.5-0                                             kubernetes
-12   kubelet.x86_64                                           1.23.6-0                                             kubernetes
-13  
-14   # 开始安装（指定你要安装的版本）
-15   [root@k8s-master ~]# yum install -y kubelet-1.23.6 kubeadm-1.23.6 kubectl-1.23.6
-16  
-17  # 设置开机自启动并启动kubelet（kubelet由systemd管理）
-18  [root@k8s-master ~]# systemctl enable kubelet &amp;amp;&amp;amp; systemctl start kubelet
-19  
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org02e7601&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;二-master-节点&#34;&gt;二、Master 节点&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;org88d2a45&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;1-k8s-初始化&#34;&gt;1、k8s 初始化&lt;/h2&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Master 节点执行&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;pre&gt;&lt;code&gt;1   [root@k8s-master ~]# kubeadm init \
-2  --apiserver-advertise-address=172.25.140.216 \
-3  --image-repository registry.aliyuncs.com/google_containers \
-4  --kubernetes-version v1.23.6 \
-5  --service-cidr=10.96.0.0/12 \
-6  --pod-network-cidr=10.244.0.0/16 \
-7  --ignore-preflight-errors=all
-8  
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;参数说明：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;1  --apiserver-advertise-address  # 集群master地址
-2  --image-repository             # 指定k8s镜像仓库地址
-3  --kubernetes-version           # 指定K8s版本（与kubeadm、kubelet版本保持一致）
-4  --service-cidr                 # Pod统一访问入口
-5  --pod-network-cidr             # Pod网络（与CNI网络保持一致）
-6  
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;初始化后输出内容：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt; 1  ...
- 2  ...
- 3  [addons] Applied essential addon: CoreDNS
- 4  [addons] Applied essential addon: kube-proxy
- 5  
- 6  Your Kubernetes control-plane has initialized successfully!
- 7  
- 8  To start using your cluster, you need to run the following as a regular user:
- 9  
-10     mkdir -p $HOME/.kube
-11     sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-12     sudo chown $(id -u):$(id -g) $HOME/.kube/config
-13  
-14    Alternatively, if you are the root user, you can run:
-15  
-16    export KUBECONFIG=/etc/kubernetes/admin.conf
-17  
-18  You should now deploy a pod network to the cluster.
-19  Run &amp;quot;kubectl apply -f [podnetwork].yaml&amp;quot; with one of the options listed at:
-20  https://kubernetes.io/docs/concepts/cluster-administration/addons/
-21  
-22  Then you can join any number of worker nodes by running the following on each as root:
-23  
-24  kubeadm join 172.25.140.216:6443 --token 8d9mk7.08nyz6xc2d5boiy8 \
-25      --discovery-token-ca-cert-hash sha256:45542b0b380a8f959e5bc93f6dd7d1c5c78b202ff1a3eea5c97804549af9a12e
-26  
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org0b51700&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;2-根据输出提示创建相关文件&#34;&gt;2、根据输出提示创建相关文件&lt;/h2&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Master 节点执行&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;pre&gt;&lt;code&gt;1  [root@k8s-master ~]# mkdir -p $HOME/.kube
-2  [root@k8s-master ~]# cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-3  [root@k8s-master ~]# chown $(id -u):$(id -g) $HOME/.kube/config
-4  [root@k8s-master ~]#
-5  
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org5a02bac&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;3-查看-k8s-运行的容器&#34;&gt;3、查看 k8s 运行的容器&lt;/h2&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Master 节点执行&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;pre&gt;&lt;code&gt; 1  root@k8s-master ~]# kubectl get pods -n kube-system -o wide
- 2  NAME                                 READY   STATUS    RESTARTS   AGE     IP               NODE         NOMINATED NODE   READINESS GATES
- 3  coredns-6d8c4cb4d-ck2x5              0/1     Pending   0          8m4s    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;       &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
- 4  coredns-6d8c4cb4d-mbctj              0/1     Pending   0          8m4s    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;       &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
- 5  etcd-k8s-master                      1/1     Running   0          8m18s   172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
- 6  kube-apiserver-k8s-master            1/1     Running   0          8m18s   172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
- 7  kube-controller-manager-k8s-master   1/1     Running   0          8m18s   172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
- 8  kube-proxy-r84lg                     1/1     Running   0          8m4s    172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
- 9  kube-scheduler-k8s-master            1/1     Running   0          8m18s   172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-10  [root@k8s-master ~]#
-11  
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org2688836&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;4-查看-k8s-节点&#34;&gt;4、查看 k8s 节点&lt;/h2&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Master 节点执行&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;pre&gt;&lt;code&gt;1  [root@k8s-master ~]# kubectl  get node -o wide
-2  NAME         STATUS     ROLES                  AGE   VERSION   INTERNAL-IP      EXTERNAL-IP   OS-IMAGE                KERNEL-VERSION               CONTAINER-RUNTIME
-3  k8s-master   NotReady   control-plane,master   11m   v1.23.6   172.25.140.216   &amp;lt;none&amp;gt;        CentOS Linux 7 (Core)   3.10.0-957.21.3.el7.x86_64   docker://20.10.21
-4  [root@k8s-master ~]#
-5  
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;可看到当前只有 k8s-master 节点，而且状态是 NotReady（未就绪），因为我们还没有部署网络插件（kubectl apply -f [podnetwork].yaml），于是接着部署容器网络（CNI）。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orge6d35ae&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;5-容器网络-cni-部署&#34;&gt;5、容器网络（CNI）部署&lt;/h2&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Master 节点执行&lt;br /&gt;
-插件地址：&lt;a href=&#34;https://kubernetes.io/docs/concepts/cluster-administration/addons/&#34;&gt;https://kubernetes.io/docs/concepts/cluster-administration/addons/&lt;/a&gt;&lt;br /&gt;
-该地址在 k8s-master 初始化成功时打印出来。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;1、选择一个主流的容器网络插件部署（Calico）&lt;br /&gt;
-   &lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/kubeadm-install-k8s/calico-install-page.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;2、下载yml文件&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master kubeadm-install-k8s]# wget https://docs.projectcalico.org/manifests/calico.yaml --no-check-certificate
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;3、根据初始化的输出提示执行启动指令&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt; 1  [root@k8s-master kubeadm-install-k8s]# kubectl apply -f calico.yaml
- 2  poddisruptionbudget.policy/calico-kube-controllers created
- 3  serviceaccount/calico-kube-controllers created
- 4  serviceaccount/calico-node created
- 5  configmap/calico-config created
- 6  customresourcedefinition.apiextensions.k8s.io/bgpconfigurations.crd.projectcalico.org created
- 7  customresourcedefinition.apiextensions.k8s.io/bgppeers.crd.projectcalico.org created
- 8  customresourcedefinition.apiextensions.k8s.io/blockaffinities.crd.projectcalico.org created
- 9  customresourcedefinition.apiextensions.k8s.io/caliconodestatuses.crd.projectcalico.org created
-10  customresourcedefinition.apiextensions.k8s.io/clusterinformations.crd.projectcalico.org created
-11  customresourcedefinition.apiextensions.k8s.io/felixconfigurations.crd.projectcalico.org created
-12  customresourcedefinition.apiextensions.k8s.io/globalnetworkpolicies.crd.projectcalico.org created
-13  customresourcedefinition.apiextensions.k8s.io/globalnetworksets.crd.projectcalico.org created
-14  customresourcedefinition.apiextensions.k8s.io/hostendpoints.crd.projectcalico.org created
-15  customresourcedefinition.apiextensions.k8s.io/ipamblocks.crd.projectcalico.org created
-16  customresourcedefinition.apiextensions.k8s.io/ipamconfigs.crd.projectcalico.org created
-17  customresourcedefinition.apiextensions.k8s.io/ipamhandles.crd.projectcalico.org created
-18  customresourcedefinition.apiextensions.k8s.io/ippools.crd.projectcalico.org created
-19  customresourcedefinition.apiextensions.k8s.io/ipreservations.crd.projectcalico.org created
-20  customresourcedefinition.apiextensions.k8s.io/kubecontrollersconfigurations.crd.projectcalico.org created
-21  customresourcedefinition.apiextensions.k8s.io/networkpolicies.crd.projectcalico.org created
-22  customresourcedefinition.apiextensions.k8s.io/networksets.crd.projectcalico.org created
-23  clusterrole.rbac.authorization.k8s.io/calico-kube-controllers created
-24  clusterrole.rbac.authorization.k8s.io/calico-node created
-25  clusterrolebinding.rbac.authorization.k8s.io/calico-kube-controllers created
-26  clusterrolebinding.rbac.authorization.k8s.io/calico-node created
-27  daemonset.apps/calico-node created
-28  deployment.apps/calico-kube-controllers created
-29  [root@k8s-master kubeadm-install-k8s]# 
-30  
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;4、看看该yaml文件所需要启动的容器&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt; 1   [root@k8s-master kubeadm-install-k8s]# cat calico.yaml |grep image
- 2         image: docker.io/calico/cni:v3.24.5
- 3         imagePullPolicy: IfNotPresent
- 4         image: docker.io/calico/cni:v3.24.5
- 5         imagePullPolicy: IfNotPresent
- 6         image: docker.io/calico/node:v3.24.5
- 7         imagePullPolicy: IfNotPresent
- 8         image: docker.io/calico/node:v3.24.5
- 9         imagePullPolicy: IfNotPresent
-10         image: docker.io/calico/kube-controllers:v3.24.5
-11         imagePullPolicy: IfNotPresent
-12  [root@k8s-master kubeadm-install-k8s]   #
-13  
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;5、查看容器是否都 Running&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt; 1  [root@k8s-master kubeadm-install-k8s]# kubectl get pods -n kube-system -o wide
- 2  NAME                                       READY   STATUS    RESTARTS   AGE     IP               NODE         NOMINATED NODE   READINESS GATES
- 3  calico-kube-controllers-7b8458594b-pdx5z   1/1     Running   0          4m37s   10.244.235.194   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
- 4  calico-node-t8hhf                          1/1     Running   0          4m37s   172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
- 5  coredns-6d8c4cb4d-ck2x5                    1/1     Running   0          32m     10.244.235.195   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
- 6  coredns-6d8c4cb4d-mbctj                    1/1     Running   0          32m     10.244.235.193   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
- 7  etcd-k8s-master                            1/1     Running   0          32m     172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
- 8  kube-apiserver-k8s-master                  1/1     Running   0          32m     172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
- 9  kube-controller-manager-k8s-master         1/1     Running   0          32m     172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-10  kube-proxy-r84lg                           1/1     Running   0          32m     172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-11  kube-scheduler-k8s-master                  1/1     Running   0          32m     172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-12  [root@k8s-master kubeadm-install-k8s]#
-13  
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org4f4a98b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;三-work-节点&#34;&gt;三、work 节点&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgfc01846&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;1-work-节点加入-k8s-集群&#34;&gt;1、work 节点加入 k8s 集群&lt;/h2&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;所有 work 节点执行&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;pre&gt;&lt;code&gt; 1  # 复制k8s-master初始化屏幕输出的语句并在work节点执行
- 2  [root@k8s-work1 ~]# kubeadm join 172.25.140.216:6443 --token 8d9mk7.08nyz6xc2d5boiy8 --discovery-token-ca-cert-hash sha256:45542b0b380a8f959e5bc93f6dd7d1c5c78b202ff1a3eea5c97804549af9a12e
- 3  [root@k8s-work2 ~]# kubeadm join 172.25.140.216:6443 --token 8d9mk7.08nyz6xc2d5boiy8 --discovery-token-ca-cert-hash sha256:45542b0b380a8f959e5bc93f6dd7d1c5c78b202ff1a3eea5c97804549af9a12e
- 4  
- 5  preflight] Running pre-flight checks
- 6  [preflight] Reading configuration from the cluster...
- 7  [preflight] FYI: You can look at this config file with &#39;kubectl -n kube-system get cm kubeadm-config -o yaml&#39;
- 8  [kubelet-start] Writing kubelet configuration to file &amp;quot;/var/lib/kubelet/config.yaml&amp;quot;
- 9  [kubelet-start] Writing kubelet environment file with flags to file &amp;quot;/var/lib/kubelet/kubeadm-flags.env&amp;quot;
-10  [kubelet-start] Starting the kubelet
-11  [kubelet-start] Waiting for the kubelet to perform the TLS Bootstrap...
-12  
-13  This node has joined the cluster:
-14  * Certificate signing request was sent to apiserver and a response was received.
-15  * The Kubelet was informed of the new secure connection details.
-16  
-17  Run &#39;kubectl get nodes&#39; on the control-plane to see this node join the cluster.
-18  
-19  [root@k8s-work2 ~]#
-20  
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org362c07d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;2-查询集群节点&#34;&gt;2、查询集群节点&lt;/h2&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Master 节点执行&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;pre&gt;&lt;code&gt;1  [root@k8s-master kubeadm-install-k8s]# kubectl  get node -o wide
-2  NAME         STATUS   ROLES                  AGE     VERSION   INTERNAL-IP      EXTERNAL-IP   OS-IMAGE                KERNEL-VERSION               CONTAINER-RUNTIME
-3  k8s-master   Ready    control-plane,master   50m     v1.23.6   172.25.140.216   &amp;lt;none&amp;gt;        CentOS Linux 7 (Core)   3.10.0-957.21.3.el7.x86_64   docker://20.10.21
-4  k8s-work1    Ready    &amp;lt;none&amp;gt;                 9m50s   v1.23.6   172.25.140.215   &amp;lt;none&amp;gt;        CentOS Linux 7 (Core)   3.10.0-957.21.3.el7.x86_64   docker://20.10.21
-5  k8s-work2    Ready    &amp;lt;none&amp;gt;                 2m41s   v1.23.6   172.25.140.214   &amp;lt;none&amp;gt;        CentOS Linux 7 (Core)   3.10.0-957.21.3.el7.x86_64   docker://20.10.21
-6  [root@k8s-master kubeadm-install-k8s]#
-7  
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;都为就绪状态了&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orge747a84&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;四-验证&#34;&gt;四、验证&lt;/h2&gt;
-
-&lt;p&gt;k8s 集群部署 nginx 服务，并通过浏览器进行访问验证。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org5ec8220&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;1-创建-pod&#34;&gt;1、创建 pod&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code&gt; 1  [root@k8s-master kubeadm-install-k8s]# kubectl create deployment nginx --image=nginx
- 2  deployment.apps/nginx created
- 3  [root@k8s-master kubeadm-install-k8s]# kubectl expose deployment nginx --port=80 --type=NodePort
- 4  service/nginx exposed
- 5  [root@k8s-master kubeadm-install-k8s]# kubectl get pod,svc
- 6  NAME                         READY   STATUS    RESTARTS   AGE
- 7  pod/nginx-85b98978db-qkd6h   1/1     Running   0          36s
- 8  
- 9  NAME                 TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
-10  service/kubernetes   ClusterIP   10.96.0.1       &amp;lt;none&amp;gt;        443/TCP        54m
-11  service/nginx        NodePort    10.108.180.91   &amp;lt;none&amp;gt;        80:31648/TCP   15s
-12  [root@k8s-master kubeadm-install-k8s]#
-13  
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgd537fac&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;2-访问-nginx&#34;&gt;2、访问 Nginx&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code&gt; 1  [root@k8s-master kubeadm-install-k8s]# curl 10.108.180.91:80
- 2  &amp;lt;!DOCTYPE html&amp;gt;
- 3  &amp;lt;html&amp;gt;
- 4  &amp;lt;head&amp;gt;
- 5  &amp;lt;title&amp;gt;Welcome to nginx!&amp;lt;/title&amp;gt;
- 6  &amp;lt;style&amp;gt;
- 7  html { color-scheme: light dark; }
- 8  body { width: 35em; margin: 0 auto;
- 9  font-family: Tahoma, Verdana, Arial, sans-serif; }
-10  &amp;lt;/style&amp;gt;
-11  &amp;lt;/head&amp;gt;
-12  &amp;lt;body&amp;gt;
-13  &amp;lt;h1&amp;gt;Welcome to nginx!&amp;lt;/h1&amp;gt;
-14  &amp;lt;p&amp;gt;If you see this page, the nginx web server is successfully installed and
-15  working. Further configuration is required.&amp;lt;/p&amp;gt;
-16  
-17  &amp;lt;p&amp;gt;For online documentation and support please refer to
-18  &amp;lt;a href=&amp;quot;http://nginx.org/&amp;quot;&amp;gt;nginx.org&amp;lt;/a&amp;gt;.&amp;lt;br/&amp;gt;
-19  Commercial support is available at
-20  &amp;lt;a href=&amp;quot;http://nginx.com/&amp;quot;&amp;gt;nginx.com&amp;lt;/a&amp;gt;.&amp;lt;/p&amp;gt;
-21  
-22  &amp;lt;p&amp;gt;&amp;lt;em&amp;gt;Thank you for using nginx.&amp;lt;/em&amp;gt;&amp;lt;/p&amp;gt;
-23  &amp;lt;/body&amp;gt;
-24  &amp;lt;/html&amp;gt;
-25  [root@k8s-master kubeadm-install-k8s]#
-26  
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;至此：kubeadm方式的k8s集群已经部署完成。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orga6cfda4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;faq&#34;&gt;FAQ&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;org4405cb7&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;1-k8s编译报错&#34;&gt;1、k8s编译报错&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code&gt; 1  ...
- 2  ...
- 3  [kubelet-check] It seems like the kubelet isn&#39;t running or healthy.
- 4  [kubelet-check] The HTTP call equal to &#39;curl -sSL http://localhost:10248/healthz&#39; failed with error: Get &amp;quot;http://localhost:10248/healthz&amp;quot;: dial tcp [::1]:10248: connect: connection refused.
- 5  
- 6   Unfortunately, an error has occurred:
- 7       timed out waiting for the condition
- 8  
- 9   This error is likely caused by:
-10       - The kubelet is not running
-11       - The kubelet is unhealthy due to a misconfiguration of the node in some way (required cgroups disabled)
-12  
-13   If you are on a systemd-powered system, you can try to troubleshoot the error with the following commands:
-14       - &#39;systemctl status kubelet&#39;
-15       - &#39;journalctl -xeu kubelet&#39;
-16  
-17   Additionally, a control plane component may have crashed or exited when started by the container runtime.
-18   To troubleshoot, list all containers using your preferred container runtimes CLI.
-19  
-20   Here is one example how you may list all Kubernetes containers running in docker:
-21       - &#39;docker ps -a | grep kube | grep -v pause&#39;
-22       Once you have found the failing container, you can inspect its logs with:
-23       - &#39;docker logs CONTAINERID&#39;
-24  
-25  error execution phase wait-control-plane: couldn&#39;t initialize a Kubernetes cluster
-26  To see the stack trace of this error execute with --v=5 or higher
-27  
-28  
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;查看日志&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;    Apr 26 20:33:30 test3 kubelet: I0426 20:33:30.588349   21936 docker_service.go:264] &amp;quot;Docker Info&amp;quot; dockerInfo=&amp;amp;{ID:2NSH:KJPQ:XOKI:5XHN:ULL3:L4LG:SXA4:PR6J:DITW:HHCF:2RKL:U2NJ Containers:0 ContainersRunning:0 ContainersPaused:0 ContainersStopped:0 Images:7 Driver:overlay2 DriverStatus:[[Backing Filesystem extfs] [Supports d_type true] [Native Overlay Diff true]] SystemStatus:[] Plugins:{Volume:[local] Network:[bridge host macvlan null overlay] Authorization:[] Log:[awslogs fluentd gcplogs gelf journald json-file logentries splunk syslog]} MemoryLimit:true SwapLimit:true KernelMemory:true KernelMemoryTCP:false CPUCfsPeriod:true CPUCfsQuota:true CPUShares:true CPUSet:true PidsLimit:false IPv4Forwarding:true BridgeNfIptables:true BridgeNfIP6tables:true Debug:false NFd:24 OomKillDisable:true NGoroutines:45 SystemTime:2022-04-26T20:33:30.583063427+08:00 LoggingDriver:json-file CgroupDriver:cgroupfs CgroupVersion: NEventsListener:0 KernelVersion:3.10.0-1160.59.1.el7.x86_64 OperatingSystem:CentOS Linux 7 (Core) OSVersion: OSType:linux Architecture:x86_64 IndexServerAddress:https://index.docker.io/v1/ RegistryConfig:0xc000263340 NCPU:2 MemTotal:3873665024 GenericResources:[] DockerRootDir:/var/lib/docker HTTPProxy: HTTPSProxy: NoProxy: Name:k8s-master Labels:[] ExperimentalBuild:false ServerVersion:18.06.3-ce ClusterStore: ClusterAdvertise: Runtimes:map[runc:{Path:docker-runc Args:[] Shim:&amp;lt;nil&amp;gt;}] DefaultRuntime:runc Swarm:{NodeID: NodeAddr: LocalNodeState:inactive ControlAvailable:false Error: RemoteManagers:[] Nodes:0 Managers:0 Cluster:&amp;lt;nil&amp;gt; Warnings:[]} LiveRestoreEnabled:false Isolation: InitBinary:docker-init ContainerdCommit:{ID:468a545b9edcd5932818eb9de8e72413e616e86e Expected:468a545b9edcd5932818eb9de8e72413e616e86e} RuncCommit:{ID:a592beb5bc4c4092b1b1bac971afed27687340c5 Expected:a592beb5bc4c4092b1b1bac971afed27687340c5} InitCommit:{ID:fec3683 Expected:fec3683} SecurityOptions:[name=seccomp,profile=default] ProductLicense: DefaultAddressPools:[] Warnings:[]}
-Apr 26 20:33:30 test3 kubelet: E0426 20:33:30.588383   21936 server.go:302] &amp;quot;Failed to run kubelet&amp;quot; err=&amp;quot;failed to run Kubelet: misconfiguration: kubelet cgroup driver: \&amp;quot;systemd\&amp;quot; is different from docker cgroup driver: \&amp;quot;cgroupfs\&amp;quot;&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;看报错的最后解释kubelet cgroup driver: \&amp;ldquo;systemd\&amp;rdquo; is different from docker cgroup driver: \&amp;ldquo;cgroupfs\&amp;rdquo;&amp;ldquo;很明显 kubelet 与 Docker 的 cgroup 驱动程序不同，kubelet 为 systemd，而 Docker 为 cgroupfs。&lt;/p&gt;
-
-&lt;p&gt;简单查看一下docker驱动：&lt;br /&gt;
-[root@k8s-master opt]# docker info |grep Cgroup&lt;br /&gt;
-Cgroup Driver: cgroupfs&lt;/p&gt;
-
-&lt;p&gt;解决方案&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;# 重置初始化
-[root@k8s-master ~]# kubeadm reset
-
-# 删除相关配置文件
-[root@k8s-master ~]# rm -rf $HOME/.kube/config  &amp;amp;&amp;amp; rm -rf $HOME/.kube
-
-# 修改 Docker 驱动为 systemd（即&amp;quot;exec-opts&amp;quot;: [&amp;quot;native.cgroupdriver=systemd&amp;quot;]）
-[root@k8s-master opt]# cat /etc/docker/daemon.json 
-{
-  &amp;quot;registry-mirrors&amp;quot;: [&amp;quot;https://q1rw9tzz.mirror.aliyuncs.com&amp;quot;],
-  &amp;quot;exec-opts&amp;quot;: [&amp;quot;native.cgroupdriver=systemd&amp;quot;]
-}
-
-# 重启 Docker
-[root@k8s-master opt]# systemctl daemon-reload 
-[root@k8s-master opt]# systemctl restart docker.service
-
-# 再次初始化k8s即可
-[root@k8s-master ~]# kubeadm init ...
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org0b33cbe&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;2-work-节点加入-k8s-集群报错&#34;&gt;2、work 节点加入 k8s 集群报错&lt;/h2&gt;
-
-&lt;p&gt;报错1：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;1  accepts at most 1 arg(s), received 3
-2  To see the stack trace of this error execute with --v=5 or higher
-3  
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;原因：命令不对，我是直接复制粘贴 k8s-master 初始化的终端输出结果，导致报错，所以最好先复制到 txt 文本下修改好格式再粘贴执行。&lt;/p&gt;
-
-&lt;p&gt;报错2：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;1  ...
-2  [kubelet-check] The HTTP call equal to &#39;curl -sSL http://localhost:10248/healthz&#39; failed with error: Get &amp;quot;http://localhost:10248/healthz&amp;quot;: dial tcp 127.0.0.1:10248: connect: connection refused.
-3  
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;解决方法同Master&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org9d65a10&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;参考&#34;&gt;参考&lt;/h1&gt;
-
-&lt;p&gt;[01]&lt;a href=&#34;https://blog.csdn.net/IT_ZRS/article/details/124466870&#34;&gt;kubeadm 部署 k8s 集群&lt;/a&gt;&lt;br /&gt;
-[02]&lt;a href=&#34;https://blog.csdn.net/oscarun/article/details/125595521?spm=1001.2014.3001.5502&#34;&gt;kubeadm系列-00-overview&lt;/a&gt;&lt;/p&gt;
-</description>
-        </item>
-        
-        <item>
-            <title>K8S学习笔记(07): 服务发现</title>
-            <link>http://mospany.github.io/2022/10/18/k8s-service/</link>
-            <pubDate>Tue, 18 Oct 2022 22:06:22 CST</pubDate>
-            <author>Mospan</author>
-            <guid>http://mospany.github.io/2022/10/18/k8s-service/</guid>
-            <description>
-
-&lt;p&gt;&lt;a id=&#34;orga912502&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;service&#34;&gt;service&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;org51c5e4e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;参考资料&#34;&gt;参考资料&lt;/h1&gt;
-
-&lt;p&gt;01.&lt;a href=&#34;https://baijiahao.baidu.com/s?id=1681303264708121640&amp;amp;wfr=spider&amp;amp;for=pc&#34;&gt;一文讲透K8s的Service概念&lt;/a&gt;&lt;br /&gt;
-02.&lt;a href=&#34;https://blog.csdn.net/huahua1999/article/details/124237065&#34;&gt;k8s-service底层之 Iptables与 IPVS&lt;/a&gt;&lt;br /&gt;
-03.&lt;a href=&#34;https://blog.csdn.net/Deepexi_Date/article/details/111042410&#34;&gt;K8S的ServiceIP实现原理&lt;/a&gt;&lt;br /&gt;
-04.&lt;a href=&#34;http://t.zoukankan.com/fengdejiyixx-p-15568056.html&#34;&gt;http://t.zoukankan.com/fengdejiyixx-p-15568056.html&lt;/a&gt;&lt;br /&gt;
-05.&lt;a href=&#34;https://blog.csdn.net/qq_37369726/article/details/121785627&#34;&gt;kubernetes pod间通信,跨namespace互访&lt;/a&gt;&lt;/p&gt;
 </description>
         </item>
         

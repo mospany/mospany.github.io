@@ -6,10 +6,19 @@
     <description>Recent content in K8S on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Wed, 31 Jan 2024 19:31:10 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 05 Feb 2024 19:31:10 +0800</lastBuildDate>
     
 	<atom:link href="http://mospany.github.io/tags/k8s/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>vGPU方案HAMi(01): 实现细粒度 GPU 切分</title>
+      <link>http://mospany.github.io/2024/02/05/hami-vgpu-split/</link>
+      <pubDate>Mon, 05 Feb 2024 19:31:10 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2024/02/05/hami-vgpu-split/</guid>
+      <description>本文主要分享一个开源的 GPU 虚拟化方案：HAMi，包括如何安装、配置以及使用。 相比于上一篇分享的 TimeSlicing 方案，HAMi 除了 GPU 共享之外还可以实现 GPU cor</description>
+    </item>
     
     <item>
       <title>K8S项目实践(12): GPU共享方案Time Slicing</title>

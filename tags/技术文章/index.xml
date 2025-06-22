@@ -6,10 +6,19 @@
     <description>Recent content in 技术文章 on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Tue, 18 Oct 2022 22:06:22 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 02 Jun 2025 16:29:28 +0800</lastBuildDate>
     
 	<atom:link href="http://mospany.github.io/tags/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>huggingface大模型文件构成</title>
+      <link>http://mospany.github.io/2025/06/02/huggingface-llm/</link>
+      <pubDate>Mon, 02 Jun 2025 16:29:28 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2025/06/02/huggingface-llm/</guid>
+      <description>简介 Hugging Face 是一个机器学习社区平台，提供数万个预训练模型、数据集、API 与工具库，广泛应用于 NLP、CV、语音、强化学习、多模态等任务。 官方平台</description>
+    </item>
     
     <item>
       <title>K8S学习笔记(07): 服务发现</title>

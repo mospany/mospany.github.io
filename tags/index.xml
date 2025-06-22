@@ -6,7 +6,7 @@
     <description>Recent content in Tags on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Wed, 31 Jan 2024 19:31:10 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 02 Jun 2025 16:29:28 +0800</lastBuildDate>
     
 	<atom:link href="http://mospany.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,16 +14,34 @@
     <item>
       <title></title>
       <link>http://mospany.github.io/tags/</link>
-      <pubDate>Wed, 31 Jan 2024 19:31:10 +0800</pubDate>
+      <pubDate>Mon, 02 Jun 2025 16:29:28 +0800</pubDate>
       
       <guid>http://mospany.github.io/tags/</guid>
       <description></description>
     </item>
     
     <item>
+      <title>AI</title>
+      <link>http://mospany.github.io/tags/ai/</link>
+      <pubDate>Mon, 02 Jun 2025 16:29:28 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/tags/ai/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>技术文章</title>
+      <link>http://mospany.github.io/tags/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/</link>
+      <pubDate>Mon, 02 Jun 2025 16:29:28 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/tags/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>GPU</title>
       <link>http://mospany.github.io/tags/gpu/</link>
-      <pubDate>Wed, 31 Jan 2024 19:31:10 +0800</pubDate>
+      <pubDate>Mon, 05 Feb 2024 19:31:10 +0800</pubDate>
       
       <guid>http://mospany.github.io/tags/gpu/</guid>
       <description></description>
@@ -32,7 +50,7 @@
     <item>
       <title>K8S</title>
       <link>http://mospany.github.io/tags/k8s/</link>
-      <pubDate>Wed, 31 Jan 2024 19:31:10 +0800</pubDate>
+      <pubDate>Mon, 05 Feb 2024 19:31:10 +0800</pubDate>
       
       <guid>http://mospany.github.io/tags/k8s/</guid>
       <description></description>
@@ -71,15 +89,6 @@
       <pubDate>Sun, 15 Jan 2023 10:44:29 +0800</pubDate>
       
       <guid>http://mospany.github.io/tags/%E5%AD%98%E5%82%A8/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>技术文章</title>
-      <link>http://mospany.github.io/tags/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/</link>
-      <pubDate>Tue, 18 Oct 2022 22:06:22 +0800</pubDate>
-      
-      <guid>http://mospany.github.io/tags/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/</guid>
       <description></description>
     </item>
     
@@ -228,7 +237,7 @@
     </item>
     
     <item>
-      <title>DPDK</title>
+      <title>dpdk</title>
       <link>http://mospany.github.io/tags/dpdk/</link>
       <pubDate>Tue, 06 Sep 2016 19:37:20 +0800</pubDate>
       
