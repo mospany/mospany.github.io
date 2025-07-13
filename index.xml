@@ -5,64 +5,21 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Mon, 02 Jun 2025 16:29:28 CST</updated>
+        <updated>Sun, 13 Jul 2025 16:27:22 CST</updated>
         
         <item>
-            <title>huggingface大模型文件构成</title>
-            <link>http://mospany.github.io/2025/06/02/huggingface-llm/</link>
-            <pubDate>Mon, 02 Jun 2025 16:29:28 CST</pubDate>
+            <title>AI学习全景图</title>
+            <link>http://mospany.github.io/2025/07/13/ai-study-toc/</link>
+            <pubDate>Sun, 13 Jul 2025 16:27:22 CST</pubDate>
             <author>Mospan</author>
-            <guid>http://mospany.github.io/2025/06/02/huggingface-llm/</guid>
+            <guid>http://mospany.github.io/2025/07/13/ai-study-toc/</guid>
             <description>
 
-&lt;h1 id=&#34;简介&#34;&gt;简介&lt;/h1&gt;
+&lt;h1 id=&#34;目录&#34;&gt;目录&lt;/h1&gt;
 
-&lt;p&gt;Hugging Face 是一个机器学习社区平台，提供数万个预训练模型、数据集、API 与工具库，广泛应用于 NLP、CV、语音、强化学习、多模态等任务。&lt;/p&gt;
+&lt;h1 id=&#34;脑图&#34;&gt;脑图&lt;/h1&gt;
 
-&lt;p&gt;官方平台：🔗 &lt;a href=&#34;https://huggingface.co/&#34;&gt;https://huggingface.co/&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;核心组件&#34;&gt;核心组件&lt;/h1&gt;
-
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;组件名&lt;/th&gt;
-&lt;th&gt;简介&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;transformers&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;主力库，提供 NLP 预训练模型的加载与使用&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;datasets&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;高质量数据集管理、加载、预处理库&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;accelerate&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;简化多 GPU、TPU 的训练部署&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;diffusers&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;文生图、扩散模型的主要支持库&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;peft&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;轻量微调（LoRA、QLoRA 等）支持库&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;&lt;code&gt;huggingface_hub&lt;/code&gt;&lt;/td&gt;
-&lt;td&gt;与 Hugging Face Hub 交互的 Python 工具库&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
+&lt;p&gt;&lt;center&gt;&lt;embed src=&#34;http://blog.mospan.cn/post/img/ai/ai-study-toc.pdf&#34; width=100% height=800&gt;&lt;/center&gt;&lt;/p&gt;
 </description>
         </item>
         

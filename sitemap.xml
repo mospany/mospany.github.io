@@ -2,60 +2,60 @@
     
     <url>
         <loc>http://mospany.github.io/tags/</loc>
-        <lastmod>2025-06-02T16:29:28+08:00</lastmod>
+        <lastmod>2025-07-13T16:27:22+08:00</lastmod>
         <priority>0</priority>
     </url>
     
     <url>
-        <loc>http://mospany.github.io/categories/ai/</loc>
-        <lastmod>2025-06-02T16:29:28+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/tags/ai/</loc>
-        <lastmod>2025-06-02T16:29:28+08:00</lastmod>
-        <priority>0</priority>
+        <loc>http://mospany.github.io/2025/07/13/ai-study-toc/</loc>
+        <lastmod>2025-07-13T16:27:22+08:00</lastmod>
     </url>
     
     <url>
         <loc>http://mospany.github.io/categories/</loc>
-        <lastmod>2025-06-02T16:29:28+08:00</lastmod>
+        <lastmod>2025-07-13T16:27:22+08:00</lastmod>
         <priority>0</priority>
     </url>
     
     <url>
         <loc>http://mospany.github.io/post/</loc>
-        <lastmod>2025-06-02T16:29:28+08:00</lastmod>
+        <lastmod>2025-07-13T16:27:22+08:00</lastmod>
         <priority>0</priority>
     </url>
     
     <url>
         <loc>http://mospany.github.io/tags/</loc>
-        <lastmod>2025-06-02T16:29:28+08:00</lastmod>
+        <lastmod>2025-07-13T16:27:22+08:00</lastmod>
         <priority>0</priority>
     </url>
     
     <url>
-        <loc>http://mospany.github.io/2025/06/02/huggingface-llm/</loc>
-        <lastmod>2025-06-02T16:29:28+08:00</lastmod>
+        <loc>http://mospany.github.io/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/</loc>
+        <lastmod>2025-07-13T16:27:22+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/</loc>
+        <lastmod>2025-07-13T16:27:22+08:00</lastmod>
+        <priority>0</priority>
     </url>
     
     <url>
         <loc>http://mospany.github.io/</loc>
-        <lastmod>2025-06-02T16:29:28+08:00</lastmod>
+        <lastmod>2025-07-13T16:27:22+08:00</lastmod>
         <priority>0</priority>
     </url>
     
     <url>
         <loc>http://mospany.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/</loc>
-        <lastmod>2025-06-02T16:29:28+08:00</lastmod>
+        <lastmod>2025-07-13T16:27:22+08:00</lastmod>
         <priority>0</priority>
     </url>
     
     <url>
         <loc>http://mospany.github.io/tags/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/</loc>
-        <lastmod>2025-06-02T16:29:28+08:00</lastmod>
+        <lastmod>2025-07-13T16:27:22+08:00</lastmod>
         <priority>0</priority>
     </url>
     
@@ -78,12 +78,6 @@
     
     <url>
         <loc>http://mospany.github.io/categories/%E4%BA%91%E8%AE%A1%E7%AE%97/</loc>
-        <lastmod>2024-02-05T19:31:10+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/</loc>
         <lastmod>2024-02-05T19:31:10+08:00</lastmod>
         <priority>0</priority>
     </url>
@@ -411,14 +405,14 @@
     </url>
     
     <url>
-        <loc>http://mospany.github.io/2016/09/06/dpdk-develop-notes/</loc>
-        <lastmod>2016-09-06T19:37:20+08:00</lastmod>
-    </url>
-    
-    <url>
         <loc>http://mospany.github.io/tags/dpdk/</loc>
         <lastmod>2016-09-06T19:37:20+08:00</lastmod>
         <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/2016/09/06/dpdk-develop-notes/</loc>
+        <lastmod>2016-09-06T19:37:20+08:00</lastmod>
     </url>
     
     <url>
