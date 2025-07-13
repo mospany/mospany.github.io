@@ -5,7 +5,243 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Sun, 13 Jul 2025 16:27:22 CST</updated>
+        <updated>Sun, 13 Jul 2025 18:20:27 CST</updated>
+        
+        <item>
+            <title>从会议室名称看AI</title>
+            <link>http://mospany.github.io/2025/07/13/meeting-room-to-see-ai/</link>
+            <pubDate>Sun, 13 Jul 2025 18:20:27 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://mospany.github.io/2025/07/13/meeting-room-to-see-ai/</guid>
+            <description>
+
+&lt;h1 id=&#34;从会议室名称看ai-核心术语解读&#34;&gt;从会议室名称看AI：核心术语解读&lt;/h1&gt;
+
+&lt;p&gt;在人工智能（AI）领域，许多会议室和项目组常以AI相关术语命名。以下是一些常见AI术语的详细解读，涵盖其英文名称、基本原理及应用场景。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;1-强化学习-reinforcement-learning&#34;&gt;1. 强化学习（Reinforcement Learning）&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;英文名称&lt;/strong&gt;：Reinforcement Learning&lt;br /&gt;
+&lt;strong&gt;原理&lt;/strong&gt;：强化学习是一种机器学习方法，强调智能体（Agent）在与环境交互过程中，通过试错获得最大化累积奖励的策略。智能体根据当前状态选择动作，环境反馈奖励或惩罚，智能体据此调整策略。强化学习广泛应用于游戏、机器人控制和自动驾驶等领域，代表性算法有Q-learning、Deep Q Network（DQN）等。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;2-深度学习-deep-learning&#34;&gt;2. 深度学习（Deep Learning）&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;英文名称&lt;/strong&gt;：Deep Learning&lt;br /&gt;
+&lt;strong&gt;原理&lt;/strong&gt;：深度学习是一种以多层神经网络为基础的机器学习方法。通过构建多层（深层）神经网络，能够自动从大量数据中提取高层次特征，实现图像识别、语音识别、自然语言处理等复杂任务。深度学习的核心在于端到端的特征学习和强大的表达能力，常见模型有卷积神经网络（CNN）、循环神经网络（RNN）等。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;3-知识图谱-knowledge-graph&#34;&gt;3. 知识图谱（Knowledge Graph）&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;英文名称&lt;/strong&gt;：Knowledge Graph&lt;br /&gt;
+&lt;strong&gt;原理&lt;/strong&gt;：知识图谱是一种以图结构组织和表达知识的方法，将实体（如人、地点、事物）及其关系以节点和边的形式存储。通过语义关联，知识图谱支持复杂的推理和查询，广泛应用于搜索引擎、智能问答和推荐系统。其构建涉及信息抽取、实体消歧、关系抽取等技术。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;4-多维缩放-multidimensional-scaling-mds&#34;&gt;4. 多维缩放（Multidimensional Scaling, MDS）&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;英文名称&lt;/strong&gt;：Multidimensional Scaling (MDS)&lt;br /&gt;
+&lt;strong&gt;原理&lt;/strong&gt;：多维缩放是一种降维方法，用于将高维数据映射到低维空间（通常是二维或三维），以便可视化和分析。MDS通过保持数据点之间的距离关系，尽量还原原始数据的结构。它常用于心理学、市场分析和生物信息学等领域的数据可视化。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;5-层次聚类-hierarchical-clustering&#34;&gt;5. 层次聚类（Hierarchical Clustering）&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;英文名称&lt;/strong&gt;：Hierarchical Clustering&lt;br /&gt;
+&lt;strong&gt;原理&lt;/strong&gt;：层次聚类是一种无监督学习方法，通过构建数据的层次结构（树状图或树状图谱）来发现数据的内在分组。算法分为自底向上（凝聚型）和自顶向下（分裂型）两类。层次聚类无需预先指定簇的数量，适用于探索数据的多层次结构。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;6-多层感知机-multilayer-perceptron-mlp&#34;&gt;6. 多层感知机（Multilayer Perceptron, MLP）&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;英文名称&lt;/strong&gt;：Multilayer Perceptron (MLP)&lt;br /&gt;
+&lt;strong&gt;原理&lt;/strong&gt;：多层感知机是一种前馈神经网络，由输入层、一个或多个隐藏层和输出层组成。每层由多个神经元构成，层与层之间全连接。MLP通过反向传播算法进行训练，能够逼近任意非线性函数，是深度学习的基础结构之一，广泛用于分类和回归任务。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;7-卷积网络-convolutional-neural-network-cnn&#34;&gt;7. 卷积网络（Convolutional Neural Network, CNN）&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;英文名称&lt;/strong&gt;：Convolutional Neural Network (CNN)&lt;br /&gt;
+&lt;strong&gt;原理&lt;/strong&gt;：卷积神经网络是一种专门处理具有网格结构数据（如图像）的深度学习模型。其核心在于卷积层，通过局部感受野和权重共享机制提取空间特征，极大减少参数数量。CNN在图像识别、目标检测、视频分析等领域表现卓越。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;8-协同过滤-collaborative-filtering&#34;&gt;8. 协同过滤（Collaborative Filtering）&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;英文名称&lt;/strong&gt;：Collaborative Filtering&lt;br /&gt;
+&lt;strong&gt;原理&lt;/strong&gt;：协同过滤是一种推荐系统技术，通过分析用户与物品的交互行为（如评分、点击）来预测用户可能喜欢的物品。分为基于用户和基于物品的协同过滤。其核心思想是“物以类聚，人以群分”，即相似用户喜欢相似物品。常用于电商、视频、音乐等平台的个性化推荐。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;9-低秩适配-low-rank-adaptation-lora&#34;&gt;9. 低秩适配（Low-Rank Adaptation, LoRA）&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;英文名称&lt;/strong&gt;：Low-Rank Adaptation (LoRA)&lt;br /&gt;
+&lt;strong&gt;原理&lt;/strong&gt;：低秩适配是一种参数高效微调（PEFT）方法，主要用于大模型的迁移学习。LoRA通过在预训练模型的权重矩阵中插入低秩分解模块，仅训练少量参数即可适应新任务，显著降低计算和存储成本。广泛应用于自然语言处理和多模态模型的微调。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;10-监督微调-supervised-fine-tuning&#34;&gt;10. 监督微调（Supervised Fine-tuning）&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;英文名称&lt;/strong&gt;：Supervised Fine-tuning&lt;br /&gt;
+&lt;strong&gt;原理&lt;/strong&gt;：监督微调是指在有标签数据集上对预训练模型进行再训练，使其更好地适应特定任务。通过监督信号（如分类标签），模型参数得到针对性优化。该方法在大模型落地应用中极为常见，如BERT、GPT等模型在下游任务的微调。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;11-交叉验证-cross-validation&#34;&gt;11. 交叉验证（Cross Validation）&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;英文名称&lt;/strong&gt;：Cross Validation&lt;br /&gt;
+&lt;strong&gt;原理&lt;/strong&gt;：交叉验证是一种模型评估方法，将数据集划分为若干子集，轮流用其中一部分作为验证集，其余作为训练集。常见的有K折交叉验证。该方法能有效评估模型的泛化能力，减少过拟合风险，是机器学习模型选择和调优的重要工具。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;12-具身智能-embodied-intelligence&#34;&gt;12. 具身智能（Embodied Intelligence）&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;英文名称&lt;/strong&gt;：Embodied Intelligence&lt;br /&gt;
+&lt;strong&gt;原理&lt;/strong&gt;：具身智能强调智能体与物理世界的交互，认为智能的产生离不开身体和环境。具身智能体（如机器人）通过感知、运动和环境反馈实现学习和适应。该理念推动了机器人学、自动驾驶和虚拟现实等领域的发展，强调“智能在于行动”。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;13-模型量化-model-quantization&#34;&gt;13. 模型量化（Model Quantization）&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;英文名称&lt;/strong&gt;：Model Quantization&lt;br /&gt;
+&lt;strong&gt;原理&lt;/strong&gt;：模型量化是一种模型压缩技术，通过将模型参数从高精度（如32位浮点）转换为低精度（如8位整数），以减少模型体积和加速推理速度。量化可显著降低硬件资源消耗，适用于边缘设备和移动端AI部署。常见量化方法有对称量化、非对称量化等。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;14-判别分析-discriminant-analysis&#34;&gt;14. 判别分析（Discriminant Analysis）&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;英文名称&lt;/strong&gt;：Discriminant Analysis&lt;br /&gt;
+&lt;strong&gt;原理&lt;/strong&gt;：判别分析是一类用于分类的统计方法，通过寻找最佳投影方向，使不同类别的数据在该方向上分离度最大。典型方法有线性判别分析（LDA）和二次判别分析（QDA）。判别分析常用于模式识别、医学诊断等领域。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;15-随机森林-random-forest&#34;&gt;15. 随机森林（Random Forest）&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;英文名称&lt;/strong&gt;：Random Forest&lt;br /&gt;
+&lt;strong&gt;原理&lt;/strong&gt;：随机森林是一种集成学习方法，通过构建多个决策树并对其结果进行投票或平均，提升模型的准确性和鲁棒性。每棵树在训练时随机选择特征和样本，减少过拟合。随机森林广泛应用于分类、回归和特征选择等任务。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;16-知识蒸馏-knowledge-distillation&#34;&gt;16. 知识蒸馏（Knowledge Distillation）&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;英文名称&lt;/strong&gt;：Knowledge Distillation&lt;br /&gt;
+&lt;strong&gt;原理&lt;/strong&gt;：知识蒸馏是一种模型压缩技术，通过将大型“教师模型”的知识迁移到小型“学生模型”。学生模型在训练时不仅学习真实标签，还模仿教师模型的输出分布，从而获得更好的泛化能力。知识蒸馏常用于模型加速和部署。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;17-专家混合-mixture-of-experts-moe&#34;&gt;17. 专家混合（Mixture of Experts, MoE）&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;英文名称&lt;/strong&gt;：Mixture of Experts (MoE)&lt;br /&gt;
+&lt;strong&gt;原理&lt;/strong&gt;：专家混合是一种模型结构，将多个“专家”子模型与一个门控网络结合。门控网络根据输入动态选择部分专家参与计算，实现模型容量与计算效率的平衡。MoE在大规模语言模型和多任务学习中表现突出，能有效提升模型性能。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;18-多头注意-multi-head-attention&#34;&gt;18. 多头注意（Multi-Head Attention）&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;英文名称&lt;/strong&gt;：Multi-Head Attention&lt;br /&gt;
+&lt;strong&gt;原理&lt;/strong&gt;：多头注意是Transformer模型的核心机制，通过并行计算多个注意力头，捕捉不同子空间的信息。每个头独立学习输入序列的不同关系，最后将各头输出拼接融合。多头注意极大提升了模型对复杂依赖关系的建模能力，广泛应用于自然语言处理和计算机视觉。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;19-梯度提升-gradient-boosting&#34;&gt;19. 梯度提升（Gradient Boosting）&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;英文名称&lt;/strong&gt;：Gradient Boosting&lt;br /&gt;
+&lt;strong&gt;原理&lt;/strong&gt;：梯度提升是一种集成学习方法，通过逐步训练一系列弱学习器（如决策树），每一步都拟合前一步的残差。最终模型是所有弱学习器的加权和。梯度提升具有强大的拟合能力，代表性算法有XGBoost、LightGBM等，广泛应用于结构化数据建模。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;20-多智能体-multi-agent&#34;&gt;20. 多智能体（Multi-Agent）&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;英文名称&lt;/strong&gt;：Multi-Agent&lt;br /&gt;
+&lt;strong&gt;原理&lt;/strong&gt;：多智能体系统由多个相互作用的智能体组成，每个智能体可独立感知、决策和行动。多智能体系统强调协作、竞争和通信，适用于分布式控制、博弈论、群体智能等场景。其研究推动了自动驾驶、智能交通、机器人集群等领域的发展。&lt;/p&gt;
+
+&lt;hr /&gt;
+</description>
+        </item>
+        
+        <item>
+            <title>常用AI术语</title>
+            <link>http://mospany.github.io/2025/07/13/ai-term/</link>
+            <pubDate>Sun, 13 Jul 2025 18:02:09 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://mospany.github.io/2025/07/13/ai-term/</guid>
+            <description>
+
+&lt;h1 id=&#34;常用ai术语归类&#34;&gt;常用AI术语归类&lt;/h1&gt;
+
+&lt;h2 id=&#34;基础概念&#34;&gt;基础概念&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;人工智能（Artificial Intelligence, AI）&lt;/strong&gt;：使机器表现出类似人类智能的技术和方法。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;机器学习（Machine Learning, ML）&lt;/strong&gt;：让计算机通过数据自动学习和改进的技术。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;深度学习（Deep Learning, DL）&lt;/strong&gt;：基于多层神经网络的机器学习方法。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;神经网络（Neural Network, NN）&lt;/strong&gt;：模仿人脑神经元结构的计算模型。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;数据集（Dataset）&lt;/strong&gt;：用于训练和测试模型的数据集合。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;机器学习相关术语&#34;&gt;机器学习相关术语&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;监督学习（Supervised Learning）&lt;/strong&gt;：利用带标签数据训练模型的方法。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;无监督学习（Unsupervised Learning）&lt;/strong&gt;：利用无标签数据发现数据结构的方法。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;半监督学习（Semi-supervised Learning）&lt;/strong&gt;：结合少量有标签和大量无标签数据进行学习的方法。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;强化学习（Reinforcement Learning, RL）&lt;/strong&gt;：通过奖励和惩罚机制让智能体学习策略的方法。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;特征（Feature）&lt;/strong&gt;：用于描述数据的属性或变量。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;标签（Label）&lt;/strong&gt;：数据对应的目标输出或分类。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;深度学习相关术语&#34;&gt;深度学习相关术语&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;卷积神经网络（Convolutional Neural Network, CNN）&lt;/strong&gt;：常用于图像处理的神经网络结构。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;循环神经网络（Recurrent Neural Network, RNN）&lt;/strong&gt;：适合处理序列数据的神经网络结构。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;生成对抗网络（Generative Adversarial Network, GAN）&lt;/strong&gt;：由生成器和判别器组成的生成模型。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;自注意力机制（Self-Attention Mechanism）&lt;/strong&gt;：模型在处理序列时关注不同位置的信息机制。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;变换器（Transformer）&lt;/strong&gt;：基于自注意力机制的深度学习模型，广泛用于NLP。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;自然语言处理-nlp-相关术语&#34;&gt;自然语言处理（NLP）相关术语&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;自然语言处理（Natural Language Processing, NLP）&lt;/strong&gt;：让计算机理解和处理人类语言的技术。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;词嵌入（Word Embedding）&lt;/strong&gt;：将词语转换为向量表示的方法。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;分词（Tokenization）&lt;/strong&gt;：将文本切分为词或子词的过程。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;命名实体识别（Named Entity Recognition, NER）&lt;/strong&gt;：识别文本中专有名词的任务。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;文本生成（Text Generation）&lt;/strong&gt;：自动生成自然语言文本的技术。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;训练与评估相关术语&#34;&gt;训练与评估相关术语&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;损失函数（Loss Function）&lt;/strong&gt;：衡量模型预测与真实值差异的函数。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;优化器（Optimizer）&lt;/strong&gt;：用于调整模型参数以最小化损失函数的算法。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;过拟合（Overfitting）&lt;/strong&gt;：模型在训练集上表现好但在新数据上表现差的现象。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;欠拟合（Underfitting）&lt;/strong&gt;：模型无法很好地拟合训练数据的现象。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;准确率（Accuracy）&lt;/strong&gt;：预测正确的样本占总样本的比例。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;召回率（Recall）&lt;/strong&gt;：正确预测的正样本占所有正样本的比例。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;精确率（Precision）&lt;/strong&gt;：正确预测的正样本占所有预测为正样本的比例。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;F1分数（F1 Score）&lt;/strong&gt;：精确率和召回率的调和平均数。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;其他常见术语&#34;&gt;其他常见术语&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;大语言模型（Large Language Model, LLM）&lt;/strong&gt;：参数量巨大的自然语言处理模型，如GPT、BERT等。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;推理（Inference）&lt;/strong&gt;：使用训练好的模型对新数据进行预测的过程。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;微调（Fine-tuning）&lt;/strong&gt;：在预训练模型基础上针对特定任务进行再训练。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;迁移学习（Transfer Learning）&lt;/strong&gt;：将已有模型知识应用到新任务的学习方法。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;开源（Open Source）&lt;/strong&gt;：源代码公开、可自由使用和修改的软件。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;本文将持续补充更多AI相关术语，欢迎留言交流！&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+        </item>
         
         <item>
             <title>AI学习全景图</title>
@@ -5983,1011 +6219,6 @@ spec:
 【09】&lt;a href=&#34;https://blog.csdn.net/qq_45874107/article/details/119839187&#34;&gt;什么是RBAC&lt;/a&gt;&lt;br /&gt;
 【10】&lt;a href=&#34;https://blog.ihypo.net/15763910382218.html&#34;&gt;Kubernetes Controller Manager 工作原理&lt;/a&gt;&lt;br /&gt;
 【11】&lt;a href=&#34;https://jishuin.proginn.com/p/763bfbd3012b&#34;&gt;controller-runtime 之 manager 实现&lt;/a&gt;&lt;/p&gt;
-</description>
-        </item>
-        
-        <item>
-            <title>K8S项目实践(03): 随机调度器</title>
-            <link>http://mospany.github.io/2022/12/11/k8s-random-scheduler/</link>
-            <pubDate>Sun, 11 Dec 2022 11:51:52 CST</pubDate>
-            <author>Mospan</author>
-            <guid>http://mospany.github.io/2022/12/11/k8s-random-scheduler/</guid>
-            <description>
-
-&lt;p&gt;&lt;a id=&#34;org3ccc143&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;简介&#34;&gt;简介&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;org6748da5&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;pod创建过程&#34;&gt;POD创建过程&lt;/h2&gt;
-
-&lt;p&gt;1、 由kubectl解析创建pod的yaml，发送创建pod请求到APIServer。&lt;br /&gt;
-2、 APIServer首先做权限认证，然后检查信息并把数据存储到ETCD里，创建deployment资源初始化。&lt;br /&gt;
-3、 kube-controller通过list-watch机制，检查发现新的deployment，将资源加入到内部工作队列，检查到资源没有关联pod和replicaset,然后创建rs资源，rs controller监听到rs创建事件后再创建pod资源。&lt;br /&gt;
-4、 scheduler 监听到pod创建事件，执行调度算法，将pod绑定到合适节点，然后告知APIServer更新pod的spec.nodeName&lt;br /&gt;
-5、 kubelet 每隔一段时间通过其所在节点的NodeName向APIServer拉取绑定到它的pod清单，并更新本地缓存。&lt;br /&gt;
-6、 kubelet发现新的pod属于自己，调用容器API来创建容器，并向APIService上报pod状态。&lt;br /&gt;
-7、 Kub-proxy为新创建的pod注册动态DNS到CoreOS。为Service添加iptables/ipvs规则，用于服务发现和负载均衡。&lt;br /&gt;
-8、 deploy controller对比pod的当前状态和期望来修正状态。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/scheduler/pod-life-cycle.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org44af008&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;调度器介绍&#34;&gt;调度器介绍&lt;/h2&gt;
-
-&lt;p&gt;从上述流程中，我们能大概清楚kube-scheduler的主要工作，负责整个k8s中pod选择和绑定node的工作，这个选择的过程就是应用调度策略，包括NodeAffinity、PodAffinity、节点资源筛选、调度优先级、公平调度等等，而绑定便就是将pod资源定义里的nodeName进行更新。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org39ad97e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;设计&#34;&gt;设计&lt;/h1&gt;
-
-&lt;p&gt;kube-scheduler的设计有两个历史阶段版本：&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;基于谓词（predicate）和优先级（priority）的筛选。&lt;/li&gt;
-&lt;li&gt;基于调度框架的调度器，新版本已经把所有的旧的设计都改造成扩展点插件形式(1.19+)。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;所谓的谓词和优先级都是对调度算法的分类，在scheduler里，谓词调度算法是来选择出一组能够绑定pod的node，而优先级算法则是在这群node中进行打分，得出一个最高分的node。&lt;/p&gt;
-
-&lt;p&gt;而调度框架的设计相比之前则更复杂一点，但确更加灵活和便于扩展，关于调度框架的设计细节可以查看官方文档——624-scheduling-framework，当然我也有一遍文章对其做了翻译还加了一些便于理解的补充——KEP: 624-scheduling-framework。总结来说调度框架的出现是为了解决以前webhooks扩展器的局限性，一个是扩展点只有：筛选、打分、抢占、绑定，而调度框架则在这之上又细分了11个扩展点；另一个则是通过http调用扩展进程的方式其实效率不高，调度框架的设计用的是静态编译的方式将扩展的程序代码和scheduler源码一起编译成新的scheduler，然后通过scheduler配置文件启用需要的插件，在进程内就能通过函数调用的方式执行插件。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/scheduler/scheduler-startup.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;上面是一个简略版的调度器处理pod流程：&lt;/p&gt;
-
-&lt;p&gt;首先scheduler会启动一个client-go的Informer来监听Pod事件（不只Pod其实还有Node等资源变更事件），这时候注册的Informer回调事件会区分Pod是否已经被调度（spec.nodeName），已经调度过的Pod则只是更新调度器缓存，而未被调度的Pod会加入到调度队列，然后经过调度框架执行注册的插件，在绑定周期前会进行Pod的假定动作，从而更新调度器缓存中该Pod状态，最后在绑定周期执行完向ApiServer发起BindAPI，从而完成了一次调度过程。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org8ebc078&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;实现&#34;&gt;实现&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;org98f2089&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;创建调度器&#34;&gt;创建调度器&lt;/h2&gt;
-
-&lt;p&gt;1、获取集群kubeconfig配置。&lt;br /&gt;
-2、调用client-go生成clientset。&lt;br /&gt;
-3、填充调度器相关参数, 包含获取node列表和关注的POD。&lt;br /&gt;
-4、返回调度器&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt; func NewScheduler(podQueue chan *v1.Pod, quit chan struct{}) Scheduler {
-  config, err := rest.InClusterConfig()
-  if err != nil {
-      log.Fatal(err)
-  }
-
-  clientset, err := kubernetes.NewForConfig(config)
-  if err != nil {
-      log.Fatal(err)
-  }
-
-  return Scheduler{
-      clientset:  clientset,
-      podQueue:   podQueue,
-      nodeLister: initInformers(clientset, podQueue, quit),
-      predicates: []predicateFunc{
-          randomPredicate,
-      },
-      priorities: []priorityFunc{
-          randomPriority,
-      },
-  }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org7e3d0d6&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;运行调度器&#34;&gt;运行调度器&lt;/h2&gt;
-
-&lt;p&gt;不间断的从关注的POD列表中选出进行调度。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org9082797&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;找合适节点&#34;&gt;找合适节点&lt;/h3&gt;
-
-&lt;p&gt;1、找到可用节点列表&lt;br /&gt;
-2、给节点随机打100以内的分数&lt;br /&gt;
-3、选择分数最高的节点&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;func (s *Scheduler) findFit(pod *v1.Pod) (string, error) {
-    nodes, err := s.nodeLister.List(labels.Everything())
-    if err != nil {
-        return &amp;quot;&amp;quot;, err
-    }
-
-    filteredNodes := s.runPredicates(nodes, pod)
-    if len(filteredNodes) == 0 {
-        return &amp;quot;&amp;quot;, errors.New(&amp;quot;failed to find node that fits pod&amp;quot;)
-    }
-    priorities := s.prioritize(filteredNodes, pod)
-    return s.findBestNode(priorities), nil
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org0354198&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;绑定pod&#34;&gt;绑定POD&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;func (s *Scheduler) bindPod(ctx context.Context, p *v1.Pod, node string) error {
-    opts := metav1.CreateOptions{}
-    return s.clientset.CoreV1().Pods(p.Namespace).Bind(ctx, &amp;amp;v1.Binding{
-        ObjectMeta: metav1.ObjectMeta{
-            Name:      p.Name,
-            Namespace: p.Namespace,
-        },
-        Target: v1.ObjectReference{
-            APIVersion: &amp;quot;v1&amp;quot;,
-            Kind:       &amp;quot;Node&amp;quot;,
-            Name:       node,
-        },
-    }, opts)
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgcdd0603&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;发送event事件&#34;&gt;发送event事件&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;func (s *Scheduler) emitEvent(ctx context.Context, p *v1.Pod, message string) error {
-    timestamp := time.Now().UTC()
-    opts := metav1.CreateOptions{}
-    _, err := s.clientset.CoreV1().Events(p.Namespace).Create(ctx, &amp;amp;v1.Event{
-        Count:          1,
-        Message:        message,
-        Reason:         &amp;quot;Scheduled&amp;quot;,
-        LastTimestamp:  metav1.NewTime(timestamp),
-        FirstTimestamp: metav1.NewTime(timestamp),
-        Type:           &amp;quot;Normal&amp;quot;,
-        Source: v1.EventSource{
-            Component: schedulerName,
-        },
-        InvolvedObject: v1.ObjectReference{
-            Kind:      &amp;quot;Pod&amp;quot;,
-            Name:      p.Name,
-            Namespace: p.Namespace,
-            UID:       p.UID,
-        },
-        ObjectMeta: metav1.ObjectMeta{
-            GenerateName: p.Name + &amp;quot;-&amp;quot;,
-        },
-    }, opts)
-    if err != nil {
-        return err
-    }
-    return nil
- }
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;查看events信息可以看出random-scheduler打出的“laced pod [default/sleep-5b6fd9944c-5scxv] on k8s-master&amp;rdquo;等信息。&amp;rdquo;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;27s         Normal    Scheduled           pod/sleep-5b6fd9944c-5scxv    Placed pod [default/sleep-5b6fd9944c-5scxv] on k8s-master
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org22e94bd&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;验证&#34;&gt;验证&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;org7cc5355&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;编译&#34;&gt;编译&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code&gt;$ make docker-image
-$ make docker-push
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgede963d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;部署&#34;&gt;部署&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code&gt;$ kubectl apply -f rbac.yaml
-$ kubectl  apply -f deployment.yaml
-$ kubectl apply -f sleep.yaml
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;把sleep.yaml里改为schedulerName: random-scheduler就可以使用该调度器。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master deployment]# kubectl  get pod -A -o wide
-NAMESPACE     NAME                                 READY   STATUS    RESTARTS       AGE     IP               NODE         NOMINATED NODE   READINESS GATES
-default       httpbin-master                       1/1     Running   2 (11h ago)    3d22h   10.244.0.36      k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-default       httpbin-worker                       1/1     Running   2 (11h ago)    3d22h   10.244.2.15      k8s-work2    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-default       netshoot-master                      1/1     Running   2 (11h ago)    3d22h   10.244.0.35      k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-default       netshoot-worker                      1/1     Running   2 (11h ago)    3d22h   10.244.2.14      k8s-work2    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-default       random-scheduler-6dc78999cc-vnxzg    1/1     Running   0              9m      10.244.0.37      k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-default       sleep-5b6fd9944c-7rn5m               1/1     Running   0              11h     10.244.1.6       k8s-work1    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-default       sleep-5b6fd9944c-bwb9t               1/1     Running   0              11h     10.244.0.38      k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-kube-system   coredns-6d8c4cb4d-ck2x5              1/1     Running   20 (11h ago)   19d     10.244.0.34      k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-kube-system   coredns-6d8c4cb4d-mbctj              1/1     Running   20 (11h ago)   19d     10.244.0.33      k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-kube-system   etcd-k8s-master                      1/1     Running   22 (11h ago)   19d     172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-kube-system   kube-apiserver-k8s-master            1/1     Running   24 (11h ago)   19d     172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-kube-system   kube-controller-manager-k8s-master   1/1     Running   22 (11h ago)   19d     172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-kube-system   kube-proxy-dnsjg                     1/1     Running   21 (11h ago)   19d     172.25.140.215   k8s-work1    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-kube-system   kube-proxy-r84lg                     1/1     Running   22 (11h ago)   19d     172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-kube-system   kube-proxy-tbkx2                     1/1     Running   20 (11h ago)   19d     172.25.140.214   k8s-work2    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-kube-system   kube-scheduler-k8s-master            1/1     Running   22 (11h ago)   19d     172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-kube-system   minicni-node-2xq2d                   1/1     Running   2 (11h ago)    3d23h   172.25.140.214   k8s-work2    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-kube-system   minicni-node-dsq8c                   1/1     Running   2 (11h ago)    3d23h   172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-kube-system   minicni-node-h8hm8                   1/1     Running   2 (11h ago)    3d23h   172.25.140.215   k8s-work1    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;可以看出, random-scheduler-6dc78999cc-vnxzg 和 sleep pod已正常变成Running状态。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgdc135cc&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;验证-1&#34;&gt;验证&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master deployment]# kubectl  logs random-scheduler-6dc78999cc-vnxzg
- I&#39;m a scheduler!
- 2022/12/13 12:12:02 New Node Added to Store: k8s-master
- 2022/12/13 12:12:02 New Node Added to Store: k8s-work1
- 2022/12/13 12:12:02 New Node Added to Store: k8s-work2
- found a pod to schedule: default / sleep-5b6fd9944c-bwb9t
- 2022/12/13 12:12:02 nodes that fit:
- 2022/12/13 12:12:02 k8s-master
- 2022/12/13 12:12:02 k8s-work1
- 2022/12/13 12:12:02 k8s-work2
- 2022/12/13 12:12:02 calculated priorities: map[k8s-master:79 k8s-work1:68 k8s-work2:15]
- Placed pod [default/sleep-5b6fd9944c-bwb9t] on k8s-master
-
- found a pod to schedule: default / sleep-5b6fd9944c-7rn5m
- 2022/12/13 12:12:02 nodes that fit:
- 2022/12/13 12:12:02 k8s-master
- 2022/12/13 12:12:02 k8s-work1
- 2022/12/13 12:12:02 calculated priorities: map[k8s-master:26 k8s-work1:50]
- Placed pod [default/sleep-5b6fd9944c-7rn5m] on k8s-work1
-
- [root@k8s-master deployment]# kubectl logs sleep-5b6fd9944c-7rn5m
- [root@k8s-master deployment]# 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;从random-scheduler日志看， sleep容器经过random-scheduler进行调度的。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master deployment]# k get events
- - LAST SEEN   TYPE      REASON              OBJECT                        MESSAGE
- 39m         Normal    Pulled              pod/netshoot-master           Container image &amp;quot;nicolaka/netshoot:latest&amp;quot; already present on machine
- 39m         Normal    Created             pod/netshoot-master           Created container centos
- 39m         Normal    Started             pod/netshoot-master           Started container centos
- 39m         Normal    Pulled              pod/netshoot-worker           Container image &amp;quot;nicolaka/netshoot:latest&amp;quot; already present on machine
- 39m         Normal    Created             pod/netshoot-worker           Created container centos
- 39m         Normal    Started             pod/netshoot-worker           Started container centos
- 27s         Normal    Scheduled           pod/sleep-5b6fd9944c-5scxv    Placed pod [default/sleep-5b6fd9944c-5scxv] on k8s-master
- 26s         Normal    Pulled              pod/sleep-5b6fd9944c-5scxv    Container image &amp;quot;tutum/curl&amp;quot; already present on machine
- 26s         Normal    Created             pod/sleep-5b6fd9944c-5scxv    Created container sleep
- 26s         Normal    Started             pod/sleep-5b6fd9944c-5scxv    Started container sleep
- 50s         Normal    Killing             pod/sleep-5b6fd9944c-7rn5m    Stopping container sleep
- 50s         Normal    Killing             pod/sleep-5b6fd9944c-bwb9t    Stopping container sleep
- 27s         Normal    Scheduled           pod/sleep-5b6fd9944c-rccmj    Placed pod [default/sleep-5b6fd9944c-rccmj] on k8s-work2
- 26s         Normal    Pulling             pod/sleep-5b6fd9944c-rccmj    Pulling image &amp;quot;tutum/curl&amp;quot;
- 27s         Normal    SuccessfulCreate    replicaset/sleep-5b6fd9944c   Created pod: sleep-5b6fd9944c-rccmj
- 27s         Normal    SuccessfulCreate    replicaset/sleep-5b6fd9944c   Created pod: sleep-5b6fd9944c-5scxv
- 27s         Normal    ScalingReplicaSet   deployment/sleep              Scaled up replica set sleep-5b6fd9944c to 2
- [root@k8s-master deployment]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;查看events信息可以看出random-scheduler打出的“laced pod [default/sleep-5b6fd9944c-5scxv] on k8s-master&amp;rdquo;等信息。&amp;rdquo;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org008f2a0&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;参考资料&#34;&gt;参考资料&lt;/h1&gt;
-
-&lt;p&gt;[01] &lt;a href=&#34;https://www.cnblogs.com/z-gh/p/15409763.html&#34;&gt;k8s调度器介绍（调度框架版本）&lt;/a&gt;&lt;br /&gt;
-[02] &lt;a href=&#34;https://zhuanlan.zhihu.com/p/400351590&#34;&gt;client-go功能详解&lt;/a&gt;&lt;br /&gt;
-[03] &lt;a href=&#34;https://www.jb51.net/article/253965.htm&#34;&gt;一篇文章搞懂Go语言中的Context&lt;/a&gt;]&lt;br /&gt;
-[04] &lt;a href=&#34;https://www.cnblogs.com/yangyuliufeng/p/13611126.html&#34;&gt;深入理解k8s中的informer机制&lt;/a&gt;]&lt;/p&gt;
-</description>
-        </item>
-        
-        <item>
-            <title>K8S项目实践(02): 动手实现minicni</title>
-            <link>http://mospany.github.io/2022/11/22/k8s-practice-minicni/</link>
-            <pubDate>Tue, 22 Nov 2022 22:42:55 CST</pubDate>
-            <author>Mospan</author>
-            <guid>http://mospany.github.io/2022/11/22/k8s-practice-minicni/</guid>
-            <description>
-
-&lt;p&gt;&lt;a id=&#34;orgfaa973a&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;简介&#34;&gt;简介&lt;/h1&gt;
-
-&lt;p&gt;不管是容器网络还是 Kubernetes 网络都需要解决以下两个核心问题：&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;容器/Pod IP 地址的管理&lt;/li&gt;
-&lt;li&gt;容器/Pod 之间的相互通信&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;容器/Pod IP 地址的管理包括容器 IP 地址的分配与回收，而容器/Pod 之间的相互通信包括同一主机的容器/Pod 之间和跨主机的容器/Pod 之间通信两种场景。这两个问题也不能完全分开来看，因为不同的解决方案往往要同时考虑以上两点。对于同一主机的容器/Pod 之间的通信来说实现相对容易，实际的挑战在于，不同容器/Pod 完全可能分布在不同的集群节点上，如何实现跨主机节点的通信不是一件容易的事情。&lt;/p&gt;
-
-&lt;p&gt;如果不采用 SDN(Software define networking) 方式来修改底层网络设备的配置，主流方案是在主机节点的 underlay 网络平面构建新的 overlay 网络负责传输容器/Pod 之间通信数据。这种网络方案在如何复用原有的 underlay 网络平面也有不同的实现方式：&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;将容器的数据包封装到原主机网络（underlay 网络平面）的三层或四层数据包中，然后使用主机网络的三层或者四层协议传输到目标主机，目标主机拆包后再转发给目标容器；&lt;/li&gt;
-&lt;li&gt;把容器网络加到主机路由表中，把主机网络（underlay 网络平面）设备当作容器网关，通过路由规则转发到指定的主机，实现容器的三层互通；&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a id=&#34;org3709b23&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;cni原理&#34;&gt;CNI原理&lt;/h1&gt;
-
-&lt;p&gt;CNI 规范相对于 CNM(Container Network Model) 对开发者的约束更少、更开放，不依赖于容器运行时，因此也更简单。关于 CNI 规范的详情请查看&lt;a href=&#34;https://github.com/containernetworking/cni/blob/master/SPEC.md&#34;&gt;官方文档&lt;/a&gt;。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/minicni/cni-standard.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;详见: &lt;a href=&#34;https://blog.csdn.net/elihe2011/article/details/122926399&#34;&gt;K8S 网络CNI&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;实现一个 CNI 网络插件只需要一个配置文件和一个可执行文件：&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;配置文件描述插件的版本、名称、描述等基本信息；&lt;/li&gt;
-&lt;li&gt;可执行文件会被上层的容器管理平台调用，一个 CNI 可执行文件需要实现将容器加入到网络的 ADD 操作以及将容器从网络中删除的 DEL 操作等；&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Kubernetes 使用 CNI 网络插件的基本工作流程是：&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;kubelet 先创建 pause 容器创建对应的网络命名空间；&lt;/li&gt;
-&lt;li&gt;根据配置调用具体的 CNI 插件，可以配置成 CNI 插件链来进行链式调用；&lt;/li&gt;
-&lt;li&gt;当 CNI 插件被调用时，它根据环境变量以及命令行参数来获得网络命名空间、容器的网络设备等必要信息，然后执行 ADD 或者其他操作；&lt;/li&gt;
-&lt;li&gt;CNI 插件给 pause 容器配置正确的网络，pod 中其他的容器都是复用 pause 容器的网络；&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgec132b9&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;cni配置文件&#34;&gt;CNI配置文件&lt;/h1&gt;
-
-&lt;p&gt;现在我们来到关键的部分。一般来说，CNI 插件需要在集群的每个节点上运行，在 CNI 的规范里面，实现一个 CNI 插件首先需要一个 JSON 格式的配置文件，配置文件需要放到每个节点的 &lt;em&gt;etc/cni/net.d&lt;/em&gt; 目录，一般命名为 &amp;lt;数字&amp;gt;-&lt;CNI-plugin&gt;.conf，而且配置文件至少需要以下几个必须的字段：&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;cniVersion: CNI 插件的字符串版本号，要求符合 Semantic Version 2.0 规范；&lt;/li&gt;
-&lt;li&gt;name: 字符串形式的网络名；&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;type: 字符串表示的 CNI 插件的可运行文件；&lt;br /&gt;
-除此之外，我们也可以增加一些自定义的配置字段，用于传递参数给 CNI 插件，这些配置会在运行时传递给 CNI 插件。在我们的例子里面，需要配置每个宿主机网桥的设备名、网络设备的最大传输单元(MTU)以及每个节点分配的24位子网地址，因此，我们的 CNI 插件的配置看起来会像下面这样：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;  {
-    &amp;quot;cniVersion&amp;quot;: &amp;quot;0.1.0&amp;quot;,
-    &amp;quot;name&amp;quot;: &amp;quot;minicni&amp;quot;,
-    &amp;quot;type&amp;quot;: &amp;quot;minicni&amp;quot;,
-    &amp;quot;bridge&amp;quot;: &amp;quot;minicni0&amp;quot;,
-    &amp;quot;mtu&amp;quot;: 1500,
-    &amp;quot;subnet&amp;quot;: __NODE_SUBNET__
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;Note: 确保配置文件放到 &lt;em&gt;etc/cni/net.d&lt;/em&gt; 目录，kubelet 默认此目录寻找 CNI 插件配置；并且，插件的配置可以分为多个插件链的形式来运行，但是为了简单起见，在我们的例子中，只配置一个独立的 CNI 插件，因为配置文件的后缀名为 .conf。&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgeb0c3b0&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;cni核心实现&#34;&gt;CNI核心实现&lt;/h1&gt;
-
-&lt;p&gt;接下来就开始看怎么实现 CNI 插件来管理 pod IP 地址以及配置容器网络设备。在此之前，我们需要明确的是，CNI 介入的时机是 kubelet 创建 pause 容器创建对应的网络命名空间之后，同时当 CNI 插件被调用的时候，kubelet 会将相关操作命令以及参数通过环境变量的形式传递给它。这些环境变量包括：&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;CNI_COMMAND: CNI 操作命令，包括 ADD, DEL, CHECK 以及 VERSION&lt;/li&gt;
-&lt;li&gt;CNI_CONTAINERID: 容器 ID&lt;/li&gt;
-&lt;li&gt;CNI_NETNS: pod 网络命名空间&lt;/li&gt;
-&lt;li&gt;CNI_IFNAME: pod 网络设备名称&lt;/li&gt;
-&lt;li&gt;CNI_PATH: CNI 插件可执行文件的搜索路径&lt;/li&gt;
-&lt;li&gt;CNI_ARGS: 可选的其他参数，形式类似于 key1=value1,key2=value2&amp;#x2026;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;在运行时，kubelet 通过 CNI 配置文件寻找 CNI 可执行文件，然后基于上述几个环境变量来执行相关的操作。CNI 插件必须支持的操作包括：&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;ADD: 将 pod 加入到 pod 网络中&lt;/li&gt;
-&lt;li&gt;DEL: 将 pod 从 pod 网络中删除&lt;/li&gt;
-&lt;li&gt;CHECK: 检查 pod 网络配置正常&lt;/li&gt;
-&lt;li&gt;VERSION: 返回可选 CNI 插件的版本信息&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;让我们直接跳到 CNI 插件的入口函数：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;func main() {
-    setupLogger()
-
-    cmd, cmdArgs, err := args.GetArgsFromEnv()
-    if err != nil {
-        log.Fatalf(&amp;quot;getting cmd arguments with error: %v&amp;quot;, err)
-        os.Exit(1)
-    }
-
-    fh := handler.NewFileHandler(IPStore)
-
-    switch cmd {
-    case &amp;quot;ADD&amp;quot;:
-        err = fh.HandleAdd(cmdArgs)
-    case &amp;quot;DEL&amp;quot;:
-        err = fh.HandleDel(cmdArgs)
-    case &amp;quot;CHECK&amp;quot;:
-        err = fh.HandleCheck(cmdArgs)
-    case &amp;quot;VERSION&amp;quot;:
-        err = fh.HandleVersion(cmdArgs)
-    default:
-        err = fmt.Errorf(&amp;quot;unknown CNI_COMMAND: %s&amp;quot;, cmd)
-    }
-    if err != nil {
-        fmt.Fprintf(os.Stderr, &amp;quot;Failed to handle CNI_COMMAND %q: %v&amp;quot;, cmd, err)
-        os.Exit(1)
-    }
- }
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;可以看到，我们首先调用 GetArgsFromEnv() 函数将 CNI 插件的操作命令以及相关参数通过环境变量读入，同时从标准输入获取 CNI 插件的 JSON 配置，然后基于不同的 CNI 操作命令执行不同的处理函数。&lt;/p&gt;
-
-&lt;p&gt;需要注意的是，我们将处理函数的集合实现为一个接口，这样就可以很容易的扩展不同的接口实现。在最基础的版本实现中，我们基本文件存储分配的 IP 信息。但是，这种实现方式存在很多问题，例如，文件存储不可靠，读写可能会发生冲突等，在后续的版本中，我们会实现基于 kubernetes 存储的接口实现，将子网信息以及 IP 信息存储到 apiserver 中，从而实现可靠存储。&lt;/p&gt;
-
-&lt;p&gt;接下来，我们就看看基于文件的接口实现是怎么处理这些 CNI 操作命令的。&lt;br /&gt;
-对于 ADD 命令：&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;从标准输入获取 CNI 插件的配置信息，最重要的是当前宿主机网桥的设备名、网络设备的最大传输单元(MTU)以及当前节点分配的24位子网地址；&lt;/li&gt;
-&lt;li&gt;然后从环境变量中找到对应的 CNI 操作参数，包括 pod 容器网络命名空间以及 pod 网络设备名等；&lt;/li&gt;
-&lt;li&gt;接下来创建或者更新节点宿主机网桥，从当前节点分配的24位子网地址中抽取子网的网关地址，准备分配给节点宿主机网桥；&lt;/li&gt;
-&lt;li&gt;接着将从文件读取已经分配的 IP 地址列表，遍历24位子网地址并从中取出第一个没有被分配的 IP 地址信息，准备分配给 pod 网络设备；pod 网络设备是 veth 设备对，一端在 pod 网络命名空间中，另外一端连接着宿主机上的网桥设备，同时所有的 pod 网络设备将宿主机上的网桥设备当作默认网关；&lt;/li&gt;
-&lt;li&gt;最终成功后需要将新的 pod IP 写入到文件中。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;看起来很简单对吧？其实作为最简单的方式，这种方案可以实现最基础的 ADD 功能, kubelet调用参数如下:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;  2022/12/09 20:17:14 cmd: ADD, ContainerID: 504032948df53a9f7bc7c35d01fb89f32b8db7a1d87514f546b78b91d2d8150a, Netns: /proc/3444/ns/net, ifName: eth0, Path: /opt/cni/bin, Args: IgnoreUnknown=1;K8S_POD_NAMESPACE=kube-system;K8S_POD_NAME=coredns-6d8c4cb4d-mbctj;K8S_POD_INFRA_CONTAINER_ID=504032948df53a9f7bc7c35d01fb89f32b8db7a1d87514f546b78b91d2d8150a, StdinData: {&amp;quot;bridge&amp;quot;:&amp;quot;minicni0&amp;quot;,&amp;quot;cniVersion&amp;quot;:&amp;quot;0.1.0&amp;quot;,&amp;quot;mtu&amp;quot;:1500,&amp;quot;name&amp;quot;:&amp;quot;minicni&amp;quot;,&amp;quot;subnet&amp;quot;:&amp;quot;10.244.0.0/24&amp;quot;,&amp;quot;type&amp;quot;:&amp;quot;minicni&amp;quot;}.
-
-2022/12/09 20:17:14 cmd: ADD, ContainerID: 84546b1f14b339f69528d96b60e3b50a983e024daf00a6ef990819d1717aaff7, Netns: /proc/3491/ns/net, ifName: eth0, Path: /opt/cni/bin, Args: IgnoreUnknown=1;K8S_POD_NAMESPACE=kube-system;K8S_POD_NAME=coredns-6d8c4cb4d-ck2x5;K8S_POD_INFRA_CONTAINER_ID=84546b1f14b339f69528d96b60e3b50a983e024daf00a6ef990819d1717aaff7, StdinData: {&amp;quot;bridge&amp;quot;:&amp;quot;minicni0&amp;quot;,&amp;quot;cniVersion&amp;quot;:&amp;quot;0.1.0&amp;quot;,&amp;quot;mtu&amp;quot;:1500,&amp;quot;name&amp;quot;:&amp;quot;minicni&amp;quot;,&amp;quot;subnet&amp;quot;:&amp;quot;10.244.0.0/24&amp;quot;,&amp;quot;type&amp;quot;:&amp;quot;minicni&amp;quot;}.
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;实现代码如下:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt; 1  func (fh *FileHandler) HandleAdd(cmdArgs *args.CmdArgs) error {
- 2    cniConfig := args.CNIConfiguration{}
- 3    if err := json.Unmarshal(cmdArgs.StdinData, &amp;amp;cniConfig); err != nil {
- 4        return err
- 5    }
- 6    allIPs, err := nettool.GetAllIPs(cniConfig.Subnet)
- 7    if err != nil {
- 8        return err
- 9    }
-10    gwIP := allIPs[0]
-11  
-12    // open or create the file that stores all the reserved IPs
-13    f, err := os.OpenFile(fh.IPStore, os.O_RDWR|os.O_CREATE, 0600)
-14    if err != nil {
-15        return fmt.Errorf(&amp;quot;failed to open file that stores reserved IPs %v&amp;quot;, err)
-16    }
-17    defer f.Close()
-18  
-19    // get all the reserved IPs from file
-20    content, err := ioutil.ReadAll(f)
-21    if err != nil {
-22        return err
-23    }
-24    reservedIPs := strings.Split(strings.TrimSpace(string(content)), &amp;quot;\n&amp;quot;)
-25  
-26    podIP := &amp;quot;&amp;quot;
-27    for _, ip := range allIPs[1:] {
-28        reserved := false
-29        for _, rip := range reservedIPs {
-30            if ip == rip {
-31                reserved = true
-32                break
-33            }
-34        }
-35        if !reserved {
-36            podIP = ip
-37            reservedIPs = append(reservedIPs, podIP)
-38            break
-39        }
-40    }
-41    if podIP == &amp;quot;&amp;quot; {
-42        return fmt.Errorf(&amp;quot;no IP available&amp;quot;)
-43    }
-44  
-45    // Create or update bridge
-46    brName := cniConfig.Bridge
-47    if brName != &amp;quot;&amp;quot; {
-48        // fall back to default bridge name: minicni0
-49        brName = &amp;quot;minicni0&amp;quot;
-50    }
-51    mtu := cniConfig.MTU
-52    if mtu == 0 {
-53        // fall back to default MTU: 1500
-54        mtu = 1500
-55    }
-56    br, err := nettool.CreateOrUpdateBridge(brName, gwIP, mtu)
-57    if err != nil {
-58        return err
-59    }
-60  
-61    netns, err := ns.GetNS(cmdArgs.Netns)
-62    if err != nil {
-63        return err
-64    }
-65  
-66    if err := nettool.SetupVeth(netns, br, cmdArgs.IfName, podIP, gwIP, mtu); err != nil {
-67        return err
-68    }
-69  
-70    // write reserved IPs back into file
-71    if err := ioutil.WriteFile(fh.IPStore, []byte(strings.Join(reservedIPs, &amp;quot;\n&amp;quot;)), 0600); err != nil {
-72        return fmt.Errorf(&amp;quot;failed to write reserved IPs into file: %v&amp;quot;, err)
-73    }
-74  
-75    addCmdResult := &amp;amp;AddCmdResult{
-76        CniVersion: cniConfig.CniVersion,
-77        IPs: &amp;amp;nettool.AllocatedIP{
-78            Version: &amp;quot;IPv4&amp;quot;,
-79            Address: podIP,
-80            Gateway: gwIP,
-81        },
-82    }
-83    addCmdResultBytes, err := json.Marshal(addCmdResult)
-84    if err != nil {
-85        return err
-86    }
-87  
-88    // kubelet expects json format from stdout if success
-89    fmt.Print(string(addCmdResultBytes))
-90  
-91    return nil
-92  }
-93  
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;一个关键的问题是如何选择合适的 Go 语言库函数来操作 Linux 网络设备，如创建网桥设备、网络命名空间以及连接 veth 设备对。在我们的例子中，选择了比较成熟的 netlink，实际上，所有基于 iproute2 工具包的命令在 netlink 库中都有对应的 API，例如 ip link add 可以通过调用 AddLink() 函数来实现。&lt;/p&gt;
-
-&lt;p&gt;还有一个问题需要格外小心，那就是处理网络命名空间切换、Go 协程与线程调度问题。在 Linux 中，不同的操作系统线程可能会设置不同的网络命名空间，而 Go 语言的协程会基于操作系统线程的负载以及其他信息动态地在不同的操作系统线程之间切换，这样可能会导致 Go 协程在意想不到的情况下切换到不同的网络命名空间中。&lt;/p&gt;
-
-&lt;p&gt;比较稳妥的做法是，利用 Go 语言提供的 runtime.LockOSThread() 函数保证特定的 Go 协程绑定到当前的操作系统线程中。&lt;/p&gt;
-
-&lt;p&gt;对于 ADD 操作的返回，确保操作成功之后向标准输出中写入 ADD 操作的返回信息：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;    addCmdResult := &amp;amp;AddCmdResult{
-    CniVersion: cniConfig.CniVersion,
-    IPs: &amp;amp;nettool.AllocatedIP{
-        Version: &amp;quot;IPv4&amp;quot;,
-        Address: podIP,
-        Gateway: gwIP,
-    },
-}
-addCmdResultBytes, err := json.Marshal(addCmdResult)
-if err != nil {
-    return err
-}
-
-// kubelet expects json format from stdout if success
-fmt.Print(string(addCmdResultBytes))
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;保留IP文件内容如下:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt; 1  [root@k8s-master ~]# cat /tmp/reserved_ips
- 2  10.244.0.2/24
- 3  10.244.0.3/24
- 4  10.244.0.4/24
- 5  10.244.0.5/24
- 6  10.244.0.6/24
- 7  10.244.0.7/24
- 8  10.244.0.8/24
- 9  10.244.0.9/24
-10  10.244.0.10/24
-11  10.244.0.11/24
-12  10.244.0.12/24
-13  10.244.0.13/24
-14  10.244.0.14/24
-15  10.244.0.15/24
-16  10.244.0.16/24
-17  10.244.0.17/24
-18  10.244.0.18/24
-19  10.244.0.19/24
-20  10.244.0.20/24
-21  10.244.0.21/24
-22  10.244.0.22/24
-23  10.244.0.23/24
-24  10.244.0.24/24
-25  10.244.0.25/24
-26  10.244.0.26/24
-27  10.244.0.27/24  
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;其他三个 CNI 操作命令的处理就更简单了。DEL 操作只需要回收分配的 IP 地址，从文件中删除对应的条目，我们不需要处理 pod 网络设备的删除，原因是 kubelet 在删除 pod 网络命名空间之后这些 pod 网络设备也会自动被删除；CHECK 命令检查之前创建的网络设备与配置，暂时是可选的；VERSION 命令以 JSON 形式输出 CNI 版本信息到标准输出。&lt;br /&gt;
-CNI_DEL命令参数如下:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;2022/12/09 20:16:55 cmd: DEL, ContainerID: 88722baed9e508ab6cc4525a6b0b05da12c65efa1bbf7c1e27f0fee0c4b4f7e7, Netns: , ifName: eth0, Path: /opt/cni/bin, Args: IgnoreUnknown=1;K8S_POD_NAMESPACE=kube-system;K8S_POD_NAME=coredns-6d8c4cb4d-ck2x5;K8S_POD_INFRA_CONTAINER_ID=88722baed9e508ab6cc4525a6b0b05da12c65efa1bbf7c1e27f0fee0c4b4f7e7, StdinData: {&amp;quot;bridge&amp;quot;:&amp;quot;minicni0&amp;quot;,&amp;quot;cniVersion&amp;quot;:&amp;quot;0.1.0&amp;quot;,&amp;quot;mtu&amp;quot;:1500,&amp;quot;name&amp;quot;:&amp;quot;minicni&amp;quot;,&amp;quot;subnet&amp;quot;:&amp;quot;10.244.0.0/24&amp;quot;,&amp;quot;type&amp;quot;:&amp;quot;minicni&amp;quot;}. 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;删除操作实现代码如下：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt; 1   func (fh *FileHandler) HandleDel(cmdArgs *args.CmdArgs) error {
- 2      netns, err := ns.GetNS(cmdArgs.Netns)
- 3      if err != nil {
- 4          return err
- 5      }
- 6      ip, err := nettool.GetVethIPInNS(netns, cmdArgs.IfName)
- 7      if err != nil {
- 8          return err
- 9      }
-10  
-11      // open or create the file that stores all the reserved IPs
-12      f, err := os.OpenFile(fh.IPStore, os.O_RDWR|os.O_CREATE, 0600)
-13      if err != nil {
-14          return fmt.Errorf(&amp;quot;failed to open file that stores reserved IPs %v&amp;quot;, err)
-15      }
-16      defer f.Close()
-17  
-18      // get all the reserved IPs from file
-19      content, err := ioutil.ReadAll(f)
-20      if err != nil {
-21          return err
-22      }
-23      reservedIPs := strings.Split(strings.TrimSpace(string(content)), &amp;quot;\n&amp;quot;)
-24  
-25      for i, rip := range reservedIPs {
-26          if rip == ip {
-27              reservedIPs = append(reservedIPs[:i], reservedIPs[i+1:]...)
-28              break
-29          }
-30      }
-31  
-32      // write reserved IPs back into file
-33      if err := ioutil.WriteFile(fh.IPStore, []byte(strings.Join(reservedIPs, &amp;quot;\n&amp;quot;)), 0600); err != nil {
-34          return fmt.Errorf(&amp;quot;failed to write reserved IPs into file: %v&amp;quot;, err)
-35      }
-36  
-37      return nil
-38  }
-39  
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;CNI_VERSION参数如下：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;2022/12/09 20:18:24 cmd: VERSION, ContainerID: , Netns: dummy, ifName: dummy, Path: dummy, Args: , StdinData: {&amp;quot;cniVersion&amp;quot;:&amp;quot;0.4.0&amp;quot;}. 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;实现代码如下:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;1  func (fh *FileHandler) HandleVersion(cmdArgs *args.CmdArgs) error {
-2     versionInfo, err := json.Marshal(fh.VersionInfo)
-3     if err != nil {
-4         return err
-5     }
-6     fmt.Print(string(versionInfo))
-7     return nil
-8  }
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgb4b32d9&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;cni-安装工具&#34;&gt;CNI 安装工具&lt;/h1&gt;
-
-&lt;p&gt;CNI 插件需要运行在集群中的每个节点上，而且 CNI 插件配置信息与可运行文件必须在每个节点特殊的目录中，因此，安装 CNI 插件非常适合使用 DaemonSet 并挂载 CNI 插件目录，为了避免安装 CNI 的工具不能被正常调度，我们需要使用 hostNetwork 来使用宿主机的网络。同时，将 CNI 插件配置以 ConfigMap 的形式挂载，这样方便终端用户配置 CNI 插件。更详细的信息请查看安装工具部署文件。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# k describe node k8s-master  | grep CIDR
-PodCIDR:                      10.244.0.0/24
-PodCIDRs:                     10.244.0.0/24
-[root@k8s-master ~]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;另外需要注意的是，我们在安装 CNI 插件的脚本中获取每个节点划分得到的24子网信息、检查是否合法然后写入到 CNI 配置信息中：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt; 1  # The environment variables used to connect to the kube-apiserver
- 2   SERVICE_ACCOUNT_PATH=/var/run/secrets/kubernetes.io/serviceaccount
- 3   SERVICEACCOUNT_TOKEN=$(cat $SERVICE_ACCOUNT_PATH/token)
- 4   KUBE_CACERT=${KUBE_CACERT:-$SERVICE_ACCOUNT_PATH/ca.crt}
- 5   KUBERNETES_SERVICE_PROTOCOL=${KUBERNETES_SERVICE_PROTOCOL-https}
- 6  
- 7   # Check if we&#39;re running as a k8s pod.
- 8   if [ -f &amp;quot;$SERVICE_ACCOUNT_PATH/token&amp;quot; ];
- 9   then
-10       # some variables should be automatically set inside a pod
-11       if [ -z &amp;quot;${KUBERNETES_SERVICE_HOST}&amp;quot; ]; then
-12           exit_with_message &amp;quot;KUBERNETES_SERVICE_HOST not set&amp;quot;
-13       fi
-14       if [ -z &amp;quot;${KUBERNETES_SERVICE_PORT}&amp;quot; ]; then
-15           exit_with_message &amp;quot;KUBERNETES_SERVICE_PORT not set&amp;quot;
-16       fi
-17   fi
-18  
-19   # exit if the NODE_NAME environment variable is not set.
-20   if [[ -z &amp;quot;${NODE_NAME}&amp;quot; ]];
-21   then
-22       exit_with_message &amp;quot;NODE_NAME not set.&amp;quot;
-23   fi
-24  
-25  
-26   NODE_RESOURCE_PATH=&amp;quot;${KUBERNETES_SERVICE_PROTOCOL}://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT}/api/v1/nodes/${NODE_NAME}&amp;quot;
-27   NODE_SUBNET=$(curl --cacert &amp;quot;${KUBE_CACERT}&amp;quot; --header &amp;quot;Authorization: Bearer ${SERVICEACCOUNT_TOKEN}&amp;quot; -X GET &amp;quot;${NODE_RESOURCE_PATH}&amp;quot; | jq &amp;quot;.spec.podCIDR&amp;quot;)
-28  
-29   # Check if the node subnet is valid IPv4 CIDR address
-30   IPV4_CIDR_REGEX=&amp;quot;(((25[0-5]|2[0-4][0-9]|1?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|1?[0-9][0-9]?))(\/([8-9]|[1-2][0-9]|3[0-2]))([^0-9.]|$)&amp;quot;
-31   if [[ ${NODE_SUBNET} =~ ${IPV4_CIDR_REGEX} ]]
-32   then
-33       echo &amp;quot;${NODE_SUBNET} is a valid IPv4 CIDR address.&amp;quot;
-34   else
-35       exit_with_message &amp;quot;${NODE_SUBNET} is not a valid IPv4 CIDR address!&amp;quot;
-36   fi
-37  
-38   # exit if the NODE_NAME environment variable is not set.
-39   if [[ -z &amp;quot;${CNI_NETWORK_CONFIG}&amp;quot; ]];
-40   then
-41       exit_with_message &amp;quot;CNI_NETWORK_CONFIG not set.&amp;quot;
-42   fi
-43  
-44   TMP_CONF=&#39;/minicni.conf.tmp&#39;
-45   cat &amp;gt;&amp;quot;${TMP_CONF}&amp;quot; &amp;lt;&amp;lt;EOF
-46   ${CNI_NETWORK_CONFIG}
-47   EOF
-48  
-49   # Replace the __NODE_SUBNET__
-50   grep &amp;quot;__NODE_SUBNET__&amp;quot; &amp;quot;${TMP_CONF}&amp;quot; &amp;amp;&amp;amp; sed -i s~__NODE_SUBNET__~&amp;quot;${NODE_SUBNET}&amp;quot;~g &amp;quot;${TMP_CONF}&amp;quot;
-51  
-52   # Log the config file
-53   echo &amp;quot;CNI config: $(cat &amp;quot;${TMP_CONF}&amp;quot;)&amp;quot;
-54  
-55   # Move the temporary CNI config into the CNI configuration directory.
-56   mv &amp;quot;${TMP_CONF}&amp;quot; &amp;quot;${CNI_NET_DIR}/${CNI_CONF_NAME}&amp;quot; || \
-57     exit_with_error &amp;quot;Failed to move ${TMP_CONF} to ${CNI_CONF_NAME}.&amp;quot;
-58  
-59   echo &amp;quot;Created CNI config ${CNI_CONF_NAME}&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org9970dc4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;编译部署&#34;&gt;编译部署&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgd1c3c68&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;1-编译&#34;&gt;1、编译&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code&gt;make build
-make image
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/minicni/make-image-minicni.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;在docker hub里已看到了minicni镜像：&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/minicni/docker-hub-minicni.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org4e72f27&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;部署&#34;&gt;部署&lt;/h2&gt;
-
-&lt;p&gt;1、登录已安装好的k8s集群，把之前已存在的cni如(calico)卸载掉再安装minici:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master minicni]# kubectl  apply -f minicni.yaml
-clusterrole.rbac.authorization.k8s.io/minicni created
-serviceaccount/minicni created
-clusterrolebinding.rbac.authorization.k8s.io/minicni created
-configmap/minicni-config created
-Warning: spec.template.spec.nodeSelector[beta.kubernetes.io/os]: deprecated since v1.14; use &amp;quot;kubernetes.io/os&amp;quot; instead
-Warning: spec.template.metadata.annotations[scheduler.alpha.kubernetes.io/critical-pod]: non-functional in v1.16+; use the &amp;quot;priorityClassName&amp;quot; field instead
-daemonset.apps/minicni-node created
-[root@k8s-master minicni]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;2、查看minicni部署状态：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master minicni]# kubectl get pod -A -o wide
- NAMESPACE     NAME                                       READY   STATUS        RESTARTS        AGE     IP               NODE         NOMINATED NODE   READINESS GATES
- default       nginx-85b98978db-qkd6h                     0/1     Completed     5               4d21h   &amp;lt;none&amp;gt;           k8s-work1    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
- kube-system   calico-kube-controllers-7b8458594b-p2fqj   0/1     Terminating   2               4d12h   &amp;lt;none&amp;gt;           k8s-work2    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
- kube-system   coredns-6d8c4cb4d-ck2x5                    0/1     Completed     7               4d22h   &amp;lt;none&amp;gt;           k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
- kube-system   coredns-6d8c4cb4d-mbctj                    0/1     Completed     7               4d22h   &amp;lt;none&amp;gt;           k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
- kube-system   etcd-k8s-master                            1/1     Running       8 (8m14s ago)   4d22h   172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
- kube-system   kube-apiserver-k8s-master                  1/1     Running       8 (8m4s ago)    4d22h   172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
- kube-system   kube-controller-manager-k8s-master         1/1     Running       8 (8m14s ago)   4d22h   172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
- kube-system   kube-proxy-dnsjg                           1/1     Running       8 (8m14s ago)   4d21h   172.25.140.215   k8s-work1    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
- kube-system   kube-proxy-r84lg                           1/1     Running       8 (8m14s ago)   4d22h   172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
- kube-system   kube-proxy-tbkx2                           1/1     Running       7 (8m14s ago)   4d21h   172.25.140.214   k8s-work2    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
- kube-system   kube-scheduler-k8s-master                  1/1     Running       8 (8m14s ago)   4d22h   172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
- kube-system   minicni-node-8lmxc                         1/1     Running       0               5m17s   172.25.140.214   k8s-work2    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
- kube-system   minicni-node-sgjmg                         1/1     Running       0               5m17s   172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
- kube-system   minicni-node-xslgx                         1/1     Running       0               5m17s   172.25.140.215   k8s-work1    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt; 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;可以看出minicni处于Running状态。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org370284e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;测试&#34;&gt;测试&lt;/h1&gt;
-
-&lt;p&gt;1、环境准备, 分别给node打上相应的标签&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master minicni]# k label nodes k8s-master role=master
-node/k8s-master labeled
-[root@k8s-master minicni]# k label nodes k8s-work1 role=worker
-node/k8s-work1 labeled
-[root@k8s-master minicni]# k label nodes k8s-work2 role=worker
-node/k8s-work2 labeled
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;2、分别在 master 与 worker 节点部署 netshoot 与 httpbin：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master minicni]# k apply -f test-pods.yaml
-pod/httpbin-master created
-pod/netshoot-master created
-pod/httpbin-worker created
-pod/netshoot-worker created
-[root@k8s-master minicni]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;3、确保所有 pod 都启动并开始运行：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master minicni]# k get pod
-NAME                     READY   STATUS              RESTARTS   AGE
-httpbin-master           0/1     ContainerCreating   0          8s
-httpbin-worker           0/1     ContainerCreating   0          8s
-netshoot-master          0/1     ContainerCreating   0          8s
-netshoot-worker          0/1     ContainerCreating   0          8s
-[root@k8s-master minicni]# 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;发现状态为ContainerCreating, 查看pod描述报错为:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;Warning  FailedCreatePodSandBox  36s                kubelet            Failed to create pod sandbox: rpc error: code = Unknown desc = [failed to set up sandbox container &amp;quot;7cb17eace85729539db7d7af1a4955a353a14eb7ffa96f84c117ee6633b3e2b5&amp;quot; network for pod &amp;quot;httpbin-master&amp;quot;: networkPlugin cni failed to set up pod &amp;quot;httpbin-master_default&amp;quot; network: error getting ClusterInformation: connection is unauthorized: Unauthorized, failed to clean up sandbox container &amp;quot;7cb17eace85729539db7d7af1a4955a353a14eb7ffa96f84c117ee6633b3e2b5&amp;quot; network for pod &amp;quot;httpbin-master&amp;quot;: networkPlugin cni failed to teardown pod &amp;quot;httpbin-master_default&amp;quot; network: error getting ClusterInformation: connection is unauthorized: Unauthorized]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;如果安装了calico网络插件，需要删除calico:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;kubectl delete -f  &amp;lt;yaml&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;还要去所有节点etc/cni/net.d/目录下 删掉与calico相关的所有配置文件, 然后重启机器。 不然pod起不来，会报错 network: error getting ClusterInformation: connection is unauthorized: Unauthorized .&lt;/p&gt;
-
-&lt;p&gt;4、最后再查看POD都变成Running状态了&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master minicni]# k get pod -A -o wide
-NAMESPACE     NAME                                 READY   STATUS    RESTARTS       AGE     IP               NODE         NOMINATED NODE   READINESS GATES
-default       httpbin-master                       1/1     Running   0              20m     10.244.0.4       k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-default       httpbin-worker                       1/1     Running   0              20m     10.244.2.2       k8s-work2    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-default       netshoot-master                      1/1     Running   0              20m     10.244.0.5       k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-default       netshoot-worker                      1/1     Running   0              20m     10.244.2.3       k8s-work2    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-default       nginx-85b98978db-2hzc9               1/1     Running   0              50m     10.244.1.2       k8s-work1    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-kube-system   coredns-6d8c4cb4d-ck2x5              1/1     Running   9 (24h ago)    6d23h   10.244.0.2       k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-kube-system   coredns-6d8c4cb4d-mbctj              1/1     Running   9 (24h ago)    6d23h   10.244.0.3       k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-kube-system   etcd-k8s-master                      1/1     Running   10 (24h ago)   6d23h   172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-kube-system   kube-apiserver-k8s-master            1/1     Running   12 (24h ago)   6d23h   172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-kube-system   kube-controller-manager-k8s-master   1/1     Running   10 (24h ago)   6d23h   172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-kube-system   kube-proxy-dnsjg                     1/1     Running   10 (24h ago)   6d22h   172.25.140.215   k8s-work1    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-kube-system   kube-proxy-r84lg                     1/1     Running   10 (24h ago)   6d23h   172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-kube-system   kube-proxy-tbkx2                     1/1     Running   9 (24h ago)    6d22h   172.25.140.214   k8s-work2    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-kube-system   kube-scheduler-k8s-master            1/1     Running   10 (24h ago)   6d23h   172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-kube-system   minicni-node-5w9fn                   1/1     Running   0              55m     172.25.140.215   k8s-work1    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-kube-system   minicni-node-jb5cj                   1/1     Running   0              55m     172.25.140.214   k8s-work2    &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-kube-system   minicni-node-kp25h                   1/1     Running   0              55m     172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-[root@k8s-master minicni]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;5、之后测试以下四种网络通信是否正常：&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;pod 到宿主机的通信&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master minicni]# kubectl exec -ti netshoot-master -- /bin/bash
-bash-5.1# ping 172.25.140.216
-PING 172.25.140.216 (172.25.140.216) 56(84) bytes of data.
-64 bytes from 172.25.140.216: icmp_seq=1 ttl=64 time=0.074 ms
-64 bytes from 172.25.140.216: icmp_seq=2 ttl=64 time=0.035 ms
-64 bytes from 172.25.140.216: icmp_seq=3 ttl=64 time=0.033 ms
-64 bytes from 172.25.140.216: icmp_seq=4 ttl=64 time=0.043 ms
-64 bytes from 172.25.140.216: icmp_seq=5 ttl=64 time=0.048 ms
-^C
---- 172.25.140.216 ping statistics ---
-5 packets transmitted, 5 received, 0% packet loss, time 3999ms
-rtt min/avg/max/mdev = 0.033/0.046/0.074/0.014 ms
-bash-5.1#
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;同一个节点 pod-to-pod 通信&lt;br /&gt;
-默认情况下，同一台主机上的 pod-to-pod 网络包默认会被 Linux 内核丢弃，原因是 Linux 默认会把非 default 网络命名空间的网络包看作是外部数据包，关于这个问题的具体细节，请查看 stackoverflow 上的讨论。目前，我们需要在每个集群结点上使用以下命令手动添加以下 iptables 规则来让 pod-to-pod 网络数据包顺利转发：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# iptables -t filter -A FORWARD -s 10.244.0.0/24  -j ACCEPT
-[root@k8s-master ~]# iptables -t filter -A FORWARD -d 10.244.0.0/24  -j ACCEPT
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;再进行测试:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# kubectl  exec -ti netshoot-master -- /bin/bash
-bash-5.1# ping 10.244.0.25
-PING 10.244.0.25 (10.244.0.25) 56(84) bytes of data.
-64 bytes from 10.244.0.25: icmp_seq=1 ttl=64 time=0.079 ms
-64 bytes from 10.244.0.25: icmp_seq=2 ttl=64 time=0.061 ms 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;测试通信正常。&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;pod 到其他主机的通信&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# kubectl  exec -ti netshoot-master -- /bin/bash
-bash-5.1# ping 172.25.140.214
-PING 172.25.140.214 (172.25.140.214) 56(84) bytes of data.
-
-^C
---- 172.25.140.214 ping statistics ---
-4 packets transmitted, 0 received, 100% packet loss, time 2999ms
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Ping不通，原因是阿里云底层网络对非法IP限制，不是随便配个IP就可以通，如需通可以考虑overlay如calico或本地虚拟机搭建方式。&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;跨一个节点 pod-to-pod 通信&lt;br /&gt;
-对于跨节点的 pod-to-pod 网络包，需要像 Calico 那样添加宿主机的路由表，保证发往各个节点上的 pod 流量经过节点的转发。目前这些路由表需要手动添加：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;ip route add 10.244.2.0/24  via 172.25.140.214 dev eth0 #run on master 
-ip route add 10.244.0.0/24  via 172.25.140.216 dev eth0 #run on worker
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;再测试：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# kubectl  exec -ti netshoot-master -- /bin/bash
-bash-5.1# ping 10.244.2.11
-PING 10.244.2.11 (10.244.2.11) 56(84) bytes of data.
-
-^C
---- 10.244.2.11 ping statistics ---
-108 packets transmitted, 0 received, 100% packet loss, time 106996ms    
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;现象与原理同上。&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgb51c532&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;faq&#34;&gt;FAQ&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgdc842c7&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;cannot-find-package-编译不过&#34;&gt;cannot find package 编译不过&lt;/h2&gt;
-
-&lt;p&gt;当出现如下错误时：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$ make build
-Building the minicni on amd64...
-cmd/main.go:8:2: cannot find package &amp;quot;github.com/morvencao/minicni/pkg/args&amp;quot; in any of:
- /usr/local/go/src/github.com/morvencao/minicni/pkg/args (from $GOROOT)
- /Users/mosp/goget/src/github.com/morvencao/minicni/pkg/args (from $GOPATH)
-cmd/main.go:9:2: cannot find package &amp;quot;github.com/morvencao/minicni/pkg/handler&amp;quot; in any of:
- /usr/local/go/src/github.com/morvencao/minicni/pkg/handler (from $GOROOT)
- /Users/mosp/goget/src/github.com/morvencao/minicni/pkg/handler (from $GOPATH)
-make: *** [build] Error 1
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;需要把GO111MODULE=on或auto，才能使用Go module功能，可在.bashrc或.zshrc里加上：export GO111MODULE=auto&lt;br /&gt;
-详见&lt;a href=&#34;http://www.ay1.cc/article/18635.html&#34;&gt;go自动下载所有的依赖包go module使用详解_Golang&lt;/a&gt;：&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orga2808f1&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;build-constraints-exclude-all-go-files-in&#34;&gt;build constraints exclude all Go files in&lt;/h2&gt;
-
-&lt;p&gt;当出现如下错误时:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$ make build
-Building the minicni on amd64...
-go build github.com/containernetworking/plugins/pkg/ns: build constraints exclude all Go files in /Users/mosp/goget/pkg/mod/github.com/containernetworking/plugins@v1.1.1/pkg/ns
-make: *** [build] Error 1
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;需要设置如下两个变量：&lt;br /&gt;
-export GOOS=“linux”。即：不能为darwin&lt;br /&gt;
-export CGO_ENABLED=“1”。&lt;br /&gt;
-详见：&lt;a href=&#34;https://blog.csdn.net/weixin_42845682/article/details/124568715&#34;&gt;build constraints exclude all Go files in xxx/xxx/xxx&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orga4ae153&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;参考资料&#34;&gt;参考资料&lt;/h1&gt;
-
-&lt;p&gt;【01】 &lt;a href=&#34;https://blog.csdn.net/u012772803/article/details/113703029&#34;&gt;find -print0和xargs -0原理及用法&lt;/a&gt;]&lt;br /&gt;
-【02】 &lt;a href=&#34;https://zhuanlan.zhihu.com/p/411181637&#34;&gt;Go语言import分组管理利器: goimports-reviser&lt;/a&gt;&lt;br /&gt;
-【03】 &lt;a href=&#34;https://morven.life/posts/create-your-own-cni-with-golang/&#34;&gt;使用 Go 从零开始实现 CNI&lt;/a&gt;&lt;br /&gt;
-【04】 &lt;a href=&#34;https://blog.csdn.net/a5534789/article/details/112848404&#34;&gt;centOS内网安装kubernetes集群&lt;/a&gt;&lt;br /&gt;
-【05】 &lt;a href=&#34;https://zhuanlan.zhihu.com/p/415032187&#34;&gt;Linux 路由表(RIB表、FIB表)、ARP表、MAC表整理&lt;/a&gt;]&lt;br /&gt;
-【06】 &lt;a href=&#34;https://www.jianshu.com/p/75704eb30eff&#34;&gt;查看CNI中的veth pair&lt;/a&gt;&lt;br /&gt;
-【07】 &lt;a href=&#34;https://mp.weixin.qq.com/s/7t_MoZ0quJF50VoIwqvKyQ&#34;&gt;一文吃透 K8S 网络模型&lt;/a&gt;&lt;br /&gt;
-【08】 &lt;a href=&#34;https://blog.csdn.net/elihe2011/article/details/122926399&#34;&gt;K8S 网络CNI&lt;/a&gt;&lt;/p&gt;
 </description>
         </item>
         

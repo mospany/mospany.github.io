@@ -1,6 +1,46 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     
     <url>
+        <loc>http://mospany.github.io/categories/</loc>
+        <lastmod>2025-07-13T18:20:27+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/post/</loc>
+        <lastmod>2025-07-13T18:20:27+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/</loc>
+        <lastmod>2025-07-13T18:20:27+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/2025/07/13/meeting-room-to-see-ai/</loc>
+        <lastmod>2025-07-13T18:20:27+08:00</lastmod>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/</loc>
+        <lastmod>2025-07-13T18:20:27+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/</loc>
+        <lastmod>2025-07-13T18:20:27+08:00</lastmod>
+        <priority>0</priority>
+    </url>
+    
+    <url>
+        <loc>http://mospany.github.io/2025/07/13/ai-term/</loc>
+        <lastmod>2025-07-13T18:02:09+08:00</lastmod>
+    </url>
+    
+    <url>
         <loc>http://mospany.github.io/tags/</loc>
         <lastmod>2025-07-13T16:27:22+08:00</lastmod>
         <priority>0</priority>
@@ -12,43 +52,13 @@
     </url>
     
     <url>
-        <loc>http://mospany.github.io/categories/</loc>
-        <lastmod>2025-07-13T16:27:22+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/post/</loc>
-        <lastmod>2025-07-13T16:27:22+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
         <loc>http://mospany.github.io/tags/</loc>
         <lastmod>2025-07-13T16:27:22+08:00</lastmod>
         <priority>0</priority>
     </url>
     
     <url>
-        <loc>http://mospany.github.io/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/</loc>
-        <lastmod>2025-07-13T16:27:22+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
         <loc>http://mospany.github.io/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/</loc>
-        <lastmod>2025-07-13T16:27:22+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/</loc>
-        <lastmod>2025-07-13T16:27:22+08:00</lastmod>
-        <priority>0</priority>
-    </url>
-    
-    <url>
-        <loc>http://mospany.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/</loc>
         <lastmod>2025-07-13T16:27:22+08:00</lastmod>
         <priority>0</priority>
     </url>

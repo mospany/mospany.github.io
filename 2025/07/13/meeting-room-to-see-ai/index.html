@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <base href="http://mospany.github.io/">
-  <title>VUE开发环境搭建 - 墨斯潘園</title>
+  <title>从会议室名称看AI - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
-  <meta name="keywords" content="前端,VUE,">
-  <meta name="description" content="安装 安装nodejs 到https://nodejs.org/en/download/ 下载对应系统的二进制版本。 按照ubuntu16.04下配">
+  <meta name="keywords" content="技术文章,人工智能,">
+  <meta name="description" content="从会议室名称看AI：核心术语解读 在人工智能（AI）领域，许多会议室和项目组常以AI相关术语命名。以下是一些常见AI术语的详细解读，涵盖其英文">
   <meta name="author" content="mospan">
-  <meta itemprop="name" content="VUE开发环境搭建 - 墨斯潘園">
-  <meta itemprop="description" content="安装 安装nodejs 到https://nodejs.org/en/download/ 下载对应系统的二进制版本。 按照ubuntu16.04下配">
+  <meta itemprop="name" content="从会议室名称看AI - 墨斯潘園">
+  <meta itemprop="description" content="从会议室名称看AI：核心术语解读 在人工智能（AI）领域，许多会议室和项目组常以AI相关术语命名。以下是一些常见AI术语的详细解读，涵盖其英文">
   <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
-  <meta name="twitter:title" content="VUE开发环境搭建 - 墨斯潘園" />
+  <meta name="twitter:title" content="从会议室名称看AI - 墨斯潘園" />
   
   <meta name="twitter:description" content="">
   <link rel="shortcut icon" href="img/favicon.ico"/>
@@ -63,7 +63,7 @@
 	<article itemprop="articleBody">
     <header class="article-info clearfix">
   <h1 itemprop="name">
-      <a href="http://mospany.github.io/2018/02/24/vue-dev-env-build/" title="VUE开发环境搭建" itemprop="url">VUE开发环境搭建</a>
+      <a href="http://mospany.github.io/2025/07/13/meeting-room-to-see-ai/" title="从会议室名称看AI" itemprop="url">从会议室名称看AI</a>
   </h1>
   <p class="article-author">By 
     
@@ -71,58 +71,193 @@
     
   </p>
   <p class="article-time">
-    <time datetime="2018-02-24 16:32:21 &#43;0800 CST" itemprop="datePublished">2018年02月24日</time>
+    <time datetime="2025-07-13 18:20:27 &#43;0800 CST" itemprop="datePublished">2025年07月13日</time>
   </p>
 </header>
 
 	<div class="article-content">
     
+		<div class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+      <nav id="TableOfContents">
+<ul>
+<li><a href="#从会议室名称看ai-核心术语解读">从会议室名称看AI：核心术语解读</a>
+<ul>
+<li>
+<ul>
+<li><a href="#1-强化学习-reinforcement-learning">1. 强化学习（Reinforcement Learning）</a></li>
+<li><a href="#2-深度学习-deep-learning">2. 深度学习（Deep Learning）</a></li>
+<li><a href="#3-知识图谱-knowledge-graph">3. 知识图谱（Knowledge Graph）</a></li>
+<li><a href="#4-多维缩放-multidimensional-scaling-mds">4. 多维缩放（Multidimensional Scaling, MDS）</a></li>
+<li><a href="#5-层次聚类-hierarchical-clustering">5. 层次聚类（Hierarchical Clustering）</a></li>
+<li><a href="#6-多层感知机-multilayer-perceptron-mlp">6. 多层感知机（Multilayer Perceptron, MLP）</a></li>
+<li><a href="#7-卷积网络-convolutional-neural-network-cnn">7. 卷积网络（Convolutional Neural Network, CNN）</a></li>
+<li><a href="#8-协同过滤-collaborative-filtering">8. 协同过滤（Collaborative Filtering）</a></li>
+<li><a href="#9-低秩适配-low-rank-adaptation-lora">9. 低秩适配（Low-Rank Adaptation, LoRA）</a></li>
+<li><a href="#10-监督微调-supervised-fine-tuning">10. 监督微调（Supervised Fine-tuning）</a></li>
+<li><a href="#11-交叉验证-cross-validation">11. 交叉验证（Cross Validation）</a></li>
+<li><a href="#12-具身智能-embodied-intelligence">12. 具身智能（Embodied Intelligence）</a></li>
+<li><a href="#13-模型量化-model-quantization">13. 模型量化（Model Quantization）</a></li>
+<li><a href="#14-判别分析-discriminant-analysis">14. 判别分析（Discriminant Analysis）</a></li>
+<li><a href="#15-随机森林-random-forest">15. 随机森林（Random Forest）</a></li>
+<li><a href="#16-知识蒸馏-knowledge-distillation">16. 知识蒸馏（Knowledge Distillation）</a></li>
+<li><a href="#17-专家混合-mixture-of-experts-moe">17. 专家混合（Mixture of Experts, MoE）</a></li>
+<li><a href="#18-多头注意-multi-head-attention">18. 多头注意（Multi-Head Attention）</a></li>
+<li><a href="#19-梯度提升-gradient-boosting">19. 梯度提升（Gradient Boosting）</a></li>
+<li><a href="#20-多智能体-multi-agent">20. 多智能体（Multi-Agent）</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+		</div>
+    
     
 
-<h3 id="安装-a-id-sec-1-name-sec-1-a">安装<a id="sec-1" name="sec-1"></a></h3>
+<h1 id="从会议室名称看ai-核心术语解读">从会议室名称看AI：核心术语解读</h1>
 
-<h4 id="安装nodejs-a-id-sec-1-1-name-sec-1-1-a">安装nodejs<a id="sec-1-1" name="sec-1-1"></a></h4>
+<p>在人工智能（AI）领域，许多会议室和项目组常以AI相关术语命名。以下是一些常见AI术语的详细解读，涵盖其英文名称、基本原理及应用场景。</p>
 
-<ol>
-<li>到<a href="https://nodejs.org/en/download/">https://nodejs.org/en/download/</a> 下载对应系统的二进制版本。</li>
-<li>按照<a href="http://blog.csdn.net/mrzhouxiaofei/article/details/66974644">ubuntu16.04下配置nodejs环境</a>进行安装。</li>
-</ol>
+<hr />
 
-<h4 id="安装npm-a-id-sec-1-2-name-sec-1-2-a">安装npm<a id="sec-1-2" name="sec-1-2"></a></h4>
+<h3 id="1-强化学习-reinforcement-learning">1. 强化学习（Reinforcement Learning）</h3>
 
-<ol>
-<li>创建npm依赖包文件package.json。</li>
+<p><strong>英文名称</strong>：Reinforcement Learning<br />
+<strong>原理</strong>：强化学习是一种机器学习方法，强调智能体（Agent）在与环境交互过程中，通过试错获得最大化累积奖励的策略。智能体根据当前状态选择动作，环境反馈奖励或惩罚，智能体据此调整策略。强化学习广泛应用于游戏、机器人控制和自动驾驶等领域，代表性算法有Q-learning、Deep Q Network（DQN）等。</p>
 
-<li><p>安装npm依赖</p>
+<hr />
 
-<h1 id="install-dependencies">install dependencies</h1>
+<h3 id="2-深度学习-deep-learning">2. 深度学习（Deep Learning）</h3>
 
-<p>npm install
-npm install fec-builder -g</p></li>
+<p><strong>英文名称</strong>：Deep Learning<br />
+<strong>原理</strong>：深度学习是一种以多层神经网络为基础的机器学习方法。通过构建多层（深层）神经网络，能够自动从大量数据中提取高层次特征，实现图像识别、语音识别、自然语言处理等复杂任务。深度学习的核心在于端到端的特征学习和强大的表达能力，常见模型有卷积神经网络（CNN）、循环神经网络（RNN）等。</p>
 
-<li><p>如果出现这个报错&rdquo;Module build failed: Error: ENOENT: no such file or directory, scandir &lsquo;/opt/node/lib/node_modules/fec-builder/node_modules/node-sass/vendor&rsquo;&ldquo;,
-直接到/opt/node/lib/node_modules/fec-builder/node_modules/node-sass/目录下执行命令&rdquo;npm rebuild node-sass&rdquo;即可。</p></li>
-</ol>
+<hr />
 
-<h3 id="启动-a-id-sec-2-name-sec-2-a">启动<a id="sec-2" name="sec-2"></a></h3>
+<h3 id="3-知识图谱-knowledge-graph">3. 知识图谱（Knowledge Graph）</h3>
 
-<p>创建fec-builder软连接：ln -s /opt/node/bin/fec-builder /usr/local/bin/fec-builder，
-直接使用fec-builder命令启动。</p>
+<p><strong>英文名称</strong>：Knowledge Graph<br />
+<strong>原理</strong>：知识图谱是一种以图结构组织和表达知识的方法，将实体（如人、地点、事物）及其关系以节点和边的形式存储。通过语义关联，知识图谱支持复杂的推理和查询，广泛应用于搜索引擎、智能问答和推荐系统。其构建涉及信息抽取、实体消歧、关系抽取等技术。</p>
 
-<pre><code># serve with hot reload at localhost:8080
-fec-builder -p 8080
+<hr />
 
-# build for production with minification
-fec-builder build -e production
-</code></pre>
+<h3 id="4-多维缩放-multidimensional-scaling-mds">4. 多维缩放（Multidimensional Scaling, MDS）</h3>
 
-<h3 id="访问-a-id-sec-3-name-sec-3-a">访问<a id="sec-3" name="sec-3"></a></h3>
+<p><strong>英文名称</strong>：Multidimensional Scaling (MDS)<br />
+<strong>原理</strong>：多维缩放是一种降维方法，用于将高维数据映射到低维空间（通常是二维或三维），以便可视化和分析。MDS通过保持数据点之间的距离关系，尽量还原原始数据的结构。它常用于心理学、市场分析和生物信息学等领域的数据可视化。</p>
 
-<p>在浏览器地址栏中输入: <a href="http://XX.XX.XX.XX:8080">http://XX.XX.XX.XX:8080</a> 进行访问。</p>
+<hr />
 
-<h3 id="调试-a-id-sec-4-name-sec-4-a">调试<a id="sec-4" name="sec-4"></a></h3>
+<h3 id="5-层次聚类-hierarchical-clustering">5. 层次聚类（Hierarchical Clustering）</h3>
 
-<p>使用chrome开发者工具进行调试，详见：<a href="https://www.jianshu.com/p/cf36d48652f4">Chrome 开发者工具中文指南</a></p>
+<p><strong>英文名称</strong>：Hierarchical Clustering<br />
+<strong>原理</strong>：层次聚类是一种无监督学习方法，通过构建数据的层次结构（树状图或树状图谱）来发现数据的内在分组。算法分为自底向上（凝聚型）和自顶向下（分裂型）两类。层次聚类无需预先指定簇的数量，适用于探索数据的多层次结构。</p>
+
+<hr />
+
+<h3 id="6-多层感知机-multilayer-perceptron-mlp">6. 多层感知机（Multilayer Perceptron, MLP）</h3>
+
+<p><strong>英文名称</strong>：Multilayer Perceptron (MLP)<br />
+<strong>原理</strong>：多层感知机是一种前馈神经网络，由输入层、一个或多个隐藏层和输出层组成。每层由多个神经元构成，层与层之间全连接。MLP通过反向传播算法进行训练，能够逼近任意非线性函数，是深度学习的基础结构之一，广泛用于分类和回归任务。</p>
+
+<hr />
+
+<h3 id="7-卷积网络-convolutional-neural-network-cnn">7. 卷积网络（Convolutional Neural Network, CNN）</h3>
+
+<p><strong>英文名称</strong>：Convolutional Neural Network (CNN)<br />
+<strong>原理</strong>：卷积神经网络是一种专门处理具有网格结构数据（如图像）的深度学习模型。其核心在于卷积层，通过局部感受野和权重共享机制提取空间特征，极大减少参数数量。CNN在图像识别、目标检测、视频分析等领域表现卓越。</p>
+
+<hr />
+
+<h3 id="8-协同过滤-collaborative-filtering">8. 协同过滤（Collaborative Filtering）</h3>
+
+<p><strong>英文名称</strong>：Collaborative Filtering<br />
+<strong>原理</strong>：协同过滤是一种推荐系统技术，通过分析用户与物品的交互行为（如评分、点击）来预测用户可能喜欢的物品。分为基于用户和基于物品的协同过滤。其核心思想是“物以类聚，人以群分”，即相似用户喜欢相似物品。常用于电商、视频、音乐等平台的个性化推荐。</p>
+
+<hr />
+
+<h3 id="9-低秩适配-low-rank-adaptation-lora">9. 低秩适配（Low-Rank Adaptation, LoRA）</h3>
+
+<p><strong>英文名称</strong>：Low-Rank Adaptation (LoRA)<br />
+<strong>原理</strong>：低秩适配是一种参数高效微调（PEFT）方法，主要用于大模型的迁移学习。LoRA通过在预训练模型的权重矩阵中插入低秩分解模块，仅训练少量参数即可适应新任务，显著降低计算和存储成本。广泛应用于自然语言处理和多模态模型的微调。</p>
+
+<hr />
+
+<h3 id="10-监督微调-supervised-fine-tuning">10. 监督微调（Supervised Fine-tuning）</h3>
+
+<p><strong>英文名称</strong>：Supervised Fine-tuning<br />
+<strong>原理</strong>：监督微调是指在有标签数据集上对预训练模型进行再训练，使其更好地适应特定任务。通过监督信号（如分类标签），模型参数得到针对性优化。该方法在大模型落地应用中极为常见，如BERT、GPT等模型在下游任务的微调。</p>
+
+<hr />
+
+<h3 id="11-交叉验证-cross-validation">11. 交叉验证（Cross Validation）</h3>
+
+<p><strong>英文名称</strong>：Cross Validation<br />
+<strong>原理</strong>：交叉验证是一种模型评估方法，将数据集划分为若干子集，轮流用其中一部分作为验证集，其余作为训练集。常见的有K折交叉验证。该方法能有效评估模型的泛化能力，减少过拟合风险，是机器学习模型选择和调优的重要工具。</p>
+
+<hr />
+
+<h3 id="12-具身智能-embodied-intelligence">12. 具身智能（Embodied Intelligence）</h3>
+
+<p><strong>英文名称</strong>：Embodied Intelligence<br />
+<strong>原理</strong>：具身智能强调智能体与物理世界的交互，认为智能的产生离不开身体和环境。具身智能体（如机器人）通过感知、运动和环境反馈实现学习和适应。该理念推动了机器人学、自动驾驶和虚拟现实等领域的发展，强调“智能在于行动”。</p>
+
+<hr />
+
+<h3 id="13-模型量化-model-quantization">13. 模型量化（Model Quantization）</h3>
+
+<p><strong>英文名称</strong>：Model Quantization<br />
+<strong>原理</strong>：模型量化是一种模型压缩技术，通过将模型参数从高精度（如32位浮点）转换为低精度（如8位整数），以减少模型体积和加速推理速度。量化可显著降低硬件资源消耗，适用于边缘设备和移动端AI部署。常见量化方法有对称量化、非对称量化等。</p>
+
+<hr />
+
+<h3 id="14-判别分析-discriminant-analysis">14. 判别分析（Discriminant Analysis）</h3>
+
+<p><strong>英文名称</strong>：Discriminant Analysis<br />
+<strong>原理</strong>：判别分析是一类用于分类的统计方法，通过寻找最佳投影方向，使不同类别的数据在该方向上分离度最大。典型方法有线性判别分析（LDA）和二次判别分析（QDA）。判别分析常用于模式识别、医学诊断等领域。</p>
+
+<hr />
+
+<h3 id="15-随机森林-random-forest">15. 随机森林（Random Forest）</h3>
+
+<p><strong>英文名称</strong>：Random Forest<br />
+<strong>原理</strong>：随机森林是一种集成学习方法，通过构建多个决策树并对其结果进行投票或平均，提升模型的准确性和鲁棒性。每棵树在训练时随机选择特征和样本，减少过拟合。随机森林广泛应用于分类、回归和特征选择等任务。</p>
+
+<hr />
+
+<h3 id="16-知识蒸馏-knowledge-distillation">16. 知识蒸馏（Knowledge Distillation）</h3>
+
+<p><strong>英文名称</strong>：Knowledge Distillation<br />
+<strong>原理</strong>：知识蒸馏是一种模型压缩技术，通过将大型“教师模型”的知识迁移到小型“学生模型”。学生模型在训练时不仅学习真实标签，还模仿教师模型的输出分布，从而获得更好的泛化能力。知识蒸馏常用于模型加速和部署。</p>
+
+<hr />
+
+<h3 id="17-专家混合-mixture-of-experts-moe">17. 专家混合（Mixture of Experts, MoE）</h3>
+
+<p><strong>英文名称</strong>：Mixture of Experts (MoE)<br />
+<strong>原理</strong>：专家混合是一种模型结构，将多个“专家”子模型与一个门控网络结合。门控网络根据输入动态选择部分专家参与计算，实现模型容量与计算效率的平衡。MoE在大规模语言模型和多任务学习中表现突出，能有效提升模型性能。</p>
+
+<hr />
+
+<h3 id="18-多头注意-multi-head-attention">18. 多头注意（Multi-Head Attention）</h3>
+
+<p><strong>英文名称</strong>：Multi-Head Attention<br />
+<strong>原理</strong>：多头注意是Transformer模型的核心机制，通过并行计算多个注意力头，捕捉不同子空间的信息。每个头独立学习输入序列的不同关系，最后将各头输出拼接融合。多头注意极大提升了模型对复杂依赖关系的建模能力，广泛应用于自然语言处理和计算机视觉。</p>
+
+<hr />
+
+<h3 id="19-梯度提升-gradient-boosting">19. 梯度提升（Gradient Boosting）</h3>
+
+<p><strong>英文名称</strong>：Gradient Boosting<br />
+<strong>原理</strong>：梯度提升是一种集成学习方法，通过逐步训练一系列弱学习器（如决策树），每一步都拟合前一步的残差。最终模型是所有弱学习器的加权和。梯度提升具有强大的拟合能力，代表性算法有XGBoost、LightGBM等，广泛应用于结构化数据建模。</p>
+
+<hr />
+
+<h3 id="20-多智能体-multi-agent">20. 多智能体（Multi-Agent）</h3>
+
+<p><strong>英文名称</strong>：Multi-Agent<br />
+<strong>原理</strong>：多智能体系统由多个相互作用的智能体组成，每个智能体可独立感知、决策和行动。多智能体系统强调协作、竞争和通信，适用于分布式控制、博弈论、群体智能等场景。其研究推动了自动驾驶、智能交通、机器人集群等领域的发展。</p>
+
+<hr />
 
     <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
   <div style="float:right;margin-top:0px;">
@@ -135,7 +270,7 @@ fec-builder build -e production
   <div>
     <p style="margin-top:0px;">作者：<a target="_blank" href="http://blog.mospan.cn/">mospan</a>
       <br />微信关注：墨斯潘園
-      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2018/02/24/vue-dev-env-build/">http://mospany.github.io/2018/02/24/vue-dev-env-build/</a>
+      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2025/07/13/meeting-room-to-see-ai/">http://mospany.github.io/2025/07/13/meeting-room-to-see-ai/</a>
       <br />
       文章版权归本人所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
   </div>
@@ -146,30 +281,8 @@ fec-builder build -e production
   <footer class="article-footer clearfix">
   
 
-<div class="article-tags">
-  <span></span>
-  
-  <a href="/tags/%E5%89%8D%E7%AB%AF">前端</a>
-  
-  <a href="/tags/vue">VUE</a>
-  
-</div>
-
-
-
-<div class="article-categories">
-  <span></span>
-  
-  <a class="article-category-link" href="/categories/%E5%89%8D%E7%AB%AF">前端</a>
-  
-  <a class="article-category-link" href="/categories/vue">VUE</a>
-  
-</div>
-
-
-
   <div class="article-share" id="share">
-    <div data-url="http://mospany.github.io/2018/02/24/vue-dev-env-build/" data-title="VUE开发环境搭建" data-tsina="3833537679" class="share clearfix">
+    <div data-url="http://mospany.github.io/2025/07/13/meeting-room-to-see-ai/" data-title="从会议室名称看AI" data-tsina="3833537679" class="share clearfix">
     </div>
   </div>
 </footer>
