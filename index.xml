@@ -5,7 +5,483 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Sun, 13 Jul 2025 18:20:27 CST</updated>
+        <updated>Sun, 13 Jul 2025 19:44:00 CST</updated>
+        
+        <item>
+            <title>AI中的数学知识</title>
+            <link>http://mospany.github.io/2025/07/13/math-in-ai/</link>
+            <pubDate>Sun, 13 Jul 2025 19:44:00 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://mospany.github.io/2025/07/13/math-in-ai/</guid>
+            <description>
+
+&lt;h1 id=&#34;ai中的数学知识全景-基础-公式-证明与应用&#34;&gt;AI中的数学知识全景：基础、公式、证明与应用&lt;/h1&gt;
+
+&lt;p&gt;人工智能（AI）作为21世纪最具变革性的技术之一，其发展离不开坚实的数学基础。无论是机器学习、深度学习、自然语言处理还是计算机视觉，背后都蕴含着丰富的数学理论与方法。本文将系统梳理AI中常用的数学知识，涵盖数学概念、所属学科、核心公式、证明过程及其在AI中的具体用途，力求为读者呈现一份详尽的“AI数学地图”。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;一-线性代数&#34;&gt;一、线性代数&lt;/h2&gt;
+
+&lt;h3 id=&#34;1-1-基本概念与学科归属&#34;&gt;1.1 基本概念与学科归属&lt;/h3&gt;
+
+&lt;p&gt;线性代数是研究向量、矩阵及其变换的数学分支，是AI的基石。它主要包括向量空间、线性变换、特征值与特征向量、奇异值分解等内容。&lt;/p&gt;
+
+&lt;h3 id=&#34;1-2-主要内容与公式&#34;&gt;1.2 主要内容与公式&lt;/h3&gt;
+
+&lt;h4 id=&#34;1-2-1-向量与矩阵&#34;&gt;1.2.1 向量与矩阵&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;向量&lt;/strong&gt;：有方向和大小的量，常用列向量表示。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;矩阵&lt;/strong&gt;：二维数组，表示线性变换或数据集。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;矩阵乘法公式&lt;/strong&gt;：&lt;br /&gt;
+设$A$为$m\times n$矩阵，$B$为$n\times p$矩阵，则$C=AB$为$m\times p$矩阵，&lt;br /&gt;
+$$
+C&lt;em&gt;{ij} = \sum&lt;/em&gt;{k=1}^n A&lt;em&gt;{ik}B&lt;/em&gt;{kj}
+$$&lt;/p&gt;
+
+&lt;h4 id=&#34;1-2-2-特征值与特征向量&#34;&gt;1.2.2 特征值与特征向量&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;定义&lt;/strong&gt;：对于方阵$A$，若存在非零向量$v$和数$\lambda$，使得$Av = \lambda v$，则$\lambda$为$A$的特征值，$v$为对应特征向量。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;特征值求解公式&lt;/strong&gt;：&lt;br /&gt;
+$$
+\det(A - \lambda I) = 0
+$$&lt;/p&gt;
+
+&lt;h4 id=&#34;1-2-3-奇异值分解-svd&#34;&gt;1.2.3 奇异值分解（SVD）&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;定义&lt;/strong&gt;：任意$m\times n$矩阵$A$可分解为$A = U\Sigma V^T$，其中$U$和$V$为正交矩阵，$\Sigma$为对角矩阵。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;1-2-4-证明举例-特征值存在性&#34;&gt;1.2.4 证明举例：特征值存在性&lt;/h4&gt;
+
+&lt;p&gt;&lt;strong&gt;定理&lt;/strong&gt;：任意$n$阶实对称矩阵都有$n$个实特征值。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;证明思路&lt;/strong&gt;：&lt;br /&gt;
+1. 实对称矩阵$A$的特征多项式为实系数多项式，必有实根（代数基本定理）。
+2. 可通过正交变换将$A$对角化，所有特征值为实数。&lt;/p&gt;
+
+&lt;h3 id=&#34;1-3-ai中的用途&#34;&gt;1.3 AI中的用途&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;数据表示&lt;/strong&gt;：样本、特征、权重均以向量/矩阵形式存储。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;神经网络&lt;/strong&gt;：前向传播、反向传播均为矩阵运算。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;降维&lt;/strong&gt;：PCA、SVD等用于特征压缩与可视化。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;图像处理&lt;/strong&gt;：卷积操作本质为矩阵乘法。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;二-概率论与数理统计&#34;&gt;二、概率论与数理统计&lt;/h2&gt;
+
+&lt;h3 id=&#34;2-1-基本概念与学科归属&#34;&gt;2.1 基本概念与学科归属&lt;/h3&gt;
+
+&lt;p&gt;概率论研究随机现象的规律，数理统计则关注数据分析与推断。AI中的不确定性建模、模型评估、参数估计等均依赖概率统计。&lt;/p&gt;
+
+&lt;h3 id=&#34;2-2-主要内容与公式&#34;&gt;2.2 主要内容与公式&lt;/h3&gt;
+
+&lt;h4 id=&#34;2-2-1-概率空间与随机变量&#34;&gt;2.2.1 概率空间与随机变量&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;概率空间&lt;/strong&gt;：$(\Omega, \mathcal{F}, P)$，$\Omega$为样本空间，$\mathcal{F}$为事件集合，$P$为概率测度。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;随机变量&lt;/strong&gt;：定义在概率空间上的实值函数。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;2-2-2-条件概率与贝叶斯公式&#34;&gt;2.2.2 条件概率与贝叶斯公式&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;条件概率&lt;/strong&gt;：$P(A|B) = \frac{P(A\cap B)}{P(B)}$&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;贝叶斯公式&lt;/strong&gt;：$P(A|B) = \frac{P(B|A)P(A)}{P(B)}$&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;2-2-3-数学期望与方差&#34;&gt;2.2.3 数学期望与方差&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;期望&lt;/strong&gt;：$E[X] = \sum_x xP(X=x)$（离散），$E[X] = \int x f(x) dx$（连续）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;方差&lt;/strong&gt;：$Var(X) = E[(X-E[X])^2]$&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;2-2-4-常见分布&#34;&gt;2.2.4 常见分布&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;正态分布&lt;/strong&gt;：$f(x) = \frac{1}{\sqrt{2\pi}\sigma}e^{-\frac{(x-\mu)^2}{2\sigma^2}}$&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;伯努利分布&lt;/strong&gt;、&lt;strong&gt;二项分布&lt;/strong&gt;、&lt;strong&gt;泊松分布&lt;/strong&gt;等。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;2-2-5-极大似然估计-mle&#34;&gt;2.2.5 极大似然估计（MLE）&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;定义&lt;/strong&gt;：给定观测数据$X$，参数$\theta$的极大似然估计为
+$$
+\hat{\theta} = \arg\max_\theta P(X|\theta)
+$$&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;2-2-6-证明举例-正态分布的极大似然估计&#34;&gt;2.2.6 证明举例：正态分布的极大似然估计&lt;/h4&gt;
+
+&lt;p&gt;&lt;strong&gt;问题&lt;/strong&gt;：已知样本$x_1, x_2, &amp;hellip;, x_n$来自$N(\mu, \sigma^2)$，求$\mu$的MLE。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;解&lt;/strong&gt;：&lt;br /&gt;
+似然函数：
+$$
+L(\mu) = \prod_{i=1}^n \frac{1}{\sqrt{2\pi}\sigma}e^{-\frac{(x&lt;em&gt;i-\mu)^2}{2\sigma^2}}
+$$
+对数似然：
+$$
+\ell(\mu) = -\frac{n}{2}\log(2\pi\sigma^2) - \frac{1}{2\sigma^2}\sum&lt;/em&gt;{i=1}^n (x&lt;em&gt;i-\mu)^2
+$$
+对$\mu$求导并令其为零：
+$$
+\frac{\partial \ell}{\partial \mu} = \frac{1}{\sigma^2}\sum&lt;/em&gt;{i=1}^n (x&lt;em&gt;i-\mu) = 0 \implies \mu = \frac{1}{n}\sum&lt;/em&gt;{i=1}^n x_i
+$$&lt;/p&gt;
+
+&lt;h3 id=&#34;2-3-ai中的用途&#34;&gt;2.3 AI中的用途&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;模型建模&lt;/strong&gt;：朴素贝叶斯、隐马尔可夫模型、生成模型等。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;损失函数&lt;/strong&gt;：交叉熵、对数似然等。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;评估指标&lt;/strong&gt;：准确率、召回率、AUC等均基于概率统计。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;不确定性估计&lt;/strong&gt;：贝叶斯深度学习、置信区间等。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;三-微积分与最优化&#34;&gt;三、微积分与最优化&lt;/h2&gt;
+
+&lt;h3 id=&#34;3-1-基本概念与学科归属&#34;&gt;3.1 基本概念与学科归属&lt;/h3&gt;
+
+&lt;p&gt;微积分研究变化率与累积量，最优化则关注函数极值的求解。AI模型训练本质是最优化问题，微积分为其提供理论基础。&lt;/p&gt;
+
+&lt;h3 id=&#34;3-2-主要内容与公式&#34;&gt;3.2 主要内容与公式&lt;/h3&gt;
+
+&lt;h4 id=&#34;3-2-1-导数与梯度&#34;&gt;3.2.1 导数与梯度&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;导数&lt;/strong&gt;：$f&amp;rsquo;(x) = \lim_{h\to 0} \frac{f(x+h)-f(x)}{h}$&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;梯度&lt;/strong&gt;：$\nabla f(x) = \left(\frac{\partial f}{\partial x_1}, &amp;hellip;, \frac{\partial f}{\partial x_n}\right)$&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;3-2-2-链式法则&#34;&gt;3.2.2 链式法则&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;公式&lt;/strong&gt;：若$y = f(u), u = g(x)$，则$\frac{dy}{dx} = \frac{dy}{du}\frac{du}{dx}$&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;3-2-3-泰勒展开&#34;&gt;3.2.3 泰勒展开&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;公式&lt;/strong&gt;：$f(x) = f(a) + f&amp;rsquo;(a)(x-a) + \frac{f&amp;rdquo;(a)}{2!}(x-a)^2 + &amp;hellip;$&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;3-2-4-最优化问题&#34;&gt;3.2.4 最优化问题&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;无约束最优化&lt;/strong&gt;：$\min_x f(x)$&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;有约束最优化&lt;/strong&gt;：$\min_x f(x), \text{ s.t. } g_i(x) \leq 0, h_j(x) = 0$&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;3-2-5-梯度下降法&#34;&gt;3.2.5 梯度下降法&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;公式&lt;/strong&gt;：$x_{k+1} = x_k - \eta \nabla f(x_k)$，$\eta$为学习率。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;3-2-6-拉格朗日乘子法&#34;&gt;3.2.6 拉格朗日乘子法&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;公式&lt;/strong&gt;：$\mathcal{L}(x, \lambda) = f(x) + \lambda g(x)$，对$\mathcal{L}$求偏导并令其为零。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;3-2-7-证明举例-梯度下降收敛性&#34;&gt;3.2.7 证明举例：梯度下降收敛性&lt;/h4&gt;
+
+&lt;p&gt;&lt;strong&gt;定理&lt;/strong&gt;：若$f(x)$为Lipschitz连续且凸，梯度下降法收敛到全局最优。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;证明思路&lt;/strong&gt;：&lt;br /&gt;
+1. 利用凸函数性质，$f(y) \geq f(x) + \nabla f(x)^T(y-x)$。
+2. 通过递推不等式证明目标函数单调下降，最终收敛。&lt;/p&gt;
+
+&lt;h3 id=&#34;3-3-ai中的用途&#34;&gt;3.3 AI中的用途&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;模型训练&lt;/strong&gt;：神经网络、支持向量机等均通过梯度下降优化损失函数。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;反向传播&lt;/strong&gt;：链式法则用于多层网络的梯度计算。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;正则化&lt;/strong&gt;：通过约束优化提升模型泛化能力。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;自动微分&lt;/strong&gt;：深度学习框架自动计算梯度。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;四-离散数学与图论&#34;&gt;四、离散数学与图论&lt;/h2&gt;
+
+&lt;h3 id=&#34;4-1-基本概念与学科归属&#34;&gt;4.1 基本概念与学科归属&lt;/h3&gt;
+
+&lt;p&gt;离散数学研究离散结构，包括集合、关系、图、组合等。图论是其重要分支，AI中的知识图谱、社交网络分析等均依赖图论。&lt;/p&gt;
+
+&lt;h3 id=&#34;4-2-主要内容与公式&#34;&gt;4.2 主要内容与公式&lt;/h3&gt;
+
+&lt;h4 id=&#34;4-2-1-集合与关系&#34;&gt;4.2.1 集合与关系&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;集合&lt;/strong&gt;：元素的无序集合。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;关系&lt;/strong&gt;：集合间的映射，如等价关系、偏序关系。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;4-2-2-图的定义&#34;&gt;4.2.2 图的定义&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;无向图&lt;/strong&gt;：$G=(V,E)$，$V$为顶点集，$E$为边集。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;有向图&lt;/strong&gt;：边有方向。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;4-2-3-路径与连通性&#34;&gt;4.2.3 路径与连通性&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;路径&lt;/strong&gt;：顶点序列，任意相邻顶点有边相连。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;连通分量&lt;/strong&gt;：最大连通子图。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;4-2-4-最短路径算法&#34;&gt;4.2.4 最短路径算法&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Dijkstra算法&lt;/strong&gt;：用于无负权图的最短路径。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Bellman-Ford算法&lt;/strong&gt;：可处理负权边。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;4-2-5-最大流问题&#34;&gt;4.2.5 最大流问题&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Ford-Fulkerson算法&lt;/strong&gt;：求解网络最大流。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;4-2-6-证明举例-dijkstra算法正确性&#34;&gt;4.2.6 证明举例：Dijkstra算法正确性&lt;/h4&gt;
+
+&lt;p&gt;&lt;strong&gt;思路&lt;/strong&gt;：&lt;br /&gt;
+1. 每次选取未访问节点中距离起点最近的节点，更新其邻居距离。
+2. 归纳法证明每个节点的最短路径在被访问时已确定。&lt;/p&gt;
+
+&lt;h3 id=&#34;4-3-ai中的用途&#34;&gt;4.3 AI中的用途&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;知识图谱&lt;/strong&gt;：实体及其关系建模为图。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;社交网络分析&lt;/strong&gt;：节点为用户，边为关系。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;图神经网络（GNN）&lt;/strong&gt;：在图结构上进行特征传播与学习。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;推荐系统&lt;/strong&gt;：基于图的协同过滤。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;五-信息论&#34;&gt;五、信息论&lt;/h2&gt;
+
+&lt;h3 id=&#34;5-1-基本概念与学科归属&#34;&gt;5.1 基本概念与学科归属&lt;/h3&gt;
+
+&lt;p&gt;信息论研究信息的度量、传输与压缩。AI中的损失函数、模型评估等大量用到信息论概念。&lt;/p&gt;
+
+&lt;h3 id=&#34;5-2-主要内容与公式&#34;&gt;5.2 主要内容与公式&lt;/h3&gt;
+
+&lt;h4 id=&#34;5-2-1-熵&#34;&gt;5.2.1 熵&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;定义&lt;/strong&gt;：$H(X) = -\sum_{i} P(x_i)\log P(x_i)$，度量不确定性。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;5-2-2-交叉熵&#34;&gt;5.2.2 交叉熵&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;定义&lt;/strong&gt;：$H(P, Q) = -\sum_{i} P(x_i)\log Q(x_i)$，度量两个分布的差异。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;5-2-3-kl散度&#34;&gt;5.2.3 KL散度&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;定义&lt;/strong&gt;：$D&lt;em&gt;{KL}(P||Q) = \sum&lt;/em&gt;{i} P(x_i)\log\frac{P(x_i)}{Q(x_i)}$&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;5-2-4-互信息&#34;&gt;5.2.4 互信息&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;定义&lt;/strong&gt;：$I(X;Y) = \sum_{x,y} P(x,y)\log\frac{P(x,y)}{P(x)P(y)}$&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;5-2-5-证明举例-kl散度非负性&#34;&gt;5.2.5 证明举例：KL散度非负性&lt;/h4&gt;
+
+&lt;p&gt;&lt;strong&gt;定理&lt;/strong&gt;：$D_{KL}(P||Q) \geq 0$，等号成立当且仅当$P=Q$。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;证明&lt;/strong&gt;：&lt;br /&gt;
+利用Jensen不等式，$\log$为凹函数，&lt;br /&gt;
+$$
+D_{KL}(P||Q) = E_P\left[\log\frac{P(x)}{Q(x)}\right] \geq \log E_P\left[\frac{P(x)}{Q(x)}\right] = 0
+$$&lt;/p&gt;
+
+&lt;h3 id=&#34;5-3-ai中的用途&#34;&gt;5.3 AI中的用途&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;损失函数&lt;/strong&gt;：分类任务常用交叉熵损失。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;生成模型&lt;/strong&gt;：GAN、VAE等用KL散度衡量分布差异。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;特征选择&lt;/strong&gt;：互信息用于评估特征与标签的相关性。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;六-数值分析与计算方法&#34;&gt;六、数值分析与计算方法&lt;/h2&gt;
+
+&lt;h3 id=&#34;6-1-基本概念与学科归属&#34;&gt;6.1 基本概念与学科归属&lt;/h3&gt;
+
+&lt;p&gt;数值分析关注数学问题的近似解法，AI模型训练、推理均需高效数值计算。&lt;/p&gt;
+
+&lt;h3 id=&#34;6-2-主要内容与公式&#34;&gt;6.2 主要内容与公式&lt;/h3&gt;
+
+&lt;h4 id=&#34;6-2-1-线性方程组求解&#34;&gt;6.2.1 线性方程组求解&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;高斯消元法&lt;/strong&gt;、&lt;strong&gt;LU分解&lt;/strong&gt;、&lt;strong&gt;共轭梯度法&lt;/strong&gt;等。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;6-2-2-特征值分解&#34;&gt;6.2.2 特征值分解&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;幂法&lt;/strong&gt;、&lt;strong&gt;Jacobi法&lt;/strong&gt;等。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;6-2-3-插值与拟合&#34;&gt;6.2.3 插值与拟合&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;拉格朗日插值&lt;/strong&gt;、&lt;strong&gt;最小二乘法&lt;/strong&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;6-2-4-数值积分&#34;&gt;6.2.4 数值积分&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;梯形法则&lt;/strong&gt;、&lt;strong&gt;辛普森法则&lt;/strong&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;6-2-5-证明举例-最小二乘法&#34;&gt;6.2.5 证明举例：最小二乘法&lt;/h4&gt;
+
+&lt;p&gt;&lt;strong&gt;问题&lt;/strong&gt;：拟合直线$y = ax + b$，最小化$\sum_{i=1}^n (y_i - (ax_i + b))^2$。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;解&lt;/strong&gt;：&lt;br /&gt;
+对$a, b$分别求偏导并令其为零，解线性方程组得最优$a, b$。&lt;/p&gt;
+
+&lt;h3 id=&#34;6-3-ai中的用途&#34;&gt;6.3 AI中的用途&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;大规模矩阵运算&lt;/strong&gt;：神经网络训练依赖高效线性代数库。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;优化算法实现&lt;/strong&gt;：如Adam、RMSProp等。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;模型推理加速&lt;/strong&gt;：量化、稀疏化等技术。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;七-常用数学工具与ai算法中的应用实例&#34;&gt;七、常用数学工具与AI算法中的应用实例&lt;/h2&gt;
+
+&lt;h3 id=&#34;7-1-主成分分析-pca&#34;&gt;7.1 主成分分析（PCA）&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;数学基础&lt;/strong&gt;：协方差矩阵、特征值分解。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;公式&lt;/strong&gt;：最大化投影方差，$w^* = \arg\max_{||w||=1} w^T S w$，$S$为协方差矩阵。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;证明&lt;/strong&gt;：拉格朗日乘子法可得$Sw = \lambda w$，即$w$为$S$的特征向量。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;用途&lt;/strong&gt;：降维、去噪、可视化。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;7-2-支持向量机-svm&#34;&gt;7.2 支持向量机（SVM）&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;数学基础&lt;/strong&gt;：凸优化、拉格朗日对偶性、核方法。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;公式&lt;/strong&gt;：$\min_{w,b} \frac{1}{2}||w||^2$，s.t. $y_i(w^T x_i + b) \geq 1$&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;证明&lt;/strong&gt;：KKT条件推导最优解。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;用途&lt;/strong&gt;：分类、回归、异常检测。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;7-3-神经网络与反向传播&#34;&gt;7.3 神经网络与反向传播&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;数学基础&lt;/strong&gt;：链式法则、矩阵微分。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;公式&lt;/strong&gt;：$\frac{\partial L}{\partial w} = \frac{\partial L}{\partial y} \frac{\partial y}{\partial w}$&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;证明&lt;/strong&gt;：逐层递推，利用链式法则。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;用途&lt;/strong&gt;：深度学习模型训练。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;7-4-马尔可夫决策过程-mdp&#34;&gt;7.4 马尔可夫决策过程（MDP）&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;数学基础&lt;/strong&gt;：概率论、动态规划。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;公式&lt;/strong&gt;：贝尔曼方程$V(s) = \max&lt;em&gt;a \sum&lt;/em&gt;{s&amp;rsquo;} P(s&amp;rsquo;|s,a)[R(s,a,s&amp;rsquo;) + \gamma V(s&amp;rsquo;)]$&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;证明&lt;/strong&gt;：利用最优性原理递归推导。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;用途&lt;/strong&gt;：强化学习、自动决策。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;八-ai数学知识的综合应用案例&#34;&gt;八、AI数学知识的综合应用案例&lt;/h2&gt;
+
+&lt;h3 id=&#34;8-1-图像识别中的数学&#34;&gt;8.1 图像识别中的数学&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;卷积神经网络（CNN）&lt;/strong&gt;：卷积操作（线性代数）、激活函数（微积分）、损失函数（信息论）、参数优化（最优化）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;特征提取&lt;/strong&gt;：PCA降维（线性代数）、SIFT/ORB等算法（离散数学）。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;8-2-自然语言处理中的数学&#34;&gt;8.2 自然语言处理中的数学&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;词向量&lt;/strong&gt;：Word2Vec中的Skip-gram模型用到概率建模、最大似然估计。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;注意力机制&lt;/strong&gt;：加权和（线性代数）、softmax归一化（概率论）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;序列建模&lt;/strong&gt;：RNN/LSTM中的链式法则、梯度消失/爆炸分析（微积分）。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;8-3-强化学习中的数学&#34;&gt;8.3 强化学习中的数学&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;策略优化&lt;/strong&gt;：梯度上升法、策略梯度定理（微积分、概率论）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;值函数估计&lt;/strong&gt;：贝尔曼方程（动态规划）、蒙特卡洛方法（数理统计）。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;8-4-生成模型中的数学&#34;&gt;8.4 生成模型中的数学&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;变分自编码器（VAE）&lt;/strong&gt;：变分推断（概率论）、KL散度（信息论）、反向传播（微积分）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;生成对抗网络（GAN）&lt;/strong&gt;：极大极小优化（最优化）、JS散度（信息论）。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;九-ai数学学习建议与资源&#34;&gt;九、AI数学学习建议与资源&lt;/h2&gt;
+
+&lt;h3 id=&#34;9-1-学习建议&#34;&gt;9.1 学习建议&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;打好基础&lt;/strong&gt;：线性代数、概率论、微积分是AI数学的“三驾马车”。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;理论结合实践&lt;/strong&gt;：通过编程实现数学算法，加深理解。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;关注证明过程&lt;/strong&gt;：理解公式背后的推导逻辑，提升抽象思维。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;多做题多应用&lt;/strong&gt;：刷题、参加竞赛、参与开源项目。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;9-2-推荐书籍与课程&#34;&gt;9.2 推荐书籍与课程&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;《线性代数及其应用》（David C. Lay）&lt;/li&gt;
+&lt;li&gt;《概率论与数理统计》（茆诗松）&lt;/li&gt;
+&lt;li&gt;《统计学习方法》（李航）&lt;/li&gt;
+&lt;li&gt;《深度学习》（Ian Goodfellow等）&lt;/li&gt;
+&lt;li&gt;斯坦福CS229、CS231n、MIT 6.036等公开课&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;十-结语&#34;&gt;十、结语&lt;/h2&gt;
+
+&lt;p&gt;AI的每一次突破，背后都离不开数学的支撑。从数据的表示、模型的构建、参数的优化，到结果的解释与评估，数学无处不在。掌握AI所需的数学知识，不仅能帮助我们更好地理解和应用现有技术，更能为创新和突破打下坚实的基础。希望本文能为广大AI学习者和从业者提供一份系统、详实的数学参考，助力大家在智能时代乘风破浪。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;em&gt;（全文约5400字，涵盖AI常用数学知识的概念、学科、公式、证明与用途，适合作为系统学习与查阅之用。）&lt;/em&gt;&lt;/p&gt;
+</description>
+        </item>
         
         <item>
             <title>从会议室名称看AI</title>
@@ -56,10 +532,10 @@
 
 &lt;hr /&gt;
 
-&lt;h3 id=&#34;6-多层感知机-multilayer-perceptron-mlp&#34;&gt;6. 多层感知机（Multilayer Perceptron, MLP）&lt;/h3&gt;
+&lt;h3 id=&#34;6-多层感知-multilayer-perceptron-mlp&#34;&gt;6. 多层感知（Multilayer Perceptron, MLP）&lt;/h3&gt;
 
 &lt;p&gt;&lt;strong&gt;英文名称&lt;/strong&gt;：Multilayer Perceptron (MLP)&lt;br /&gt;
-&lt;strong&gt;原理&lt;/strong&gt;：多层感知机是一种前馈神经网络，由输入层、一个或多个隐藏层和输出层组成。每层由多个神经元构成，层与层之间全连接。MLP通过反向传播算法进行训练，能够逼近任意非线性函数，是深度学习的基础结构之一，广泛用于分类和回归任务。&lt;/p&gt;
+&lt;strong&gt;原理&lt;/strong&gt;：多层感知是一种前馈神经网络，由输入层、一个或多个隐藏层和输出层组成。每层由多个神经元构成，层与层之间全连接。MLP通过反向传播算法进行训练，能够逼近任意非线性函数，是深度学习的基础结构之一，广泛用于分类和回归任务。&lt;/p&gt;
 
 &lt;hr /&gt;
 
@@ -250,8 +726,6 @@
             <author>Mospan</author>
             <guid>http://mospany.github.io/2025/07/13/ai-study-toc/</guid>
             <description>
-
-&lt;h1 id=&#34;目录&#34;&gt;目录&lt;/h1&gt;
 
 &lt;h1 id=&#34;脑图&#34;&gt;脑图&lt;/h1&gt;
 
@@ -5678,547 +6152,6 @@ Use &amp;quot;csc controller -h,--help&amp;quot; for more information
 【05】&lt;a href=&#34;http://www.noobyard.com/article/p-qgxfxmfi-nv.html&#34;&gt;Kubernetes K8S之固定节点nodeName和nodeSelector调度详解&lt;/a&gt;&lt;br /&gt;
 【06】&lt;a href=&#34;https://www.modb.pro/db/523598&#34;&gt;kubernetes CSI（下）&lt;/a&gt;&lt;br /&gt;
 【07】&lt;a href=&#34;https://www.codeleading.com/article/35162638950/&#34;&gt;阿里云服务器 CentOS7 下安装和配置 NFS&lt;/a&gt;&lt;/p&gt;
-</description>
-        </item>
-        
-        <item>
-            <title>K8S项目实践(04): 基于kubebuilder编写operator</title>
-            <link>http://mospany.github.io/2022/12/14/operator-on-kubebuilder/</link>
-            <pubDate>Wed, 14 Dec 2022 18:24:22 CST</pubDate>
-            <author>Mospan</author>
-            <guid>http://mospany.github.io/2022/12/14/operator-on-kubebuilder/</guid>
-            <description>
-
-&lt;p&gt;&lt;a id=&#34;orgcfa7382&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;介绍&#34;&gt;介绍&lt;/h1&gt;
-
-&lt;p&gt;Kubebuilder是一个由controller-runtime支持的出色SDK，它可以帮助您轻松快速地在 Go 中编写Kubernetes operator，方法是处理多种忙碌的事情，例如以组织良好的方式引导大量样板代码，设置有用的 Makefile make，目标是构建、运行和部署operator、构建 CRD、设置相关的 Dockefile、RBAC、涉及部署operator的多个 YAML 等等。&lt;br /&gt;
-Kubebuilder 是一个使用 CRDs 构建 K8s API 的 SDK，主要是：&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;提供脚手架工具初始化 CRDs 工程，自动生成 boilerplate 代码和配置；&lt;/li&gt;
-&lt;li&gt;提供代码库封装底层的 K8s go-client；&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;方便用户从零开始开发 CRDs，Controllers 和 Admission Webhooks 来扩展 K8s。&lt;/p&gt;
-
-&lt;p&gt;为了编写自定义的operatro，需要进行如下:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;安装kubebuilder&lt;/li&gt;
-&lt;li&gt;使用kubebuilder进行项目创建&lt;/li&gt;
-&lt;li&gt;编写operator代码&lt;/li&gt;
-&lt;li&gt;编译打包镜像上传到镜像仓库。&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;a id=&#34;org0fa6862&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;原理&#34;&gt;原理&lt;/h1&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operatorr/kubebuilder-arch.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org78ac50d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;基础概念&#34;&gt;基础概念&lt;/h2&gt;
-
-&lt;p&gt;&lt;a id=&#34;org52cd124&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;gvks-gvrs&#34;&gt;GVKs&amp;amp;GVRs&lt;/h3&gt;
-
-&lt;p&gt;GVK = GroupVersionKind，GVR = GroupVersionResource。&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;API Group &amp;amp; Versions（GV）&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;API Group 是相关 API 功能的集合，每个 Group 拥有一或多个 Versions，用于接口的演进。&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Kinds &amp;amp; Resources（GVR）&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;每个 GV 都包含多个 API 类型，称为 Kinds，在不同的 Versions 之间同一个 Kind 定义可能不同， Resource 是 Kind 的对象标识（resource type），一般来说 Kinds 和 Resources 是 1:1 的，比如 pods Resource 对应 Pod Kind，但是有时候相同的 Kind 可能对应多个 Resources，比如 Scale Kind 可能对应很多 Resources：deployments/scale，replicasets/scale，对于 CRD 来说，只会是 1:1 的关系。&lt;/p&gt;
-
-&lt;p&gt;每一个 GVK 都关联着一个 package 中给定的 root Go type，比如 apps/v1/Deployment 就关联着 K8s 源码里面 k8s.io/api/apps/v1 package 中的 Deployment struct，我们提交的各类资源定义 YAML 文件都需要写：&lt;/p&gt;
-
-&lt;p&gt;apiVersion：这个就是 GV 。kind：这个就是 K。&lt;/p&gt;
-
-&lt;p&gt;根据 GVK K8s 就能找到你到底要创建什么类型的资源，根据你定义的 Spec 创建好资源之后就成为了 Resource，也就是 GVR。GVK/GVR 就是 K8s 资源的坐标，是我们创建/删除/修改/读取资源的基础。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org691e4a3&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;scheme&#34;&gt;Scheme&lt;/h3&gt;
-
-&lt;p&gt;每一组 Controllers 都需要一个 Scheme，提供了 Kinds 与对应 Go types 的映射，也就是说给定 Go type 就知道他的 GVK，给定 GVK 就知道他的 Go type，比如说我们给定一个 Scheme: &amp;ldquo;tutotial.kubebuilder.io/api/v1&amp;rdquo;.CronJob{} 这个 Go type 映射到 batch.tutotial.kubebuilder.io/v1 的 CronJob GVK，那么从 Api Server 获取到下面的 JSON:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;{
-    &amp;quot;kind&amp;quot;: &amp;quot;CronJob&amp;quot;,
-    &amp;quot;apiVersion&amp;quot;: &amp;quot;batch.tutorial.kubebuilder.io/v1&amp;quot;,
-    ...
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;就能构造出对应的 Go type了，通过这个 Go type 也能正确地获取 GVR 的一些信息，控制器可以通过该 Go type 获取到期望状态以及其他辅助信息进行调谐逻辑。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgc45a76f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;manager&#34;&gt;Manager&lt;/h3&gt;
-
-&lt;p&gt;Kubebuilder 的核心组件，具有 3 个职责：&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;负责运行所有的 Controllers；&lt;/li&gt;
-&lt;li&gt;初始化共享 caches，包含 listAndWatch 功能；&lt;/li&gt;
-&lt;li&gt;初始化 clients 用于与 Api Server 通信。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a id=&#34;org50d3209&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;cache&#34;&gt;Cache&lt;/h3&gt;
-
-&lt;p&gt;Kubebuilder 的核心组件，负责在 Controller 进程里面根据 Scheme 同步 Api Server 中所有该 Controller 关心 GVKs 的 GVRs，其核心是 GVK -&amp;gt; Informer 的映射，Informer 会负责监听对应 GVK 的 GVRs 的创建/删除/更新操作，以触发 Controller 的 Reconcile 逻辑。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org7fb1547&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;controller&#34;&gt;Controller&lt;/h3&gt;
-
-&lt;p&gt;Kubebuidler 为我们生成的脚手架文件，我们只需要实现 Reconcile 方法即可。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org528499e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;client&#34;&gt;Client&lt;/h3&gt;
-
-&lt;p&gt;在实现 Controller 的时候不可避免地需要对某些资源类型进行创建/删除/更新，就是通过该 Clients 实现的，其中查询功能实际查询是本地的 Cache，写操作直接访问 Api Server。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org16de8d6&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;index&#34;&gt;Index&lt;/h3&gt;
-
-&lt;p&gt;由于 Controller 经常要对 Cache 进行查询，Kubebuilder 提供 Index utility 给 Cache 加索引提升查询效率。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org607691c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;finalizer&#34;&gt;Finalizer&lt;/h3&gt;
-
-&lt;p&gt;在一般情况下，如果资源被删除之后，我们虽然能够被触发删除事件，但是这个时候从 Cache 里面无法读取任何被删除对象的信息，这样一来，导致很多垃圾清理工作因为信息不足无法进行，K8s 的 Finalizer 字段用于处理这种情况。在 K8s 中，只要对象 ObjectMeta 里面的 Finalizers 不为空，对该对象的 delete 操作就会转变为 update 操作，具体说就是 update deletionTimestamp 字段，其意义就是告诉 K8s 的 GC“在deletionTimestamp 这个时刻之后，只要 Finalizers 为空，就立马删除掉该对象”。&lt;/p&gt;
-
-&lt;p&gt;所以一般的使用姿势就是在创建对象时把 Finalizers 设置好（任意 string），然后处理 DeletionTimestamp 不为空的 update 操作（实际是 delete），根据 Finalizers 的值执行完所有的 pre-delete hook（此时可以在 Cache 里面读取到被删除对象的任何信息）之后将 Finalizers 置为空即可。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org0c0efe9&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;ownerreference&#34;&gt;OwnerReference&lt;/h3&gt;
-
-&lt;p&gt;K8s GC 在删除一个对象时，任何 ownerReference 是该对象的对象都会被清除，与此同时，Kubebuidler 支持所有对象的变更都会触发 Owner 对象 controller 的 Reconcile 方法。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgb1ddf8b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;实现&#34;&gt;实现&lt;/h1&gt;
-
-&lt;p&gt;1、构造新的scheme,&lt;br /&gt;
-2、解析命令行参数，获取或默认metric和健康检查端口。&lt;br /&gt;
-3、实例化 manager，参数 config&lt;br /&gt;
-   3.1） 向 manager 添加 scheme&lt;br /&gt;
-   3.2） 向 manager 添加 controller，该 controller 包含一个 reconciler 结构体，我们需要在 reconciler 结构体实现逻辑处理&lt;br /&gt;
-4、向manager添加healthz和readyz探测。&lt;br /&gt;
-5、启动 manager.start()&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org40fbcb7&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;镜像仓库&#34;&gt;镜像仓库&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;org246c0bb&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;注册仓库&#34;&gt;注册仓库&lt;/h2&gt;
-
-&lt;p&gt;登录&lt;a href=&#34;https://registry.hub.docker.com/进行注册，如用户名为mospany&#34;&gt;https://registry.hub.docker.com/进行注册，如用户名为mospany&lt;/a&gt;, 密码为自定义。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org43ccc0d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;使用镜像&#34;&gt;使用镜像&lt;/h2&gt;
-
-&lt;p&gt;&lt;a id=&#34;org829ca45&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;登录仓库&#34;&gt;登录仓库&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;$ docker login index.docker.io
-Username: mospany
-Password:
-Login Succeeded
-
-或直接 docker login默认登录docker hub。
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org2fc914e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;上传镜像&#34;&gt;上传镜像&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;$ docker tag loggen:latest mospany/loggen:latest
-$ docker push mospany/loggen:latest
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operatorr/hub-docker.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;参见：&lt;a href=&#34;https://hub.docker.com/repository/docker/mospany/loggen&#34;&gt;https://hub.docker.com/repository/docker/mospany/loggen&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org3d0e3a5&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;下载镜像&#34;&gt;下载镜像&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;$ docker pull mospany/loggen:latest
-latest: Pulling from mospany/loggen
-Digest: sha256:0cdeece36f8a003dd6b9c463cc73dad93479deabec08c1def033e72ec9818539
-Status: Image is up to date for mospany/loggen:latest
-docker.io/mospany/loggen:latest
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgc8a2f44&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;项目&#34;&gt;项目&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;org3a9cf00&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;创建项目&#34;&gt;创建项目&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code&gt;mkdir guestbook
-cd guestbook
-go mod init guestbook
-kubebuilder init --domain xiaohongshu.org --owner &amp;quot;luxiu&amp;quot;
-kubebuilder create api --group redis  --version v1 --kind RedisCluster
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;关键截图如下：&lt;br /&gt;
-   &lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operatorr/kubebuilder-operator.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org1ddad49&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;修改文件&#34;&gt;修改文件&lt;/h2&gt;
-
-&lt;p&gt;1）修改Dockerfile的gcr.io镜像为其他可访问镜像(如golang:1.18)&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;为了防止出现“failed to solve with frontend dockerfile.v0: failed to create LLB definition: failed to do request: Head &amp;ldquo;&lt;a href=&#34;https://gcr.io/v2/distroless/static/manifests/nonroot&#34;&gt;https://gcr.io/v2/distroless/static/manifests/nonroot&lt;/a&gt;&amp;ldquo;: Service Unavailable”错误，需修改Dockerfile的gcr.io镜像为其他可访问镜像(如golang:1.18)&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;2）修改Dockerfile添加代理&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;为了防止go mod download时不至于超时连不上，需在Run go mod download行上面添加&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;pre&gt;&lt;code&gt;ENV GOPROXY=&amp;quot;https://goproxy.cn&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;否则会出现如下错误：&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;3.469 go: cloud.google.com/go@v0.81.0: Get &amp;ldquo;&lt;a href=&#34;https://proxy.golang.org/cloud.google.com/go/@v/v0.81.0.mod&#34;&gt;https://proxy.golang.org/cloud.google.com/go/@v/v0.81.0.mod&lt;/a&gt;&amp;ldquo;: malformed HTTP response &amp;ldquo;\x00\x00\x12\x04&amp;#x2026;\x00\x00\x01&amp;rdquo;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;**切记切记**： 先修改好再编译，否则一直出现上面错误(当时找了半天)&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;# Build the manager binary
-  FROM golang:1.18 as builder
-  ENV GOPROXY=&amp;quot;https://goproxy.cn&amp;quot;
-
-  WORKDIR /workspace
-  # Copy the Go Modules manifests
-  COPY go.mod go.mod
-  COPY go.sum go.sum
-  # cache deps before building and copying source so that we don&#39;t need to re-download as much
-  # and so that source changes don&#39;t invalidate our downloaded layer
-  RUN go mod download
-
-  # Copy the go source
-  COPY main.go main.go
-  COPY api/ api/
-  COPY controllers/ controllers/
-
-  # Build
-  RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -o manager main.go
-
-  # Use distroless as minimal base image to package the manager binary
-  # Refer to https://github.com/GoogleContainerTools/distroless for more details
-  #FROM gcr.io/distroless/static:nonroot
-  FROM centos:latest
-  WORKDIR /
-  COPY --from=builder /workspace/manager .
-  USER 65532:65532
-
-  ENTRYPOINT [&amp;quot;/manager&amp;quot;]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;必须在Dockerfile里面设置代理”ENV GOPROXY=&amp;rdquo;&lt;https://goproxy.cn&#34;“才行，如下设置也不行&gt;。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operator/docker-preferences.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;3）修改Makefile中的crd中的配置&lt;br /&gt;
-  给kubectl加上所要连接的集群， 如本机为&amp;#x2013;context docker-desktop。可通过如下命令获得：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;kubectl config get-contexts
-kubectl cluster-info
-kubectl config view
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operator/kubectl-info.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;对应的Makefile修改如下：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;.PHONY: install
-install: manifests kustomize ## Install CRDs into the K8s cluster specified in ~/.kube/config.
-  $(KUSTOMIZE) build config/crd | kubectl --context docker-desktop  apply -f -
-
-.PHONY: uninstall
-uninstall: manifests kustomize ## Uninstall CRDs from the K8s cluster specified in ~/.kube/config. Call with ignore-not-found=true to ignore resource not found errors during deletion.
-  $(KUSTOMIZE) build config/crd | kubectl --context docker-desktop  delete --ignore-not-found=$(ignore-not-found) -f -
-
-.PHONY: deploy
-deploy: manifests kustomize ## Deploy controller to the K8s cluster specified in ~/.kube/config.
-  cd config/manager &amp;amp;&amp;amp; $(KUSTOMIZE) edit set image controller=${IMG}
-  $(KUSTOMIZE) build config/default | kubectl --context docker-desktop  apply -f -
-
-.PHONY: undeploy
-undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/config. Call with ignore-not-found=true to ignore resource not found errors during deletion.
-  $(KUSTOMIZE) build config/default | kubectl --context docker-desktop  delete --ignore-not-found=$(ignore-not-found) -f -
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgf288f34&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;编译&#34;&gt;编译&lt;/h2&gt;
-
-&lt;p&gt;&lt;a id=&#34;org99eec51&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;make-help&#34;&gt;make help&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;make help
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operator/make-help.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org54938e4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;make-build&#34;&gt;make build&lt;/h3&gt;
-
-&lt;p&gt;编译并在bin/下生成目标可执行程序。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operator/make-build.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orge8e0f0a&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;make-install&#34;&gt;make install&lt;/h3&gt;
-
-&lt;p&gt;安装crd到目标集群，这一步可能受github网络影响自动下载kustomize慢需要多试几次或隔天再试。&lt;br /&gt;
-   &lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operator/make-install.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orge3f35bb&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;make-docker-build&#34;&gt;make docker-build&lt;/h3&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operator/make-docker-build.png&#34; alt=&#34;img&#34; /&gt;&lt;br /&gt;
-可以在刚生成的镜像列表中生成镜像。&lt;br /&gt;
-&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operator/make-docker-images.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org54b15f4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;make-docker-push&#34;&gt;make docker-push&lt;/h3&gt;
-
-&lt;p&gt;1）先增加要上传镜像的tag&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$ docker tag controller:latest docker.io/mospany/controller:latest
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;2）make docker-push&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$ make docker-push IMG=docker.io/mospany/controller:latest
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operator/make-docker-push.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;查看docker hub上传效果&lt;br /&gt;
-&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operator/make-docker-hub.png&#34; alt=&#34;img&#34; /&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;a id=&#34;org5f3af46&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;运行&#34;&gt;运行&lt;/h2&gt;
-
-&lt;p&gt;先在mac上安装k8s集群，详见：&lt;a href=&#34;https://blog.51cto.com/zlyang/4838042&#34;&gt;Mac系统安装k8s集群&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org861d0fa&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;本地运行&#34;&gt;本地运行&lt;/h3&gt;
-
-&lt;p&gt;要想在本地运行 controller，只需要执行下面的命令，你将看到 controller 启动和运行时输出：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;make run
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operator/make-run.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org5dc2c10&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;部署到k8s集群中运行&#34;&gt;部署到k8s集群中运行&lt;/h3&gt;
-
-&lt;pre&gt;&lt;code&gt;make deploy IMG=docker.io/mospany/controller:v1.0
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operator/make-deploy.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;查看日志&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;kubectl logs -n guestbook-system guestbook-controller-manager-7c67b5bd6c-gm5qs
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operator/make-logs.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgf9f8f6e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;创建cr&#34;&gt;创建CR&lt;/h2&gt;
-
-&lt;p&gt;该创建自定义资源对象CR了，如原生中的rc/deployment等对象&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;# mosp @ mospdeMacBook-Pro in ~/work/pingan/arch/mysrc/guestbook [21:14:17]
-$ kubectl get RedisCluster
-NAME                  AGE
-rediscluster-sample   48m
-
-# mosp @ mospdeMacBook-Pro in ~/work/pingan/arch/mysrc/guestbook [21:22:49]
-$ kubectl get RedisCluster -o yaml
-apiVersion: v1
-items:
-- apiVersion: redis.xiaohongshu.org/v1
-  kind: RedisCluster
-  metadata:
-    annotations:
-      kubectl.kubernetes.io/last-applied-configuration: |
-        {&amp;quot;apiVersion&amp;quot;:&amp;quot;redis.xiaohongshu.org/v1&amp;quot;,&amp;quot;kind&amp;quot;:&amp;quot;RedisCluster&amp;quot;,&amp;quot;metadata&amp;quot;:{&amp;quot;annotations&amp;quot;:{},&amp;quot;name&amp;quot;:&amp;quot;rediscluster-sample&amp;quot;,&amp;quot;namespace&amp;quot;:&amp;quot;default&amp;quot;},&amp;quot;spec&amp;quot;:null}
-    creationTimestamp: &amp;quot;2022-07-29T12:34:11Z&amp;quot;
-    generation: 1
-    name: rediscluster-sample
-    namespace: default
-    resourceVersion: &amp;quot;200052&amp;quot;
-    uid: 18eaf75f-9597-46af-bd88-abf7153c1377
-  status: {}
-kind: List
-metadata:
-  resourceVersion: &amp;quot;&amp;quot;
-  selfLink: &amp;quot;&amp;quot;
-
-# mosp @ mospdeMacBook-Pro in ~/work/pingan/arch/mysrc/guestbook [21:23:07]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org7b598e7&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;开发业务逻辑&#34;&gt;开发业务逻辑&lt;/h2&gt;
-
-&lt;p&gt;下面我们将修改 CRD 的数据结构并在 controller 中增加一些日志输出。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org869a73b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;修改-crd&#34;&gt;修改 CRD&lt;/h3&gt;
-
-&lt;p&gt;我们将修改api/v1/rediscluster_types.go 文件的内容，在 CRD 中增加 FirstName、LastName 和 Status 字段。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;// RedisClusterSpec defines the desired state of RedisCluster
-type RedisClusterSpec struct {
-    // INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-
-    // Important: Run &amp;quot;make&amp;quot; to regenerate code after modifying this file
-
-    // Foo is an example field of RedisCluster. Edit rediscluster_types.go to remove/update
-    FirstName string `json:&amp;quot;firstname&amp;quot;`
-    LastName  string `json:&amp;quot;lastname&amp;quot;`
-}
-
-// RedisClusterStatus defines the observed state of RedisCluster
-type RedisClusterStatus struct {
-    // INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-
-    // Important: Run &amp;quot;make&amp;quot; to regenerate code after modifying this file
-    Status string `json:&amp;quot;Status&amp;quot;`
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;orga981c1e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;修改-reconcile-函数&#34;&gt;修改 Reconcile 函数&lt;/h3&gt;
-
-&lt;p&gt;Reconcile 函数是 Operator 的核心逻辑，Operator 的业务逻辑都位于 controllers/rediscluster_controller.go 文件的 Reconcile 函数中&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;func (r *RedisClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-    _ = log.FromContext(ctx)
-
-    // TODO(user): your logic here
-
-    // 获取当前的 CR，并打印
-    logger := log.FromContext(ctx)
-    obj := &amp;amp;redisv1.RedisCluster{}
-    if err := r.Get(ctx, req.NamespacedName, obj); err != nil {
-        logger.Error(err, &amp;quot;Unable to fetch object&amp;quot;)
-        return ctrl.Result{}, nil
-    } else {
-        logger.Info(&amp;quot;Greeting from Kubebuilder to&amp;quot;, obj.Spec.FirstName, obj.Spec.LastName)
-    }
-
-    // 初始化 CR 的 Status 为 Running
-    obj.Status.Status = &amp;quot;Running&amp;quot;
-    if err := r.Status().Update(ctx, obj); err != nil {
-        logger.Error(err, &amp;quot;unable to update status&amp;quot;)
-    }
-
-    return ctrl.Result{}, nil
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org1cfb9cb&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;运行测试&#34;&gt;运行测试&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;安装CRD（同上）&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;部署controller（同上）&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;创建CR&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;修改 config/samples/redis_v1_rediscluster.yaml 文件中的配置&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;apiVersion: redis.xiaohongshu.org/v1
-kind: RedisCluster
-metadata:
-  name: rediscluster-sample
-spec:
-  # TODO(user): Add fields here
-  firstname: Jimmy
-  lastname: Song
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;执行下面命令，创建CR：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$ k8sdev apply -f  config/samples/redis_v1_rediscluster.yaml
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;查看controller里的运行日志：&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/operator/controller-logs.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org1683514&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;参考资料&#34;&gt;参考资料&lt;/h1&gt;
-
-&lt;p&gt;【01】&lt;a href=&#34;https://blog.csdn.net/weixin_43568070/article/details/89892620&#34;&gt;使用shell命令行登陆Docker Hub出现的404Not found的问题&lt;/a&gt;&lt;br /&gt;
-【02】&lt;a href=&#34;https://blog.csdn.net/HaHa_Sir/article/details/119412754&#34;&gt;Docker镜像推送Dockerhub&lt;/a&gt;&lt;br /&gt;
-【03】&lt;a href=&#34;https://www.cnblogs.com/mysql-dba/p/15982341.html&#34;&gt;使用 kubebuilder 创建并部署 k8s-operator&lt;/a&gt;&lt;br /&gt;
-【04】&lt;a href=&#34;http://tnblog.net/hb/article/details/7516&#34;&gt;Kustomize的基本使用&lt;/a&gt;&lt;br /&gt;
-【05】&lt;a href=&#34;https://www.cnblogs.com/lizhewei/p/13214785.html&#34;&gt;【kubebuilder2.0】安装、源码分析 &lt;/a&gt;&lt;br /&gt;
-【06】&lt;a href=&#34;https://www.cnblogs.com/alisystemsoftware/p/11580202.html&#34;&gt;深入解析 Kubebuilder：让编写 CRD 变得更简单&lt;/a&gt;&lt;br /&gt;
-【07】&lt;a href=&#34;https://os.51cto.com/article/661378.html&#34;&gt;一篇带给你KubeBuilder 简明教程&lt;/a&gt;&lt;br /&gt;
-【08】&lt;a href=&#34;https://blog.csdn.net/chenxy02/article/details/125554680&#34;&gt;深入解析Kubebuilder&lt;/a&gt;&lt;br /&gt;
-【09】&lt;a href=&#34;https://blog.csdn.net/qq_45874107/article/details/119839187&#34;&gt;什么是RBAC&lt;/a&gt;&lt;br /&gt;
-【10】&lt;a href=&#34;https://blog.ihypo.net/15763910382218.html&#34;&gt;Kubernetes Controller Manager 工作原理&lt;/a&gt;&lt;br /&gt;
-【11】&lt;a href=&#34;https://jishuin.proginn.com/p/763bfbd3012b&#34;&gt;controller-runtime 之 manager 实现&lt;/a&gt;&lt;/p&gt;
 </description>
         </item>
         
