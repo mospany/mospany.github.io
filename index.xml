@@ -5,7 +5,744 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Sun, 13 Jul 2025 19:44:00 CST</updated>
+        <updated>Sat, 02 Aug 2025 15:44:09 CST</updated>
+        
+        <item>
+            <title>Python基础与速查手册</title>
+            <link>http://mospany.github.io/2025/08/02/python-in-ai/</link>
+            <pubDate>Sat, 02 Aug 2025 15:44:09 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://mospany.github.io/2025/08/02/python-in-ai/</guid>
+            <description>
+
+&lt;h2 id=&#34;一-基础语法速查&#34;&gt;🧠 一、基础语法速查&lt;/h2&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;语法&lt;/th&gt;
+&lt;th&gt;示例&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;变量定义&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;x = 10&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;不需要声明类型&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;条件语句&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;if x &amp;gt; 0: ... elif x==0: ... else: ...&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;结构清晰&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;循环&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;for i in range(10):&lt;/code&gt;&lt;br&gt;&lt;code&gt;while x &amp;lt; 5:&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;遍历/条件循环&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;函数定义&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;def func(a, b=1): return a + b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;默认参数、返回值&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;列表推导式&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;[x**2 for x in range(5)]&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;快速生成新列表&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;多变量赋值&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;a, b = 1, 2&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;解包&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;类型注解&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;def add(x: int) -&amp;gt; int:&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;函数签名更清晰&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;二-常用数据结构函数&#34;&gt;🧰 二、常用数据结构函数&lt;/h2&gt;
+
+&lt;h3 id=&#34;字符串-str&#34;&gt;字符串 &lt;code&gt;str&lt;/code&gt;&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;函数&lt;/th&gt;
+&lt;th&gt;示例&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;s.lower()&lt;/code&gt; / &lt;code&gt;s.upper()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;大小写转换&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;s.split(&#39;,&#39;)&lt;/code&gt; / &lt;code&gt;&#39; &#39;.join(list)&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;拆分 / 合并&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;s.strip()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;去除首尾空白&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;s.replace(&#39;a&#39;,&#39;b&#39;)&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;替换字符串&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;f&amp;quot;{x:.2f}&amp;quot;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;f-string 格式化字符串&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&#34;列表-list&#34;&gt;列表 &lt;code&gt;list&lt;/code&gt;&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;函数&lt;/th&gt;
+&lt;th&gt;示例&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;len(lst)&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;获取长度&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;lst.append(x)&lt;/code&gt; / &lt;code&gt;lst.extend(...)&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;添加元素&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;lst.pop()&lt;/code&gt; / &lt;code&gt;lst.remove(x)&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;删除元素&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;lst.sort()&lt;/code&gt; / &lt;code&gt;sorted(lst)&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;排序，原地或新列表&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;lst[::-1]&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;反转列表&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&#34;字典-dict&#34;&gt;字典 &lt;code&gt;dict&lt;/code&gt;&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;函数&lt;/th&gt;
+&lt;th&gt;示例&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;d.get(&#39;key&#39;, default)&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;安全取值&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;d.keys()&lt;/code&gt; / &lt;code&gt;d.values()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;键/值视图&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;d.items()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;遍历键值对&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;dict(zip(keys, values))&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;合并为字典&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&#34;集合-set&#34;&gt;集合 &lt;code&gt;set&lt;/code&gt;&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;操作&lt;/th&gt;
+&lt;th&gt;示例&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;并&lt;/td&gt;
+&lt;td&gt;`a&lt;/td&gt;
+&lt;td&gt;b&lt;code&gt;/&lt;/code&gt;a.union(b)`&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;交&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;a &amp;amp; b&lt;/code&gt; / &lt;code&gt;a.intersection(b)&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;差&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;a - b&lt;/code&gt; / &lt;code&gt;a.difference(b)&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;三-内置函数高频使用表&#34;&gt;🔁 三、内置函数高频使用表&lt;/h2&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;函数&lt;/th&gt;
+&lt;th&gt;用途&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;len()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;长度&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;sum()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;求和&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;min()&lt;/code&gt; / &lt;code&gt;max()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;最小/最大&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;range()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;生成数列&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;enumerate()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;索引+元素遍历&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;zip(a, b)&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;配对遍历&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;map(func, iterable)&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;映射&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;filter(func, iterable)&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;过滤&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;sorted(list, key=..., reverse=True)&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;排序控制&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;any()&lt;/code&gt; / &lt;code&gt;all()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;判断是否有 / 是否都为真&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;四-模块与工具函数&#34;&gt;⚙️ 四、模块与工具函数&lt;/h2&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;模块&lt;/th&gt;
+&lt;th&gt;常用函数&lt;/th&gt;
+&lt;th&gt;用途&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;math&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;math.sqrt()&lt;/code&gt;, &lt;code&gt;log()&lt;/code&gt;, &lt;code&gt;ceil()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;数学运算&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;random&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;random.choice()&lt;/code&gt;, &lt;code&gt;randint()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;随机操作&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;datetime&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;datetime.now()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;时间戳处理&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;os&lt;/code&gt;, &lt;code&gt;sys&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;os.path&lt;/code&gt;, &lt;code&gt;sys.argv&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;路径与参数&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;glob&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;glob.glob(&#39;*.py&#39;)&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;文件批量匹配&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;re&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;re.findall()&lt;/code&gt;, &lt;code&gt;sub()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;正则匹配&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;json&lt;/code&gt; / &lt;code&gt;yaml&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;json.load()&lt;/code&gt;, &lt;code&gt;yaml.safe_load()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;配置处理&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;五-异常处理-文件操作&#34;&gt;🧪 五、异常处理 &amp;amp; 文件操作&lt;/h2&gt;
+
+&lt;h3 id=&#34;异常处理&#34;&gt;异常处理&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;try:
+    risky_operation()
+except ValueError as e:
+    print(&amp;quot;Caught error:&amp;quot;, e)
+finally:
+    cleanup()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;文件操作&#34;&gt;文件操作&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;with open(&#39;file.txt&#39;, &#39;r&#39;) as f:
+    content = f.read()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;七-数值计算与张量操作-numpy-pytorch&#34;&gt;🔢 七、数值计算与张量操作（NumPy &amp;amp; PyTorch）&lt;/h2&gt;
+
+&lt;h3 id=&#34;numpy常用函数&#34;&gt;NumPy常用函数&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;函数&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;np.array()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;创建数组&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;np.zeros()&lt;/code&gt; / &lt;code&gt;np.ones()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;初始化张量&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;np.reshape()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;重塑维度&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;np.dot()&lt;/code&gt; / &lt;code&gt;np.matmul()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;向量/矩阵乘法&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;np.mean()&lt;/code&gt; / &lt;code&gt;np.std()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;均值、标准差&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;np.argmax()&lt;/code&gt; / &lt;code&gt;np.argsort()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;排序、索引最大值&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;np.concatenate()&lt;/code&gt; / &lt;code&gt;np.stack()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;合并数组&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&#34;pytorch张量操作&#34;&gt;PyTorch张量操作&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;函数&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;torch.tensor()&lt;/code&gt; / &lt;code&gt;torch.from_numpy()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;创建张量&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;x.to(&#39;cuda&#39;)&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;张量转GPU&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;x.view()&lt;/code&gt; / &lt;code&gt;x.reshape()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;改变维度&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;x.mean(dim=1)&lt;/code&gt; / &lt;code&gt;x.softmax(dim=-1)&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;常见计算&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;torch.cat()&lt;/code&gt; / &lt;code&gt;torch.stack()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;拼接张量&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;torch.nn.functional&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;提供无状态的函数，如激活函数&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;八-模型开发与训练-pytorch&#34;&gt;🧠 八、模型开发与训练（PyTorch）&lt;/h2&gt;
+
+&lt;h3 id=&#34;模型定义&#34;&gt;模型定义&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import torch.nn as nn
+
+class MyModel(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.linear = nn.Linear(768, 2)
+    
+    def forward(self, x):
+        return self.linear(x)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;常用训练组件&#34;&gt;常用训练组件&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;模块&lt;/th&gt;
+&lt;th&gt;常用函数&lt;/th&gt;
+&lt;th&gt;用途&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;nn&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;nn.Linear&lt;/code&gt;, &lt;code&gt;nn.Embedding&lt;/code&gt;, &lt;code&gt;nn.Transformer&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;模型层&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;optim&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;SGD&lt;/code&gt;, &lt;code&gt;Adam&lt;/code&gt;, &lt;code&gt;lr_scheduler&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;优化器&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;loss&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;CrossEntropyLoss&lt;/code&gt;, &lt;code&gt;MSELoss&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;损失函数&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;DataLoader&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;torch.utils.data.DataLoader&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;数据批加载&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;autograd&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;loss.backward()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;反向传播&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;九-大模型加载与推理相关库函数&#34;&gt;🚀 九、大模型加载与推理相关库函数&lt;/h2&gt;
+
+&lt;h3 id=&#34;huggingface-transformers&#34;&gt;HuggingFace Transformers&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;函数&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;from_pretrained()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;加载模型和tokenizer&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;AutoModelForCausalLM&lt;/code&gt; / &lt;code&gt;AutoTokenizer&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;大模型架构适配&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;tokenizer.encode()&lt;/code&gt; / &lt;code&gt;decode()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;文本与token转换&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;model.generate()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;文本生成&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&#34;推理优化相关&#34;&gt;推理优化相关&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;库&lt;/th&gt;
+&lt;th&gt;函数 / 说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;torch.no_grad()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;禁用梯度，加快推理&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;torch.cuda.amp.autocast()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;半精度混合精度推理&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;torch.jit.trace()&lt;/code&gt; / &lt;code&gt;script()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;模型静态图编译&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;onnxruntime&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;InferenceSession()&lt;/code&gt;，用于ONNX推理&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;vllm&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;高效推理库（异步批次 + KV Cache 管理）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;十-辅助工具库函数&#34;&gt;🧰 十、辅助工具库函数&lt;/h2&gt;
+
+&lt;h3 id=&#34;配置与日志&#34;&gt;配置与日志&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;库&lt;/th&gt;
+&lt;th&gt;常用函数&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;argparse&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;parser.add_argument()&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;yaml&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;yaml.safe_load(open(&#39;config.yaml&#39;))&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;logging&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;logging.info()&lt;/code&gt;，配合训练日志记录&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&#34;文件与路径&#34;&gt;文件与路径&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;库&lt;/th&gt;
+&lt;th&gt;用途&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;os&lt;/code&gt;, &lt;code&gt;pathlib&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;文件路径管理&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;glob&lt;/code&gt;, &lt;code&gt;shutil&lt;/code&gt;, &lt;code&gt;zipfile&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;文件批量操作、压缩&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;tqdm&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;训练进度条显示&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&#34;调试与性能&#34;&gt;调试与性能&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;工具&lt;/th&gt;
+&lt;th&gt;用法&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;print()&lt;/code&gt; / &lt;code&gt;logging&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;日志输出&lt;/td&gt;
+&lt;td&gt;可配日志等级&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;assert&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;assert x &amp;gt; 0&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;条件断言&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;%timeit&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;IPython魔法命令&lt;/td&gt;
+&lt;td&gt;性能测试&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;pdb.set_trace()&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;中断调试&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;十一-推荐学习资源&#34;&gt;📚十一、 推荐学习资源&lt;/h2&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;主题&lt;/th&gt;
+&lt;th&gt;资源&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Python 3 标准库手册&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;https://docs.python.org/3/library/&#34;&gt;https://docs.python.org/3/library/&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;PyTorch文档&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;https://pytorch.org/docs/stable/index.html&#34;&gt;https://pytorch.org/docs/stable/index.html&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;HuggingFace教程&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;https://huggingface.co/transformers/&#34;&gt;https://huggingface.co/transformers/&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Python标准库速查&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;https://docs.python.org/3/library/&#34;&gt;https://docs.python.org/3/library/&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+</description>
+        </item>
         
         <item>
             <title>AI中的数学知识</title>
@@ -5597,561 +6334,6 @@ test
 &lt;h1 id=&#34;参考&#34;&gt;参考&lt;/h1&gt;
 
 &lt;p&gt;【01】&lt;a href=&#34;https://www.codeleading.com/article/35162638950/&#34;&gt;阿里云服务器 CentOS7 下安装和配置 NFS&lt;/a&gt;&lt;/p&gt;
-</description>
-        </item>
-        
-        <item>
-            <title>K8S项目实践(05): 动手实现CSI驱动</title>
-            <link>http://mospany.github.io/2022/12/22/k8s-sci-driver/</link>
-            <pubDate>Thu, 22 Dec 2022 22:21:36 CST</pubDate>
-            <author>Mospan</author>
-            <guid>http://mospany.github.io/2022/12/22/k8s-sci-driver/</guid>
-            <description>
-
-&lt;p&gt;&lt;a id=&#34;org3f75c1c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;简介&#34;&gt;简介&lt;/h1&gt;
-
-&lt;p&gt;外部存储接入 Kubernetes 的方式主要有两种：In-Tree 和 Out-of-Tree。其中 In-Tree 是指存储驱动的源码都在 Kubernetes 代码库中，与 Kubernetes 一起发布、迭代、管理，这种方式灵活性较差，且门槛较高。Out-of-Tree 是指存储插件由第三方编写、发布、管理，作为一种扩展与 Kubernetes 配合使用。Out-of-Tree 主要有 FlexVolume 和 CSI 两种实现方式，其中，FlexVolume 因为其命令式的特点，不易维护和管理，从 Kubernetes v1.23 版本开始已被弃用。因此 CSI 已经成为 Kubernetes 存储扩展（ Out-of-Tree ）的唯一方式。&lt;/p&gt;
-
-&lt;p&gt;在介绍CSI之前，先梳理一下kubernetes中使用存储有哪些步骤：&lt;br /&gt;
-1、创建pv对象&lt;br /&gt;
-2、存储服务器上创建一个volume&lt;br /&gt;
-3、把创建的volume挂载到宿主机上&lt;br /&gt;
-4、格式化volume&lt;br /&gt;
-5、把格式化的volume mount到pod的volume目录&lt;br /&gt;
-6、创建pvc对象并和pv对象绑定&lt;br /&gt;
-7、pod使用pvc&lt;/p&gt;
-
-&lt;p&gt;代码工程：&lt;a href=&#34;https://github.com/mospany/nfscsi.git&#34;&gt;https://github.com/mospany/nfscsi.git&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orga5011fc&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;术语&#34;&gt;术语&lt;/h1&gt;
-
-&lt;table border=&#34;2&#34; cellspacing=&#34;0&#34; cellpadding=&#34;6&#34; rules=&#34;groups&#34; frame=&#34;hsides&#34;&gt;
-
-
-&lt;colgroup&gt;
-&lt;col  class=&#34;org-left&#34; /&gt;
-
-&lt;col  class=&#34;org-left&#34; /&gt;
-
-&lt;col  class=&#34;org-left&#34; /&gt;
-
-&lt;col  class=&#34;org-left&#34; /&gt;
-&lt;/colgroup&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;缩写&lt;/th&gt;
-&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;英文全称&lt;/th&gt;
-&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;中文全称&lt;/th&gt;
-&lt;th scope=&#34;col&#34; class=&#34;org-left&#34;&gt;描述&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;pvc&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;PersistentVolumeClaim&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;持久卷声明&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;描述的是pod希望使用的持久化存储的属性&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;pv&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;PersistentVolume&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;持久卷&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;描述的是具体的持久化存储数据卷信息&lt;/td&gt;
-&lt;/tr&gt;
-
-
-&lt;tr&gt;
-&lt;td class=&#34;org-left&#34;&gt;storageClass&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;storageClass&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;存储类&lt;/td&gt;
-&lt;td class=&#34;org-left&#34;&gt;创建pv的模板&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;&lt;a id=&#34;org20530b7&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;csi组成&#34;&gt;CSI组成&lt;/h1&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/csi/csi-component.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;通常情况下：CSI Driver = DaemonSet + Deployment(StatefuleSet) 。&lt;br /&gt;
-其中:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;绿色部分：Identity、Node、Controller 是需要开发者自己实现的，被称为 Custom Components。&lt;/li&gt;
-&lt;li&gt;粉色部分：node-driver-registrar、external-attacher、external-provisioner 组件是 Kubernetes 团队开发和维护的，被称为 External Components，它们都是以 sidecar 的形式与 Custom Components 配合使用的。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a id=&#34;orga3ae62a&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;custom-components&#34;&gt;Custom Components&lt;/h2&gt;
-
-&lt;p&gt;Custom Components 本质是 3 个 gRPC Services：&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Identity Service 顾名思义，主要用于对外暴露这个插件本身的信息，比如驱动的名称、驱动的能力等：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;//github.com/container-storage-interface/spec/lib/go/csi/csi.pb.go
-type IdentityServer interface {
-    GetPluginInfo(context.Context, *GetPluginInfoRequest) (*GetPluginInfoResponse, error)
-    GetPluginCapabilities(context.Context, *GetPluginCapabilitiesRequest) (*GetPluginCapabilitiesResponse, error)
-    Probe(context.Context, *ProbeRequest) (*ProbeResponse, error)
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Controller Service 主要定义一些 无需在宿主机上执行的操作，这也是与下文的 Node Service 最根本的区别。以 CreateVolume 为例，k8s 通过调用该方法创建底层存储。比如底层使用了某云供应商的云硬盘服务，开发者在 CreateVolume 方法实现中应该调用云硬盘服务的创建 / 订购云硬盘的 API，调用 API 这个操作是不需要在特定宿主机上执行的。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;// github.com/container-storage-interface/spec/lib/go/csi/csi.pb.go
-type ControllerServer interface {
-    CreateVolume(context.Context, *CreateVolumeRequest) (*CreateVolumeResponse, error)
-    DeleteVolume(context.Context, *DeleteVolumeRequest) (*DeleteVolumeResponse, error)
-    ControllerPublishVolume(context.Context, *ControllerPublishVolumeRequest) (*ControllerPublishVolumeResponse, error)
-    ControllerUnpublishVolume(context.Context, *ControllerUnpublishVolumeRequest) (*ControllerUnpublishVolumeResponse, error)
-    ValidateVolumeCapabilities(context.Context, *ValidateVolumeCapabilitiesRequest) (*ValidateVolumeCapabilitiesResponse, error)
-    ListVolumes(context.Context, *ListVolumesRequest) (*ListVolumesResponse, error)
-    GetCapacity(context.Context, *GetCapacityRequest) (*GetCapacityResponse, error)
-    ControllerGetCapabilities(context.Context, *ControllerGetCapabilitiesRequest) (*ControllerGetCapabilitiesResponse, error)
-    CreateSnapshot(context.Context, *CreateSnapshotRequest) (*CreateSnapshotResponse, error)
-    DeleteSnapshot(context.Context, *DeleteSnapshotRequest) (*DeleteSnapshotResponse, error)
-    ListSnapshots(context.Context, *ListSnapshotsRequest) (*ListSnapshotsResponse, error)
-    ControllerExpandVolume(context.Context, *ControllerExpandVolumeRequest) (*ControllerExpandVolumeResponse, error)
-    ControllerGetVolume(context.Context, *ControllerGetVolumeRequest) (*ControllerGetVolumeResponse, error)
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Node Service 定义了 需要在宿主机上执行的操作，比如：mount、unmount。在前面的部署架构图中，Node Service 使用 Daemonset 的方式部署，也是为了确保 Node Service 会被运行在每个节点，以便执行诸如 mount 之类的指令。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;// github.com/container-storage-interface/spec/lib/go/csi/csi.pb.go
-type NodeServer interface {
-    NodeStageVolume(context.Context, *NodeStageVolumeRequest) (*NodeStageVolumeResponse, error)
-    NodeUnstageVolume(context.Context, *NodeUnstageVolumeRequest) (*NodeUnstageVolumeResponse, error)
-    NodePublishVolume(context.Context, *NodePublishVolumeRequest) (*NodePublishVolumeResponse, error)
-    NodeUnpublishVolume(context.Context, *NodeUnpublishVolumeRequest) (*NodeUnpublishVolumeResponse, error)
-    NodeGetVolumeStats(context.Context, *NodeGetVolumeStatsRequest) (*NodeGetVolumeStatsResponse, error)
-    NodeExpandVolume(context.Context, *NodeExpandVolumeRequest) (*NodeExpandVolumeResponse, error)
-    NodeGetCapabilities(context.Context, *NodeGetCapabilitiesRequest) (*NodeGetCapabilitiesResponse, error)
-    NodeGetInfo(context.Context, *NodeGetInfoRequest) (*NodeGetInfoResponse, error)
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a id=&#34;org7bc93bd&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;原理&#34;&gt;原理&lt;/h1&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/csi/nfs-csi.png&#34; alt=&#34;img&#34; /&gt;&lt;br /&gt;
-1、首先肯定是要在一个进程里编程实现前面提到的三个gRPC服务对应的方法，例如IdentityServer下的三个方法、ControllerServer下的CreateVolume/DeleteVolume方法以及NodeServer下的NodePublishVolume/NodeUnpublishVolume方法等，并以unix sock的方式提供gRPC服务（后文会用到），并打包成镜像；&lt;/p&gt;
-
-&lt;p&gt;2、把node-driver-registrar和CSI服务作为两个容器放到一个pod里，这样node-driver-registrar服务就可以用unix sock的方式访问CSI进程里的gRPC服务并且向kubelet注册；&lt;/p&gt;
-
-&lt;p&gt;3、node-driver-registrar完成注册后，后续的Mount/Unmount等操作kubelet会直接通过unix sock访问CSI。这里有两层含义：第一层含义是kubelet会直接通过unix sock访问CSI，因此CSI需要用hostPath的方式把自己unix sock文件暴露；第二层含义是kubelet直接调用CSI服务，这意味着node-driver-registrar和CSI的这个pod应该是daemonSet形式部署的；&lt;/p&gt;
-
-&lt;p&gt;4、把external-provisioner和CSI服务作为两个容器放到一个pod里，去实现Dynamic Provisioning功能。因为Dynamic Provisioning设计创建卷和删除卷，因此这个pod应该看做是有状态的，在部署上通常是带有选举的deployment部署或者副本数为1的statefulSet部署（如果需要Attach/Detach功能，也可以再加个容器把external-attacher放到这个pod中）。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org953691d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;csi注册流程&#34;&gt;CSI注册流程&lt;/h2&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/csi/csi-reg.png&#34; alt=&#34;img&#34; /&gt;&lt;br /&gt;
-相关的步骤释义如下：&lt;/p&gt;
-
-&lt;p&gt;1、kubelet启动后基于fsnotify监听/var/lib/kubelet/plugins_registry目录；&lt;br /&gt;
-2、node-driver-registrar启动通过启动参数中配置的CSI进程的sock文件，调CSI进程的GetPluginInfo方法获取CSI插件名称；&lt;br /&gt;
-3、node-driver-registrar启动后在/var/lib/kubelet/plugins_registry目录下创建自己的sock文件{csiName}-reg.sock；&lt;br /&gt;
-4、kubelet的watcher监听到/var/lib/kubelet/plugins_registry目录下有sock文件创建，把该sock文件信息存入内存中的desiredStateOfWorld对象中；&lt;br /&gt;
-5、kubelet中有个reconciler协程周期性的检查desiredStateOfWorld对象和actualStateOfWorld对象中的数据差异，发现有新的CSI插件需要执行注册过程；&lt;br /&gt;
-6、reconciler通过/var/lib/kubelet/plugins_registry/{csiName}-reg.sock，调用node-driver-registrar下的GetInfo方法获取CSI插件的名称和CSI进程的sock文件路径等信息；&lt;br /&gt;
-7、reconciler通过上一步拿到的CSI进程sock文件，调用CSI进程下NodeGetInfo方法获取一些数据用于后续的Node和CSINode对象；&lt;br /&gt;
-8、组装数据调apiServer接口更新本节点对应的Node对象的annotation；&lt;br /&gt;
-9、组装数据调apiServer接口创建/更新对应的CSINode对象；&lt;br /&gt;
-10、reconciler通过/var/lib/kubelet/plugins_registry/{csiName}-reg.sock，调用node-driver-registrar的NotifyRegistrationStatus方法，告知其注册结果。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org34e354f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;nfs搭建&#34;&gt;NFS搭建&lt;/h1&gt;
-
-&lt;p&gt;由于实现CSI需要一个后端存储，Linux提供NFS功能可以免费搭建一个NSC存储功能用来验证。&lt;br /&gt;
-搭建办法详见: &lt;a href=&#34;http://blog.mospan.cn/2023/01/15/aliyun-ecs-install-nfs/&#34;&gt;CentOS7 下安装和配置 NFS&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgaf35c61&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;部署&#34;&gt;部署&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;org82b326f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;部署node&#34;&gt;部署node&lt;/h2&gt;
-
-&lt;p&gt;进入代码工程中的deploy下运行命令`kubectl apply -f node.yaml`&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master nfscsi]# pwd
-/root/nfscsi
-[root@k8s-master nfscsi]# cd deploy/
-[root@k8s-master deploy]# ls
-node.yaml  provisioner.yaml
-[root@k8s-master deploy]# ll
-总用量 12
--rw-r--r-- 1 root root 3720 1月   8 22:18 node.yaml
--rw-r--r-- 1 root root 4413 1月   8 22:16 provisioner.yaml
-
-[root@k8s-master deploy]# k apply -f node.yaml
-serviceaccount/nfs-csi-node created
-clusterrole.rbac.authorization.k8s.io/nfs-csi-node created
-clusterrolebinding.rbac.authorization.k8s.io/nfs-csi-node created
-daemonset.apps/nfs-csi-node created
-[root@k8s-master deploy]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;查看POD的运行状态：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master deploy]# k get pod -A -o wide | grep nfs
-kube-system   nfs-csi-node-x28zj                         2/2     Running   0                10m   172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-[root@k8s-master deploy]#
-[root@k8s-master deploy]# k get ds -A
-NAMESPACE     NAME           DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR                                              AGE
-kube-system   calico-node    3         3         3       3            3           kubernetes.io/os=linux                                     19d
-kube-system   kube-proxy     3         3         3       3            3           kubernetes.io/os=linux                                     52d
-kube-system   nfs-csi-node   1         1         1       1            1           kubernetes.io/hostname=k8s-master,kubernetes.io/os=linux   10m
-[root@k8s-master deploy]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;pod正常启动后，先查看node-driver-registrar的日志，注册正常：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master nfscsi]# kubectl logs -n kube-system nfs-csi-node-x28zj node-driver-registrar
-I0115 07:45:31.451826       1 main.go:166] Version: v2.5.0
-I0115 07:45:31.451864       1 main.go:167] Running node-driver-registrar in mode=registration
-I0115 07:45:31.452324       1 main.go:191] Attempting to open a gRPC connection with: &amp;quot;/csi/csi.sock&amp;quot;
-I0115 07:45:32.455714       1 main.go:198] Calling CSI driver to discover driver name
-I0115 07:45:32.457464       1 main.go:208] CSI driver name: &amp;quot;nfscsi&amp;quot;
-I0115 07:45:32.457493       1 node_register.go:53] Starting Registration Server at: /registration/nfscsi-reg.sock
-I0115 07:45:32.457582       1 node_register.go:62] Registration Server started at: /registration/nfscsi-reg.sock
-I0115 07:45:32.458992       1 node_register.go:92] Skipping HTTP server because endpoint is set to: &amp;quot;&amp;quot;
-I0115 07:45:33.018081       1 main.go:102] Received GetInfo call: &amp;amp;InfoRequest{}
-I0115 07:45:33.018292       1 main.go:109] &amp;quot;Kubelet registration probe created&amp;quot; path=&amp;quot;/var/lib/kubelet/plugins/csi-nfsplugin/registration&amp;quot;
-I0115 07:45:33.623838       1 main.go:120] Received NotifyRegistrationStatus call: &amp;amp;RegistrationStatus{PluginRegistered:true,Error:,}
-[root@k8s-master nfscsi]# ll /var/lib/kubelet/plugins/csi-nfsplugin/csi.sock
-srwxr-xr-x 1 root root 0 1月  15 15:45 /var/lib/kubelet/plugins/csi-nfsplugin/csi.sock
-[root@k8s-master nfscsi]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;再看看自己编码nfs-csi容器日志，注册过程只调用了GetPluginInfo和NodeGetInfo&lt;br /&gt;
-方法：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master nfscsi]# kubectl logs -n kube-system nfs-csi-node-x28zj nfs-csi
-2023/01/15 07:45:31 driverName: nfscsi, version: N/A, nodeID: k8s-master
-2023/01/15 07:45:31 grpc server start
-2023/01/15 07:45:32 GetPluginInfo request
-2023/01/15 07:45:33 NodeGetInfo request
-[root@k8s-master nfscsi]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;node-driver-registrar和CSI进程的sock文件：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master nfscsi]# ll /var/lib/kubelet/plugins_registry/
-总用量 0
-srwx------ 1 root root 0 1月  15 15:45 nfscsi-reg.sock
-[root@k8s-master nfscsi]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;node对象的annotation：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master nfscsi]# kubectl get node k8s-master  -oyaml| grep annotations -A 9
-annotations:
-  csi.volume.kubernetes.io/nodeid: &#39;{&amp;quot;nfscsi&amp;quot;:&amp;quot;k8s-master&amp;quot;}&#39;
-  kubeadm.alpha.kubernetes.io/cri-socket: /var/run/dockershim.sock
-  node.alpha.kubernetes.io/ttl: &amp;quot;0&amp;quot;
-  projectcalico.org/IPv4Address: 172.25.140.216/20
-  projectcalico.org/IPv4IPIPTunnelAddr: 10.244.235.192
-  volumes.kubernetes.io/controller-managed-attach-detach: &amp;quot;true&amp;quot;
-creationTimestamp: &amp;quot;2022-11-23T15:34:38Z&amp;quot;
-labels:
-  app: hdls-csi-controller
-[root@k8s-master nfscsi]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;最后验证CSINode对象：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master nfscsi]# k get csinode -o wide
-NAME         DRIVERS   AGE
-k8s-master   1         52d
-k8s-work1    0         52d
-k8s-work2    0         52d
-[root@k8s-master nfscsi]# kubectl get csinode k8s-master -o yaml
-apiVersion: storage.k8s.io/v1
-kind: CSINode
-metadata:
-  annotations:
-    storage.alpha.kubernetes.io/migrated-plugins: kubernetes.io/aws-ebs,kubernetes.io/azure-disk,kubernetes.io/cinder,kubernetes.io/gce-pd
-  creationTimestamp: &amp;quot;2022-11-23T15:34:38Z&amp;quot;
-  name: k8s-master
-  ownerReferences:
-  - apiVersion: v1
-    kind: Node
-    name: k8s-master
-    uid: cb4c3e59-66e5-40a0-a385-aa2072719381
-  resourceVersion: &amp;quot;278990&amp;quot;
-  uid: cf0f93f0-495e-49f2-88b4-6f7126ca6176
-spec:
-  drivers:
-  - name: nfscsi
-    nodeID: k8s-master
-    topologyKeys: null
-[root@k8s-master nfscsi]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;到这里我们成功完成并验证了CSI的注册。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master deploy]# k logs -n kube-system nfs-csi-node-vxkc8  nfs-csi
-2023/01/15 08:33:22 driverName: nfscsi, version: N/A, nodeID: k8s-master
-2023/01/15 08:33:22 grpc server start
-2023/01/15 08:33:23 GetPluginInfo request
-2023/01/15 08:33:23 NodeGetInfo request
-2023/01/15 09:42:25 NodeGetCapabilities request
-2023/01/15 09:42:25 NodeGetCapabilities request
-2023/01/15 09:42:25 NodeGetCapabilities request
-2023/01/15 09:42:25 NodeGetCapabilities request
-2023/01/15 09:42:25 NodePublishVolume request
-2023/01/15 09:42:25 source: 127.0.0.1:/data/pvc-910384b5-b5eb-4196-b6d3-876f9679ed05, targetPath: /var/lib/kubelet/pods/e86fa053-7d1b-4330-a6f2-555d350b45e9/volumes/kubernetes.io~csi/pvc-910384b5-b5eb-4196-b6d3-876f9679ed05/mount, options: []
-2023/01/15 09:43:20 NodeGetCapabilities request
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;当POD执行CreateVolume是将调用nodeService里的NodePublishVolume方法进行mount操作，即把nfs里的pvc-子目录mount到宿主机pod目录卷下。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgccab5fd&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;部署provisioner&#34;&gt;部署provisioner&lt;/h2&gt;
-
-&lt;p&gt;Dynamic Provisioning原理：所谓的Dynamic Provisioning，其实就是创建pvc后会自动创建卷和pv，并把pv和pvc绑定&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/k8s/csi/provisioner-follow.jpg&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;部署运行:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master deploy]# kubectl apply -f provisioner.yaml
-storageclass.storage.k8s.io/nfscsi created
-csidriver.storage.k8s.io/nfscsi created
-serviceaccount/nfs-csi-provisioner created
-clusterrole.rbac.authorization.k8s.io/nfs-csi-provisioner created
-clusterrolebinding.rbac.authorization.k8s.io/nfs-csi-provisioner created
-deployment.apps/nfs-csi-provisioner created
-[root@k8s-master deploy]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;观察对应的provisioner是否起来：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master deploy]# k get pod -A -o wide | grep nfs
-kube-system   nfs-csi-node-vxkc8                         2/2     Running   0               10m     172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-kube-system   nfs-csi-provisioner-6f7db46646-77lqv       2/2     Running   0               2m20s   172.25.140.216   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-[root@k8s-master deploy]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgbd2779f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;创建pvc&#34;&gt;创建PVC&lt;/h3&gt;
-
-&lt;p&gt;准备一个如下的pvc yaml，apply该yaml：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master test]# pwd
-/root/nfscsi/test
-[root@k8s-master test]# cat pvc.yaml
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: test-pvc
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: nfscsi
-  resources:
-    requests:
-      storage: 1Gi
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;查看是否会自动创建卷、pv，并和pvc绑定：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master test]# kubectl apply -f pvc.yaml
-persistentvolumeclaim/test-pvc created
-[root@k8s-master test]# k get pvc
-NAME       STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
-test-pvc   Bound    pvc-910384b5-b5eb-4196-b6d3-876f9679ed05   1Gi        RWO            nfscsi         20s
-[root@k8s-master test]# k get pv
-NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS     CLAIM              STORAGECLASS   REASON   AGE
-pvc-910384b5-b5eb-4196-b6d3-876f9679ed05   1Gi        RWO            Delete           Bound      default/test-pvc   nfscsi                  35s
-[root@k8s-master test]# ll /mnt/nfs-data/
-总用量 16
-drwxr-xr-x 2 root root 4096 1月  15 17:06 pvc-910384b5-b5eb-4196-b6d3-876f9679ed05
-[root@k8s-master test]# ll /data/
-总用量 16
-drwxr-xr-x 2 root root 4096 1月   8 22:22 pvc-7115a52d-ba4f-4571-adbc-25e71941ca55
-[root@k8s-master test]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;查看provisioner pod日志：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master test]# k logs -n kube-system  nfs-csi-provisioner-6f7db46646-77lqv nfs-csi
-2023/01/15 08:41:03 driverName: nfscsi, version: N/A, nodeID: k8s-master
-2023/01/15 08:41:03 grpc server start
-2023/01/15 08:41:04 Probe request
-2023/01/15 08:41:04 GetPluginInfo request
-2023/01/15 08:41:04 GetPluginCapabilities request
-2023/01/15 08:41:04 ControllerGetCapabilities request
-...
-2023/01/15 09:06:26 CreateVolume request
-2023/01/15 09:06:26 req name:  pvc-910384b5-b5eb-4196-b6d3-876f9679ed05
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;可以看出创建pvc时自动绑定pv成功。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org252c6f3&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;删除pvc&#34;&gt;删除PVC&lt;/h3&gt;
-
-&lt;p&gt;同理。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org20891ab&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;测试&#34;&gt;测试&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgaaf51bd&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;验证pod使用csi&#34;&gt;验证POD使用CSI&lt;/h2&gt;
-
-&lt;p&gt;先准备POD的yaml&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master test]# cat pod.yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: test-nginx-sci-pod
-spec:
-  nodeName: k8s-master  # 运行在安装了csi插件的node上
-  containers:
-  - name: nginx
-    image: nginx:latest
-    imagePullPolicy: IfNotPresent
-    volumeMounts:
-    - name: nfs-pvc
-      mountPath: /var/log/nginx
-  volumes:
-  - name: nfs-pvc
-    persistentVolumeClaim:
-      claimName: test-pvc
-   [root@k8s-master test]#  
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;运行&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master test]# kubectl apply -f pod.yaml
-pod/test-nginx-sci-pod created
-[root@k8s-master test]# kubectl get pod -A | grep test-nginx
-default       test-nginx-sci-pod                         1/1     Running   0                18s
-[root@k8s-master test]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;查看nginx日志&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master test]# ll /mnt/nfs-data/pvc-910384b5-b5eb-4196-b6d3-876f9679ed05/
-总用量 4
--rw-r--r-- 1 root root    0 1月  15 17:48 access.log
--rw-r--r-- 1 root root 1641 1月  15 17:52 error.log
-[root@k8s-master test]#
-[root@k8s-master test]# tail /mnt/nfs-data/pvc-910384b5-b5eb-4196-b6d3-876f9679ed05/access.log
-[root@k8s-master test]# tail /mnt/nfs-data/pvc-910384b5-b5eb-4196-b6d3-876f9679ed05/error.log
-2023/01/15 09:49:20 [notice] 1#1: worker process 33 exited with code 0
-2023/01/15 09:49:20 [notice] 1#1: exit
-2023/01/15 09:51:39 [notice] 1#1: using the &amp;quot;epoll&amp;quot; event method
-2023/01/15 09:51:39 [notice] 1#1: nginx/1.21.5
-2023/01/15 09:51:39 [notice] 1#1: built by gcc 10.2.1 20210110 (Debian 10.2.1-6)
-2023/01/15 09:51:39 [notice] 1#1: OS: Linux 3.10.0-957.21.3.el7.x86_64
-2023/01/15 09:51:39 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 65536:65536
-2023/01/15 09:51:39 [notice] 1#1: start worker processes
-2023/01/15 09:51:39 [notice] 1#1: start worker process 32
-2023/01/15 09:51:39 [notice] 1#1: start worker process 33
-[root@k8s-master test]#
-[root@k8s-master test]# ll /data/pvc-910384b5-b5eb-4196-b6d3-876f9679ed05/
-总用量 4
--rw-r--r-- 1 root root    0 1月  15 17:48 access.log
--rw-r--r-- 1 root root 1641 1月  15 17:52 error.log
-[root@k8s-master test]# 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;可以看出宿主机和nfs服务器上该pvc下已经有nginx日志生成达到了目的。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orga9b7cb5&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;csc功能测试命令&#34;&gt;csc功能测试命令&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;安装&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;go install -v  github.com/rexray/gocsi/csc@latest
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;使用go env查看GOPATH, go install 的程序一般就放在第一个路径下的bin&lt;/p&gt;
-
-&lt;p&gt;把它拷贝到目标机上并加可执行权限。&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;命令&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master csi-hdls]# ./csc
-NAME
-    csc -- a command line container storage interface (CSI) client
-
-SYNOPSIS
-    csc [flags] CMD
-
-AVAILABLE COMMANDS
-    controller
-    identity
-    node
-
-Use &amp;quot;csc -h,--help&amp;quot; for more information
-[root@k8s-master csi-hdls]# ./csc controller help
-NAME
-    controller -- the csi controller service rpcs
-
-SYNOPSIS
-    csc controller [flags] CMD
-
-AVAILABLE COMMANDS
-    create-snapshot
-    create-volume
-    delete-snapshot
-    delete-volume
-    expand-volume
-    get-capabilities
-    get-capacity
-    list-snapshots
-    list-volumes
-    publish
-    unpublish
-    validate-volume-capabilities
-
-Use &amp;quot;csc controller -h,--help&amp;quot; for more information
-[root@k8s-master csi-hdls]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;emptyDir的位置应该位于运行pod的给定节点上的/var/lib/kubelet/pods/{podid}/volumes/kubernetes.io~empty-dir/中&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgd2a986a&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;参考&#34;&gt;参考&lt;/h1&gt;
-
-&lt;p&gt;【01】&lt;a href=&#34;https://zhuanlan.zhihu.com/p/583032625&#34;&gt;如何实现一个 Kubernetes CSI Driver&lt;/a&gt;&lt;br /&gt;
-【02】&lt;a href=&#34;https://zhuanlan.zhihu.com/p/539307741&#34;&gt;Kubernetes CSI 驱动开发指南&lt;/a&gt;&lt;br /&gt;
-【03】&lt;a href=&#34;https://www.cnblogs.com/cxt618/p/15487359.html&#34;&gt;gRPC详细入门介绍&lt;/a&gt;&lt;br /&gt;
-【04】&lt;a href=&#34;https://jishuin.proginn.com/p/763bfbd3890f&#34;&gt;如何编写一个 CSI 插件&lt;/a&gt;&lt;br /&gt;
-【05】&lt;a href=&#34;http://www.noobyard.com/article/p-qgxfxmfi-nv.html&#34;&gt;Kubernetes K8S之固定节点nodeName和nodeSelector调度详解&lt;/a&gt;&lt;br /&gt;
-【06】&lt;a href=&#34;https://www.modb.pro/db/523598&#34;&gt;kubernetes CSI（下）&lt;/a&gt;&lt;br /&gt;
-【07】&lt;a href=&#34;https://www.codeleading.com/article/35162638950/&#34;&gt;阿里云服务器 CentOS7 下安装和配置 NFS&lt;/a&gt;&lt;/p&gt;
 </description>
         </item>
         

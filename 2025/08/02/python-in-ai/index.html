@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <base href="http://mospany.github.io/">
-  <title>VUE - 墨斯潘園</title>
+  <title>Python基础与速查手册 - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
-  
-  <meta name="description" content="VUE">
+  <meta name="keywords" content="技术文章,人工智能,">
+  <meta name="description" content="🧠 一、基础语法速查 语法 示例 说明 变量定义 x = 10 不需要声明类型 条件语句 if x &gt; 0: ... elif x==0: ... else: ... 结构清晰 循环 for i in range(10): while x &lt; 5: 遍历/条件循环 函数定义 def func(a,">
   <meta name="author" content="mospan">
-  <meta itemprop="name" content="VUE - 墨斯潘園">
-  <meta itemprop="description" content="VUE">
+  <meta itemprop="name" content="Python基础与速查手册 - 墨斯潘園">
+  <meta itemprop="description" content="🧠 一、基础语法速查 语法 示例 说明 变量定义 x = 10 不需要声明类型 条件语句 if x &gt; 0: ... elif x==0: ... else: ... 结构清晰 循环 for i in range(10): while x &lt; 5: 遍历/条件循环 函数定义 def func(a,">
   <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
-  <meta name="twitter:title" content="VUE - 墨斯潘園" />
+  <meta name="twitter:title" content="Python基础与速查手册 - 墨斯潘園" />
   
   <meta name="twitter:description" content="">
   <link rel="shortcut icon" href="img/favicon.ico"/>
@@ -59,28 +59,829 @@
 
   </header>
   <div id="container">
-    <div id="main">
-      
-      
-      <h2 id="2018-02">2018-02</h2>
-      
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="http://mospany.github.io/2018/02/24/vue-dev-env-build/" title="VUE开发环境搭建" itemprop="url">
-    <h1 itemprop="name">VUE开发环境搭建</h1>
-    <p itemprop="description">安装 安装nodejs 到https://nodejs.org/en/download/ 下载对应系统的二进制版本。 按照ubuntu16.04下配</p>
-    <time datetime="2018-02-24 16:32:21 &#43;0800 CST" itemprop="datePublished">2018年02月24日</time>
-  </a>
-</section>
+    <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody">
+    <header class="article-info clearfix">
+  <h1 itemprop="name">
+      <a href="http://mospany.github.io/2025/08/02/python-in-ai/" title="Python基础与速查手册" itemprop="url">Python基础与速查手册</a>
+  </h1>
+  <p class="article-author">By 
+    
+      <a href="http://blog.mospan.cn" title="mospan">mospan</a>
+    
+  </p>
+  <p class="article-time">
+    <time datetime="2025-08-02 15:44:09 &#43;0800 CST" itemprop="datePublished">2025年08月02日</time>
+  </p>
+</header>
 
-        
-      <nav id="page-nav" class="clearfix">
-          
+	<div class="article-content">
+    
+    
+
+<h2 id="一-基础语法速查">🧠 一、基础语法速查</h2>
+
+<table>
+<thead>
+<tr>
+<th>语法</th>
+<th>示例</th>
+<th>说明</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>变量定义</td>
+<td><code>x = 10</code></td>
+<td>不需要声明类型</td>
+</tr>
+
+<tr>
+<td>条件语句</td>
+<td><code>if x &gt; 0: ... elif x==0: ... else: ...</code></td>
+<td>结构清晰</td>
+</tr>
+
+<tr>
+<td>循环</td>
+<td><code>for i in range(10):</code><br><code>while x &lt; 5:</code></td>
+<td>遍历/条件循环</td>
+</tr>
+
+<tr>
+<td>函数定义</td>
+<td><code>def func(a, b=1): return a + b</code></td>
+<td>默认参数、返回值</td>
+</tr>
+
+<tr>
+<td>列表推导式</td>
+<td><code>[x**2 for x in range(5)]</code></td>
+<td>快速生成新列表</td>
+</tr>
+
+<tr>
+<td>多变量赋值</td>
+<td><code>a, b = 1, 2</code></td>
+<td>解包</td>
+</tr>
+
+<tr>
+<td>类型注解</td>
+<td><code>def add(x: int) -&gt; int:</code></td>
+<td>函数签名更清晰</td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h2 id="二-常用数据结构函数">🧰 二、常用数据结构函数</h2>
+
+<h3 id="字符串-str">字符串 <code>str</code></h3>
+
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>示例</th>
+<th>说明</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>s.lower()</code> / <code>s.upper()</code></td>
+<td>大小写转换</td>
+<td></td>
+</tr>
+
+<tr>
+<td><code>s.split(',')</code> / <code>' '.join(list)</code></td>
+<td>拆分 / 合并</td>
+<td></td>
+</tr>
+
+<tr>
+<td><code>s.strip()</code></td>
+<td>去除首尾空白</td>
+<td></td>
+</tr>
+
+<tr>
+<td><code>s.replace('a','b')</code></td>
+<td>替换字符串</td>
+<td></td>
+</tr>
+
+<tr>
+<td><code>f&quot;{x:.2f}&quot;</code></td>
+<td>f-string 格式化字符串</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="列表-list">列表 <code>list</code></h3>
+
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>示例</th>
+<th>说明</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>len(lst)</code></td>
+<td>获取长度</td>
+<td></td>
+</tr>
+
+<tr>
+<td><code>lst.append(x)</code> / <code>lst.extend(...)</code></td>
+<td>添加元素</td>
+<td></td>
+</tr>
+
+<tr>
+<td><code>lst.pop()</code> / <code>lst.remove(x)</code></td>
+<td>删除元素</td>
+<td></td>
+</tr>
+
+<tr>
+<td><code>lst.sort()</code> / <code>sorted(lst)</code></td>
+<td>排序，原地或新列表</td>
+<td></td>
+</tr>
+
+<tr>
+<td><code>lst[::-1]</code></td>
+<td>反转列表</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="字典-dict">字典 <code>dict</code></h3>
+
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>示例</th>
+<th>说明</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>d.get('key', default)</code></td>
+<td>安全取值</td>
+<td></td>
+</tr>
+
+<tr>
+<td><code>d.keys()</code> / <code>d.values()</code></td>
+<td>键/值视图</td>
+<td></td>
+</tr>
+
+<tr>
+<td><code>d.items()</code></td>
+<td>遍历键值对</td>
+<td></td>
+</tr>
+
+<tr>
+<td><code>dict(zip(keys, values))</code></td>
+<td>合并为字典</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="集合-set">集合 <code>set</code></h3>
+
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>示例</th>
+<th>说明</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>并</td>
+<td>`a</td>
+<td>b<code>/</code>a.union(b)`</td>
+</tr>
+
+<tr>
+<td>交</td>
+<td><code>a &amp; b</code> / <code>a.intersection(b)</code></td>
+<td></td>
+</tr>
+
+<tr>
+<td>差</td>
+<td><code>a - b</code> / <code>a.difference(b)</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h2 id="三-内置函数高频使用表">🔁 三、内置函数高频使用表</h2>
+
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>用途</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>len()</code></td>
+<td>长度</td>
+</tr>
+
+<tr>
+<td><code>sum()</code></td>
+<td>求和</td>
+</tr>
+
+<tr>
+<td><code>min()</code> / <code>max()</code></td>
+<td>最小/最大</td>
+</tr>
+
+<tr>
+<td><code>range()</code></td>
+<td>生成数列</td>
+</tr>
+
+<tr>
+<td><code>enumerate()</code></td>
+<td>索引+元素遍历</td>
+</tr>
+
+<tr>
+<td><code>zip(a, b)</code></td>
+<td>配对遍历</td>
+</tr>
+
+<tr>
+<td><code>map(func, iterable)</code></td>
+<td>映射</td>
+</tr>
+
+<tr>
+<td><code>filter(func, iterable)</code></td>
+<td>过滤</td>
+</tr>
+
+<tr>
+<td><code>sorted(list, key=..., reverse=True)</code></td>
+<td>排序控制</td>
+</tr>
+
+<tr>
+<td><code>any()</code> / <code>all()</code></td>
+<td>判断是否有 / 是否都为真</td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h2 id="四-模块与工具函数">⚙️ 四、模块与工具函数</h2>
+
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>常用函数</th>
+<th>用途</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>math</code></td>
+<td><code>math.sqrt()</code>, <code>log()</code>, <code>ceil()</code></td>
+<td>数学运算</td>
+</tr>
+
+<tr>
+<td><code>random</code></td>
+<td><code>random.choice()</code>, <code>randint()</code></td>
+<td>随机操作</td>
+</tr>
+
+<tr>
+<td><code>datetime</code></td>
+<td><code>datetime.now()</code></td>
+<td>时间戳处理</td>
+</tr>
+
+<tr>
+<td><code>os</code>, <code>sys</code></td>
+<td><code>os.path</code>, <code>sys.argv</code></td>
+<td>路径与参数</td>
+</tr>
+
+<tr>
+<td><code>glob</code></td>
+<td><code>glob.glob('*.py')</code></td>
+<td>文件批量匹配</td>
+</tr>
+
+<tr>
+<td><code>re</code></td>
+<td><code>re.findall()</code>, <code>sub()</code></td>
+<td>正则匹配</td>
+</tr>
+
+<tr>
+<td><code>json</code> / <code>yaml</code></td>
+<td><code>json.load()</code>, <code>yaml.safe_load()</code></td>
+<td>配置处理</td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h2 id="五-异常处理-文件操作">🧪 五、异常处理 &amp; 文件操作</h2>
+
+<h3 id="异常处理">异常处理</h3>
+
+<pre><code class="language-python">try:
+    risky_operation()
+except ValueError as e:
+    print(&quot;Caught error:&quot;, e)
+finally:
+    cleanup()
+</code></pre>
+
+<h3 id="文件操作">文件操作</h3>
+
+<pre><code class="language-python">with open('file.txt', 'r') as f:
+    content = f.read()
+</code></pre>
+
+<hr />
+
+<h2 id="七-数值计算与张量操作-numpy-pytorch">🔢 七、数值计算与张量操作（NumPy &amp; PyTorch）</h2>
+
+<h3 id="numpy常用函数">NumPy常用函数</h3>
+
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>说明</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>np.array()</code></td>
+<td>创建数组</td>
+</tr>
+
+<tr>
+<td><code>np.zeros()</code> / <code>np.ones()</code></td>
+<td>初始化张量</td>
+</tr>
+
+<tr>
+<td><code>np.reshape()</code></td>
+<td>重塑维度</td>
+</tr>
+
+<tr>
+<td><code>np.dot()</code> / <code>np.matmul()</code></td>
+<td>向量/矩阵乘法</td>
+</tr>
+
+<tr>
+<td><code>np.mean()</code> / <code>np.std()</code></td>
+<td>均值、标准差</td>
+</tr>
+
+<tr>
+<td><code>np.argmax()</code> / <code>np.argsort()</code></td>
+<td>排序、索引最大值</td>
+</tr>
+
+<tr>
+<td><code>np.concatenate()</code> / <code>np.stack()</code></td>
+<td>合并数组</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="pytorch张量操作">PyTorch张量操作</h3>
+
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>说明</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>torch.tensor()</code> / <code>torch.from_numpy()</code></td>
+<td>创建张量</td>
+</tr>
+
+<tr>
+<td><code>x.to('cuda')</code></td>
+<td>张量转GPU</td>
+</tr>
+
+<tr>
+<td><code>x.view()</code> / <code>x.reshape()</code></td>
+<td>改变维度</td>
+</tr>
+
+<tr>
+<td><code>x.mean(dim=1)</code> / <code>x.softmax(dim=-1)</code></td>
+<td>常见计算</td>
+</tr>
+
+<tr>
+<td><code>torch.cat()</code> / <code>torch.stack()</code></td>
+<td>拼接张量</td>
+</tr>
+
+<tr>
+<td><code>torch.nn.functional</code></td>
+<td>提供无状态的函数，如激活函数</td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h2 id="八-模型开发与训练-pytorch">🧠 八、模型开发与训练（PyTorch）</h2>
+
+<h3 id="模型定义">模型定义</h3>
+
+<pre><code class="language-python">import torch.nn as nn
+
+class MyModel(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.linear = nn.Linear(768, 2)
+    
+    def forward(self, x):
+        return self.linear(x)
+</code></pre>
+
+<h3 id="常用训练组件">常用训练组件</h3>
+
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>常用函数</th>
+<th>用途</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>nn</code></td>
+<td><code>nn.Linear</code>, <code>nn.Embedding</code>, <code>nn.Transformer</code></td>
+<td>模型层</td>
+</tr>
+
+<tr>
+<td><code>optim</code></td>
+<td><code>SGD</code>, <code>Adam</code>, <code>lr_scheduler</code></td>
+<td>优化器</td>
+</tr>
+
+<tr>
+<td><code>loss</code></td>
+<td><code>CrossEntropyLoss</code>, <code>MSELoss</code></td>
+<td>损失函数</td>
+</tr>
+
+<tr>
+<td><code>DataLoader</code></td>
+<td><code>torch.utils.data.DataLoader</code></td>
+<td>数据批加载</td>
+</tr>
+
+<tr>
+<td><code>autograd</code></td>
+<td><code>loss.backward()</code></td>
+<td>反向传播</td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h2 id="九-大模型加载与推理相关库函数">🚀 九、大模型加载与推理相关库函数</h2>
+
+<h3 id="huggingface-transformers">HuggingFace Transformers</h3>
+
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>说明</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>from_pretrained()</code></td>
+<td>加载模型和tokenizer</td>
+</tr>
+
+<tr>
+<td><code>AutoModelForCausalLM</code> / <code>AutoTokenizer</code></td>
+<td>大模型架构适配</td>
+</tr>
+
+<tr>
+<td><code>tokenizer.encode()</code> / <code>decode()</code></td>
+<td>文本与token转换</td>
+</tr>
+
+<tr>
+<td><code>model.generate()</code></td>
+<td>文本生成</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="推理优化相关">推理优化相关</h3>
+
+<table>
+<thead>
+<tr>
+<th>库</th>
+<th>函数 / 说明</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>torch.no_grad()</code></td>
+<td>禁用梯度，加快推理</td>
+</tr>
+
+<tr>
+<td><code>torch.cuda.amp.autocast()</code></td>
+<td>半精度混合精度推理</td>
+</tr>
+
+<tr>
+<td><code>torch.jit.trace()</code> / <code>script()</code></td>
+<td>模型静态图编译</td>
+</tr>
+
+<tr>
+<td><code>onnxruntime</code></td>
+<td><code>InferenceSession()</code>，用于ONNX推理</td>
+</tr>
+
+<tr>
+<td><code>vllm</code></td>
+<td>高效推理库（异步批次 + KV Cache 管理）</td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h2 id="十-辅助工具库函数">🧰 十、辅助工具库函数</h2>
+
+<h3 id="配置与日志">配置与日志</h3>
+
+<table>
+<thead>
+<tr>
+<th>库</th>
+<th>常用函数</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>argparse</code></td>
+<td><code>parser.add_argument()</code></td>
+</tr>
+
+<tr>
+<td><code>yaml</code></td>
+<td><code>yaml.safe_load(open('config.yaml'))</code></td>
+</tr>
+
+<tr>
+<td><code>logging</code></td>
+<td><code>logging.info()</code>，配合训练日志记录</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="文件与路径">文件与路径</h3>
+
+<table>
+<thead>
+<tr>
+<th>库</th>
+<th>用途</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>os</code>, <code>pathlib</code></td>
+<td>文件路径管理</td>
+</tr>
+
+<tr>
+<td><code>glob</code>, <code>shutil</code>, <code>zipfile</code></td>
+<td>文件批量操作、压缩</td>
+</tr>
+
+<tr>
+<td><code>tqdm</code></td>
+<td>训练进度条显示</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="调试与性能">调试与性能</h3>
+
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>用法</th>
+<th>说明</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>print()</code> / <code>logging</code></td>
+<td>日志输出</td>
+<td>可配日志等级</td>
+</tr>
+
+<tr>
+<td><code>assert</code></td>
+<td><code>assert x &gt; 0</code></td>
+<td>条件断言</td>
+</tr>
+
+<tr>
+<td><code>%timeit</code></td>
+<td>IPython魔法命令</td>
+<td>性能测试</td>
+</tr>
+
+<tr>
+<td><code>pdb.set_trace()</code></td>
+<td>中断调试</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h2 id="十一-推荐学习资源">📚十一、 推荐学习资源</h2>
+
+<table>
+<thead>
+<tr>
+<th>主题</th>
+<th>资源</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Python 3 标准库手册</td>
+<td><a href="https://docs.python.org/3/library/">https://docs.python.org/3/library/</a></td>
+</tr>
+
+<tr>
+<td>PyTorch文档</td>
+<td><a href="https://pytorch.org/docs/stable/index.html">https://pytorch.org/docs/stable/index.html</a></td>
+</tr>
+
+<tr>
+<td>HuggingFace教程</td>
+<td><a href="https://huggingface.co/transformers/">https://huggingface.co/transformers/</a></td>
+</tr>
+
+<tr>
+<td>Python标准库速查</td>
+<td><a href="https://docs.python.org/3/library/">https://docs.python.org/3/library/</a></td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+    <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+  <div style="float:right;margin-top:0px;">
+    <img src="/img/qrcode.jpg" width="129px" height="129px"/>
+    <div style="text-align:center;">微信扫一扫</div>
+  </div>
+  <div style="float:left;margin-top:0px;">
+    <img src="/img/rewardcode.jpg" width="129px" height="129px"/>
+  </div>
+  <div>
+    <p style="margin-top:0px;">作者：<a target="_blank" href="http://blog.mospan.cn/">mospan</a>
+      <br />微信关注：墨斯潘園
+      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2025/08/02/python-in-ai/">http://mospany.github.io/2025/08/02/python-in-ai/</a>
+      <br />
+      文章版权归本人所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+  </div>
+</div>
+
+
+	</div>
+  <footer class="article-footer clearfix">
+  
+
+<div class="article-tags">
+  <span></span>
+  
+  <a href="/tags/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0">技术文章</a>
+  
+  <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD">人工智能</a>
+  
+</div>
 
 
 
-      </nav>
+<div class="article-categories">
+  <span></span>
+  
+  <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0">技术文章</a>
+  
+  <a class="article-category-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD">人工智能</a>
+  
+</div>
+
+
+
+  <div class="article-share" id="share">
+    <div data-url="http://mospany.github.io/2025/08/02/python-in-ai/" data-title="Python基础与速查手册" data-tsina="3833537679" class="share clearfix">
     </div>
+  </div>
+</footer>
+
+	</article>
+  
+
+
+
+
+
+<div id="git-comments"></div>
+<link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
+<script src="https://billts.site/js/gitment.js"></script>
+<script>
+var gitment = new Gitment({
+  id: '<%= page.date %>',
+  owner: 'mospany',
+  repo: 'mospan-hugo-blog-gitment',
+  oauth: {
+    client_id: '0cafe299c964f0af2d1e',
+    client_secret: 'ec47ee9481210935a662298791c31da203694a8f',
+  },
+})
+gitment.render('git-comments')
+</script>    
+
+
+</div>
+
     <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
@@ -576,6 +1377,38 @@ $(document).ready(function(){
 
 <script type="text/javascript">
 $(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
   var $this = $('.share'),
       url = $this.attr('data-url'),
       encodedUrl = encodeURIComponent(url),
@@ -602,6 +1435,27 @@ $(document).ready(function(){
 });
 </script>
 
+
+<link rel="stylesheet" href="http://mospany.github.io/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="http://mospany.github.io/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
 
 
 

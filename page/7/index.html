@@ -1,19 +1,20 @@
 <!DOCTYPE HTML>
 <html lang="zh-CN">
 <head>
+	<meta name="generator" content="Hugo 0.55.6" />
   <meta charset="UTF-8">
   <base href="http://mospany.github.io/">
-  <title>VUE - 墨斯潘園</title>
+  <title>墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
-  
-  <meta name="description" content="VUE">
+  <meta name="keywords" content="">
+  <meta name="description" content="墨斯潘園">
   <meta name="author" content="mospan">
-  <meta itemprop="name" content="VUE - 墨斯潘園">
-  <meta itemprop="description" content="VUE">
+  <meta itemprop="name" content="墨斯潘園">
+  <meta itemprop="description" content="墨斯潘園">
   <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
-  <meta name="twitter:title" content="VUE - 墨斯潘園" />
+  <meta name="twitter:title" content="墨斯潘園" />
   
   <meta name="twitter:description" content="">
   <link rel="shortcut icon" href="img/favicon.ico"/>
@@ -59,24 +60,144 @@
 
   </header>
   <div id="container">
+      
     <div id="main">
       
       
-      <h2 id="2018-02">2018-02</h2>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
       
       
       <section class="post" itemscope itemprop="blogPost">
-    <a href="http://mospany.github.io/2018/02/24/vue-dev-env-build/" title="VUE开发环境搭建" itemprop="url">
-    <h1 itemprop="name">VUE开发环境搭建</h1>
-    <p itemprop="description">安装 安装nodejs 到https://nodejs.org/en/download/ 下载对应系统的二进制版本。 按照ubuntu16.04下配</p>
-    <time datetime="2018-02-24 16:32:21 &#43;0800 CST" itemprop="datePublished">2018年02月24日</time>
+    <a href="http://mospany.github.io/post/2023/2023-12-03-pod-life-cycle/" title="" itemprop="url">
+    <h1 itemprop="name"></h1>
+    <p itemprop="description">Table of Contents  简介 pod状态  主要状态 其他状态  容器状态 kubelet状态  +
+toc = true
+categories = [&ldquo;技术文章&rdquo;]
+date = &ldquo;2023-12-03T10:42:05+08:00&rdquo;
+description = &ldquo;&rdquo;
+keywords = [&ldquo;K8S&rdquo;,&ldquo;云计算&rdquo;]
+tags = [&ldquo;K8S&rdquo;,&ldquo;云计算&rdquo;]
+title = &ldquo;K8S学习笔记(08): POD生命周期&rdquo;
+url = &ldquo;2023/12/03/pod-life-cycle&ldquo;
++
+
+简介 pod 遵循预定义的生命周期，起始于 Pending 阶段， 如果至少其中有一个主要容器正常启动，则进入 Running，之后取决于 Pod 中是否有容器以失败状态结束而进入 Succeeded 或者 Failed 阶段。
+
+pod状态 
+主要状态 Pod主要有以下几个状态, 定义在pkg/apis/core/types.go中：
+    状态 意义 描述     Pending 等待中 Pod已经被创建，但还没有完成调度，或者说有一个或多个镜像正处于从远程仓库下载的过程。处在这个阶段的Pod可能正在写数据到etcd中、调度、pull镜像或启动容器。   Running 运行中 该 Pod 已经绑定到了一个节点上，Pod 中所有的容器都已被创建。至少有一个容器正在运行，或者正处于启动或重启状态。   Succeeded 正常终止 Pod中的所有的容器已经正常的执行后退出，并且不会自动重启，一般会是在部署job的时候会出现。   Failed 异常停止 Pod 中的所有容器都已终止了，并且至少有一个容器是因为失败终止。也就是说，容器以非0状态退出或者被系统终止。   Unkonwn 未知状态 API Server无法正常获取到Pod对象的状态信息，通常是由于其无法与所在工作节点的kubelet通信所致。</p>
+    <time datetime="0001-01-01 00:00:00 &#43;0000 UTC" itemprop="datePublished">0001年01月01日</time>
   </a>
 </section>
 
-        
+      
       <nav id="page-nav" class="clearfix">
           
 
+
+<a aria-label="First" href="http://mospany.github.io//">
+  <span aria-hidden="true">««</span>
+</a>
+
+<a aria-label="Previous" href="http://mospany.github.io//page/6/">
+  <span aria-hidden="true">«</span>
+</a>
+
+
+<a href="http://mospany.github.io//">
+  1
+</a>
+
+<a href="http://mospany.github.io//page/2/">
+  2
+</a>
+
+<a href="http://mospany.github.io//page/3/">
+  3
+</a>
+
+<a href="http://mospany.github.io//page/4/">
+  4
+</a>
+
+<a href="http://mospany.github.io//page/5/">
+  5
+</a>
+
+<a href="http://mospany.github.io//page/6/">
+  6
+</a>
+
+<a class="active" href="http://mospany.github.io//page/7/">
+  7
+</a>
+
+
+<a class="disabled" aria-label="Next" href="#">
+  <span aria-hidden="true">»</span>
+</a>
+
+<a aria-label="Last" href="http://mospany.github.io//page/7/">
+  <span aria-hidden="true">»»</span>
+</a>
 
 
       </nav>
