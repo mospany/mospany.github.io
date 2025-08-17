@@ -17,7 +17,7 @@
       <pubDate>Sat, 02 Aug 2025 15:44:09 +0800</pubDate>
       
       <guid>http://mospany.github.io/2025/08/02/python-in-ai/</guid>
-      <description>🧠 一、基础语法速查 语法 示例 说明 变量定义 x = 10 不需要声明类型 条件语句 if x &amp;gt; 0: ... elif x==0: ... else: ... 结构清晰 循环 for i in range(10): while x &amp;lt; 5: 遍历/条件循环 函数定义 def func(a,</description>
+      <description>🧠 一、基础语法速查 🧠 Python 关键字（共 36 个，区分大小写） 关键字 说明 False 布尔值，假 True 布尔值，真 None 空值 and 逻辑与 or 逻辑或 not 逻辑非 if 条件语句 elif 条件分支 else 条件</description>
     </item>
     
     <item>

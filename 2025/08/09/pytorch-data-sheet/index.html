@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <base href="http://mospany.github.io/">
-  <title>项目实践 - 墨斯潘園</title>
+  <title>pytorch速查手册 - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
-  
-  <meta name="description" content="项目实践">
+  <meta name="keywords" content=",,">
+  <meta name="description" content="🧠 1. 安装与基础 # 安装 CPU 版本 pip install torch torchvision torchaudio # 安装 GPU 版本（CUDA 12.1 示例） pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121 import torch print(torch.__version__) # 版本 print(torch.cuda.is_available()) # 检查 GPU 📦 2. 张量（Tensor）基础 # 创建张量">
   <meta name="author" content="mospan">
-  <meta itemprop="name" content="项目实践 - 墨斯潘園">
-  <meta itemprop="description" content="项目实践">
+  <meta itemprop="name" content="pytorch速查手册 - 墨斯潘園">
+  <meta itemprop="description" content="🧠 1. 安装与基础 # 安装 CPU 版本 pip install torch torchvision torchaudio # 安装 GPU 版本（CUDA 12.1 示例） pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121 import torch print(torch.__version__) # 版本 print(torch.cuda.is_available()) # 检查 GPU 📦 2. 张量（Tensor）基础 # 创建张量">
   <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
-  <meta name="twitter:title" content="项目实践 - 墨斯潘園" />
+  <meta name="twitter:title" content="pytorch速查手册 - 墨斯潘園" />
   
   <meta name="twitter:description" content="">
   <link rel="shortcut icon" href="img/favicon.ico"/>
@@ -59,60 +59,247 @@
 
   </header>
   <div id="container">
-    <div id="main">
-      
-      
-      <h2 id="2023-03">2023-03</h2>
-      
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="http://mospany.github.io/2023/03/05/k8s-webhook-example/" title="K8S项目实践(06): 动手实现webhook" itemprop="url">
-    <h1 itemprop="name">K8S项目实践(06): 动手实现webhook</h1>
-    <p itemprop="description">简介 Webhook就是一种HTTP回调，用于在某种情况下执行某些动作，Webhook不是K8S独有的，很多场景下都可以进行Webhook，比</p>
-    <time datetime="2023-03-05 11:32:18 &#43;0800 CST" itemprop="datePublished">2023年03月05日</time>
-  </a>
-</section>
+    <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody">
+    <header class="article-info clearfix">
+  <h1 itemprop="name">
+      <a href="http://mospany.github.io/2025/08/09/pytorch-data-sheet/" title="pytorch速查手册" itemprop="url">pytorch速查手册</a>
+  </h1>
+  <p class="article-author">By 
+    
+      <a href="http://blog.mospan.cn" title="mospan">mospan</a>
+    
+  </p>
+  <p class="article-time">
+    <time datetime="2025-08-09 11:28:11 &#43;0800 CST" itemprop="datePublished">2025年08月09日</time>
+  </p>
+</header>
 
-        
-      <h2 id="2022-12">2022-12</h2>
-      
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="http://mospany.github.io/2022/12/22/k8s-sci-driver/" title="K8S项目实践(05): 动手实现CSI驱动" itemprop="url">
-    <h1 itemprop="name">K8S项目实践(05): 动手实现CSI驱动</h1>
-    <p itemprop="description">简介 外部存储接入 Kubernetes 的方式主要有两种：In-Tree 和 Out-of-Tree。其中 In-Tree 是指存储驱动的源码都在 Kubernetes 代码库中，与 Kubernetes 一起发布、迭代、管理</p>
-    <time datetime="2022-12-22 22:21:36 &#43;0800 CST" itemprop="datePublished">2022年12月22日</time>
-  </a>
-</section>
+	<div class="article-content">
+    
+    
 
-       
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="http://mospany.github.io/2022/12/14/operator-on-kubebuilder/" title="K8S项目实践(04): 基于kubebuilder编写operator" itemprop="url">
-    <h1 itemprop="name">K8S项目实践(04): 基于kubebuilder编写operator</h1>
-    <p itemprop="description">介绍 Kubebuilder是一个由controller-runtime支持的出色SDK，它可以帮助您轻松快速地在 Go 中编写Kubernetes</p>
-    <time datetime="2022-12-14 18:24:22 &#43;0800 CST" itemprop="datePublished">2022年12月14日</time>
-  </a>
-</section>
+<hr />
 
-       
-      
-      <section class="post" itemscope itemprop="blogPost">
-    <a href="http://mospany.github.io/2022/12/11/k8s-random-scheduler/" title="K8S项目实践(03): 随机调度器" itemprop="url">
-    <h1 itemprop="name">K8S项目实践(03): 随机调度器</h1>
-    <p itemprop="description">简介 POD创建过程 1、 由kubectl解析创建pod的yaml，发送创建pod请求到APIServer。 2、 APIServer首先做权限认证</p>
-    <time datetime="2022-12-11 11:51:52 &#43;0800 CST" itemprop="datePublished">2022年12月11日</time>
-  </a>
-</section>
+<h2 id="1-安装与基础">🧠 1. 安装与基础</h2>
 
-        
-      <nav id="page-nav" class="clearfix">
-          
+<pre><code class="language-bash"># 安装 CPU 版本
+pip install torch torchvision torchaudio
+
+# 安装 GPU 版本（CUDA 12.1 示例）
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+</code></pre>
+
+<pre><code class="language-python">import torch
+print(torch.__version__)    # 版本
+print(torch.cuda.is_available())  # 检查 GPU
+</code></pre>
+
+<hr />
+
+<h2 id="2-张量-tensor-基础">📦 2. 张量（Tensor）基础</h2>
+
+<pre><code class="language-python"># 创建张量
+x = torch.tensor([1, 2, 3])          # 从列表
+x = torch.zeros(3, 3)                # 全零
+x = torch.ones(2, 2)                  # 全一
+x = torch.eye(3)                      # 单位矩阵
+x = torch.rand(2, 3)                  # 均匀分布
+x = torch.randn(2, 3)                 # 正态分布
+x = torch.arange(0, 10, 2)            # 等差数列
+x = torch.linspace(0, 1, steps=5)     # 等间隔数列
+
+# 张量属性
+print(x.shape, x.dtype, x.device)
+
+# 数据类型
+x = x.float()  # 转 float32
+x = x.double() # 转 float64
+x = x.int()    # 转 int32
+
+# 张量运算
+y = torch.tensor([4, 5, 6])
+print(x + y)       # 加法
+print(x * y)       # 逐元素乘
+print(torch.dot(x, y))  # 点积
+print(x @ y)       # 矩阵乘
+</code></pre>
+
+<hr />
+
+<h2 id="3-设备-cpu-gpu-操作">🔄 3. 设备（CPU/GPU）操作</h2>
+
+<pre><code class="language-python"># 放到 GPU
+device = torch.device(&quot;cuda&quot; if torch.cuda.is_available() else &quot;cpu&quot;)
+x = x.to(device)
+
+# 直接创建在 GPU
+x = torch.rand(2, 2, device=&quot;cuda&quot;)
+</code></pre>
+
+<hr />
+
+<h2 id="4-自动求导-autograd">🧮 4. 自动求导（Autograd）</h2>
+
+<pre><code class="language-python"># 自动求导
+x = torch.tensor(2.0, requires_grad=True)
+y = x ** 2 + 3 * x + 1
+y.backward()  # dy/dx
+print(x.grad)  # 输出梯度：7
+</code></pre>
+
+<hr />
+
+<h2 id="5-神经网络构建-torch-nn">🏗 5. 神经网络构建（torch.nn）</h2>
+
+<pre><code class="language-python">import torch.nn as nn
+import torch.nn.functional as F
+
+class Net(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.fc1 = nn.Linear(10, 50)
+        self.fc2 = nn.Linear(50, 1)
+
+    def forward(self, x):
+        x = F.relu(self.fc1(x))
+        return self.fc2(x)
+
+model = Net()
+print(model)
+</code></pre>
+
+<hr />
+
+<h2 id="6-损失函数-优化器">⚡ 6. 损失函数 &amp; 优化器</h2>
+
+<pre><code class="language-python">import torch.optim as optim
+
+criterion = nn.MSELoss()
+optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
+</code></pre>
+
+<hr />
+
+<h2 id="7-训练循环模板">🔁 7. 训练循环模板</h2>
+
+<pre><code class="language-python">for epoch in range(epochs):
+    for data, target in dataloader:
+        optimizer.zero_grad()      # 清空梯度
+        output = model(data)       # 前向传播
+        loss = criterion(output, target) # 计算损失
+        loss.backward()            # 反向传播
+        optimizer.step()           # 更新参数
+</code></pre>
+
+<hr />
+
+<h2 id="8-推理-评估模式">🔍 8. 推理（评估模式）</h2>
+
+<pre><code class="language-python">model.eval()
+with torch.no_grad():  # 禁用梯度
+    pred = model(x)
+</code></pre>
+
+<hr />
+
+<h2 id="9-数据加载-dataloader">📊 9. 数据加载（DataLoader）</h2>
+
+<pre><code class="language-python">from torch.utils.data import DataLoader, TensorDataset
+
+dataset = TensorDataset(torch.randn(100, 10), torch.randn(100, 1))
+loader = DataLoader(dataset, batch_size=16, shuffle=True)
+</code></pre>
+
+<hr />
+
+<h2 id="10-常用加速技巧">🏎 10. 常用加速技巧</h2>
+
+<ul>
+<li><code>with torch.no_grad()</code>：推理时禁用梯度</li>
+<li><code>model.eval()</code>：关闭 Dropout / BatchNorm</li>
+<li>使用 <strong>GPU</strong>：<code>model.to(&quot;cuda&quot;)</code></li>
+<li>使用 <strong>AMP（自动混合精度）</strong>：<code>torch.cuda.amp</code></li>
+</ul>
+
+<hr />
+
+    <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+  <div style="float:right;margin-top:0px;">
+    <img src="/img/qrcode.jpg" width="129px" height="129px"/>
+    <div style="text-align:center;">微信扫一扫</div>
+  </div>
+  <div style="float:left;margin-top:0px;">
+    <img src="/img/rewardcode.jpg" width="129px" height="129px"/>
+  </div>
+  <div>
+    <p style="margin-top:0px;">作者：<a target="_blank" href="http://blog.mospan.cn/">mospan</a>
+      <br />微信关注：墨斯潘園
+      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2025/08/09/pytorch-data-sheet/">http://mospany.github.io/2025/08/09/pytorch-data-sheet/</a>
+      <br />
+      文章版权归本人所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+  </div>
+</div>
+
+
+	</div>
+  <footer class="article-footer clearfix">
+  
+
+<div class="article-tags">
+  <span></span>
+  
+  <a href="/tags/"></a>
+  
+  <a href="/tags/"></a>
+  
+</div>
 
 
 
-      </nav>
+<div class="article-categories">
+  <span></span>
+  
+  <a class="article-category-link" href="/categories/"></a>
+  
+  <a class="article-category-link" href="/categories/"></a>
+  
+</div>
+
+
+
+  <div class="article-share" id="share">
+    <div data-url="http://mospany.github.io/2025/08/09/pytorch-data-sheet/" data-title="pytorch速查手册" data-tsina="3833537679" class="share clearfix">
     </div>
+  </div>
+</footer>
+
+	</article>
+  
+
+
+
+
+
+<div id="git-comments"></div>
+<link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
+<script src="https://billts.site/js/gitment.js"></script>
+<script>
+var gitment = new Gitment({
+  id: '<%= page.date %>',
+  owner: 'mospany',
+  repo: 'mospan-hugo-blog-gitment',
+  oauth: {
+    client_id: '0cafe299c964f0af2d1e',
+    client_secret: 'ec47ee9481210935a662298791c31da203694a8f',
+  },
+})
+gitment.render('git-comments')
+</script>    
+
+
+</div>
+
     <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
@@ -608,6 +795,38 @@ $(document).ready(function(){
 
 <script type="text/javascript">
 $(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
   var $this = $('.share'),
       url = $this.attr('data-url'),
       encodedUrl = encodeURIComponent(url),
@@ -634,6 +853,27 @@ $(document).ready(function(){
 });
 </script>
 
+
+<link rel="stylesheet" href="http://mospany.github.io/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="http://mospany.github.io/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
 
 
 

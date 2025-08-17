@@ -5,7 +5,162 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Sat, 02 Aug 2025 15:44:09 CST</updated>
+        <updated>Sat, 09 Aug 2025 11:28:11 CST</updated>
+        
+        <item>
+            <title>pytorch速查手册</title>
+            <link>http://mospany.github.io/2025/08/09/pytorch-data-sheet/</link>
+            <pubDate>Sat, 09 Aug 2025 11:28:11 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://mospany.github.io/2025/08/09/pytorch-data-sheet/</guid>
+            <description>
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;1-安装与基础&#34;&gt;🧠 1. 安装与基础&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# 安装 CPU 版本
+pip install torch torchvision torchaudio
+
+# 安装 GPU 版本（CUDA 12.1 示例）
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import torch
+print(torch.__version__)    # 版本
+print(torch.cuda.is_available())  # 检查 GPU
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;2-张量-tensor-基础&#34;&gt;📦 2. 张量（Tensor）基础&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;# 创建张量
+x = torch.tensor([1, 2, 3])          # 从列表
+x = torch.zeros(3, 3)                # 全零
+x = torch.ones(2, 2)                  # 全一
+x = torch.eye(3)                      # 单位矩阵
+x = torch.rand(2, 3)                  # 均匀分布
+x = torch.randn(2, 3)                 # 正态分布
+x = torch.arange(0, 10, 2)            # 等差数列
+x = torch.linspace(0, 1, steps=5)     # 等间隔数列
+
+# 张量属性
+print(x.shape, x.dtype, x.device)
+
+# 数据类型
+x = x.float()  # 转 float32
+x = x.double() # 转 float64
+x = x.int()    # 转 int32
+
+# 张量运算
+y = torch.tensor([4, 5, 6])
+print(x + y)       # 加法
+print(x * y)       # 逐元素乘
+print(torch.dot(x, y))  # 点积
+print(x @ y)       # 矩阵乘
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;3-设备-cpu-gpu-操作&#34;&gt;🔄 3. 设备（CPU/GPU）操作&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;# 放到 GPU
+device = torch.device(&amp;quot;cuda&amp;quot; if torch.cuda.is_available() else &amp;quot;cpu&amp;quot;)
+x = x.to(device)
+
+# 直接创建在 GPU
+x = torch.rand(2, 2, device=&amp;quot;cuda&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;4-自动求导-autograd&#34;&gt;🧮 4. 自动求导（Autograd）&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;# 自动求导
+x = torch.tensor(2.0, requires_grad=True)
+y = x ** 2 + 3 * x + 1
+y.backward()  # dy/dx
+print(x.grad)  # 输出梯度：7
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;5-神经网络构建-torch-nn&#34;&gt;🏗 5. 神经网络构建（torch.nn）&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import torch.nn as nn
+import torch.nn.functional as F
+
+class Net(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.fc1 = nn.Linear(10, 50)
+        self.fc2 = nn.Linear(50, 1)
+
+    def forward(self, x):
+        x = F.relu(self.fc1(x))
+        return self.fc2(x)
+
+model = Net()
+print(model)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;6-损失函数-优化器&#34;&gt;⚡ 6. 损失函数 &amp;amp; 优化器&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import torch.optim as optim
+
+criterion = nn.MSELoss()
+optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;7-训练循环模板&#34;&gt;🔁 7. 训练循环模板&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;for epoch in range(epochs):
+    for data, target in dataloader:
+        optimizer.zero_grad()      # 清空梯度
+        output = model(data)       # 前向传播
+        loss = criterion(output, target) # 计算损失
+        loss.backward()            # 反向传播
+        optimizer.step()           # 更新参数
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;8-推理-评估模式&#34;&gt;🔍 8. 推理（评估模式）&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;model.eval()
+with torch.no_grad():  # 禁用梯度
+    pred = model(x)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;9-数据加载-dataloader&#34;&gt;📊 9. 数据加载（DataLoader）&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from torch.utils.data import DataLoader, TensorDataset
+
+dataset = TensorDataset(torch.randn(100, 10), torch.randn(100, 1))
+loader = DataLoader(dataset, batch_size=16, shuffle=True)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;10-常用加速技巧&#34;&gt;🏎 10. 常用加速技巧&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;with torch.no_grad()&lt;/code&gt;：推理时禁用梯度&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;model.eval()&lt;/code&gt;：关闭 Dropout / BatchNorm&lt;/li&gt;
+&lt;li&gt;使用 &lt;strong&gt;GPU&lt;/strong&gt;：&lt;code&gt;model.to(&amp;quot;cuda&amp;quot;)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;使用 &lt;strong&gt;AMP（自动混合精度）&lt;/strong&gt;：&lt;code&gt;torch.cuda.amp&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+</description>
+        </item>
         
         <item>
             <title>Python基础与速查手册</title>
@@ -16,6 +171,196 @@
             <description>
 
 &lt;h2 id=&#34;一-基础语法速查&#34;&gt;🧠 一、基础语法速查&lt;/h2&gt;
+
+&lt;h3 id=&#34;python-关键字-共-36-个-区分大小写&#34;&gt;🧠 Python 关键字（共 36 个，区分大小写）&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;关键字&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;False&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;布尔值，假&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;True&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;布尔值，真&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;None&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;空值&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;and&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;逻辑与&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;or&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;逻辑或&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;not&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;逻辑非&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;if&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;条件语句&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;elif&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;条件分支&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;else&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;条件结尾&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;while&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;条件循环&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;for&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;循环语句&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;break&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;中断循环&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;continue&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;跳过当前循环&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;in&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;成员判断、循环迭代&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;is&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;身份比较（是否是同一个对象）&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;pass&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;占位语句&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;def&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;定义函数&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;return&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;返回值&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;yield&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;生成器返回值&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;lambda&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;匿名函数&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;global&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;全局变量声明&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;nonlocal&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;闭包变量声明&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;import&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;导入模块&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;from&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;从模块导入指定成员&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;as&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;给导入模块/异常命名&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;class&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;类定义&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;try&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;异常捕获开始&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;except&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;异常捕获&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;finally&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;异常结束处理&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;raise&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;主动抛出异常&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;assert&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;断言&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;del&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;删除变量或元素&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;with&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;上下文管理语句&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;async&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;异步定义函数（协程）&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;await&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;异步调用（等待协程结果）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&#34;语法&#34;&gt;语法&lt;/h3&gt;
 
 &lt;table&gt;
 &lt;thead&gt;
@@ -6101,239 +6446,6 @@ sideEffects: None
 &lt;h1 id=&#34;参考资料&#34;&gt;参考资料&lt;/h1&gt;
 
 &lt;p&gt;【01】&lt;a href=&#34;https://zhuanlan.zhihu.com/p/404764407&#34;&gt;从0到1开发K8S_Webhook最佳实践&lt;/a&gt;]&lt;/p&gt;
-</description>
-        </item>
-        
-        <item>
-            <title>CentOS7 下安装和配置 NFS</title>
-            <link>http://mospany.github.io/2023/01/15/aliyun-ecs-install-nfs/</link>
-            <pubDate>Sun, 15 Jan 2023 10:44:29 CST</pubDate>
-            <author>Mospan</author>
-            <guid>http://mospany.github.io/2023/01/15/aliyun-ecs-install-nfs/</guid>
-            <description>
-
-&lt;p&gt;&lt;a id=&#34;org629d3e2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;简介&#34;&gt;简介&lt;/h1&gt;
-
-&lt;p&gt;NFS（Network File System，网络文件系统）是当前主流异构平台共享文件系统之一。主要应用在UNIX环境下。最早是由Sun Microsystems开发，现在能够支持在不同类型的系统之间通过网络进行文件共享，广泛应用在FreeBSD、SCO、Solaris等异构操作系统平台，允许一个系统在网络上与他人共享目录和文件。通过使用NFS，用户和程序可以像访问本地文件一样访问远端系统上的文件，使得每个计算机的节点能够像使用本地资源一样方便地使用网上资源。换言之，NFS可用于不同类型计算机、操作系统、网络架构和传输协议运行环境中的网络文件远程访问和共享。&lt;/p&gt;
-
-&lt;p&gt;NFS的工作原理是使用客户端/服务器架构，由一个客户端程序和服务器程序组成。服务器程序向其他计算机提供对文件系统的访问，其过程称为输出。NFS客户端程序对共享文件系统进行访问时，把它们从NFS服务器中“输送”出来。文件通常以块为单位进行传输。其大小是8KB（虽然它可能会将操作分成更小尺寸的分片）。NFS传输协议用于服务器和客户机之间文件访问和共享的通信，从而使客户机远程地访问保存在存储设备上的数据。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org043eb1b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;服务端搭建&#34;&gt;服务端搭建&lt;/h1&gt;
-
-&lt;p&gt;由于实现CSI需要一个后端存储，Linux提供NFS功能可以免费搭建一个NSC存储功能用来验证。&lt;br /&gt;
-搭建办法详见: &lt;a href=&#34;https://www.codeleading.com/article/35162638950/&#34;&gt;阿里云服务器 CentOS7 下安装和配置 NFS&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org31fb10d&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;服务端安装&#34;&gt;服务端安装&lt;/h2&gt;
-
-&lt;p&gt;使用 yum 安装 NFS 安装包。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;yum install nfs-utils -y 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org768e380&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;服务端配置&#34;&gt;服务端配置&lt;/h2&gt;
-
-&lt;p&gt;设置 NFS 服务开机启动&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# systemctl enable rpcbind
-[root@k8s-master ~]# systemctl enable nfs
-[root@k8s-master ~]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org79e8e0b&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;配置共享目录&#34;&gt;配置共享目录&lt;/h2&gt;
-
-&lt;p&gt;服务启动之后，我们在服务端配置一个共享目录&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# mkdir /data
-[root@k8s-master ~]# chmod 755 /data
-[root@k8s-master ~]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;根据这个目录，相应配置导出目录&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;vim /etc/exports
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;添加如下配置&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;/data/     *(rw,sync,no_root_squash,no_all_squash)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;data: 共享目录位置。&lt;br /&gt;
-192.168.0.0/24: 客户端 IP 范围，* 代表所有，即没有限制（我在实验中会设置为*）。&lt;br /&gt;
-rw: 权限设置，可读可写。&lt;br /&gt;
-sync: 同步共享目录。&lt;br /&gt;
-no_root_squash: 可以使用 root 授权。&lt;br /&gt;
-no_all_squash: 可以使用普通用户授权。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orge7422da&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;启动-nfs-服务&#34;&gt;启动 NFS 服务&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# systemctl start rpcbind
-[root@k8s-master ~]# systemctl start nfs
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org2db5bbe&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;防火墙需要打开-rpc-bind-和-nfs-的服务&#34;&gt;防火墙需要打开 rpc-bind 和 nfs 的服务&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# firewall-cmd --zone=public --permanent --add-service={rpc-bind,mountd,nfs}
-FirewallD is not running
-[root@k8s-master ~]# firewall-cmd --reload
-FirewallD is not running
-[root@k8s-master ~]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org9febc6e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;检查&#34;&gt;检查&lt;/h2&gt;
-
-&lt;p&gt;可以检查一下本地的共享目录&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# showmount -e localhost
-Export list for localhost:
-/data *
-[root@k8s-master ~]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;这样，服务端就配置好了。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgbfea31c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;查看端口&#34;&gt;查看端口&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# rpcinfo -p localhost
-program vers proto   port  service
- 100000    4   tcp    111  portmapper
- 100000    3   tcp    111  portmapper
- 100000    2   tcp    111  portmapper
- 100000    4   udp    111  portmapper
- 100000    3   udp    111  portmapper
- 100000    2   udp    111  portmapper
- 100005    1   udp  20048  mountd
- 100005    1   tcp  20048  mountd
- 100005    2   udp  20048  mountd
- 100024    1   udp  54689  status
- 100005    2   tcp  20048  mountd
- 100024    1   tcp  46564  status
- 100005    3   udp  20048  mountd
- 100005    3   tcp  20048  mountd
- 100003    3   tcp   2049  nfs
- 100003    4   tcp   2049  nfs
- 100227    3   tcp   2049  nfs_acl
- 100003    3   udp   2049  nfs
- 100003    4   udp   2049  nfs
- 100227    3   udp   2049  nfs_acl
- 100021    1   udp  40110  nlockmgr
- 100021    3   udp  40110  nlockmgr
- 100021    4   udp  40110  nlockmgr
- 100021    1   tcp  33742  nlockmgr
- 100021    3   tcp  33742  nlockmgr
- 100021    4   tcp  33742  nlockmgr
- [root@k8s-master ~]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;orga16c2a2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;客户端连接-nfs&#34;&gt;客户端连接 NFS&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;orge9dc5a1&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;在客户端创建目录&#34;&gt;在客户端创建目录&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# mkdir -p /mnt/nfs-data/
-[root@k8s-master ~]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgce10511&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;挂载&#34;&gt;挂载&lt;/h2&gt;
-
-&lt;p&gt;为了测试方便， 服务端和客户端均在同一台服务器上。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# mount -t nfs 127.0.0.1:/data /mnt/nfs-data
-[root@k8s-master ~]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;挂载之后，可以使用 mount 命令查看一下&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# mount | grep nfs
-nfsd on /proc/fs/nfsd type nfsd (rw,relatime)
-sunrpc on /var/lib/nfs/rpc_pipefs type rpc_pipefs (rw,relatime)
-127.0.0.1:/data on /mnt/nfs-data type nfs4 (rw,relatime,vers=4.1,rsize=524288,wsize=524288,namlen=255,hard,proto=tcp,timeo=600,retrans=2,sec=sys,clientaddr=127.0.0.1,local_lock=none,addr=127.0.0.1)
-[root@k8s-master ~]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;这说明已经挂载成功了。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgc315b27&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;测试nfs&#34;&gt;测试NFS&lt;/h1&gt;
-
-&lt;p&gt;测试一下，在客户端向共享目录创建一个文件&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# echo test &amp;gt; /mnt/nfs-data/bbb.txt
-[root@k8s-master ~]#
-[root@k8s-master ~]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;之后取 NFS 服务端查看一下&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# echo test &amp;gt; /mnt/nfs-data/bbb.txt
-[root@k8s-master ~]#
-[root@k8s-master ~]# cat /data/bbb.txt
-test
-[root@k8s-master ~]# 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;可以看到，共享目录已经写入了。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org6f32303&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;客户端自动挂载&#34;&gt;客户端自动挂载&lt;/h1&gt;
-
-&lt;p&gt;自动挂载很常用，客户端设置一下即可。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$ vim /etc/fstab
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;在结尾添加类似如下配置&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# cat /etc/fstab
-
- #
- # /etc/fstab
- # Created by anaconda on Thu Jul 11 02:52:01 2019
- #
- # Accessible filesystems, by reference, are maintained under &#39;/dev/disk&#39;
- # See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info
- #
- UUID=1114fe9e-2309-4580-b183-d778e6d97397 /                       ext4    defaults        1 1
- 127.0.0.1:/data     /mnt/nfs-data                   nfs     defaults        0 0
- [root@k8s-master ~]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;由于修改了 /etc/fstab，需要重新加载 systemctl。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master ~]# systemctl daemon-reload
-[root@k8s-master ~]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org284ecce&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;参考&#34;&gt;参考&lt;/h1&gt;
-
-&lt;p&gt;【01】&lt;a href=&#34;https://www.codeleading.com/article/35162638950/&#34;&gt;阿里云服务器 CentOS7 下安装和配置 NFS&lt;/a&gt;&lt;/p&gt;
 </description>
         </item>
         

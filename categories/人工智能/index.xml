@@ -6,10 +6,19 @@
     <description>Recent content in 人工智能 on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sat, 02 Aug 2025 15:44:09 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 09 Aug 2025 11:28:11 +0800</lastBuildDate>
     
 	<atom:link href="http://mospany.github.io/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>pytorch速查手册</title>
+      <link>http://mospany.github.io/2025/08/09/pytorch-data-sheet/</link>
+      <pubDate>Sat, 09 Aug 2025 11:28:11 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2025/08/09/pytorch-data-sheet/</guid>
+      <description>🧠 1. 安装与基础 # 安装 CPU 版本 pip install torch torchvision torchaudio # 安装 GPU 版本（CUDA 12.1 示例） pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121 import torch print(torch.__version__) # 版本 print(torch.cuda.is_available()) # 检查 GPU 📦 2. 张量（Tensor）基础 # 创建张量</description>
+    </item>
     
     <item>
       <title>Python基础与速查手册</title>
@@ -17,7 +26,7 @@
       <pubDate>Sat, 02 Aug 2025 15:44:09 +0800</pubDate>
       
       <guid>http://mospany.github.io/2025/08/02/python-in-ai/</guid>
-      <description>🧠 一、基础语法速查 语法 示例 说明 变量定义 x = 10 不需要声明类型 条件语句 if x &amp;gt; 0: ... elif x==0: ... else: ... 结构清晰 循环 for i in range(10): while x &amp;lt; 5: 遍历/条件循环 函数定义 def func(a,</description>
+      <description>🧠 一、基础语法速查 🧠 Python 关键字（共 36 个，区分大小写） 关键字 说明 False 布尔值，假 True 布尔值，真 None 空值 and 逻辑与 or 逻辑或 not 逻辑非 if 条件语句 elif 条件分支 else 条件</description>
     </item>
     
     <item>

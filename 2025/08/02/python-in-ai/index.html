@@ -6,10 +6,10 @@
   <title>Python基础与速查手册 - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
   <meta name="keywords" content="技术文章,人工智能,">
-  <meta name="description" content="🧠 一、基础语法速查 语法 示例 说明 变量定义 x = 10 不需要声明类型 条件语句 if x &gt; 0: ... elif x==0: ... else: ... 结构清晰 循环 for i in range(10): while x &lt; 5: 遍历/条件循环 函数定义 def func(a,">
+  <meta name="description" content="🧠 一、基础语法速查 🧠 Python 关键字（共 36 个，区分大小写） 关键字 说明 False 布尔值，假 True 布尔值，真 None 空值 and 逻辑与 or 逻辑或 not 逻辑非 if 条件语句 elif 条件分支 else 条件">
   <meta name="author" content="mospan">
   <meta itemprop="name" content="Python基础与速查手册 - 墨斯潘園">
-  <meta itemprop="description" content="🧠 一、基础语法速查 语法 示例 说明 变量定义 x = 10 不需要声明类型 条件语句 if x &gt; 0: ... elif x==0: ... else: ... 结构清晰 循环 for i in range(10): while x &lt; 5: 遍历/条件循环 函数定义 def func(a,">
+  <meta itemprop="description" content="🧠 一、基础语法速查 🧠 Python 关键字（共 36 个，区分大小写） 关键字 说明 False 布尔值，假 True 布尔值，真 None 空值 and 逻辑与 or 逻辑或 not 逻辑非 if 条件语句 elif 条件分支 else 条件">
   <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
@@ -80,6 +80,196 @@
     
 
 <h2 id="一-基础语法速查">🧠 一、基础语法速查</h2>
+
+<h3 id="python-关键字-共-36-个-区分大小写">🧠 Python 关键字（共 36 个，区分大小写）</h3>
+
+<table>
+<thead>
+<tr>
+<th>关键字</th>
+<th>说明</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>False</code></td>
+<td>布尔值，假</td>
+</tr>
+
+<tr>
+<td><code>True</code></td>
+<td>布尔值，真</td>
+</tr>
+
+<tr>
+<td><code>None</code></td>
+<td>空值</td>
+</tr>
+
+<tr>
+<td><code>and</code></td>
+<td>逻辑与</td>
+</tr>
+
+<tr>
+<td><code>or</code></td>
+<td>逻辑或</td>
+</tr>
+
+<tr>
+<td><code>not</code></td>
+<td>逻辑非</td>
+</tr>
+
+<tr>
+<td><code>if</code></td>
+<td>条件语句</td>
+</tr>
+
+<tr>
+<td><code>elif</code></td>
+<td>条件分支</td>
+</tr>
+
+<tr>
+<td><code>else</code></td>
+<td>条件结尾</td>
+</tr>
+
+<tr>
+<td><code>while</code></td>
+<td>条件循环</td>
+</tr>
+
+<tr>
+<td><code>for</code></td>
+<td>循环语句</td>
+</tr>
+
+<tr>
+<td><code>break</code></td>
+<td>中断循环</td>
+</tr>
+
+<tr>
+<td><code>continue</code></td>
+<td>跳过当前循环</td>
+</tr>
+
+<tr>
+<td><code>in</code></td>
+<td>成员判断、循环迭代</td>
+</tr>
+
+<tr>
+<td><code>is</code></td>
+<td>身份比较（是否是同一个对象）</td>
+</tr>
+
+<tr>
+<td><code>pass</code></td>
+<td>占位语句</td>
+</tr>
+
+<tr>
+<td><code>def</code></td>
+<td>定义函数</td>
+</tr>
+
+<tr>
+<td><code>return</code></td>
+<td>返回值</td>
+</tr>
+
+<tr>
+<td><code>yield</code></td>
+<td>生成器返回值</td>
+</tr>
+
+<tr>
+<td><code>lambda</code></td>
+<td>匿名函数</td>
+</tr>
+
+<tr>
+<td><code>global</code></td>
+<td>全局变量声明</td>
+</tr>
+
+<tr>
+<td><code>nonlocal</code></td>
+<td>闭包变量声明</td>
+</tr>
+
+<tr>
+<td><code>import</code></td>
+<td>导入模块</td>
+</tr>
+
+<tr>
+<td><code>from</code></td>
+<td>从模块导入指定成员</td>
+</tr>
+
+<tr>
+<td><code>as</code></td>
+<td>给导入模块/异常命名</td>
+</tr>
+
+<tr>
+<td><code>class</code></td>
+<td>类定义</td>
+</tr>
+
+<tr>
+<td><code>try</code></td>
+<td>异常捕获开始</td>
+</tr>
+
+<tr>
+<td><code>except</code></td>
+<td>异常捕获</td>
+</tr>
+
+<tr>
+<td><code>finally</code></td>
+<td>异常结束处理</td>
+</tr>
+
+<tr>
+<td><code>raise</code></td>
+<td>主动抛出异常</td>
+</tr>
+
+<tr>
+<td><code>assert</code></td>
+<td>断言</td>
+</tr>
+
+<tr>
+<td><code>del</code></td>
+<td>删除变量或元素</td>
+</tr>
+
+<tr>
+<td><code>with</code></td>
+<td>上下文管理语句</td>
+</tr>
+
+<tr>
+<td><code>async</code></td>
+<td>异步定义函数（协程）</td>
+</tr>
+
+<tr>
+<td><code>await</code></td>
+<td>异步调用（等待协程结果）</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="语法">语法</h3>
 
 <table>
 <thead>
@@ -894,11 +1084,11 @@ gitment.render('git-comments')
     
     <li><a href="http://mospany.github.io/categories/%e4%ba%91%e8%ae%a1%e7%ae%97" title="云计算">云计算<sup>7</sup></a></li>
     
-    <li><a href="http://mospany.github.io/categories/%e4%ba%ba%e5%b7%a5%e6%99%ba%e8%83%bd" title="人工智能">人工智能<sup>12</sup></a></li>
+    <li><a href="http://mospany.github.io/categories/%e4%ba%ba%e5%b7%a5%e6%99%ba%e8%83%bd" title="人工智能">人工智能<sup>13</sup></a></li>
     
     <li><a href="http://mospany.github.io/categories/%e5%b7%a5%e5%85%b7%e4%bd%bf%e7%94%a8" title="工具使用">工具使用<sup>3</sup></a></li>
     
-    <li><a href="http://mospany.github.io/categories/%e6%8a%80%e6%9c%af%e6%96%87%e7%ab%a0" title="技术文章">技术文章<sup>47</sup></a></li>
+    <li><a href="http://mospany.github.io/categories/%e6%8a%80%e6%9c%af%e6%96%87%e7%ab%a0" title="技术文章">技术文章<sup>48</sup></a></li>
     
     <li><a href="http://mospany.github.io/categories/%e7%94%9f%e6%b4%bb%e8%ae%b0%e5%bd%95" title="生活记录">生活记录<sup>1</sup></a></li>
     
@@ -917,7 +1107,7 @@ gitment.render('git-comments')
 	<p class="asidetitle">标签</p>
 		<ul class="clearfix">
       
-			<li><a href="http://mospany.github.io/tags/" title=""><sup>6</sup></a></li>
+			<li><a href="http://mospany.github.io/tags/" title=""><sup>8</sup></a></li>
       
 			<li><a href="http://mospany.github.io/tags/dns" title="dns">dns<sup>2</sup></a></li>
       
@@ -1059,7 +1249,7 @@ gitment.render('git-comments')
       
       
       <li class="archive-list-item">
-        <a class="archive-list-link" href="http://mospany.github.io/post/#2025-08">2025年08月</a><span class="archive-list-count">10</span>
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2025-08">2025年08月</a><span class="archive-list-count">11</span>
       </li>
       
       
