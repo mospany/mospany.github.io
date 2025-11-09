@@ -5,7 +5,2500 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Sat, 09 Aug 2025 11:28:11 CST</updated>
+        <updated>Sun, 09 Nov 2025 11:24:40 CST</updated>
+        
+        <item>
+            <title>大模型权重文件解析</title>
+            <link>http://mospany.github.io/2025/11/09/hugging-face/</link>
+            <pubDate>Sun, 09 Nov 2025 11:24:40 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://mospany.github.io/2025/11/09/hugging-face/</guid>
+            <description>
+
+&lt;h1 id=&#34;1-模型文件&#34;&gt;1、模型文件&lt;/h1&gt;
+
+&lt;p&gt;以Qwen1.5-32B-Chat-AWQ模型文件列表为例：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;shengping.mo@y108p30:/data2/huggingface/Qwen/Qwen1.5-32B-Chat-AWQ$ ls -lh
+total 20G
+-rw-r--r-- 1 xd xd  839 Jun 27 22:30 config.json
+-rw-r--r-- 1 xd xd  243 Jun 27 22:30 generation_config.json
+-rw-r--r-- 1 xd xd 6.8K Jun 27 22:30 LICENSE
+-rw-r--r-- 1 xd xd 1.6M Jun 27 22:30 merges.txt
+-rw-r--r-- 1 xd xd 4.7G Jun 27 22:28 model-00001-of-00005.safetensors
+-rw-r--r-- 1 xd xd 4.7G Jun 27 22:29 model-00002-of-00005.safetensors
+-rw-r--r-- 1 xd xd 4.7G Jun 27 22:29 model-00003-of-00005.safetensors
+-rw-r--r-- 1 xd xd 4.3G Jun 27 22:30 model-00004-of-00005.safetensors
+-rw-r--r-- 1 xd xd 1.5G Jun 27 22:30 model-00005-of-00005.safetensors
+-rw-r--r-- 1 xd xd 140K Jun 27 22:30 model.safetensors.index.json
+-rw-r--r-- 1 xd xd 4.0K Jun 27 22:30 README.md
+-rw-r--r-- 1 xd xd 1.3K Jun 27 22:30 tokenizer_config.json
+-rw-r--r-- 1 xd xd 6.8M Jun 27 22:30 tokenizer.json
+-rw-r--r-- 1 xd xd 2.7M Jun 27 22:30 vocab.json
+shengping.mo@y108p30:/data2/huggingface/Qwen/Qwen1.5-32B-Chat-AWQ$ 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;2-整体分析&#34;&gt;2、整体分析&lt;/h1&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;config.json&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;存储模型架构元数据，包括网络层数，隐藏维度，注意力头数，词表大小，激活函数类型等参数
+&lt;br /&gt;&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;模型权重文件：torch 和 hf 权重文件&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;pytroch_model.pth: 用于保存模型权重参数的二进制文件，以字典的形式保存，键为层名称，值为对应的权重张量数据。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;model.safetensor：和pth权重文件的功能相同，区别是采用了安全序列化格式，避免反序列化漏洞风险。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;分片权重文件：对于超大型的模型权重，会被分割成多个文件，解决单个文件体积限制问题。&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;分词器相关&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;tokenizer_config.json: 分词器类型、特殊标记的定义&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;tokenizer.json: 将分词器的所有配置信息，包括词汇表，合并规则，归一化，预分词，后处理等打包在一起，目的是让训练和推理过程中的分词行为完全一致。&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;文本生成参数配置文件 &lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;generation_config.json：定义文本生成策略，包括温度，top-p等超参数。
+&lt;br /&gt;&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;tokenizer-json&#34;&gt;tokenizer.json&lt;/h3&gt;
+
+&lt;p&gt;文件定义了分词器的所有配置&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;added_tokens: 原有词汇表基础上额外添加的特殊token([PAD] [CLS])&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;post_processor: 后处理模板，设置单句，双句对输入时输入时自动添加[cls] 和 [sep]&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;decoder：解码器类型&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;model：底层分词器模型 的类型及其参数。&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Vocab: 定义了词汇表，其中key为token的字符串，value为对应的id。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;merges：定义了子token合并成更长token的规则。&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;special-tokens-map-json&#34;&gt;special_tokens_map.json&lt;/h3&gt;
+
+&lt;p&gt;文件定义了与文本序列处理相关的特殊token&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;bos_token (Beginning of Sentence Token): 序列开始标记，文本序列的起始位置&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;eos_token (End of Sentence Token)： 序列结束标记，表示文本序列的结束位置。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;eop_token (End of Paragraph Token): 段落结束标记，表示段落结束的特殊标记&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;pad_token (Padding Token): 填充标记，它将用于文本序列填充到相同长度时使用的特殊token。tokenizer.json 文件解析。 &lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h1 id=&#34;3-具体分析&#34;&gt;3、具体分析&lt;/h1&gt;
+
+&lt;h2 id=&#34;3-1-config-json&#34;&gt;3.1 config.json&lt;/h2&gt;
+
+&lt;p&gt;作用：用于&lt;strong&gt;描述模型的结构、超参数、训练方式、特殊行为等信息&lt;/strong&gt;，在加载模型时自动解析并构建模型实例。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
+  // 使用的模型架构名称
+  &amp;quot;architectures&amp;quot;: [
+    &amp;quot;Qwen2ForCausalLM&amp;quot;
+  ],
+  // 注意力层的dropout比例
+  &amp;quot;attention_dropout&amp;quot;: 0.0,
+  // 句子起始（BOS）token的ID
+  &amp;quot;bos_token_id&amp;quot;: 151643,
+  // 句子结束（EOS）token的ID
+  &amp;quot;eos_token_id&amp;quot;: 151645,
+  // 隐藏层激活函数
+  &amp;quot;hidden_act&amp;quot;: &amp;quot;silu&amp;quot;,
+  // 隐藏层维度
+  &amp;quot;hidden_size&amp;quot;: 5120,
+  // 参数初始化范围
+  &amp;quot;initializer_range&amp;quot;: 0.02,
+  // 前馈网络中间层的维度
+  &amp;quot;intermediate_size&amp;quot;: 27392,
+  // 最大位置编码长度
+  &amp;quot;max_position_embeddings&amp;quot;: 32768,
+  // 支持滑动窗口的最大层数
+  &amp;quot;max_window_layers&amp;quot;: 35,
+  // 模型类型标识
+  &amp;quot;model_type&amp;quot;: &amp;quot;qwen2&amp;quot;,
+  // 注意力头的数量
+  &amp;quot;num_attention_heads&amp;quot;: 40,
+  // Transformer层的数量
+  &amp;quot;num_hidden_layers&amp;quot;: 64,
+  // key-value注意力头的数量（用于分组注意力等）
+  &amp;quot;num_key_value_heads&amp;quot;: 8,
+  // 量化相关配置
+  &amp;quot;quantization_config&amp;quot;: {
+    // 量化位数
+    &amp;quot;bits&amp;quot;: 4,
+    // 量化分组大小
+    &amp;quot;group_size&amp;quot;: 32,
+    // 不进行量化的模块
+    &amp;quot;modules_to_not_convert&amp;quot;: null,
+    // 量化方法
+    &amp;quot;quant_method&amp;quot;: &amp;quot;awq&amp;quot;,
+    // 量化版本
+    &amp;quot;version&amp;quot;: &amp;quot;gemm&amp;quot;,
+    // 是否使用零点
+    &amp;quot;zero_point&amp;quot;: true
+  },
+  // RMSNorm的epsilon值
+  &amp;quot;rms_norm_eps&amp;quot;: 1e-06,
+  // ROPE位置编码的theta参数
+  &amp;quot;rope_theta&amp;quot;: 1000000.0,
+  // 滑动窗口长度
+  &amp;quot;sliding_window&amp;quot;: 32768,
+  // 是否共享词嵌入权重
+  &amp;quot;tie_word_embeddings&amp;quot;: false,
+  // PyTorch中使用的数据类型
+  &amp;quot;torch_dtype&amp;quot;: &amp;quot;float16&amp;quot;,
+  // transformers库的版本
+  &amp;quot;transformers_version&amp;quot;: &amp;quot;4.38.2&amp;quot;,
+  // 是否使用缓存（加速推理）
+  &amp;quot;use_cache&amp;quot;: true,
+  // 是否启用滑动窗口机制
+  &amp;quot;use_sliding_window&amp;quot;: false,
+  // 词表大小
+  &amp;quot;vocab_size&amp;quot;: 152064
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;一-基本模型规格&#34;&gt;🧠 一、基本模型规格&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;参数&lt;/th&gt;
+&lt;th&gt;含义&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;model_type&lt;/code&gt;: &lt;code&gt;&amp;quot;qwen2&amp;quot;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;模型类型&lt;/td&gt;
+&lt;td&gt;来自阿里达摩院的 Qwen2 系列&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;architectures&lt;/code&gt;: &lt;code&gt;&amp;quot;Qwen2ForCausalLM&amp;quot;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;架构&lt;/td&gt;
+&lt;td&gt;自回归语言模型（Causal Language Model）&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;hidden_size&lt;/code&gt;: &lt;code&gt;5120&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;每层维度&lt;/td&gt;
+&lt;td&gt;大型模型（估算 20B 参数级别）&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;num_hidden_layers&lt;/code&gt;: &lt;code&gt;64&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Transformer 层数&lt;/td&gt;
+&lt;td&gt;层数非常深&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;num_attention_heads&lt;/code&gt;: &lt;code&gt;40&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;注意力头数&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;num_key_value_heads&lt;/code&gt;: &lt;code&gt;8&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;KV 分组数量&lt;/td&gt;
+&lt;td&gt;表明采用了 &lt;strong&gt;Grouped Query Attention (GQA)&lt;/strong&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;intermediate_size&lt;/code&gt;: &lt;code&gt;27392&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;FFN 层维度&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;vocab_size&lt;/code&gt;: &lt;code&gt;152064&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;词表大小&lt;/td&gt;
+&lt;td&gt;包含中文/英文等多语言词表&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;二-上下文和位置处理&#34;&gt;🧠 二、上下文和位置处理&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;参数&lt;/th&gt;
+&lt;th&gt;含义&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;max_position_embeddings&lt;/code&gt;: &lt;code&gt;32768&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;最大位置嵌入（理论最大上下文长度）&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;sliding_window&lt;/code&gt;: &lt;code&gt;32768&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;实际窗口大小&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;max_window_layers&lt;/code&gt;: &lt;code&gt;35&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;可支持滑动窗口的层数&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;rope_theta&lt;/code&gt;: &lt;code&gt;1e6&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;用于 RoPE（旋转位置编码）的频率参数（适配长上下文）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;📌 &lt;strong&gt;说明&lt;/strong&gt;：这是一个&lt;strong&gt;支持超长上下文&lt;/strong&gt;（32K token）的模型，适合：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;读大文档（PDF/合同/代码）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;长对话历史保持上下文连贯&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;文本审校、知识提取&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;三-优化与量化配置&#34;&gt;⚙️ 三、优化与量化配置&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;参数&lt;/th&gt;
+&lt;th&gt;含义&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;quantization_config.bits&lt;/code&gt;: &lt;code&gt;4&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;4-bit 量化&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;quant_method&lt;/code&gt;: &lt;code&gt;awq&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;使用 AWQ（Activation-aware Weight Quantization）&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;group_size&lt;/code&gt;: &lt;code&gt;32&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;每组参数量化块大小&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;version&lt;/code&gt;: &lt;code&gt;gemm&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;量化内核类型，基于 GEMM&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;zero_point&lt;/code&gt;: true&lt;/td&gt;
+&lt;td&gt;使用 Zero-point 对称量化&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;torch_dtype&lt;/code&gt;: &lt;code&gt;&amp;quot;float16&amp;quot;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;半精度 float16 运算&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;📌 &lt;strong&gt;说明&lt;/strong&gt;：这说明这个模型是经过 &lt;strong&gt;4bit AWQ 量化优化的版本&lt;/strong&gt;，意味着你可以：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;在消费级显卡（比如 24G 显存）运行&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;延迟更低，推理速度快&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;部署成本降低&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;3-2-generation-config-json&#34;&gt;3.2 generation_config.json&lt;/h2&gt;
+
+&lt;p&gt;推理参数（生成策略）配置文件,  用于控制模型生成文本时的行为（例如采样策略、终止符号、重复惩罚等）， 这段 JSON 是模型的“生成策略说明书”，控制模型如何从输入中“说出”下一句话。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
+  // 起始标记的token id
+  &amp;quot;bos_token_id&amp;quot;: 151643,
+  // 是否使用采样生成
+  &amp;quot;do_sample&amp;quot;: true,
+  // 结束标记的token id列表
+  &amp;quot;eos_token_id&amp;quot;: [
+    151645,
+    151643
+  ],
+  // 填充token的id
+  &amp;quot;pad_token_id&amp;quot;: 151643,
+  // 重复惩罚系数
+  &amp;quot;repetition_penalty&amp;quot;: 1.05,
+  // 采样温度
+  &amp;quot;temperature&amp;quot;: 0.7,
+  // top-k采样参数
+  &amp;quot;top_k&amp;quot;: 20,
+  // top-p采样参数
+  &amp;quot;top_p&amp;quot;: 0.8,
+  // transformers库的版本
+  &amp;quot;transformers_version&amp;quot;: &amp;quot;4.38.2&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;字段解析与作用&#34;&gt;🔍 字段解析与作用&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;参数名&lt;/th&gt;
+&lt;th&gt;示例值&lt;/th&gt;
+&lt;th&gt;含义与作用&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;bos_token_id&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;151643&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Begin Of Sequence，生成起始标记 token ID&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;eos_token_id&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;[151645, 151643]&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;End Of Sequence，遇到这些 token ID 时停止生成&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;pad_token_id&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;151643&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;用于 padding（对齐序列）时使用的 token ID&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;do_sample&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;true&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;启用采样（否则是贪婪/beam search）&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;temperature&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;0.7&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;控制采样随机性（值越低越确定）&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;top_k&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;20&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;限制每一步采样时最多考虑前 20 个概率最高的 token&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;top_p&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;0.8&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;nucleus sampling（只考虑累积概率 ≥ 0.8 的 token）&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;repetition_penalty&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;1.05&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;惩罚重复词语（&amp;gt;1 会降低重复出现 token 的概率）&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;transformers_version&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;&amp;quot;4.38.2&amp;quot;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;指明此配置兼容的 HuggingFace Transformers 版本&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;实际生成中它怎么用&#34;&gt;🧠 实际生成中它怎么用？&lt;/h3&gt;
+
+&lt;p&gt;你加载模型后，如果该文件存在，Transformers 会自动读取这些参数并应用到 &lt;code&gt;generate()&lt;/code&gt; 调用中：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from transformers import AutoTokenizer, AutoModelForCausalLM
+
+model = AutoModelForCausalLM.from_pretrained(&amp;quot;Qwen/Qwen2-7B&amp;quot;)
+tokenizer = AutoTokenizer.from_pretrained(&amp;quot;Qwen/Qwen2-7B&amp;quot;)
+
+input_ids = tokenizer(&amp;quot;你好，请帮我总结一下这段话：&amp;quot;, return_tensors=&amp;quot;pt&amp;quot;).input_ids
+outputs = model.generate(input_ids)
+print(tokenizer.decode(outputs[0], skip_special_tokens=True))
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;如果目录下存在 &lt;code&gt;generation_config.json&lt;/code&gt;，&lt;code&gt;model.generate()&lt;/code&gt; 会默认读取其中的设置（如 &lt;code&gt;top_k&lt;/code&gt;, &lt;code&gt;temperature&lt;/code&gt; 等）。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;你也可以手动覆盖它：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;outputs = model.generate(
+    input_ids,
+    temperature=0.7,
+    top_k=20,
+    top_p=0.8,
+    repetition_penalty=1.05,
+    do_sample=True,
+    max_new_tokens=256
+)
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;你可以用它做什么&#34;&gt;✅ 你可以用它做什么？&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;自定义生成风格&lt;/strong&gt;：更随机或更确定、控制重复&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;优化对话流畅性&lt;/strong&gt;：结合 &lt;code&gt;eos_token_id&lt;/code&gt;，能更自然地中止输出&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;自动化部署&lt;/strong&gt;：多个模型可统一读取生成策略文件&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;3-3-merges-txt&#34;&gt;3.3 merges.txt&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;merges.txt&lt;/code&gt; 是 Hugging Face 模型中的一个 &lt;strong&gt;分词器（Tokenizer）文件&lt;/strong&gt;，它是 &lt;strong&gt;Byte Pair Encoding（BPE）&lt;/strong&gt; 分词算法的核心组成部分之一，配合 &lt;code&gt;vocab.json&lt;/code&gt; 使用，决定了如何将文本分割成 token。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/4jKqm0b8gmBmbnw1/img/ad459646-9cf9-4b50-9321-5f022f5f71d6.png&#34; alt=&#34;image.png&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;merges.txt&lt;/code&gt; 是 Hugging Face 模型中的一个 &lt;strong&gt;分词器（Tokenizer）文件&lt;/strong&gt;，它是 &lt;strong&gt;Byte Pair Encoding（BPE）&lt;/strong&gt; 分词算法的核心组成部分之一，配合 &lt;code&gt;vocab.json&lt;/code&gt; 使用，决定了如何将文本分割成 token。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;bpe-分词算法背景简述&#34;&gt;🧠 BPE 分词算法背景简述&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;Byte Pair Encoding (BPE)&lt;/strong&gt; 是一种基于频率的子词（subword）分词方法，常用于：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;GPT 系列（包括 OpenAI 模型）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;RoBERTa、DistilBERT、Qwen、LLaMA、BLOOM 等 HuggingFace 模型&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;适用于多语言、中文、代码等&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;merges-txt-文件作用&#34;&gt;📂 &lt;code&gt;**merges.txt**&lt;/code&gt; 文件作用&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;定义每一步合并哪些子词，形成新的词片段（token）&lt;/strong&gt;，即：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;从原始字符逐步构建更大的常见子词&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;保留高频组合、减少词表大小、提升表示能力&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;文件内容格式示例&#34;&gt;🧾 文件内容格式示例&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-txt&#34;&gt;#version: 0.2
+t h
+th e
+he r
+re s
+es t
+...
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;每一行是一个 &lt;strong&gt;合并规则（merge rule）&lt;/strong&gt;，格式为两个空格分隔的子词（symbol）：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-plaintext&#34;&gt;A B
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;表示 &lt;code&gt;A B → AB&lt;/code&gt; 的合并操作。模型在分词时会按这些规则顺序地将字符对合并成 token，直到无法合并为止。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;与-vocab-json-的关系&#34;&gt;🔄 与 vocab.json 的关系&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;文件&lt;/th&gt;
+&lt;th&gt;作用&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;vocab.json&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;保存最终的 token → id 映射（所有可用 token）&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;merges.txt&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;保存 BPE 合并规则（从字符构造这些 token 的路径）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;二者共同定义了分词器的行为，缺一不可。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;应用举例-gpt-分词过程&#34;&gt;📦 应用举例：GPT 分词过程&lt;/h3&gt;
+
+&lt;p&gt;假设原始文本是 &lt;code&gt;&amp;quot;there&amp;quot;&lt;/code&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;初始字符序列：&lt;code&gt;[&amp;quot;t&amp;quot;, &amp;quot;h&amp;quot;, &amp;quot;e&amp;quot;, &amp;quot;r&amp;quot;, &amp;quot;e&amp;quot;]&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;第一次匹配合并规则：&lt;code&gt;t h → th&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;变为：&lt;code&gt;[&amp;quot;th&amp;quot;, &amp;quot;e&amp;quot;, &amp;quot;r&amp;quot;, &amp;quot;e&amp;quot;]&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;然后：&lt;code&gt;th e → the&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;然后：&lt;code&gt;the r → ther&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;然后：&lt;code&gt;ther e → there&lt;/code&gt; → ✅ 完整 token&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;最终就是一个 token：&lt;code&gt;there&lt;/code&gt;，对应 &lt;code&gt;vocab.json&lt;/code&gt; 中的某个 ID。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;怎么查看&#34;&gt;🔍 怎么查看？&lt;/h3&gt;
+
+&lt;p&gt;使用 HuggingFace Tokenizer API 查看分词器：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from transformers import AutoTokenizer
+
+tokenizer = AutoTokenizer.from_pretrained(&amp;quot;Qwen/Qwen2-7B&amp;quot;)
+print(tokenizer.tokenize(&amp;quot;there&amp;quot;))
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;常见用途&#34;&gt;🛠️ 常见用途&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;作用&lt;/th&gt;
+&lt;th&gt;示例&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;✅ 自定义分词器&lt;/td&gt;
+&lt;td&gt;用你自己的 &lt;code&gt;merges.txt&lt;/code&gt; + &lt;code&gt;vocab.json&lt;/code&gt; 创建分词器&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;🧪 分析模型分词习惯&lt;/td&gt;
+&lt;td&gt;看哪些词被拆了，比如中文 &lt;code&gt;数据处理&lt;/code&gt; → &lt;code&gt;数&lt;/code&gt;, &lt;code&gt;据&lt;/code&gt;, &lt;code&gt;处理&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;📦 微调 tokenizer&lt;/td&gt;
+&lt;td&gt;用 HuggingFace &lt;code&gt;tokenizers&lt;/code&gt; 工具重新训练 tokenizer&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;实战示例-创建自定义-bpe-分词器&#34;&gt;🧰 实战示例：创建自定义 BPE 分词器&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from tokenizers import Tokenizer, models, trainers, pre_tokenizers
+
+tokenizer = Tokenizer(models.BPE())
+tokenizer.pre_tokenizer = pre_tokenizers.Whitespace()
+
+trainer = trainers.BpeTrainer(vocab_size=10000, special_tokens=[&amp;quot;&amp;lt;pad&amp;gt;&amp;quot;, &amp;quot;&amp;lt;unk&amp;gt;&amp;quot;])
+tokenizer.train([&amp;quot;your_corpus.txt&amp;quot;], trainer)
+
+tokenizer.save(&amp;quot;tokenizer.json&amp;quot;)  # 里面包含 vocab 和 merges
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;总结一句话&#34;&gt;✅ 总结一句话&lt;/h3&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;code&gt;merges.txt&lt;/code&gt; 是 HuggingFace BPE 分词器的“合并规则表”，告诉模型如何从字符组合成 token，它是 &lt;code&gt;vocab.json&lt;/code&gt; 的构造过程记录，二者配合用于模型输入的分词处理。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;3-4-model-00001-of-000xx-safetensors&#34;&gt;3.4 model-00001-of-000XX.safetensors&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;model-00001-of-000XX.safetensors&lt;/code&gt; 是 Hugging Face 或类似框架在保存大型模型权重时生成的文件之一。其中XX值代表有多少个类似的权重文件，这个文件的 &lt;strong&gt;作用是保存模型的实际权重（参数）数据&lt;/strong&gt;，是推理或训练时真正加载到模型中的核心内容。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;一句话概括&#34;&gt;📦 一句话概括&lt;/h3&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;code&gt;model-00001-of-000XX.safetensors&lt;/code&gt; 是保存 Transformer 模型参数的&lt;strong&gt;分片化 safetensors 文件&lt;/strong&gt;，它是 &lt;code&gt;.bin&lt;/code&gt; 的安全高效替代，用于多文件分布式加载大型模型。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;文件组成与命名结构&#34;&gt;🔍 文件组成与命名结构&lt;/h3&gt;
+
+&lt;p&gt;比如你看到这样的目录结构：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;model-00001-of-00007.safetensors
+model-00002-of-00007.safetensors
+...
+model-00007-of-00007.safetensors
+model.safetensors.index.json
+config.json
+tokenizer.json
+generation_config.json
+...
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;含义如下：&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;文件名&lt;/th&gt;
+&lt;th&gt;含义&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;model-00001-of-00007.safetensors&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;模型参数的第 1 个分片，共 7 个&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;model.safetensors.index.json&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;记录每个权重张量存储在哪个分片中（索引文件）&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;config.json&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;模型结构描述&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;tokenizer.json&lt;/code&gt; / &lt;code&gt;merges.txt&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;分词器文件&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;generation_config.json&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;文本生成策略配置&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;safetensors-格式简析&#34;&gt;🧠 safetensors 格式简析&lt;/h3&gt;
+
+&lt;p&gt;&lt;code&gt;safetensors&lt;/code&gt; 是一种由 Hugging Face 社区主导开发的&lt;strong&gt;安全、快速、零拷贝的模型权重保存格式&lt;/strong&gt;，用于替代早期的 &lt;code&gt;.bin&lt;/code&gt;（PyTorch pickle）格式。&lt;/p&gt;
+
+&lt;h4 id=&#34;相比-bin-格式的优势&#34;&gt;✅ 相比 &lt;code&gt;**.bin**&lt;/code&gt; 格式的优势：&lt;/h4&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;特性&lt;/th&gt;
+&lt;th&gt;&lt;code&gt;.bin&lt;/code&gt;&lt;/th&gt;
+&lt;th&gt;&lt;code&gt;.safetensors&lt;/code&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;安全性（避免执行 pickle）&lt;/td&gt;
+&lt;td&gt;❌ 可能执行恶意代码&lt;/td&gt;
+&lt;td&gt;✅ 完全静态数据&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;加载速度（零拷贝 mmap）&lt;/td&gt;
+&lt;td&gt;较慢&lt;/td&gt;
+&lt;td&gt;✅ 极快&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;分片支持&lt;/td&gt;
+&lt;td&gt;✅&lt;/td&gt;
+&lt;td&gt;✅&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;通用性（兼容 PyTorch）&lt;/td&gt;
+&lt;td&gt;✅&lt;/td&gt;
+&lt;td&gt;✅（HuggingFace 专用）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;文件内部结构&#34;&gt;🔍 文件内部结构&lt;/h3&gt;
+
+&lt;p&gt;你不能直接打开 &lt;code&gt;.safetensors&lt;/code&gt; 文件，但可以用 &lt;code&gt;safetensors&lt;/code&gt; 官方库读取其中内容：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from safetensors import safe_open
+
+with safe_open(&amp;quot;model-00001-of-00007.safetensors&amp;quot;, framework=&amp;quot;pt&amp;quot;) as f:
+    for name in f.keys():
+        tensor = f.get_tensor(name)
+        print(name, tensor.shape)
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这些 &lt;code&gt;name&lt;/code&gt; 就是模型的权重名（如：&lt;code&gt;transformer.h.0.attn.q_proj.weight&lt;/code&gt;），对应模型层。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;model-safetensors-index-json-作用&#34;&gt;📦 &lt;code&gt;**model.safetensors.index.json**&lt;/code&gt; 作用&lt;/h3&gt;
+
+&lt;p&gt;这个 JSON 文件告诉框架：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;所有参数都有哪些&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;每个参数在哪个 &lt;code&gt;.safetensors&lt;/code&gt; 分片中&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;每个 tensor 的形状与数据类型&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;示例结构如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
+  &amp;quot;metadata&amp;quot;: {
+    &amp;quot;total_size&amp;quot;: 54123342123
+  },
+  &amp;quot;weight_map&amp;quot;: {
+    &amp;quot;transformer.h.0.attn.q_proj.weight&amp;quot;: &amp;quot;model-00001-of-00007.safetensors&amp;quot;,
+    &amp;quot;transformer.h.0.attn.k_proj.weight&amp;quot;: &amp;quot;model-00001-of-00007.safetensors&amp;quot;,
+    ...
+  }
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这样框架就能在多个分片中找到每个参数的位置。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;如何加载含-safetensors-的模型&#34;&gt;🛠️ 如何加载含 &lt;code&gt;**.safetensors**&lt;/code&gt; 的模型？&lt;/h3&gt;
+
+&lt;p&gt;使用 Hugging Face Transformers 会自动识别：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from transformers import AutoModelForCausalLM
+
+model = AutoModelForCausalLM.from_pretrained(&amp;quot;your_model_dir&amp;quot;, trust_remote_code=True)
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;框架会：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;加载 &lt;code&gt;config.json&lt;/code&gt; 构建模型结构&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;加载 &lt;code&gt;safetensors.index.json&lt;/code&gt; 映射文件&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;从多个 &lt;code&gt;.safetensors&lt;/code&gt; 分片中加载权重&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;如果你要保存为-safetensors&#34;&gt;📤 如果你要保存为 &lt;code&gt;**.safetensors**&lt;/code&gt;&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from transformers import AutoModelForCausalLM
+
+model.save_pretrained(&amp;quot;your_dir&amp;quot;, safe_serialization=True)
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;它会自动生成：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;分片的 &lt;code&gt;model-xxxx-of-yyyy.safetensors&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;model.safetensors.index.json&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;你也可以设置 &lt;code&gt;max_shard_size&lt;/code&gt; 控制分片大小（如 &lt;code&gt;&amp;quot;2GB&amp;quot;&lt;/code&gt;）。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;总结&#34;&gt;✅ 总结&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;项目&lt;/th&gt;
+&lt;th&gt;内容&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;文件名&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;model-00001-of-000XX.safetensors&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;作用&lt;/td&gt;
+&lt;td&gt;存储 Transformer 模型参数的分片（权重）&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;搭配使用&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;model.safetensors.index.json&lt;/code&gt; 提供索引&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;加载方式&lt;/td&gt;
+&lt;td&gt;自动由 Hugging Face Transformers 识别&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;替代格式&lt;/td&gt;
+&lt;td&gt;更快、更安全的 &lt;code&gt;.bin&lt;/code&gt; 替代品&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;应用场景&lt;/td&gt;
+&lt;td&gt;大模型分布式权重管理，私有部署，安全模型分发&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;3-5-model-safetensors-index-json&#34;&gt;3.5 model.safetensors.index.json&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;model.safetensors.index.json&lt;/code&gt; 是 Hugging Face Transformers 在使用 &lt;code&gt;.safetensors&lt;/code&gt; 格式保存大模型权重时生成的 &lt;strong&gt;索引文件&lt;/strong&gt;，用于记录 &lt;strong&gt;每个模型参数（tensor）在哪个分片文件中&lt;/strong&gt;，让模型加载器能正确分布式加载多个 &lt;code&gt;.safetensors&lt;/code&gt; 文件。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;一句话总结&#34;&gt;🧠 一句话总结&lt;/h3&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;code&gt;model.safetensors.index.json&lt;/code&gt; 是多分片 &lt;code&gt;.safetensors&lt;/code&gt; 权重文件的&lt;strong&gt;目录映射表&lt;/strong&gt;，记录了每个权重张量的文件位置。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;为什么需要它&#34;&gt;📦 为什么需要它？&lt;/h3&gt;
+
+&lt;p&gt;当模型很大（例如 7B/14B/70B），所有参数无法放进一个 &lt;code&gt;.safetensors&lt;/code&gt; 文件时，会被拆成多片，比如：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-plaintext&#34;&gt;model-00001-of-00007.safetensors
+model-00002-of-00007.safetensors
+...
+model-00007-of-00007.safetensors
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这时就需要一个索引文件告诉你：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;每个 tensor 存在哪个分片文件里&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;所有权重一共多大&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;文件结构详解&#34;&gt;📄 文件结构详解&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
+    &amp;quot;metadata&amp;quot;: {
+        // 总大小（字节）
+        &amp;quot;total_size&amp;quot;: 21011769344
+    },
+    &amp;quot;weight_map&amp;quot;: {
+        // 嵌入层权重文件
+        &amp;quot;model.embed_tokens.weight&amp;quot;: &amp;quot;model-00001-of-00005.safetensors&amp;quot;,
+        // 第0层自注意力q_proj的权重文件
+        &amp;quot;model.layers.0.self_attn.q_proj.qweight&amp;quot;: &amp;quot;model-00001-of-00005.safetensors&amp;quot;,
+        &amp;quot;model.layers.0.self_attn.q_proj.qzeros&amp;quot;: &amp;quot;model-00001-of-00005.safetensors&amp;quot;,
+        &amp;quot;model.layers.0.self_attn.q_proj.scales&amp;quot;: &amp;quot;model-00001-of-00005.safetensors&amp;quot;,
+        &amp;quot;model.layers.0.self_attn.q_proj.bias&amp;quot;: &amp;quot;model-00001-of-00005.safetensors&amp;quot;,
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;一个典型的 &lt;code&gt;model.safetensors.index.json&lt;/code&gt; 文件内容如下（已格式化）：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
+  &amp;quot;metadata&amp;quot;: {
+    &amp;quot;total_size&amp;quot;: 13789162534  // 所有分片的总大小（字节数）
+  },
+  &amp;quot;weight_map&amp;quot;: {
+    &amp;quot;model.embed_tokens.weight&amp;quot;: &amp;quot;model-00001-of-00007.safetensors&amp;quot;,
+    &amp;quot;model.layers.0.self_attn.q_proj.weight&amp;quot;: &amp;quot;model-00001-of-00007.safetensors&amp;quot;,
+    &amp;quot;model.layers.0.self_attn.k_proj.weight&amp;quot;: &amp;quot;model-00001-of-00007.safetensors&amp;quot;,
+    ...
+    &amp;quot;lm_head.weight&amp;quot;: &amp;quot;model-00007-of-00007.safetensors&amp;quot;
+  }
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;字段解释&#34;&gt;🧩 字段解释&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;字段&lt;/th&gt;
+&lt;th&gt;类型&lt;/th&gt;
+&lt;th&gt;含义&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;metadata.total_size&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;int&lt;/td&gt;
+&lt;td&gt;所有权重总大小（字节数）&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;weight_map&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;dict&lt;/td&gt;
+&lt;td&gt;key 为参数名，value 为对应的分片文件名&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;例如：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;&amp;quot;model.layers.42.mlp.down_proj.weight&amp;quot;: &amp;quot;model-00006-of-00007.safetensors&amp;quot;
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;表示这一层的参数在第 6 个权重分片中。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;使用方式&#34;&gt;🛠️ 使用方式&lt;/h3&gt;
+
+&lt;p&gt;当你用 Transformers 的 &lt;code&gt;.from_pretrained()&lt;/code&gt; 加载 safetensors 权重时，它会：&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;读取 &lt;code&gt;config.json&lt;/code&gt; 建好模型结构&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;检查是否有 &lt;code&gt;model.safetensors.index.json&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;根据 &lt;code&gt;weight_map&lt;/code&gt; 去每个分片 &lt;code&gt;.safetensors&lt;/code&gt; 文件加载参数&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;你无需手动操作。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from transformers import AutoModelForCausalLM
+
+model = AutoModelForCausalLM.from_pretrained(&amp;quot;path/to/model&amp;quot;, trust_remote_code=True)
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;自定义用法-高级&#34;&gt;✏️ 自定义用法（高级）&lt;/h3&gt;
+
+&lt;p&gt;你可以修改或生成自己的 &lt;code&gt;model.safetensors.index.json&lt;/code&gt;，例如：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;加载部分权重&lt;/strong&gt;：比如只加载 encoder 层用于微调&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;重新分片&lt;/strong&gt;：将一个大文件拆成多个分片&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;工具包支持：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from safetensors.torch import load_file
+from transformers import PreTrainedModel
+
+# 可读取特定 safetensors 文件
+tensors = load_file(&amp;quot;model-00001-of-00007.safetensors&amp;quot;)
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;补充说明&#34;&gt;📌 补充说明&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;.index.json&lt;/code&gt; 是 &lt;strong&gt;只读辅助文件&lt;/strong&gt;，不包含参数值本身&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;不可缺失&lt;/strong&gt;：如果有多个分片，必须存在此文件，否则加载会报错&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;对应 &lt;code&gt;.bin&lt;/code&gt; 的同类文件叫 &lt;code&gt;pytorch_model.bin.index.json&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;总结-1&#34;&gt;✅ 总结&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;项目&lt;/th&gt;
+&lt;th&gt;内容&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;文件名&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;model.safetensors.index.json&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;作用&lt;/td&gt;
+&lt;td&gt;记录每个模型参数在哪个 &lt;code&gt;.safetensors&lt;/code&gt; 分片中&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;用于&lt;/td&gt;
+&lt;td&gt;自动多分片加载、分布式部署、节省内存&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;典型配套文件&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;model-00001-of-00007.safetensors&lt;/code&gt; 等多个分片&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;自动处理&lt;/td&gt;
+&lt;td&gt;Transformers 框架会自动解析并加载&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;3-6-readme-md&#34;&gt;3.6 README.md&lt;/h2&gt;
+
+&lt;p&gt;在 Hugging Face 模型目录中（如 &lt;code&gt;huggingface.co/你的模型名/&lt;/code&gt;），&lt;code&gt;README.md&lt;/code&gt; 的作用非常重要，它不仅是模型介绍文档，还直接影响你在 Hugging Face 网页上看到的模型主页内容。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;一句话总结-1&#34;&gt;🧠 一句话总结&lt;/h3&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;code&gt;README.md&lt;/code&gt; 是 Hugging Face 模型仓库的&lt;strong&gt;可视化主页说明文档&lt;/strong&gt;，用于展示模型的介绍、用法、性能、许可证等信息。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;典型结构与作用&#34;&gt;📄 典型结构与作用&lt;/h3&gt;
+
+&lt;p&gt;一个标准的 &lt;code&gt;README.md&lt;/code&gt; 通常包含如下部分：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;---
+license: other
+license_name: tongyi-qianwen
+license_link: &amp;gt;-
+  https://huggingface.co/Qwen/Qwen1.5-32B-Chat-AWQ/blob/main/LICENSE
+language:
+- en
+pipeline_tag: text-generation
+tags:
+- chat
+---
+
+# Qwen1.5-32B-Chat-AWQ
+
+
+## Introduction
+
+Qwen1.5 is the beta version of Qwen2, a transformer-based decoder-only language model pretrained on a large amount of data. In comparison with the previous released Qwen, the improvements include: 
+
+* 8 model sizes, including 0.5B, 1.8B, 4B, 7B, 14B, 32B and 72B dense models, and an MoE model of 14B with 2.7B activated;
+* Significant performance improvement in human preference for chat models;
+* Multilingual support of both base and chat models;
+* Stable support of 32K context length for models of all sizes
+* No need of `trust_remote_code`.
+
+For more details, please refer to our [blog post](https://qwenlm.github.io/blog/qwen1.5/) and [GitHub repo](https://github.com/QwenLM/Qwen1.5).
+&amp;lt;br&amp;gt;
+
+## Model Details
+Qwen1.5 is a language model series including decoder language models of different model sizes. For each size, we release the base language model and the aligned chat model. It is based on the Transformer architecture with SwiGLU activation, attention QKV bias, group query attention, mixture of sliding window attention and full attention, etc. Additionally, we have an improved tokenizer adaptive to multiple natural languages and codes. For the beta version, temporarily we did not include GQA (except for 32B) and the mixture of SWA and full attention.
+
+## Training details
+We pretrained the models with a large amount of data, and we post-trained the models with both supervised finetuning and direct preference optimization.
+
+## Requirements
+The code of Qwen1.5 has been in the latest Hugging face transformers and we advise you to install `transformers&amp;gt;=4.37.0`, or you might encounter the following error:
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;KeyError: &amp;lsquo;qwen2&amp;rsquo;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+## Quickstart
+
+Here provides a code snippet with `apply_chat_template` to show you how to load the tokenizer and model and how to generate contents.
+
+```python
+from transformers import AutoModelForCausalLM, AutoTokenizer
+device = &amp;quot;cuda&amp;quot; # the device to load the model onto
+
+model = AutoModelForCausalLM.from_pretrained(
+    &amp;quot;Qwen/Qwen1.5-32B-Chat-AWQ&amp;quot;,
+    torch_dtype=&amp;quot;auto&amp;quot;,
+    device_map=&amp;quot;auto&amp;quot;
+)
+tokenizer = AutoTokenizer.from_pretrained(&amp;quot;Qwen/Qwen1.5-32B-Chat-AWQ&amp;quot;)
+
+prompt = &amp;quot;Give me a short introduction to large language model.&amp;quot;
+messages = [
+    {&amp;quot;role&amp;quot;: &amp;quot;system&amp;quot;, &amp;quot;content&amp;quot;: &amp;quot;You are a helpful assistant.&amp;quot;},
+    {&amp;quot;role&amp;quot;: &amp;quot;user&amp;quot;, &amp;quot;content&amp;quot;: prompt}
+]
+text = tokenizer.apply_chat_template(
+    messages,
+    tokenize=False,
+    add_generation_prompt=True
+)
+model_inputs = tokenizer([text], return_tensors=&amp;quot;pt&amp;quot;).to(device)
+
+generated_ids = model.generate(
+    model_inputs.input_ids,
+    max_new_tokens=512
+)
+generated_ids = [
+    output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)
+]
+
+response = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;tips&#34;&gt;Tips&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;If you encounter code switching or other bad cases, we advise you to use our provided hyper-parameters in &lt;code&gt;generation_config.json&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;citation&#34;&gt;Citation&lt;/h2&gt;
+
+&lt;p&gt;If you find our work helpful, feel free to give us a cite.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;@article{qwen,
+  title={Qwen Technical Report},
+  author={Jinze Bai and Shuai Bai and Yunfei Chu and Zeyu Cui and Kai Dang and Xiaodong Deng and Yang Fan and Wenbin Ge and Yu Han and Fei Huang and Binyuan Hui and Luo Ji and Mei Li and Junyang Lin and Runji Lin and Dayiheng Liu and Gao Liu and Chengqiang Lu and Keming Lu and Jianxin Ma and Rui Men and Xingzhang Ren and Xuancheng Ren and Chuanqi Tan and Sinan Tan and Jianhong Tu and Peng Wang and Shijie Wang and Wei Wang and Shengguang Wu and Benfeng Xu and Jin Xu and An Yang and Hao Yang and Jian Yang and Shusheng Yang and Yang Yao and Bowen Yu and Hongyi Yuan and Zheng Yuan and Jianwei Zhang and Xingxuan Zhang and Yichang Zhang and Zhenru Zhang and Chang Zhou and Jingren Zhou and Xiaohuan Zhou and Tianhang Zhu},
+  journal={arXiv preprint arXiv:2309.16609},
+  year={2023}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code&gt;
+#### 1. 模型简介
+
+```markdown
+# Qwen2-7B-Chat
+
+Qwen2 是阿里达摩院发布的新一代大语言模型，支持中英文，具备对话能力。
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;简明扼要介绍模型名称、来源、能力、适用场景。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;hr /&gt;
+
+&lt;h4 id=&#34;2-模型卡元数据-yaml-header&#34;&gt;2. 模型卡元数据（YAML Header）&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-markdown&#34;&gt;---
+license: apache-2.0
+language:
+  - zh
+  - en
+tags:
+  - chat
+  - qwen2
+pipeline_tag: text-generation
+---
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;这段 YAML 元数据是 Hugging Face “模型卡”规范的一部分，供网页渲染和搜索使用。常见字段包括：&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;字段&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;license&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;模型许可证类型（如 apache-2.0、mit、openrail）&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;language&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;支持的语言&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;tags&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;模型标签，影响推荐和搜索&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;pipeline_tag&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;用于展示推理 Widget 的模型类型（如 &lt;code&gt;text-generation&lt;/code&gt;, &lt;code&gt;text-classification&lt;/code&gt;）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+
+&lt;h4 id=&#34;3-模型使用方式-代码示例&#34;&gt;3. 模型使用方式（代码示例）&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;## 使用方法
+
+```python
+from transformers import AutoTokenizer, AutoModelForCausalLM
+
+tokenizer = AutoTokenizer.from_pretrained(&amp;quot;Qwen/Qwen2-7B-Chat&amp;quot;)
+model = AutoModelForCausalLM.from_pretrained(&amp;quot;Qwen/Qwen2-7B-Chat&amp;quot;)
+
+inputs = tokenizer(&amp;quot;你好，请介绍一下你自己。&amp;quot;, return_tensors=&amp;quot;pt&amp;quot;)
+outputs = model.generate(**inputs)
+print(tokenizer.decode(outputs[0]))
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-plaintext&#34;&gt;
+&amp;gt; 展示如何加载和使用模型，通常使用 `transformers` 接口，帮助用户快速上手。
+
+---
+
+### 4. 模型细节（结构、训练语料、推理设置）
+
+```markdown
+## 模型结构
+
+- 参数量：7B
+- 层数：32
+- 支持上下文长度：32K
+- 训练数据：中英混合、网络文本、代码等
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;有助于用户了解模型能力与边界。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;hr /&gt;
+
+&lt;h4 id=&#34;5-性能评估-benchmark-可选&#34;&gt;5. 性能评估 / Benchmark（可选）&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-markdown&#34;&gt;## Benchmark
+
+| Dataset | Score |
+|---------|-------|
+| MMLU    | 68.3  |
+| CMMLU   | 56.1  |
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h4 id=&#34;6-许可与责任声明&#34;&gt;6. 许可与责任声明&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-markdown&#34;&gt;## 许可证
+
+本模型采用 Apache 2.0 协议，可商用使用。
+
+## 注意事项
+
+本模型为研究用途，不对生成内容负责。请勿用于违法行为。
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;如何影响-hugging-face-页面&#34;&gt;💻 如何影响 Hugging Face 页面？&lt;/h3&gt;
+
+&lt;p&gt;上传的 &lt;code&gt;README.md&lt;/code&gt; 会被渲染为 Hugging Face 模型页的主要内容部分：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;位于模型卡最上方&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;显示推理示例、标签、语言支持、下载入口等&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;决定了用户是否信任、理解、使用你的模型&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;👉 可以理解为：&lt;strong&gt;它既是文档，又是营销页！&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;如何编辑-上传&#34;&gt;🛠️ 如何编辑 / 上传？&lt;/h3&gt;
+
+&lt;h4 id=&#34;方法-1-手动创建&#34;&gt;方法 1：手动创建&lt;/h4&gt;
+
+&lt;p&gt;将 &lt;code&gt;README.md&lt;/code&gt; 放入模型目录中，调用：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;huggingface-cli upload ./your_model --repo-id yourname/yourmodel
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;方法-2-在线编辑&#34;&gt;方法 2：在线编辑&lt;/h4&gt;
+
+&lt;p&gt;在模型页面右上角点击 ✏️「Edit model card」，在线修改 &lt;code&gt;README.md&lt;/code&gt;。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;总结-2&#34;&gt;✅ 总结&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;项目&lt;/th&gt;
+&lt;th&gt;内容&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;文件名&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;README.md&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;位置&lt;/td&gt;
+&lt;td&gt;模型目录根路径&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;作用&lt;/td&gt;
+&lt;td&gt;显示在 Hugging Face 模型主页，提供模型介绍、使用方法、元数据&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;类型&lt;/td&gt;
+&lt;td&gt;Markdown 文本，支持代码块、表格、图片等&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;与谁配套&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;config.json&lt;/code&gt;（结构）、&lt;code&gt;safetensors&lt;/code&gt;（权重）、&lt;code&gt;tokenizer.json&lt;/code&gt;（分词器）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;3-7-tokenizer-config-json&#34;&gt;3.7 tokenizer_config.json&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;tokenizer_config.json&lt;/code&gt; 是 Hugging Face Transformers 模型目录中的重要配置文件，它用于&lt;strong&gt;描述 tokenizer 的运行时行为和元信息&lt;/strong&gt;，对加载、兼容性、推理行为等都有影响。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;一句话理解&#34;&gt;🧠 一句话理解&lt;/h3&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;code&gt;tokenizer_config.json&lt;/code&gt; 是告诉 &lt;code&gt;AutoTokenizer&lt;/code&gt;（或其它 Tokenizer 类）&lt;strong&gt;如何正确加载和使用分词器&lt;/strong&gt;的说明书。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;文件位置&#34;&gt;📦 文件位置&lt;/h3&gt;
+
+&lt;p&gt;在 Hugging Face 模型目录结构中，通常与下列文件位于同一目录下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-plaintext&#34;&gt;- config.json
+- tokenizer_config.json
+- tokenizer.json
+- merges.txt / vocab.json
+- special_tokens_map.json
+- model.safetensors
+- README.md
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;典型内容示例&#34;&gt;🧾 典型内容示例&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
+  // 是否在分词时添加前缀空格
+  &amp;quot;add_prefix_space&amp;quot;: false,
+  // 特殊token的解码器
+  &amp;quot;added_tokens_decoder&amp;quot;: {
+    // &amp;lt;|endoftext|&amp;gt; 结束文本的特殊token
+    &amp;quot;151643&amp;quot;: {
+      &amp;quot;content&amp;quot;: &amp;quot;&amp;lt;|endoftext|&amp;gt;&amp;quot;,
+      &amp;quot;lstrip&amp;quot;: false,
+      &amp;quot;normalized&amp;quot;: false,
+      &amp;quot;rstrip&amp;quot;: false,
+      &amp;quot;single_word&amp;quot;: false,
+      &amp;quot;special&amp;quot;: true
+    },
+    // &amp;lt;|im_start|&amp;gt; 对话开始的特殊token
+    &amp;quot;151644&amp;quot;: {
+      &amp;quot;content&amp;quot;: &amp;quot;&amp;lt;|im_start|&amp;gt;&amp;quot;,
+      &amp;quot;lstrip&amp;quot;: false,
+      &amp;quot;normalized&amp;quot;: false,
+      &amp;quot;rstrip&amp;quot;: false,
+      &amp;quot;single_word&amp;quot;: false,
+      &amp;quot;special&amp;quot;: true
+    },
+    // &amp;lt;|im_end|&amp;gt; 对话结束的特殊token
+    &amp;quot;151645&amp;quot;: {
+      &amp;quot;content&amp;quot;: &amp;quot;&amp;lt;|im_end|&amp;gt;&amp;quot;,
+      &amp;quot;lstrip&amp;quot;: false,
+      &amp;quot;normalized&amp;quot;: false,
+      &amp;quot;rstrip&amp;quot;: false,
+      &amp;quot;single_word&amp;quot;: false,
+      &amp;quot;special&amp;quot;: true
+    }
+  },
+  // 额外的特殊token列表
+  &amp;quot;additional_special_tokens&amp;quot;: [],
+  // 句子起始token（未设置）
+  &amp;quot;bos_token&amp;quot;: null,
+  // 聊天模板，定义消息格式
+  &amp;quot;chat_template&amp;quot;: &amp;quot;{% for message in messages %}{% if loop.first and messages[0][&#39;role&#39;] != &#39;system&#39; %}{{ &#39;&amp;lt;|im_start|&amp;gt;system\nYou are a helpful assistant.&amp;lt;|im_end|&amp;gt;\n&#39; }}{% endif %}{{&#39;&amp;lt;|im_start|&amp;gt;&#39; + message[&#39;role&#39;] + &#39;\n&#39; + message[&#39;content&#39;] + &#39;&amp;lt;|im_end|&amp;gt;&#39; + &#39;\n&#39;}}{% endfor %}{% if add_generation_prompt %}{{ &#39;&amp;lt;|im_start|&amp;gt;assistant\n&#39; }}{% endif %}&amp;quot;,
+  // 是否清理分词空格
+  &amp;quot;clean_up_tokenization_spaces&amp;quot;: false,
+  // 句子结束token
+  &amp;quot;eos_token&amp;quot;: &amp;quot;&amp;lt;|im_end|&amp;gt;&amp;quot;,
+  // 错误处理方式
+  &amp;quot;errors&amp;quot;: &amp;quot;replace&amp;quot;,
+  // 模型最大长度
+  &amp;quot;model_max_length&amp;quot;: 32768,
+  // 填充token
+  &amp;quot;pad_token&amp;quot;: &amp;quot;&amp;lt;|endoftext|&amp;gt;&amp;quot;,
+  // 是否分割特殊token
+  &amp;quot;split_special_tokens&amp;quot;: false,
+  // 分词器类名
+  &amp;quot;tokenizer_class&amp;quot;: &amp;quot;Qwen2Tokenizer&amp;quot;,
+  // 未知token（未设置）
+  &amp;quot;unk_token&amp;quot;: null
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;以一个用于文本生成的 tokenizer 为例：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
+  &amp;quot;add_bos_token&amp;quot;: true,
+  &amp;quot;add_eos_token&amp;quot;: false,
+  &amp;quot;bos_token&amp;quot;: &amp;quot;&amp;lt;s&amp;gt;&amp;quot;,
+  &amp;quot;eos_token&amp;quot;: &amp;quot;&amp;lt;/s&amp;gt;&amp;quot;,
+  &amp;quot;unk_token&amp;quot;: &amp;quot;&amp;lt;unk&amp;gt;&amp;quot;,
+  &amp;quot;pad_token&amp;quot;: &amp;quot;&amp;lt;pad&amp;gt;&amp;quot;,
+  &amp;quot;cls_token&amp;quot;: &amp;quot;&amp;lt;s&amp;gt;&amp;quot;,
+  &amp;quot;sep_token&amp;quot;: &amp;quot;&amp;lt;/s&amp;gt;&amp;quot;,
+  &amp;quot;do_lower_case&amp;quot;: false,
+  &amp;quot;model_max_length&amp;quot;: 2048,
+  &amp;quot;tokenizer_class&amp;quot;: &amp;quot;LlamaTokenizer&amp;quot;,
+  &amp;quot;auto_map&amp;quot;: {
+    &amp;quot;AutoTokenizer&amp;quot;: [&amp;quot;tokenization_llama.LlamaTokenizer&amp;quot;, null]
+  },
+  &amp;quot;use_fast&amp;quot;: false
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;字段说明&#34;&gt;🔍 字段说明&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;字段名&lt;/th&gt;
+&lt;th&gt;类型&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;add_bos_token&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;bool&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;是否在输入前添加 &lt;code&gt;&amp;lt;s&amp;gt;&lt;/code&gt; 开头 token（通常用于 decoder-only 模型）&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;add_eos_token&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;bool&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;是否自动在输入后添加 &lt;code&gt;&amp;lt;/s&amp;gt;&lt;/code&gt;（终止符）&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;bos_token&lt;/code&gt;, &lt;code&gt;eos_token&lt;/code&gt;, &lt;code&gt;unk_token&lt;/code&gt;, &lt;code&gt;pad_token&lt;/code&gt;, &lt;code&gt;cls_token&lt;/code&gt;, &lt;code&gt;sep_token&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;string&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;特殊标记符定义，影响解码和处理&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;do_lower_case&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;bool&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;是否将输入强制小写（常用于 BERT）&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;model_max_length&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;int&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;默认支持的最大序列长度（超出时会报错或截断）&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;tokenizer_class&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;string&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;指定用哪个 Tokenizer 类加载（如 &lt;code&gt;LlamaTokenizer&lt;/code&gt;, &lt;code&gt;GPT2Tokenizer&lt;/code&gt;）&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;auto_map&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;dict&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;自定义 Tokenizer 类映射（用于私有 tokenizer 的注册）&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;use_fast&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;bool&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;是否默认启用 &lt;code&gt;FastTokenizer&lt;/code&gt;（Rust 实现，更快）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;和其它文件的关系&#34;&gt;🚀 和其它文件的关系&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;文件&lt;/th&gt;
+&lt;th&gt;作用&lt;/th&gt;
+&lt;th&gt;相互关系&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;tokenizer.json&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;主要的序列化分词器模型&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;tokenizer_config.json&lt;/code&gt; 指定如何加载它&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;vocab.json&lt;/code&gt;, &lt;code&gt;merges.txt&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;适用于 BPE tokenizer（如 GPT-2）&lt;/td&gt;
+&lt;td&gt;低层词表配置文件&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;special_tokens_map.json&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;映射特殊 token 到实际字符串（例如 &lt;code&gt;&amp;lt;pad&amp;gt;&lt;/code&gt; 对应 ID）&lt;/td&gt;
+&lt;td&gt;可与本文件内容重叠，但也可独立覆盖&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;config.json&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;模型结构（层数、头数等）&lt;/td&gt;
+&lt;td&gt;和 tokenizer 配套使用，但用途不同&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;示例-加载方式受-tokenizer-config-json-影响&#34;&gt;✅ 示例：加载方式受 &lt;code&gt;**tokenizer_config.json**&lt;/code&gt; 影响&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from transformers import AutoTokenizer
+
+tokenizer = AutoTokenizer.from_pretrained(&amp;quot;Qwen/Qwen2-7B-Chat&amp;quot;)
+
+# 会优先读取 tokenizer_config.json 中的信息
+# 决定是否加载 fast tokenizer、默认特殊符号、是否添加 bos_token 等
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;编辑或自定义使用场景&#34;&gt;🛠️ 编辑或自定义使用场景&lt;/h3&gt;
+
+&lt;p&gt;你可能会想修改它的场景包括：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;为 tokenizer 添加 pad_token 或 eos_token&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;调整 &lt;code&gt;model_max_length&lt;/code&gt; 以适配 longer context&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;替换 tokenizer 类名（如加载自定义的分词器逻辑）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;禁用 fast tokenizer（当 fast 模型存在 bug）&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;例如：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
+  &amp;quot;pad_token&amp;quot;: &amp;quot;&amp;lt;|pad|&amp;gt;&amp;quot;,
+  &amp;quot;model_max_length&amp;quot;: 4096,
+  &amp;quot;tokenizer_class&amp;quot;: &amp;quot;MyCustomTokenizer&amp;quot;,
+  &amp;quot;use_fast&amp;quot;: false
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;总结-3&#34;&gt;总结 ✅&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;功能&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;核心作用&lt;/td&gt;
+&lt;td&gt;告诉 &lt;code&gt;AutoTokenizer&lt;/code&gt; 如何加载、配置、初始化&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;关键字段&lt;/td&gt;
+&lt;td&gt;特殊符号、是否 lower-case、最大长度、fast/slow 模式&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;和其它文件关系&lt;/td&gt;
+&lt;td&gt;配合 &lt;code&gt;tokenizer.json&lt;/code&gt; 和 &lt;code&gt;special_tokens_map.json&lt;/code&gt; 等文件共同使用&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;是否可选&lt;/td&gt;
+&lt;td&gt;是，但缺失时会采用默认推断逻辑，可能导致不一致行为&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;3-8-tokenizer-json&#34;&gt;3.8 tokenizer.json&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;tokenizer.json&lt;/code&gt; 是 Hugging Face Transformers 分词器目录中最核心的文件之一，它是&lt;strong&gt;Tokenizer 的完整序列化文件&lt;/strong&gt;，包括词表、预处理规则、正则、特殊 token 映射、分词算法逻辑等。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;一句话理解-1&#34;&gt;🧠 一句话理解&lt;/h3&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;code&gt;tokenizer.json&lt;/code&gt; 是 &lt;strong&gt;tokenizer 的所有行为和词表信息的统一打包版本&lt;/strong&gt;，用于快速加载和复现 tokenizer 行为，尤其在使用 &lt;code&gt;fast tokenizer&lt;/code&gt; 时。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;它和其它文件有何区别&#34;&gt;🔍 它和其它文件有何区别？&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;文件&lt;/th&gt;
+&lt;th&gt;作用&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;tokenizer_config.json&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;参数设置&lt;/td&gt;
+&lt;td&gt;控制 tokenizer 运行行为（如是否加 bos_token）&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;tokenizer.json&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;主体&lt;/td&gt;
+&lt;td&gt;保存完整 fast tokenizer 定义，包括词表、merge、pretokenizer 等&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;vocab.json&lt;/code&gt; + &lt;code&gt;merges.txt&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;GPT/BPE 模型词表&lt;/td&gt;
+&lt;td&gt;用于 slow tokenizer 的构建&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;special_tokens_map.json&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;映射&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;&amp;lt;pad&amp;gt;&lt;/code&gt;、&lt;code&gt;&amp;lt;eos&amp;gt;&lt;/code&gt; 这些符号的实际字符串/ID&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;code&gt;tokenizer.json&lt;/code&gt; 是 Fast Tokenizer（Rust 实现）专用文件，可以&lt;strong&gt;替代 vocab.json 和 merges.txt&lt;/strong&gt;，因此更快、更便携。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;典型结构内容&#34;&gt;📦 典型结构内容&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;shengping.mo@y108p30:/data2/huggingface/Qwen/Qwen1.5-32B-Chat-AWQ$ head  -n 100 tokenizer.json 
+{
+  &amp;quot;version&amp;quot;: &amp;quot;1.0&amp;quot;,
+  &amp;quot;truncation&amp;quot;: null, // 截断设置
+  &amp;quot;padding&amp;quot;: null,    // 填充设置
+  &amp;quot;added_tokens&amp;quot;: [   // 新增的特殊token
+    {
+      &amp;quot;id&amp;quot;: 151643,
+      &amp;quot;content&amp;quot;: &amp;quot;&amp;lt;|endoftext|&amp;gt;&amp;quot;, // 文本结束标记
+      &amp;quot;single_word&amp;quot;: false,
+      &amp;quot;lstrip&amp;quot;: false,
+      &amp;quot;rstrip&amp;quot;: false,
+      &amp;quot;normalized&amp;quot;: false,
+      &amp;quot;special&amp;quot;: true
+    },
+    {
+      &amp;quot;id&amp;quot;: 151644,
+      &amp;quot;content&amp;quot;: &amp;quot;&amp;lt;|im_start|&amp;gt;&amp;quot;, // 对话开始标记
+      &amp;quot;single_word&amp;quot;: false,
+      &amp;quot;lstrip&amp;quot;: false,
+      &amp;quot;rstrip&amp;quot;: false,
+      &amp;quot;normalized&amp;quot;: false,
+      &amp;quot;special&amp;quot;: true
+    },
+    {
+      &amp;quot;id&amp;quot;: 151645,
+      &amp;quot;content&amp;quot;: &amp;quot;&amp;lt;|im_end|&amp;gt;&amp;quot;, // 对话结束标记
+      &amp;quot;single_word&amp;quot;: false,
+      &amp;quot;lstrip&amp;quot;: false,
+      &amp;quot;rstrip&amp;quot;: false,
+      &amp;quot;normalized&amp;quot;: false,
+      &amp;quot;special&amp;quot;: true
+    }
+  ],
+  &amp;quot;normalizer&amp;quot;: {
+    &amp;quot;type&amp;quot;: &amp;quot;NFC&amp;quot; // 归一化类型
+  },
+  &amp;quot;pre_tokenizer&amp;quot;: { // 分词前处理
+    &amp;quot;type&amp;quot;: &amp;quot;Sequence&amp;quot;,
+    &amp;quot;pretokenizers&amp;quot;: [
+      {
+        &amp;quot;type&amp;quot;: &amp;quot;Split&amp;quot;,
+        &amp;quot;pattern&amp;quot;: {
+          &amp;quot;Regex&amp;quot;: &amp;quot;(?i:&#39;s|&#39;t|&#39;re|&#39;ve|&#39;m|&#39;ll|&#39;d)|[^\r\n\p{L}\p{N}]?\p{L}+|\p{N}| ?[^\s\p{L}\p{N}]+[\r\n]*|\s*[\r\n]+|\s+(?!\S)|\s+&amp;quot;
+        },
+        &amp;quot;behavior&amp;quot;: &amp;quot;Isolated&amp;quot;,
+        &amp;quot;invert&amp;quot;: false
+      },
+      {
+        &amp;quot;type&amp;quot;: &amp;quot;ByteLevel&amp;quot;,
+        &amp;quot;add_prefix_space&amp;quot;: false,
+        &amp;quot;trim_offsets&amp;quot;: false,
+        &amp;quot;use_regex&amp;quot;: false
+      }
+    ]
+  },
+  &amp;quot;post_processor&amp;quot;: { // 分词后处理
+    &amp;quot;type&amp;quot;: &amp;quot;ByteLevel&amp;quot;,
+    &amp;quot;add_prefix_space&amp;quot;: false,
+    &amp;quot;trim_offsets&amp;quot;: false,
+    &amp;quot;use_regex&amp;quot;: false
+  },
+  &amp;quot;decoder&amp;quot;: { // 解码器
+    &amp;quot;type&amp;quot;: &amp;quot;ByteLevel&amp;quot;,
+    &amp;quot;add_prefix_space&amp;quot;: false,
+    &amp;quot;trim_offsets&amp;quot;: false,
+    &amp;quot;use_regex&amp;quot;: false
+  },
+  &amp;quot;model&amp;quot;: { // 模型相关配置
+    &amp;quot;type&amp;quot;: &amp;quot;BPE&amp;quot;,
+    &amp;quot;dropout&amp;quot;: null,
+    &amp;quot;unk_token&amp;quot;: null,
+    &amp;quot;continuing_subword_prefix&amp;quot;: &amp;quot;&amp;quot;,
+    &amp;quot;end_of_word_suffix&amp;quot;: &amp;quot;&amp;quot;,
+    &amp;quot;fuse_unk&amp;quot;: false,
+    &amp;quot;byte_fallback&amp;quot;: false,
+    &amp;quot;vocab&amp;quot;: { // 词表
+      &amp;quot;!&amp;quot;: 0,
+      &amp;quot;\&amp;quot;&amp;quot;: 1,
+      &amp;quot;#&amp;quot;: 2,
+      &amp;quot;$&amp;quot;: 3,
+      &amp;quot;%&amp;quot;: 4,
+      &amp;quot;&amp;amp;&amp;quot;: 5,
+      &amp;quot;&#39;&amp;quot;: 6,
+      &amp;quot;(&amp;quot;: 7,
+      &amp;quot;)&amp;quot;: 8,
+      &amp;quot;*&amp;quot;: 9,
+      &amp;quot;+&amp;quot;: 10,
+      &amp;quot;,&amp;quot;: 11,
+      &amp;quot;-&amp;quot;: 12,
+      &amp;quot;.&amp;quot;: 13,
+      &amp;quot;/&amp;quot;: 14,
+      &amp;quot;0&amp;quot;: 15,
+      &amp;quot;1&amp;quot;: 16,
+      &amp;quot;2&amp;quot;: 17,
+      &amp;quot;3&amp;quot;: 18,
+      &amp;quot;4&amp;quot;: 19,
+      &amp;quot;5&amp;quot;: 20,
+      &amp;quot;6&amp;quot;: 21,
+      &amp;quot;7&amp;quot;: 22,
+      &amp;quot;8&amp;quot;: 23,
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;一个 &lt;code&gt;tokenizer.json&lt;/code&gt; 是一个大型 JSON 文件，通常包含以下字段：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-jsonc&#34;&gt;{
+  &amp;quot;version&amp;quot;: &amp;quot;1.0&amp;quot;,
+  &amp;quot;truncation&amp;quot;: { ... },
+  &amp;quot;padding&amp;quot;: { ... },
+  &amp;quot;added_tokens&amp;quot;: [ ... ],
+  &amp;quot;normalizer&amp;quot;: { ... },
+  &amp;quot;pre_tokenizer&amp;quot;: { ... },
+  &amp;quot;post_processor&amp;quot;: { ... },
+  &amp;quot;decoder&amp;quot;: { ... },
+  &amp;quot;model&amp;quot;: {
+    &amp;quot;type&amp;quot;: &amp;quot;BPE&amp;quot;,
+    &amp;quot;vocab&amp;quot;: {
+      &amp;quot;the&amp;quot;: 0,
+      &amp;quot;a&amp;quot;: 1,
+      ...
+    },
+    &amp;quot;merges&amp;quot;: [
+      [&amp;quot;t&amp;quot;, &amp;quot;h&amp;quot;],
+      [&amp;quot;th&amp;quot;, &amp;quot;e&amp;quot;],
+      ...
+    ]
+  }
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h4 id=&#34;关键字段解释&#34;&gt;🔧 关键字段解释&lt;/h4&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;字段名&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;model&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;分词模型结构，如 &lt;code&gt;BPE&lt;/code&gt; / &lt;code&gt;WordPiece&lt;/code&gt;，含词表和合并规则&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;vocab&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;单词到 token ID 的映射&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;merges&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;合并规则（仅用于 BPE）&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;normalizer&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;正规化规则，如 Unicode 规范化、lowercasing 等&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;pre_tokenizer&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;分词前的处理，如空格拆分、正则&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;post_processor&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;分词后的处理，如添加 &lt;code&gt;&amp;lt;bos&amp;gt;&lt;/code&gt;、&lt;code&gt;&amp;lt;/s&amp;gt;&lt;/code&gt; 等特殊 token&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;decoder&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;将 token ID 序列还原为字符串&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;added_tokens&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;用户添加的特殊 token，比如 &lt;code&gt;&amp;lt;user&amp;gt;&lt;/code&gt;, &lt;code&gt;&amp;lt;bot&amp;gt;&lt;/code&gt; 等&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;padding&lt;/code&gt; / &lt;code&gt;truncation&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;padding 和截断规则，决定输入对齐策略&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;加载示例&#34;&gt;✅ 加载示例&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from transformers import PreTrainedTokenizerFast
+
+tokenizer = PreTrainedTokenizerFast(tokenizer_file=&amp;quot;path/to/tokenizer.json&amp;quot;)
+print(tokenizer.tokenize(&amp;quot;你好，世界！&amp;quot;))
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;你也可以使用：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;tokenizer = AutoTokenizer.from_pretrained(&amp;quot;模型路径或Hub名&amp;quot;)
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;背后就是调用 &lt;code&gt;tokenizer.json&lt;/code&gt; 加载逻辑。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;应用场景&#34;&gt;🚀 应用场景&lt;/h3&gt;
+
+&lt;h4 id=&#34;使用-rust-实现的-fast-tokenizer-默认-hugging-face-会优先加载-tokenizer-json&#34;&gt;✅ 使用 Rust 实现的 fast tokenizer（默认 Hugging Face 会优先加载 &lt;code&gt;**tokenizer.json**&lt;/code&gt;）&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;更快的批量 tokenization&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;支持 pretokenizer + postprocessor 全流程定制&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;更容易部署（打包成 ONNX 或导出）&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;自定义-tokenizer-时生成这个文件&#34;&gt;✅ 自定义 tokenizer 时生成这个文件：&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from tokenizers import Tokenizer, trainers, models
+
+# 训练 BPE 模型
+tokenizer = Tokenizer(models.BPE())
+# ...
+tokenizer.train(...)  # 自定义训练
+tokenizer.save(&amp;quot;tokenizer.json&amp;quot;)
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;和-fast-tokenizer-的关系&#34;&gt;📝 和 fast tokenizer 的关系&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;特性&lt;/th&gt;
+&lt;th&gt;slow tokenizer&lt;/th&gt;
+&lt;th&gt;fast tokenizer (&lt;code&gt;tokenizer.json&lt;/code&gt;)&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;加载速度&lt;/td&gt;
+&lt;td&gt;慢&lt;/td&gt;
+&lt;td&gt;快（Rust 实现）&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;是否需要 vocab/merges&lt;/td&gt;
+&lt;td&gt;是&lt;/td&gt;
+&lt;td&gt;不需要（已合并到 tokenizer.json）&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;多语言支持&lt;/td&gt;
+&lt;td&gt;有&lt;/td&gt;
+&lt;td&gt;更强&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;正则/pipeline 细节可配置性&lt;/td&gt;
+&lt;td&gt;较弱&lt;/td&gt;
+&lt;td&gt;很强（支持 pretokenizer/normalizer/postprocessor）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;总结-4&#34;&gt;总结 ✅&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;属性&lt;/th&gt;
+&lt;th&gt;内容&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;文件类型&lt;/td&gt;
+&lt;td&gt;JSON&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;用途&lt;/td&gt;
+&lt;td&gt;描述 tokenizer 全部行为，用于 fast tokenizer 加载&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;是否必须&lt;/td&gt;
+&lt;td&gt;不是必须，但存在时优先使用&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;和 vocab/merges 的关系&lt;/td&gt;
+&lt;td&gt;可以替代，功能更完整&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;修改方式&lt;/td&gt;
+&lt;td&gt;可通过 &lt;code&gt;tokenizers&lt;/code&gt; 库创建或修改&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;建议&lt;/td&gt;
+&lt;td&gt;模型训练或部署推荐使用 &lt;code&gt;tokenizer.json&lt;/code&gt;，尤其在需要高性能时&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;3-9-vocab-json&#34;&gt;3.9 vocab.json&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;vocab.json&lt;/code&gt; 是 Hugging Face Tokenizer 模型中用于存储**词汇表（vocabulary）**的文件，常见于基于 BPE（Byte Pair Encoding）或 WordPiece 等子词分词算法的模型，例如 GPT、BERT、Roberta、LLaMA 等。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;一句话理解-2&#34;&gt;✅ 一句话理解&lt;/h3&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;code&gt;vocab.json&lt;/code&gt; 定义了「&lt;strong&gt;token 到 ID 的映射关系&lt;/strong&gt;」，是分词器的核心文件之一。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;文件结构示例&#34;&gt;📦 文件结构示例&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
+  &amp;quot;the&amp;quot;: 0,
+  &amp;quot;Ġthe&amp;quot;: 1,
+  &amp;quot;a&amp;quot;: 2,
+  &amp;quot;Ġa&amp;quot;: 3,
+  &amp;quot;apple&amp;quot;: 1000,
+  &amp;quot;##ple&amp;quot;: 1001,
+  &amp;quot;&amp;lt;pad&amp;gt;&amp;quot;: 50256,
+  &amp;quot;&amp;lt;eos&amp;gt;&amp;quot;: 50257
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;key：&lt;strong&gt;token（字符串）&lt;/strong&gt;，可以是单词、子词、符号或特殊 token&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;value：&lt;strong&gt;整型 ID&lt;/strong&gt;，用于将 token 转为模型可用的输入&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;code&gt;Ġ&lt;/code&gt; 表示前面有空格（在 Roberta/BPE 中常见） &lt;code&gt;##&lt;/code&gt; 表示这个词是接在前一个词后面的（WordPiece 标记）&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;它与其它文件的区别&#34;&gt;🔍 它与其它文件的区别&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;文件&lt;/th&gt;
+&lt;th&gt;作用&lt;/th&gt;
+&lt;th&gt;是否必须&lt;/th&gt;
+&lt;th&gt;快速说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;vocab.json&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;token ➜ ID 映射&lt;/td&gt;
+&lt;td&gt;是（slow tokenizer）&lt;/td&gt;
+&lt;td&gt;分词后映射成整数 token ID&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;merges.txt&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;BPE 合并规则&lt;/td&gt;
+&lt;td&gt;是（BPE 模型）&lt;/td&gt;
+&lt;td&gt;指定如何从字符对合并出 token&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;tokenizer.json&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Fast tokenizer 全部行为&lt;/td&gt;
+&lt;td&gt;否&lt;/td&gt;
+&lt;td&gt;打包了 vocab 和 merges，也更快&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;tokenizer_config.json&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;加载 tokenizer 的配置项&lt;/td&gt;
+&lt;td&gt;否&lt;/td&gt;
+&lt;td&gt;控制是否添加特殊 token 等行为&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;special_tokens_map.json&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;特殊 token 的 ID/映射&lt;/td&gt;
+&lt;td&gt;否&lt;/td&gt;
+&lt;td&gt;控制 ,  等的定义&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;应用方式&#34;&gt;🔧 应用方式&lt;/h3&gt;
+
+&lt;p&gt;加载模型 tokenizer 时会自动用到：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from transformers import AutoTokenizer
+
+tokenizer = AutoTokenizer.from_pretrained(&amp;quot;gpt2&amp;quot;)  # 会读取 vocab.json + merges.txt
+tokens = tokenizer.tokenize(&amp;quot;The apple is red.&amp;quot;)
+ids = tokenizer.convert_tokens_to_ids(tokens)
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;你也可以手动加载：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import json
+
+with open(&amp;quot;vocab.json&amp;quot;) as f:
+    vocab = json.load(f)
+print(vocab[&amp;quot;apple&amp;quot;])  # 输出对应的 token ID
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;如何生成-vocab-json&#34;&gt;🏗 如何生成 vocab.json？&lt;/h3&gt;
+
+&lt;p&gt;通常是通过训练分词器：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from tokenizers import Tokenizer, models, trainers, pre_tokenizers
+
+tokenizer = Tokenizer(models.BPE())
+tokenizer.pre_tokenizer = pre_tokenizers.Whitespace()
+
+trainer = trainers.BpeTrainer(vocab_size=10000, special_tokens=[&amp;quot;&amp;lt;pad&amp;gt;&amp;quot;, &amp;quot;&amp;lt;eos&amp;gt;&amp;quot;])
+tokenizer.train([&amp;quot;corpus.txt&amp;quot;], trainer)
+
+tokenizer.model.save(&amp;quot;.&amp;quot;, &amp;quot;my-tokenizer&amp;quot;)  # 输出 vocab.json + merges.txt
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;在推理中的作用&#34;&gt;🚀 在推理中的作用&lt;/h3&gt;
+
+&lt;p&gt;在推理时，文本输入流程如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-plaintext&#34;&gt;文本输入 → 分词器 → token 序列 → vocab.json 查 ID → 模型输入
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;反向输出流程：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-plaintext&#34;&gt;模型输出 token ID → vocab.json 反查 token → 拼接成文本
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;所以它是编码与解码的基础。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;总结-5&#34;&gt;✅ 总结&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;属性&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;文件类型&lt;/td&gt;
+&lt;td&gt;JSON（键为字符串 token，值为整数 ID）&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;用途&lt;/td&gt;
+&lt;td&gt;供 slow tokenizer 使用；token ↔ ID 映射&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;依赖&lt;/td&gt;
+&lt;td&gt;通常与 merges.txt 配合使用&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;被谁用&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;AutoTokenizer&lt;/code&gt;, &lt;code&gt;PreTrainedTokenizer&lt;/code&gt; 等&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;是否可替代&lt;/td&gt;
+&lt;td&gt;若有 &lt;code&gt;tokenizer.json&lt;/code&gt;，则可不再使用它&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&#34;4-总结&#34;&gt;4、总结&lt;/h1&gt;
+
+&lt;p&gt;Hugging Face 模型目录结构是用于保存一个预训练模型（及其 tokenizer、配置等）的完整打包形式，目的是为了方便模型的加载、共享、部署和推理。下面为你总结模型目录的&lt;strong&gt;标准构成&lt;/strong&gt;、每个文件的作用、是否必须、以及它们之间的关系。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;1-目录结构总览&#34;&gt;✅ 1. 目录结构总览&lt;/h2&gt;
+
+&lt;p&gt;一个典型的 Hugging Face 模型目录如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-plaintext&#34;&gt;/your-model-dir/
+├── config.json
+├── generation_config.json
+├── pytorch_model.bin / model.safetensors
+├── model.safetensors.index.json (如为分片模型)
+├── tokenizer_config.json
+├── tokenizer.json
+├── vocab.json
+├── merges.txt (如为 BPE)
+├── special_tokens_map.json
+├── README.md
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;2-各文件功能详解&#34;&gt;📁 2. 各文件功能详解&lt;/h2&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;文件名&lt;/th&gt;
+&lt;th&gt;必须&lt;/th&gt;
+&lt;th&gt;类型&lt;/th&gt;
+&lt;th&gt;作用&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;config.json&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;✅ 是&lt;/td&gt;
+&lt;td&gt;模型配置&lt;/td&gt;
+&lt;td&gt;定义模型架构参数（层数、隐藏维度、dropout 等）&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;pytorch_model.bin&lt;/strong&gt; / &lt;strong&gt;model.safetensors&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;✅ 是&lt;/td&gt;
+&lt;td&gt;模型权重&lt;/td&gt;
+&lt;td&gt;保存模型的预训练参数（PyTorch 格式 / safetensors 更安全）&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;model.safetensors.index.json&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;🚫 否&lt;/td&gt;
+&lt;td&gt;权重索引&lt;/td&gt;
+&lt;td&gt;用于分片模型（多块 .safetensors 的索引信息）&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;tokenizer_config.json&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;✅ 是&lt;/td&gt;
+&lt;td&gt;tokenizer 配置&lt;/td&gt;
+&lt;td&gt;控制 tokenizer 行为，比如是否小写、是否添加 BOS/EOS 等&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;tokenizer.json&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;🚫 否&lt;/td&gt;
+&lt;td&gt;Fast tokenizer&lt;/td&gt;
+&lt;td&gt;Hugging Face 的 Rust 实现 tokenizer，速度快，包含 vocab+merges&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;vocab.json&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;✅ 是&lt;/td&gt;
+&lt;td&gt;词表（token → id）&lt;/td&gt;
+&lt;td&gt;分词器词典，主要用于 slow tokenizer&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;merges.txt&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;⚠️ 视分词器类型&lt;/td&gt;
+&lt;td&gt;BPE 合并规则&lt;/td&gt;
+&lt;td&gt;仅用于 BPE（GPT、Roberta 等）&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;special_tokens_map.json&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;🚫 否&lt;/td&gt;
+&lt;td&gt;特殊 token 映射&lt;/td&gt;
+&lt;td&gt;映射 、、 等到对应 ID&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;generation_config.json&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;🚫 否&lt;/td&gt;
+&lt;td&gt;推理配置&lt;/td&gt;
+&lt;td&gt;定义采样策略（如 temperature, top_k, repetition_penalty 等）&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;README.md&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;🚫 否&lt;/td&gt;
+&lt;td&gt;文档&lt;/td&gt;
+&lt;td&gt;模型说明文档（在 Hugging Face hub 上展示）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;3-必须-vs-可选文件汇总&#34;&gt;🧠 3. 必须 vs 可选文件汇总&lt;/h2&gt;
+
+&lt;h3 id=&#34;必须文件-用于模型加载&#34;&gt;✅ 必须文件（用于模型加载）&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;config.json&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;pytorch_model.bin&lt;/code&gt; 或 &lt;code&gt;model.safetensors&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;tokenizer_config.json&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;vocab.json&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;根据模型类型必须&#34;&gt;⚠️ 根据模型类型必须&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;merges.txt&lt;/code&gt;：如果使用 BPE tokenizer（如 GPT、Roberta）
+&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;可选但推荐&#34;&gt;🚫 可选但推荐&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;tokenizer.json&lt;/code&gt;：推荐用于 fast tokenizer，加快速度&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;generation_config.json&lt;/code&gt;：如模型用于生成任务（文本生成、聊天）&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;special_tokens_map.json&lt;/code&gt;：对话模型、翻译、QA 常用&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;README.md&lt;/code&gt;：用于模型说明和文档展示&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;code&gt;model.safetensors.index.json&lt;/code&gt;：当模型是分片结构（sharded）时才出现&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;4-加载时工作机制&#34;&gt;📦 4. 加载时工作机制&lt;/h2&gt;
+
+&lt;p&gt;Hugging Face 的 &lt;code&gt;AutoModel&lt;/code&gt; 和 &lt;code&gt;AutoTokenizer&lt;/code&gt; 会根据目录内容自动判断使用哪种文件：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from transformers import AutoModelForCausalLM, AutoTokenizer
+
+model = AutoModelForCausalLM.from_pretrained(&amp;quot;./your-model-dir&amp;quot;)
+tokenizer = AutoTokenizer.from_pretrained(&amp;quot;./your-model-dir&amp;quot;)
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;它会依次尝试加载：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;权重：&lt;code&gt;model.safetensors&lt;/code&gt; &amp;gt; &lt;code&gt;pytorch_model.bin&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;tokenizer：&lt;code&gt;tokenizer.json&lt;/code&gt; &amp;gt; &lt;code&gt;vocab.json + merges.txt&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;特殊 token：&lt;code&gt;special_tokens_map.json&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;推理策略：&lt;code&gt;generation_config.json&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;5-示例应用流程&#34;&gt;🔍 5. 示例应用流程&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-txt&#34;&gt;文本 → tokenizer.json/vocab.json → token ID → 模型(config+权重) → 输出 token ID → 反向 tokenizer → 文本输出
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;总结一句话-1&#34;&gt;✅ 总结一句话&lt;/h2&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Hugging Face 模型目录包含了“模型结构（config）+权重+分词器+推理策略”的完整组件，是部署、共享、加载模型的标准打包格式。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;hr /&gt;
+</description>
+        </item>
         
         <item>
             <title>pytorch速查手册</title>
@@ -6208,244 +8701,6 @@ Commercial support is available at
 &lt;h1 id=&#34;参考资料&#34;&gt;参考资料&lt;/h1&gt;
 
 &lt;p&gt;【01】 &lt;a href=&#34;https://zhuanlan.zhihu.com/p/618495330&#34;&gt;当前最新稳定访问NewBing方法（操作简单）&lt;/a&gt;&lt;/p&gt;
-</description>
-        </item>
-        
-        <item>
-            <title>K8S项目实践(06): 动手实现webhook</title>
-            <link>http://mospany.github.io/2023/03/05/k8s-webhook-example/</link>
-            <pubDate>Sun, 05 Mar 2023 11:32:18 CST</pubDate>
-            <author>Mospan</author>
-            <guid>http://mospany.github.io/2023/03/05/k8s-webhook-example/</guid>
-            <description>
-
-&lt;p&gt;&lt;a id=&#34;orgabac5c2&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;简介&#34;&gt;简介&lt;/h1&gt;
-
-&lt;p&gt;Webhook就是一种HTTP回调，用于在某种情况下执行某些动作，Webhook不是K8S独有的，很多场景下都可以进行Webhook，比如在提交完代码后调用一个Webhook自动构建docker镜像&lt;/p&gt;
-
-&lt;p&gt;K8S中提供了自定义资源类型和自定义控制器来扩展功能，还提供了动态准入控制，其实就是通过Webhook来实现准入控制，分为两种：验证性质的准入 Webhook （Validating Admission Webhook） 和 修改性质的准入 Webhook （Mutating Admission Webhook）&lt;/p&gt;
-
-&lt;p&gt;Admission Webhook有哪些使用场景？如下&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;在资源持久化到ETCD之前进行修改（Mutating Webhook），比如增加init Container或者sidecar Container&lt;/li&gt;
-&lt;li&gt;在资源持久化到ETCD之前进行校验（Validating Webhook），不满足条件的资源直接拒绝并给出相应信息&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://blog.mospan.cn/post/img/webhook/webhook.webp&#34;&gt;http://blog.mospan.cn/post/img/webhook/webhook.webp&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Webhook可以理解成Java Web开发中的Filter，每个请求都会经过Filter处理，从图中可以看到，先执行的是Mutating Webhook，它可以对资源进行修改，然后执行的是Validating Webhook，它可以拒绝或者接受请求，但是它不能修改请求。&lt;/p&gt;
-
-&lt;p&gt;K8S中有已经实现了的Admission Webhook列表，详情参考每个准入控制器的作用是什么？&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org5a64fe0&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;示例原理&#34;&gt;示例原理&lt;/h1&gt;
-
-&lt;p&gt;我们以一个简单的Webhook作为例子，该Webhook会在创建Deployment资源的时候检查它是否有相应的标签，如果没有的话，则加上（Mutating Webhook），然后在检验它是否有相应的标签（Validating Webhook），有则创建该Deployment，否则拒绝并给出相应错误提示。&lt;/p&gt;
-
-&lt;p&gt;所有代码都在：&lt;br /&gt;
-git@github.com:mospany/admission-webhook-example.git&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org02043ed&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;验证&#34;&gt;验证&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;org122233e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;编译打包&#34;&gt;编译打包&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code&gt;cd admission-webhook-example/v1
-DOCKER_USER=mospany bash ./build
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;它将生成镜像并上传到docker.io/mospany/admission-webhook-example:v1。&lt;br /&gt;
-&lt;img src=&#34;http://blog.mospan.cn/post/img/webhook/build.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org0aa6c11&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;检查是否开启了动态准入控制&#34;&gt;检查是否开启了动态准入控制&lt;/h2&gt;
-
-&lt;p&gt;查看APIServer是否开启了MutatingAdmissionWebhook和ValidatingAdmissionWebhook&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;# 获取apiserver pod名字
-apiserver_pod_name=`kubectl get --no-headers=true po -n kube-system | grep kube-apiserver | awk &#39;{ print $1 }&#39;`
-# 查看api server的启动参数plugin
-kubectl get po $apiserver_pod_name -n kube-system -o yaml | grep plugin
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;如果输出如下，说明已经开启&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;- --enable-admission-plugins=NodeRestriction,MutatingAdmissionWebhook,ValidatingAdmissionWebhook
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;否则，需要修改启动参数，请不然直接修改Pod的参数，这样修改不会成功，请修改配置文件/etc/kubernetes/manifests/kube-apiserver.yaml，加上相应的插件参数后保存，APIServer的Pod会监控该文件的变化，然后重新启动。&lt;br /&gt;
-&lt;img src=&#34;http://blog.mospan.cn/post/img/webhook/check-apiserver.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orga56c5e4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;创建rbac&#34;&gt;创建RBAC&lt;/h2&gt;
-
-&lt;p&gt;由于我们的webhook会对资源进行修改，所以需要单独给一个ServiceAccount，在K8S集群中直接创建即可&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;kubectl apply -f deployment/rbac.yaml 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;效果如下：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master deployment]# kubectl apply -f rbac.yaml
-serviceaccount/admission-webhook-example-sa unchanged
-clusterrole.rbac.authorization.k8s.io/admission-webhook-example-cr unchanged
-clusterrolebinding.rbac.authorization.k8s.io/admission-webhook-example-crb unchanged
-[root@k8s-master deployment]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org57c61b3&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;证书认证&#34;&gt;证书认证&lt;/h2&gt;
-
-&lt;p&gt;K8S集群默认是HTTPS通信的，所以APiserver调用webhook的过程也是HTTPS的，所以需要进行证书认证，证书认证相当于是给Service的域名进行认证（Service后面会创建），将Service域名放到认证请求server.csr文件中，然后创建一个K8S证书签署请求资源CertificateSigningRequest，APIServer签署该证书后生成server-cert.pem，再将最初创建的私钥server-key.pem和签署好的证书server-cert.pem放到Secret中供Deployment调用，详细过程看脚本&lt;br /&gt;
-webhook-create-signed-cert.sh&lt;/p&gt;
-
-&lt;p&gt;认证很简单，执行该脚本即可，会创建一个名为admission-webhook-example-certs的Secret&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;./deployment/webhook-create-signed-cert.sh
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;这一步顺便把Service创建了，因为证书是给该Service的域名颁发的&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;kubectl apply -f deployment/service.yaml
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org9750af4&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;部署deployment&#34;&gt;部署Deployment&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code&gt;kubectl  apply -f deployment.yaml 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;稍等片刻如果有类似如下输出说明Pod已经运行&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;[root@k8s-master deployment]# kubectl  apply -f deployment.yaml
-deployment.apps/admission-webhook-example-deployment unchanged
-[root@k8s-master deployment]# kubectl  get pod -A -o wide | grep web
-default       admission-webhook-example-deployment-7dd75cffb6-24bhg   1/1     Running   2 (13d ago)    57d    10.244.235.217   k8s-master   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
-[root@k8s-master deployment]# kubectl  get pod -A  | grep web
-default       admission-webhook-example-deployment-7dd75cffb6-24bhg   1/1     Running   2 (13d ago)    57d
-[root@k8s-master deployment]#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org7111e46&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;部署validatingwebhook&#34;&gt;部署ValidatingWebhook&lt;/h2&gt;
-
-&lt;p&gt;首先包含一个namespaceSelector，表示此webhook只针对有admission-webhook-example标签的namespace生效，当然也可以去掉&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;namespaceSelector:
-   matchLabels:
-     admission-webhook-example: enabled
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;查看编排文件deployment/validatingwebhook.yaml，里面有一个占位符${CA_BUNDLE}&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;clientConfig:
- service:
- name: admission-webhook-example-svc
- namespace: default
- path: &amp;quot;/validate&amp;quot;  # Path是我们自己定义的
- caBundle: ${CA_BUNDLE}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;这个是什么呢？webhook是APIServer调用的，此时APIServer相当于是一个客服端，webhook是一个服务端，可以对比下平时上网，打开https网站时是谁在验证域名的证书？是内置在浏览器里面的根证书在做验证，所以这里的CA_BUNDLE就类似于APIServer调用webhook的根证书，它去验证webhook证书。&lt;/p&gt;
-
-&lt;p&gt;所以先填充这个CA_BUNDLE后再执行&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;# 填充占位符
-cat deployment/validatingwebhook.yaml | ./deployment/webhook-patch-ca-bundle.sh &amp;gt; /tmp/validatingwebhook.yaml
-
-# 部署
-kubectl apply -f /tmp/validatingwebhook.yaml
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;orge4b820e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;验证-1&#34;&gt;验证&lt;/h2&gt;
-
-&lt;p&gt;1、给default namespace添加label&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;kubectl label namespace default admission-webhook-example=enabled
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;2、部署sleep.yaml&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;kubectl apply -f deployment/sleep.yaml 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;a id=&#34;org3ee59df&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;faq&#34;&gt;FAQ&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;org896c547&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;error-unable-to-recognize-stdin-no-matches-for-kind-certificatesigningrequest-in-version-certificates-k8s-io-v1beta1&#34;&gt;error: unable to recognize &amp;ldquo;STDIN&amp;rdquo;: no matches for kind &amp;ldquo;CertificateSigningRequest&amp;rdquo; in version &amp;ldquo;certificates.k8s.io/v1beta1&amp;rdquo;&lt;/h2&gt;
-
-&lt;p&gt;当执行`bash webhook-create-signed-cert.sh`时出现如下错误：&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;error: unable to recognize &amp;ldquo;STDIN&amp;rdquo;: no matches for kind &amp;ldquo;CertificateSigningRequest&amp;rdquo; in version &amp;ldquo;certificates.k8s.io/v1beta1&amp;rdquo;`&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;需修改webhook-create-signed-cert.sh相关内容为:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;# create  server cert/key CSR and  send to k8s API
-cat &amp;lt;&amp;lt;EOF | kubectl create -f -
-apiVersion: certificates.k8s.io/v1
-kind: CertificateSigningRequest
-metadata:
-  name: ${csrName}
-spec:
-  groups:
-  - system:authenticated
-  request: $(cat ${tmpdir}/server.csr | base64 | tr -d &#39;\n&#39;)
-  signerName: kubernetes.io/kube-apiserver-client
-  usages:
-  - digital signature
-  - key encipherment
-  - client auth
-EOF
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;详见：&lt;a href=&#34;https://bytemeta.vip/repo/morvencao/kube-sidecar-injector/issues/29&#34;&gt;missing required field &amp;ldquo;signerName&amp;rdquo; #29&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orga1e1728&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;no-matches-for-kind-validatingwebhookconfiguration-in-version-admissionregistration-k8s-io-v1beta1&#34;&gt;no matches for kind &amp;ldquo;ValidatingWebhookConfiguration&amp;rdquo; in version &amp;ldquo;admissionregistration.k8s.io/v1beta1&amp;rdquo;&lt;/h2&gt;
-
-&lt;p&gt;当执行`kubectl apply -f validatingwebhook.yaml`时出现错误：&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;no matches for kind &amp;ldquo;ValidatingWebhookConfiguration&amp;rdquo; in version &amp;ldquo;admissionregistration.k8s.io/v1beta1&amp;rdquo;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;需改为：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;admissionReviewVersions: [&amp;quot;v1&amp;quot;,&amp;quot;v1beta1&amp;quot;]
-sideEffects: None
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;详见： &lt;a href=&#34;https://kodekloud.com/community/t/pls-help-me-in-configuring-using-opa-in-minikbe/28428/5&#34;&gt;Pls help me in configuring/using OPA in minikbe&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;orgc3c8eba&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;x509-certificate-specifies-an-incompatible-key-usage&#34;&gt;x509: certificate specifies an incompatible key usage&lt;/h2&gt;
-
-&lt;p&gt;&lt;a id=&#34;orga94e650&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;参考资料&#34;&gt;参考资料&lt;/h1&gt;
-
-&lt;p&gt;【01】&lt;a href=&#34;https://zhuanlan.zhihu.com/p/404764407&#34;&gt;从0到1开发K8S_Webhook最佳实践&lt;/a&gt;]&lt;/p&gt;
 </description>
         </item>
         

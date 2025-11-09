@@ -1,0 +1,3225 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <base href="http://mospany.github.io/">
+  <title>大模型权重文件解析 - 墨斯潘園</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+  <meta name="keywords" content="技术文章,人工智能,">
+  <meta name="description" content="1、模型文件 以Qwen1.5-32B-Chat-AWQ模型文件列表为例： shengping.mo@y108p30:/data2/huggingface/Qwen/Qwen1.5-32B-Chat-AWQ$ ls -lh total 20G -rw-r--r-- 1 xd xd 839 Jun 27 22:30 config.json -rw-r--r-- 1 xd xd 243 Jun 27 22:30 generation_config.json -rw-r--r-- 1 xd xd 6.8K Jun 27 22:30 LICENSE -rw-r--r-- 1">
+  <meta name="author" content="mospan">
+  <meta itemprop="name" content="大模型权重文件解析 - 墨斯潘園">
+  <meta itemprop="description" content="1、模型文件 以Qwen1.5-32B-Chat-AWQ模型文件列表为例： shengping.mo@y108p30:/data2/huggingface/Qwen/Qwen1.5-32B-Chat-AWQ$ ls -lh total 20G -rw-r--r-- 1 xd xd 839 Jun 27 22:30 config.json -rw-r--r-- 1 xd xd 243 Jun 27 22:30 generation_config.json -rw-r--r-- 1 xd xd 6.8K Jun 27 22:30 LICENSE -rw-r--r-- 1">
+  <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@mospan" />
+  <meta name="twitter:title" content="大模型权重文件解析 - 墨斯潘園" />
+  
+  <meta name="twitter:description" content="">
+  <link rel="shortcut icon" href="img/favicon.ico"/>
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png" />
+  <link rel="stylesheet" href="highlight/styles/github.css">
+  <script src="highlight/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <link rel="stylesheet" href="font/hack/css/hack.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <div>
+  
+  <div id="imglogo">
+    <a href="http://mospany.github.io/"><img src="http://mospany.github.io/img/logo.jpg" alt="墨斯潘園" title="墨斯潘園"/></a>
+  </div>
+  
+  <div id="textlogo">
+    <h1 class="site-name"><a href="http://mospany.github.io/" title="墨斯潘園">墨斯潘園</a></h1>
+    <h2 class="blog-motto">技术改变生活，学习成就未来</h2>
+  </div>
+  <div class="navbar"><a class="navbutton navmobile" href="#" title="menu"></a></div>
+  <nav class="animated">
+    <ul>
+      
+      <li><a href="/">首页</a></li> 
+      
+      <li><a href="/about">关于</a></li> 
+      
+      <li>
+        <form class="search" method="get" action="https://www.google.com/search">
+          <div>
+            <input type="text" id="search" name="q" placeholder="搜索">
+          </div>
+        </form>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+  </header>
+  <div id="container">
+    <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody">
+    <header class="article-info clearfix">
+  <h1 itemprop="name">
+      <a href="http://mospany.github.io/2025/11/09/hugging-face/" title="大模型权重文件解析" itemprop="url">大模型权重文件解析</a>
+  </h1>
+  <p class="article-author">By 
+    
+      <a href="http://blog.mospan.cn" title="mospan">mospan</a>
+    
+  </p>
+  <p class="article-time">
+    <time datetime="2025-11-09 11:24:40 &#43;0800 CST" itemprop="datePublished">2025年11月09日</time>
+  </p>
+</header>
+
+	<div class="article-content">
+    
+    
+
+<h1 id="1-模型文件">1、模型文件</h1>
+
+<p>以Qwen1.5-32B-Chat-AWQ模型文件列表为例：</p>
+
+<pre><code class="language-json">shengping.mo@y108p30:/data2/huggingface/Qwen/Qwen1.5-32B-Chat-AWQ$ ls -lh
+total 20G
+-rw-r--r-- 1 xd xd  839 Jun 27 22:30 config.json
+-rw-r--r-- 1 xd xd  243 Jun 27 22:30 generation_config.json
+-rw-r--r-- 1 xd xd 6.8K Jun 27 22:30 LICENSE
+-rw-r--r-- 1 xd xd 1.6M Jun 27 22:30 merges.txt
+-rw-r--r-- 1 xd xd 4.7G Jun 27 22:28 model-00001-of-00005.safetensors
+-rw-r--r-- 1 xd xd 4.7G Jun 27 22:29 model-00002-of-00005.safetensors
+-rw-r--r-- 1 xd xd 4.7G Jun 27 22:29 model-00003-of-00005.safetensors
+-rw-r--r-- 1 xd xd 4.3G Jun 27 22:30 model-00004-of-00005.safetensors
+-rw-r--r-- 1 xd xd 1.5G Jun 27 22:30 model-00005-of-00005.safetensors
+-rw-r--r-- 1 xd xd 140K Jun 27 22:30 model.safetensors.index.json
+-rw-r--r-- 1 xd xd 4.0K Jun 27 22:30 README.md
+-rw-r--r-- 1 xd xd 1.3K Jun 27 22:30 tokenizer_config.json
+-rw-r--r-- 1 xd xd 6.8M Jun 27 22:30 tokenizer.json
+-rw-r--r-- 1 xd xd 2.7M Jun 27 22:30 vocab.json
+shengping.mo@y108p30:/data2/huggingface/Qwen/Qwen1.5-32B-Chat-AWQ$ 
+</code></pre>
+
+<h1 id="2-整体分析">2、整体分析</h1>
+
+<ol>
+<li><p>config.json</p>
+
+<ol>
+<li>存储模型架构元数据，包括网络层数，隐藏维度，注意力头数，词表大小，激活函数类型等参数
+<br /></li>
+</ol></li>
+
+<li><p>模型权重文件：torch 和 hf 权重文件</p>
+
+<ol>
+<li><p>pytroch_model.pth: 用于保存模型权重参数的二进制文件，以字典的形式保存，键为层名称，值为对应的权重张量数据。</p></li>
+
+<li><p>model.safetensor：和pth权重文件的功能相同，区别是采用了安全序列化格式，避免反序列化漏洞风险。</p></li>
+
+<li><p>分片权重文件：对于超大型的模型权重，会被分割成多个文件，解决单个文件体积限制问题。</p></li>
+</ol></li>
+
+<li><p>分词器相关</p>
+
+<ol>
+<li><p>tokenizer_config.json: 分词器类型、特殊标记的定义</p></li>
+
+<li><p>tokenizer.json: 将分词器的所有配置信息，包括词汇表，合并规则，归一化，预分词，后处理等打包在一起，目的是让训练和推理过程中的分词行为完全一致。</p></li>
+</ol></li>
+
+<li><p>文本生成参数配置文件 </p>
+
+<ol>
+<li>generation_config.json：定义文本生成策略，包括温度，top-p等超参数。
+<br /></li>
+</ol></li>
+</ol>
+
+<h3 id="tokenizer-json">tokenizer.json</h3>
+
+<p>文件定义了分词器的所有配置</p>
+
+<ol>
+<li><p>added_tokens: 原有词汇表基础上额外添加的特殊token([PAD] [CLS])</p></li>
+
+<li><p>post_processor: 后处理模板，设置单句，双句对输入时输入时自动添加[cls] 和 [sep]</p></li>
+
+<li><p>decoder：解码器类型</p></li>
+
+<li><p>model：底层分词器模型 的类型及其参数。</p>
+
+<ol>
+<li><p>Vocab: 定义了词汇表，其中key为token的字符串，value为对应的id。</p></li>
+
+<li><p>merges：定义了子token合并成更长token的规则。</p></li>
+</ol></li>
+</ol>
+
+<h3 id="special-tokens-map-json">special_tokens_map.json</h3>
+
+<p>文件定义了与文本序列处理相关的特殊token</p>
+
+<ol>
+<li><p>bos_token (Beginning of Sentence Token): 序列开始标记，文本序列的起始位置</p></li>
+
+<li><p>eos_token (End of Sentence Token)： 序列结束标记，表示文本序列的结束位置。</p></li>
+
+<li><p>eop_token (End of Paragraph Token): 段落结束标记，表示段落结束的特殊标记</p></li>
+
+<li><p>pad_token (Padding Token): 填充标记，它将用于文本序列填充到相同长度时使用的特殊token。tokenizer.json 文件解析。 </p></li>
+</ol>
+
+<h1 id="3-具体分析">3、具体分析</h1>
+
+<h2 id="3-1-config-json">3.1 config.json</h2>
+
+<p>作用：用于<strong>描述模型的结构、超参数、训练方式、特殊行为等信息</strong>，在加载模型时自动解析并构建模型实例。</p>
+
+<pre><code class="language-json">{
+  // 使用的模型架构名称
+  &quot;architectures&quot;: [
+    &quot;Qwen2ForCausalLM&quot;
+  ],
+  // 注意力层的dropout比例
+  &quot;attention_dropout&quot;: 0.0,
+  // 句子起始（BOS）token的ID
+  &quot;bos_token_id&quot;: 151643,
+  // 句子结束（EOS）token的ID
+  &quot;eos_token_id&quot;: 151645,
+  // 隐藏层激活函数
+  &quot;hidden_act&quot;: &quot;silu&quot;,
+  // 隐藏层维度
+  &quot;hidden_size&quot;: 5120,
+  // 参数初始化范围
+  &quot;initializer_range&quot;: 0.02,
+  // 前馈网络中间层的维度
+  &quot;intermediate_size&quot;: 27392,
+  // 最大位置编码长度
+  &quot;max_position_embeddings&quot;: 32768,
+  // 支持滑动窗口的最大层数
+  &quot;max_window_layers&quot;: 35,
+  // 模型类型标识
+  &quot;model_type&quot;: &quot;qwen2&quot;,
+  // 注意力头的数量
+  &quot;num_attention_heads&quot;: 40,
+  // Transformer层的数量
+  &quot;num_hidden_layers&quot;: 64,
+  // key-value注意力头的数量（用于分组注意力等）
+  &quot;num_key_value_heads&quot;: 8,
+  // 量化相关配置
+  &quot;quantization_config&quot;: {
+    // 量化位数
+    &quot;bits&quot;: 4,
+    // 量化分组大小
+    &quot;group_size&quot;: 32,
+    // 不进行量化的模块
+    &quot;modules_to_not_convert&quot;: null,
+    // 量化方法
+    &quot;quant_method&quot;: &quot;awq&quot;,
+    // 量化版本
+    &quot;version&quot;: &quot;gemm&quot;,
+    // 是否使用零点
+    &quot;zero_point&quot;: true
+  },
+  // RMSNorm的epsilon值
+  &quot;rms_norm_eps&quot;: 1e-06,
+  // ROPE位置编码的theta参数
+  &quot;rope_theta&quot;: 1000000.0,
+  // 滑动窗口长度
+  &quot;sliding_window&quot;: 32768,
+  // 是否共享词嵌入权重
+  &quot;tie_word_embeddings&quot;: false,
+  // PyTorch中使用的数据类型
+  &quot;torch_dtype&quot;: &quot;float16&quot;,
+  // transformers库的版本
+  &quot;transformers_version&quot;: &quot;4.38.2&quot;,
+  // 是否使用缓存（加速推理）
+  &quot;use_cache&quot;: true,
+  // 是否启用滑动窗口机制
+  &quot;use_sliding_window&quot;: false,
+  // 词表大小
+  &quot;vocab_size&quot;: 152064
+}
+</code></pre>
+
+<h3 id="一-基本模型规格">🧠 一、基本模型规格</h3>
+
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+<th>说明</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>model_type</code>: <code>&quot;qwen2&quot;</code></td>
+<td>模型类型</td>
+<td>来自阿里达摩院的 Qwen2 系列</td>
+</tr>
+
+<tr>
+<td><code>architectures</code>: <code>&quot;Qwen2ForCausalLM&quot;</code></td>
+<td>架构</td>
+<td>自回归语言模型（Causal Language Model）</td>
+</tr>
+
+<tr>
+<td><code>hidden_size</code>: <code>5120</code></td>
+<td>每层维度</td>
+<td>大型模型（估算 20B 参数级别）</td>
+</tr>
+
+<tr>
+<td><code>num_hidden_layers</code>: <code>64</code></td>
+<td>Transformer 层数</td>
+<td>层数非常深</td>
+</tr>
+
+<tr>
+<td><code>num_attention_heads</code>: <code>40</code></td>
+<td>注意力头数</td>
+<td></td>
+</tr>
+
+<tr>
+<td><code>num_key_value_heads</code>: <code>8</code></td>
+<td>KV 分组数量</td>
+<td>表明采用了 <strong>Grouped Query Attention (GQA)</strong></td>
+</tr>
+
+<tr>
+<td><code>intermediate_size</code>: <code>27392</code></td>
+<td>FFN 层维度</td>
+<td></td>
+</tr>
+
+<tr>
+<td><code>vocab_size</code>: <code>152064</code></td>
+<td>词表大小</td>
+<td>包含中文/英文等多语言词表</td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h3 id="二-上下文和位置处理">🧠 二、上下文和位置处理</h3>
+
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>max_position_embeddings</code>: <code>32768</code></td>
+<td>最大位置嵌入（理论最大上下文长度）</td>
+</tr>
+
+<tr>
+<td><code>sliding_window</code>: <code>32768</code></td>
+<td>实际窗口大小</td>
+</tr>
+
+<tr>
+<td><code>max_window_layers</code>: <code>35</code></td>
+<td>可支持滑动窗口的层数</td>
+</tr>
+
+<tr>
+<td><code>rope_theta</code>: <code>1e6</code></td>
+<td>用于 RoPE（旋转位置编码）的频率参数（适配长上下文）</td>
+</tr>
+</tbody>
+</table>
+
+<p>📌 <strong>说明</strong>：这是一个<strong>支持超长上下文</strong>（32K token）的模型，适合：</p>
+
+<ul>
+<li><p>读大文档（PDF/合同/代码）</p></li>
+
+<li><p>长对话历史保持上下文连贯</p></li>
+
+<li><p>文本审校、知识提取</p></li>
+</ul>
+
+<hr />
+
+<h3 id="三-优化与量化配置">⚙️ 三、优化与量化配置</h3>
+
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>quantization_config.bits</code>: <code>4</code></td>
+<td>4-bit 量化</td>
+</tr>
+
+<tr>
+<td><code>quant_method</code>: <code>awq</code></td>
+<td>使用 AWQ（Activation-aware Weight Quantization）</td>
+</tr>
+
+<tr>
+<td><code>group_size</code>: <code>32</code></td>
+<td>每组参数量化块大小</td>
+</tr>
+
+<tr>
+<td><code>version</code>: <code>gemm</code></td>
+<td>量化内核类型，基于 GEMM</td>
+</tr>
+
+<tr>
+<td><code>zero_point</code>: true</td>
+<td>使用 Zero-point 对称量化</td>
+</tr>
+
+<tr>
+<td><code>torch_dtype</code>: <code>&quot;float16&quot;</code></td>
+<td>半精度 float16 运算</td>
+</tr>
+</tbody>
+</table>
+
+<p>📌 <strong>说明</strong>：这说明这个模型是经过 <strong>4bit AWQ 量化优化的版本</strong>，意味着你可以：</p>
+
+<ul>
+<li><p>在消费级显卡（比如 24G 显存）运行</p></li>
+
+<li><p>延迟更低，推理速度快</p></li>
+
+<li><p>部署成本降低</p></li>
+</ul>
+
+<h2 id="3-2-generation-config-json">3.2 generation_config.json</h2>
+
+<p>推理参数（生成策略）配置文件,  用于控制模型生成文本时的行为（例如采样策略、终止符号、重复惩罚等）， 这段 JSON 是模型的“生成策略说明书”，控制模型如何从输入中“说出”下一句话。</p>
+
+<pre><code class="language-json">{
+  // 起始标记的token id
+  &quot;bos_token_id&quot;: 151643,
+  // 是否使用采样生成
+  &quot;do_sample&quot;: true,
+  // 结束标记的token id列表
+  &quot;eos_token_id&quot;: [
+    151645,
+    151643
+  ],
+  // 填充token的id
+  &quot;pad_token_id&quot;: 151643,
+  // 重复惩罚系数
+  &quot;repetition_penalty&quot;: 1.05,
+  // 采样温度
+  &quot;temperature&quot;: 0.7,
+  // top-k采样参数
+  &quot;top_k&quot;: 20,
+  // top-p采样参数
+  &quot;top_p&quot;: 0.8,
+  // transformers库的版本
+  &quot;transformers_version&quot;: &quot;4.38.2&quot;
+}
+</code></pre>
+
+<h3 id="字段解析与作用">🔍 字段解析与作用</h3>
+
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>示例值</th>
+<th>含义与作用</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>bos_token_id</code></td>
+<td><code>151643</code></td>
+<td>Begin Of Sequence，生成起始标记 token ID</td>
+</tr>
+
+<tr>
+<td><code>eos_token_id</code></td>
+<td><code>[151645, 151643]</code></td>
+<td>End Of Sequence，遇到这些 token ID 时停止生成</td>
+</tr>
+
+<tr>
+<td><code>pad_token_id</code></td>
+<td><code>151643</code></td>
+<td>用于 padding（对齐序列）时使用的 token ID</td>
+</tr>
+
+<tr>
+<td><code>do_sample</code></td>
+<td><code>true</code></td>
+<td>启用采样（否则是贪婪/beam search）</td>
+</tr>
+
+<tr>
+<td><code>temperature</code></td>
+<td><code>0.7</code></td>
+<td>控制采样随机性（值越低越确定）</td>
+</tr>
+
+<tr>
+<td><code>top_k</code></td>
+<td><code>20</code></td>
+<td>限制每一步采样时最多考虑前 20 个概率最高的 token</td>
+</tr>
+
+<tr>
+<td><code>top_p</code></td>
+<td><code>0.8</code></td>
+<td>nucleus sampling（只考虑累积概率 ≥ 0.8 的 token）</td>
+</tr>
+
+<tr>
+<td><code>repetition_penalty</code></td>
+<td><code>1.05</code></td>
+<td>惩罚重复词语（&gt;1 会降低重复出现 token 的概率）</td>
+</tr>
+
+<tr>
+<td><code>transformers_version</code></td>
+<td><code>&quot;4.38.2&quot;</code></td>
+<td>指明此配置兼容的 HuggingFace Transformers 版本</td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h3 id="实际生成中它怎么用">🧠 实际生成中它怎么用？</h3>
+
+<p>你加载模型后，如果该文件存在，Transformers 会自动读取这些参数并应用到 <code>generate()</code> 调用中：</p>
+
+<pre><code class="language-python">from transformers import AutoTokenizer, AutoModelForCausalLM
+
+model = AutoModelForCausalLM.from_pretrained(&quot;Qwen/Qwen2-7B&quot;)
+tokenizer = AutoTokenizer.from_pretrained(&quot;Qwen/Qwen2-7B&quot;)
+
+input_ids = tokenizer(&quot;你好，请帮我总结一下这段话：&quot;, return_tensors=&quot;pt&quot;).input_ids
+outputs = model.generate(input_ids)
+print(tokenizer.decode(outputs[0], skip_special_tokens=True))
+
+</code></pre>
+
+<blockquote>
+<p>如果目录下存在 <code>generation_config.json</code>，<code>model.generate()</code> 会默认读取其中的设置（如 <code>top_k</code>, <code>temperature</code> 等）。</p>
+</blockquote>
+
+<p>你也可以手动覆盖它：</p>
+
+<pre><code class="language-python">outputs = model.generate(
+    input_ids,
+    temperature=0.7,
+    top_k=20,
+    top_p=0.8,
+    repetition_penalty=1.05,
+    do_sample=True,
+    max_new_tokens=256
+)
+
+</code></pre>
+
+<hr />
+
+<h3 id="你可以用它做什么">✅ 你可以用它做什么？</h3>
+
+<ul>
+<li><p><strong>自定义生成风格</strong>：更随机或更确定、控制重复</p></li>
+
+<li><p><strong>优化对话流畅性</strong>：结合 <code>eos_token_id</code>，能更自然地中止输出</p></li>
+
+<li><p><strong>自动化部署</strong>：多个模型可统一读取生成策略文件</p></li>
+</ul>
+
+<hr />
+
+<h2 id="3-3-merges-txt">3.3 merges.txt</h2>
+
+<p><code>merges.txt</code> 是 Hugging Face 模型中的一个 <strong>分词器（Tokenizer）文件</strong>，它是 <strong>Byte Pair Encoding（BPE）</strong> 分词算法的核心组成部分之一，配合 <code>vocab.json</code> 使用，决定了如何将文本分割成 token。</p>
+
+<p><img src="https://alidocs.oss-cn-zhangjiakou.aliyuncs.com/res/4jKqm0b8gmBmbnw1/img/ad459646-9cf9-4b50-9321-5f022f5f71d6.png" alt="image.png" /></p>
+
+<p><code>merges.txt</code> 是 Hugging Face 模型中的一个 <strong>分词器（Tokenizer）文件</strong>，它是 <strong>Byte Pair Encoding（BPE）</strong> 分词算法的核心组成部分之一，配合 <code>vocab.json</code> 使用，决定了如何将文本分割成 token。</p>
+
+<hr />
+
+<h3 id="bpe-分词算法背景简述">🧠 BPE 分词算法背景简述</h3>
+
+<p><strong>Byte Pair Encoding (BPE)</strong> 是一种基于频率的子词（subword）分词方法，常用于：</p>
+
+<ul>
+<li><p>GPT 系列（包括 OpenAI 模型）</p></li>
+
+<li><p>RoBERTa、DistilBERT、Qwen、LLaMA、BLOOM 等 HuggingFace 模型</p></li>
+
+<li><p>适用于多语言、中文、代码等</p></li>
+</ul>
+
+<hr />
+
+<h3 id="merges-txt-文件作用">📂 <code>**merges.txt**</code> 文件作用</h3>
+
+<p><strong>定义每一步合并哪些子词，形成新的词片段（token）</strong>，即：</p>
+
+<ul>
+<li><p>从原始字符逐步构建更大的常见子词</p></li>
+
+<li><p>保留高频组合、减少词表大小、提升表示能力</p></li>
+</ul>
+
+<hr />
+
+<h3 id="文件内容格式示例">🧾 文件内容格式示例</h3>
+
+<pre><code class="language-txt">#version: 0.2
+t h
+th e
+he r
+re s
+es t
+...
+
+</code></pre>
+
+<p>每一行是一个 <strong>合并规则（merge rule）</strong>，格式为两个空格分隔的子词（symbol）：</p>
+
+<pre><code class="language-plaintext">A B
+
+</code></pre>
+
+<p>表示 <code>A B → AB</code> 的合并操作。模型在分词时会按这些规则顺序地将字符对合并成 token，直到无法合并为止。</p>
+
+<hr />
+
+<h3 id="与-vocab-json-的关系">🔄 与 vocab.json 的关系</h3>
+
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>作用</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>vocab.json</code></td>
+<td>保存最终的 token → id 映射（所有可用 token）</td>
+</tr>
+
+<tr>
+<td><code>merges.txt</code></td>
+<td>保存 BPE 合并规则（从字符构造这些 token 的路径）</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote>
+<p>二者共同定义了分词器的行为，缺一不可。</p>
+</blockquote>
+
+<hr />
+
+<h3 id="应用举例-gpt-分词过程">📦 应用举例：GPT 分词过程</h3>
+
+<p>假设原始文本是 <code>&quot;there&quot;</code></p>
+
+<ol>
+<li><p>初始字符序列：<code>[&quot;t&quot;, &quot;h&quot;, &quot;e&quot;, &quot;r&quot;, &quot;e&quot;]</code></p></li>
+
+<li><p>第一次匹配合并规则：<code>t h → th</code></p></li>
+
+<li><p>变为：<code>[&quot;th&quot;, &quot;e&quot;, &quot;r&quot;, &quot;e&quot;]</code></p></li>
+
+<li><p>然后：<code>th e → the</code></p></li>
+
+<li><p>然后：<code>the r → ther</code></p></li>
+
+<li><p>然后：<code>ther e → there</code> → ✅ 完整 token</p></li>
+</ol>
+
+<p>最终就是一个 token：<code>there</code>，对应 <code>vocab.json</code> 中的某个 ID。</p>
+
+<hr />
+
+<h3 id="怎么查看">🔍 怎么查看？</h3>
+
+<p>使用 HuggingFace Tokenizer API 查看分词器：</p>
+
+<pre><code class="language-python">from transformers import AutoTokenizer
+
+tokenizer = AutoTokenizer.from_pretrained(&quot;Qwen/Qwen2-7B&quot;)
+print(tokenizer.tokenize(&quot;there&quot;))
+
+</code></pre>
+
+<hr />
+
+<h3 id="常见用途">🛠️ 常见用途</h3>
+
+<table>
+<thead>
+<tr>
+<th>作用</th>
+<th>示例</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>✅ 自定义分词器</td>
+<td>用你自己的 <code>merges.txt</code> + <code>vocab.json</code> 创建分词器</td>
+</tr>
+
+<tr>
+<td>🧪 分析模型分词习惯</td>
+<td>看哪些词被拆了，比如中文 <code>数据处理</code> → <code>数</code>, <code>据</code>, <code>处理</code></td>
+</tr>
+
+<tr>
+<td>📦 微调 tokenizer</td>
+<td>用 HuggingFace <code>tokenizers</code> 工具重新训练 tokenizer</td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h3 id="实战示例-创建自定义-bpe-分词器">🧰 实战示例：创建自定义 BPE 分词器</h3>
+
+<pre><code class="language-python">from tokenizers import Tokenizer, models, trainers, pre_tokenizers
+
+tokenizer = Tokenizer(models.BPE())
+tokenizer.pre_tokenizer = pre_tokenizers.Whitespace()
+
+trainer = trainers.BpeTrainer(vocab_size=10000, special_tokens=[&quot;&lt;pad&gt;&quot;, &quot;&lt;unk&gt;&quot;])
+tokenizer.train([&quot;your_corpus.txt&quot;], trainer)
+
+tokenizer.save(&quot;tokenizer.json&quot;)  # 里面包含 vocab 和 merges
+
+</code></pre>
+
+<hr />
+
+<h3 id="总结一句话">✅ 总结一句话</h3>
+
+<blockquote>
+<p><code>merges.txt</code> 是 HuggingFace BPE 分词器的“合并规则表”，告诉模型如何从字符组合成 token，它是 <code>vocab.json</code> 的构造过程记录，二者配合用于模型输入的分词处理。</p>
+</blockquote>
+
+<hr />
+
+<h2 id="3-4-model-00001-of-000xx-safetensors">3.4 model-00001-of-000XX.safetensors</h2>
+
+<p><code>model-00001-of-000XX.safetensors</code> 是 Hugging Face 或类似框架在保存大型模型权重时生成的文件之一。其中XX值代表有多少个类似的权重文件，这个文件的 <strong>作用是保存模型的实际权重（参数）数据</strong>，是推理或训练时真正加载到模型中的核心内容。</p>
+
+<hr />
+
+<h3 id="一句话概括">📦 一句话概括</h3>
+
+<blockquote>
+<p><code>model-00001-of-000XX.safetensors</code> 是保存 Transformer 模型参数的<strong>分片化 safetensors 文件</strong>，它是 <code>.bin</code> 的安全高效替代，用于多文件分布式加载大型模型。</p>
+</blockquote>
+
+<hr />
+
+<h3 id="文件组成与命名结构">🔍 文件组成与命名结构</h3>
+
+<p>比如你看到这样的目录结构：</p>
+
+<pre><code class="language-bash">model-00001-of-00007.safetensors
+model-00002-of-00007.safetensors
+...
+model-00007-of-00007.safetensors
+model.safetensors.index.json
+config.json
+tokenizer.json
+generation_config.json
+...
+
+</code></pre>
+
+<p>含义如下：</p>
+
+<table>
+<thead>
+<tr>
+<th>文件名</th>
+<th>含义</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>model-00001-of-00007.safetensors</code></td>
+<td>模型参数的第 1 个分片，共 7 个</td>
+</tr>
+
+<tr>
+<td><code>model.safetensors.index.json</code></td>
+<td>记录每个权重张量存储在哪个分片中（索引文件）</td>
+</tr>
+
+<tr>
+<td><code>config.json</code></td>
+<td>模型结构描述</td>
+</tr>
+
+<tr>
+<td><code>tokenizer.json</code> / <code>merges.txt</code></td>
+<td>分词器文件</td>
+</tr>
+
+<tr>
+<td><code>generation_config.json</code></td>
+<td>文本生成策略配置</td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h3 id="safetensors-格式简析">🧠 safetensors 格式简析</h3>
+
+<p><code>safetensors</code> 是一种由 Hugging Face 社区主导开发的<strong>安全、快速、零拷贝的模型权重保存格式</strong>，用于替代早期的 <code>.bin</code>（PyTorch pickle）格式。</p>
+
+<h4 id="相比-bin-格式的优势">✅ 相比 <code>**.bin**</code> 格式的优势：</h4>
+
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th><code>.bin</code></th>
+<th><code>.safetensors</code></th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>安全性（避免执行 pickle）</td>
+<td>❌ 可能执行恶意代码</td>
+<td>✅ 完全静态数据</td>
+</tr>
+
+<tr>
+<td>加载速度（零拷贝 mmap）</td>
+<td>较慢</td>
+<td>✅ 极快</td>
+</tr>
+
+<tr>
+<td>分片支持</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+
+<tr>
+<td>通用性（兼容 PyTorch）</td>
+<td>✅</td>
+<td>✅（HuggingFace 专用）</td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h3 id="文件内部结构">🔍 文件内部结构</h3>
+
+<p>你不能直接打开 <code>.safetensors</code> 文件，但可以用 <code>safetensors</code> 官方库读取其中内容：</p>
+
+<pre><code class="language-python">from safetensors import safe_open
+
+with safe_open(&quot;model-00001-of-00007.safetensors&quot;, framework=&quot;pt&quot;) as f:
+    for name in f.keys():
+        tensor = f.get_tensor(name)
+        print(name, tensor.shape)
+
+</code></pre>
+
+<p>这些 <code>name</code> 就是模型的权重名（如：<code>transformer.h.0.attn.q_proj.weight</code>），对应模型层。</p>
+
+<hr />
+
+<h3 id="model-safetensors-index-json-作用">📦 <code>**model.safetensors.index.json**</code> 作用</h3>
+
+<p>这个 JSON 文件告诉框架：</p>
+
+<ul>
+<li><p>所有参数都有哪些</p></li>
+
+<li><p>每个参数在哪个 <code>.safetensors</code> 分片中</p></li>
+
+<li><p>每个 tensor 的形状与数据类型</p></li>
+</ul>
+
+<p>示例结构如下：</p>
+
+<pre><code class="language-json">{
+  &quot;metadata&quot;: {
+    &quot;total_size&quot;: 54123342123
+  },
+  &quot;weight_map&quot;: {
+    &quot;transformer.h.0.attn.q_proj.weight&quot;: &quot;model-00001-of-00007.safetensors&quot;,
+    &quot;transformer.h.0.attn.k_proj.weight&quot;: &quot;model-00001-of-00007.safetensors&quot;,
+    ...
+  }
+}
+
+</code></pre>
+
+<p>这样框架就能在多个分片中找到每个参数的位置。</p>
+
+<hr />
+
+<h3 id="如何加载含-safetensors-的模型">🛠️ 如何加载含 <code>**.safetensors**</code> 的模型？</h3>
+
+<p>使用 Hugging Face Transformers 会自动识别：</p>
+
+<pre><code class="language-python">from transformers import AutoModelForCausalLM
+
+model = AutoModelForCausalLM.from_pretrained(&quot;your_model_dir&quot;, trust_remote_code=True)
+
+</code></pre>
+
+<p>框架会：</p>
+
+<ul>
+<li><p>加载 <code>config.json</code> 构建模型结构</p></li>
+
+<li><p>加载 <code>safetensors.index.json</code> 映射文件</p></li>
+
+<li><p>从多个 <code>.safetensors</code> 分片中加载权重</p></li>
+</ul>
+
+<hr />
+
+<h3 id="如果你要保存为-safetensors">📤 如果你要保存为 <code>**.safetensors**</code></h3>
+
+<pre><code class="language-python">from transformers import AutoModelForCausalLM
+
+model.save_pretrained(&quot;your_dir&quot;, safe_serialization=True)
+
+</code></pre>
+
+<p>它会自动生成：</p>
+
+<ul>
+<li><p>分片的 <code>model-xxxx-of-yyyy.safetensors</code></p></li>
+
+<li><p><code>model.safetensors.index.json</code></p></li>
+</ul>
+
+<p>你也可以设置 <code>max_shard_size</code> 控制分片大小（如 <code>&quot;2GB&quot;</code>）。</p>
+
+<hr />
+
+<h3 id="总结">✅ 总结</h3>
+
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>内容</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>文件名</td>
+<td><code>model-00001-of-000XX.safetensors</code></td>
+</tr>
+
+<tr>
+<td>作用</td>
+<td>存储 Transformer 模型参数的分片（权重）</td>
+</tr>
+
+<tr>
+<td>搭配使用</td>
+<td><code>model.safetensors.index.json</code> 提供索引</td>
+</tr>
+
+<tr>
+<td>加载方式</td>
+<td>自动由 Hugging Face Transformers 识别</td>
+</tr>
+
+<tr>
+<td>替代格式</td>
+<td>更快、更安全的 <code>.bin</code> 替代品</td>
+</tr>
+
+<tr>
+<td>应用场景</td>
+<td>大模型分布式权重管理，私有部署，安全模型分发</td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h2 id="3-5-model-safetensors-index-json">3.5 model.safetensors.index.json</h2>
+
+<p><code>model.safetensors.index.json</code> 是 Hugging Face Transformers 在使用 <code>.safetensors</code> 格式保存大模型权重时生成的 <strong>索引文件</strong>，用于记录 <strong>每个模型参数（tensor）在哪个分片文件中</strong>，让模型加载器能正确分布式加载多个 <code>.safetensors</code> 文件。</p>
+
+<hr />
+
+<h3 id="一句话总结">🧠 一句话总结</h3>
+
+<blockquote>
+<p><code>model.safetensors.index.json</code> 是多分片 <code>.safetensors</code> 权重文件的<strong>目录映射表</strong>，记录了每个权重张量的文件位置。</p>
+</blockquote>
+
+<hr />
+
+<h3 id="为什么需要它">📦 为什么需要它？</h3>
+
+<p>当模型很大（例如 7B/14B/70B），所有参数无法放进一个 <code>.safetensors</code> 文件时，会被拆成多片，比如：</p>
+
+<pre><code class="language-plaintext">model-00001-of-00007.safetensors
+model-00002-of-00007.safetensors
+...
+model-00007-of-00007.safetensors
+
+</code></pre>
+
+<p>这时就需要一个索引文件告诉你：</p>
+
+<ul>
+<li><p>每个 tensor 存在哪个分片文件里</p></li>
+
+<li><p>所有权重一共多大</p></li>
+</ul>
+
+<hr />
+
+<h3 id="文件结构详解">📄 文件结构详解</h3>
+
+<pre><code class="language-json">{
+    &quot;metadata&quot;: {
+        // 总大小（字节）
+        &quot;total_size&quot;: 21011769344
+    },
+    &quot;weight_map&quot;: {
+        // 嵌入层权重文件
+        &quot;model.embed_tokens.weight&quot;: &quot;model-00001-of-00005.safetensors&quot;,
+        // 第0层自注意力q_proj的权重文件
+        &quot;model.layers.0.self_attn.q_proj.qweight&quot;: &quot;model-00001-of-00005.safetensors&quot;,
+        &quot;model.layers.0.self_attn.q_proj.qzeros&quot;: &quot;model-00001-of-00005.safetensors&quot;,
+        &quot;model.layers.0.self_attn.q_proj.scales&quot;: &quot;model-00001-of-00005.safetensors&quot;,
+        &quot;model.layers.0.self_attn.q_proj.bias&quot;: &quot;model-00001-of-00005.safetensors&quot;,
+</code></pre>
+
+<p>一个典型的 <code>model.safetensors.index.json</code> 文件内容如下（已格式化）：</p>
+
+<pre><code class="language-json">{
+  &quot;metadata&quot;: {
+    &quot;total_size&quot;: 13789162534  // 所有分片的总大小（字节数）
+  },
+  &quot;weight_map&quot;: {
+    &quot;model.embed_tokens.weight&quot;: &quot;model-00001-of-00007.safetensors&quot;,
+    &quot;model.layers.0.self_attn.q_proj.weight&quot;: &quot;model-00001-of-00007.safetensors&quot;,
+    &quot;model.layers.0.self_attn.k_proj.weight&quot;: &quot;model-00001-of-00007.safetensors&quot;,
+    ...
+    &quot;lm_head.weight&quot;: &quot;model-00007-of-00007.safetensors&quot;
+  }
+}
+
+</code></pre>
+
+<hr />
+
+<h3 id="字段解释">🧩 字段解释</h3>
+
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>含义</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>metadata.total_size</code></td>
+<td>int</td>
+<td>所有权重总大小（字节数）</td>
+</tr>
+
+<tr>
+<td><code>weight_map</code></td>
+<td>dict</td>
+<td>key 为参数名，value 为对应的分片文件名</td>
+</tr>
+</tbody>
+</table>
+
+<p>例如：</p>
+
+<pre><code class="language-json">&quot;model.layers.42.mlp.down_proj.weight&quot;: &quot;model-00006-of-00007.safetensors&quot;
+
+</code></pre>
+
+<p>表示这一层的参数在第 6 个权重分片中。</p>
+
+<hr />
+
+<h3 id="使用方式">🛠️ 使用方式</h3>
+
+<p>当你用 Transformers 的 <code>.from_pretrained()</code> 加载 safetensors 权重时，它会：</p>
+
+<ol>
+<li><p>读取 <code>config.json</code> 建好模型结构</p></li>
+
+<li><p>检查是否有 <code>model.safetensors.index.json</code></p></li>
+
+<li><p>根据 <code>weight_map</code> 去每个分片 <code>.safetensors</code> 文件加载参数</p></li>
+</ol>
+
+<p>你无需手动操作。</p>
+
+<pre><code class="language-python">from transformers import AutoModelForCausalLM
+
+model = AutoModelForCausalLM.from_pretrained(&quot;path/to/model&quot;, trust_remote_code=True)
+
+</code></pre>
+
+<hr />
+
+<h3 id="自定义用法-高级">✏️ 自定义用法（高级）</h3>
+
+<p>你可以修改或生成自己的 <code>model.safetensors.index.json</code>，例如：</p>
+
+<ul>
+<li><p><strong>加载部分权重</strong>：比如只加载 encoder 层用于微调</p></li>
+
+<li><p><strong>重新分片</strong>：将一个大文件拆成多个分片</p></li>
+</ul>
+
+<p>工具包支持：</p>
+
+<pre><code class="language-python">from safetensors.torch import load_file
+from transformers import PreTrainedModel
+
+# 可读取特定 safetensors 文件
+tensors = load_file(&quot;model-00001-of-00007.safetensors&quot;)
+
+</code></pre>
+
+<hr />
+
+<h3 id="补充说明">📌 补充说明</h3>
+
+<ul>
+<li><p><code>.index.json</code> 是 <strong>只读辅助文件</strong>，不包含参数值本身</p></li>
+
+<li><p><strong>不可缺失</strong>：如果有多个分片，必须存在此文件，否则加载会报错</p></li>
+
+<li><p>对应 <code>.bin</code> 的同类文件叫 <code>pytorch_model.bin.index.json</code></p></li>
+</ul>
+
+<hr />
+
+<h3 id="总结-1">✅ 总结</h3>
+
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>内容</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>文件名</td>
+<td><code>model.safetensors.index.json</code></td>
+</tr>
+
+<tr>
+<td>作用</td>
+<td>记录每个模型参数在哪个 <code>.safetensors</code> 分片中</td>
+</tr>
+
+<tr>
+<td>用于</td>
+<td>自动多分片加载、分布式部署、节省内存</td>
+</tr>
+
+<tr>
+<td>典型配套文件</td>
+<td><code>model-00001-of-00007.safetensors</code> 等多个分片</td>
+</tr>
+
+<tr>
+<td>自动处理</td>
+<td>Transformers 框架会自动解析并加载</td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h2 id="3-6-readme-md">3.6 README.md</h2>
+
+<p>在 Hugging Face 模型目录中（如 <code>huggingface.co/你的模型名/</code>），<code>README.md</code> 的作用非常重要，它不仅是模型介绍文档，还直接影响你在 Hugging Face 网页上看到的模型主页内容。</p>
+
+<hr />
+
+<h3 id="一句话总结-1">🧠 一句话总结</h3>
+
+<blockquote>
+<p><code>README.md</code> 是 Hugging Face 模型仓库的<strong>可视化主页说明文档</strong>，用于展示模型的介绍、用法、性能、许可证等信息。</p>
+</blockquote>
+
+<hr />
+
+<h3 id="典型结构与作用">📄 典型结构与作用</h3>
+
+<p>一个标准的 <code>README.md</code> 通常包含如下部分：</p>
+
+<pre><code class="language-json">---
+license: other
+license_name: tongyi-qianwen
+license_link: &gt;-
+  https://huggingface.co/Qwen/Qwen1.5-32B-Chat-AWQ/blob/main/LICENSE
+language:
+- en
+pipeline_tag: text-generation
+tags:
+- chat
+---
+
+# Qwen1.5-32B-Chat-AWQ
+
+
+## Introduction
+
+Qwen1.5 is the beta version of Qwen2, a transformer-based decoder-only language model pretrained on a large amount of data. In comparison with the previous released Qwen, the improvements include: 
+
+* 8 model sizes, including 0.5B, 1.8B, 4B, 7B, 14B, 32B and 72B dense models, and an MoE model of 14B with 2.7B activated;
+* Significant performance improvement in human preference for chat models;
+* Multilingual support of both base and chat models;
+* Stable support of 32K context length for models of all sizes
+* No need of `trust_remote_code`.
+
+For more details, please refer to our [blog post](https://qwenlm.github.io/blog/qwen1.5/) and [GitHub repo](https://github.com/QwenLM/Qwen1.5).
+&lt;br&gt;
+
+## Model Details
+Qwen1.5 is a language model series including decoder language models of different model sizes. For each size, we release the base language model and the aligned chat model. It is based on the Transformer architecture with SwiGLU activation, attention QKV bias, group query attention, mixture of sliding window attention and full attention, etc. Additionally, we have an improved tokenizer adaptive to multiple natural languages and codes. For the beta version, temporarily we did not include GQA (except for 32B) and the mixture of SWA and full attention.
+
+## Training details
+We pretrained the models with a large amount of data, and we post-trained the models with both supervised finetuning and direct preference optimization.
+
+## Requirements
+The code of Qwen1.5 has been in the latest Hugging face transformers and we advise you to install `transformers&gt;=4.37.0`, or you might encounter the following error:
+</code></pre>
+
+<p>KeyError: &lsquo;qwen2&rsquo;</p>
+
+<pre><code>
+## Quickstart
+
+Here provides a code snippet with `apply_chat_template` to show you how to load the tokenizer and model and how to generate contents.
+
+```python
+from transformers import AutoModelForCausalLM, AutoTokenizer
+device = &quot;cuda&quot; # the device to load the model onto
+
+model = AutoModelForCausalLM.from_pretrained(
+    &quot;Qwen/Qwen1.5-32B-Chat-AWQ&quot;,
+    torch_dtype=&quot;auto&quot;,
+    device_map=&quot;auto&quot;
+)
+tokenizer = AutoTokenizer.from_pretrained(&quot;Qwen/Qwen1.5-32B-Chat-AWQ&quot;)
+
+prompt = &quot;Give me a short introduction to large language model.&quot;
+messages = [
+    {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;},
+    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: prompt}
+]
+text = tokenizer.apply_chat_template(
+    messages,
+    tokenize=False,
+    add_generation_prompt=True
+)
+model_inputs = tokenizer([text], return_tensors=&quot;pt&quot;).to(device)
+
+generated_ids = model.generate(
+    model_inputs.input_ids,
+    max_new_tokens=512
+)
+generated_ids = [
+    output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)
+]
+
+response = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
+</code></pre>
+
+<h2 id="tips">Tips</h2>
+
+<ul>
+<li>If you encounter code switching or other bad cases, we advise you to use our provided hyper-parameters in <code>generation_config.json</code>.</li>
+</ul>
+
+<h2 id="citation">Citation</h2>
+
+<p>If you find our work helpful, feel free to give us a cite.</p>
+
+<pre><code>@article{qwen,
+  title={Qwen Technical Report},
+  author={Jinze Bai and Shuai Bai and Yunfei Chu and Zeyu Cui and Kai Dang and Xiaodong Deng and Yang Fan and Wenbin Ge and Yu Han and Fei Huang and Binyuan Hui and Luo Ji and Mei Li and Junyang Lin and Runji Lin and Dayiheng Liu and Gao Liu and Chengqiang Lu and Keming Lu and Jianxin Ma and Rui Men and Xingzhang Ren and Xuancheng Ren and Chuanqi Tan and Sinan Tan and Jianhong Tu and Peng Wang and Shijie Wang and Wei Wang and Shengguang Wu and Benfeng Xu and Jin Xu and An Yang and Hao Yang and Jian Yang and Shusheng Yang and Yang Yao and Bowen Yu and Hongyi Yuan and Zheng Yuan and Jianwei Zhang and Xingxuan Zhang and Yichang Zhang and Zhenru Zhang and Chang Zhou and Jingren Zhou and Xiaohuan Zhou and Tianhang Zhu},
+  journal={arXiv preprint arXiv:2309.16609},
+  year={2023}
+}
+</code></pre>
+
+<pre><code>
+#### 1. 模型简介
+
+```markdown
+# Qwen2-7B-Chat
+
+Qwen2 是阿里达摩院发布的新一代大语言模型，支持中英文，具备对话能力。
+
+</code></pre>
+
+<blockquote>
+<p>简明扼要介绍模型名称、来源、能力、适用场景。</p>
+</blockquote>
+
+<hr />
+
+<h4 id="2-模型卡元数据-yaml-header">2. 模型卡元数据（YAML Header）</h4>
+
+<pre><code class="language-markdown">---
+license: apache-2.0
+language:
+  - zh
+  - en
+tags:
+  - chat
+  - qwen2
+pipeline_tag: text-generation
+---
+
+</code></pre>
+
+<blockquote>
+<p>这段 YAML 元数据是 Hugging Face “模型卡”规范的一部分，供网页渲染和搜索使用。常见字段包括：</p>
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>说明</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>license</code></td>
+<td>模型许可证类型（如 apache-2.0、mit、openrail）</td>
+</tr>
+
+<tr>
+<td><code>language</code></td>
+<td>支持的语言</td>
+</tr>
+
+<tr>
+<td><code>tags</code></td>
+<td>模型标签，影响推荐和搜索</td>
+</tr>
+
+<tr>
+<td><code>pipeline_tag</code></td>
+<td>用于展示推理 Widget 的模型类型（如 <code>text-generation</code>, <code>text-classification</code>）</td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h4 id="3-模型使用方式-代码示例">3. 模型使用方式（代码示例）</h4>
+
+<pre><code class="language-python">## 使用方法
+
+```python
+from transformers import AutoTokenizer, AutoModelForCausalLM
+
+tokenizer = AutoTokenizer.from_pretrained(&quot;Qwen/Qwen2-7B-Chat&quot;)
+model = AutoModelForCausalLM.from_pretrained(&quot;Qwen/Qwen2-7B-Chat&quot;)
+
+inputs = tokenizer(&quot;你好，请介绍一下你自己。&quot;, return_tensors=&quot;pt&quot;)
+outputs = model.generate(**inputs)
+print(tokenizer.decode(outputs[0]))
+
+</code></pre>
+
+<pre><code class="language-plaintext">
+&gt; 展示如何加载和使用模型，通常使用 `transformers` 接口，帮助用户快速上手。
+
+---
+
+### 4. 模型细节（结构、训练语料、推理设置）
+
+```markdown
+## 模型结构
+
+- 参数量：7B
+- 层数：32
+- 支持上下文长度：32K
+- 训练数据：中英混合、网络文本、代码等
+
+</code></pre>
+
+<blockquote>
+<p>有助于用户了解模型能力与边界。</p>
+</blockquote>
+
+<hr />
+
+<h4 id="5-性能评估-benchmark-可选">5. 性能评估 / Benchmark（可选）</h4>
+
+<pre><code class="language-markdown">## Benchmark
+
+| Dataset | Score |
+|---------|-------|
+| MMLU    | 68.3  |
+| CMMLU   | 56.1  |
+
+</code></pre>
+
+<hr />
+
+<h4 id="6-许可与责任声明">6. 许可与责任声明</h4>
+
+<pre><code class="language-markdown">## 许可证
+
+本模型采用 Apache 2.0 协议，可商用使用。
+
+## 注意事项
+
+本模型为研究用途，不对生成内容负责。请勿用于违法行为。
+
+</code></pre>
+
+<hr />
+
+<h3 id="如何影响-hugging-face-页面">💻 如何影响 Hugging Face 页面？</h3>
+
+<p>上传的 <code>README.md</code> 会被渲染为 Hugging Face 模型页的主要内容部分：</p>
+
+<ul>
+<li><p>位于模型卡最上方</p></li>
+
+<li><p>显示推理示例、标签、语言支持、下载入口等</p></li>
+
+<li><p>决定了用户是否信任、理解、使用你的模型</p></li>
+</ul>
+
+<blockquote>
+<p>👉 可以理解为：<strong>它既是文档，又是营销页！</strong></p>
+</blockquote>
+
+<hr />
+
+<h3 id="如何编辑-上传">🛠️ 如何编辑 / 上传？</h3>
+
+<h4 id="方法-1-手动创建">方法 1：手动创建</h4>
+
+<p>将 <code>README.md</code> 放入模型目录中，调用：</p>
+
+<pre><code class="language-bash">huggingface-cli upload ./your_model --repo-id yourname/yourmodel
+
+</code></pre>
+
+<h4 id="方法-2-在线编辑">方法 2：在线编辑</h4>
+
+<p>在模型页面右上角点击 ✏️「Edit model card」，在线修改 <code>README.md</code>。</p>
+
+<hr />
+
+<h3 id="总结-2">✅ 总结</h3>
+
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>内容</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>文件名</td>
+<td><code>README.md</code></td>
+</tr>
+
+<tr>
+<td>位置</td>
+<td>模型目录根路径</td>
+</tr>
+
+<tr>
+<td>作用</td>
+<td>显示在 Hugging Face 模型主页，提供模型介绍、使用方法、元数据</td>
+</tr>
+
+<tr>
+<td>类型</td>
+<td>Markdown 文本，支持代码块、表格、图片等</td>
+</tr>
+
+<tr>
+<td>与谁配套</td>
+<td><code>config.json</code>（结构）、<code>safetensors</code>（权重）、<code>tokenizer.json</code>（分词器）</td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h2 id="3-7-tokenizer-config-json">3.7 tokenizer_config.json</h2>
+
+<p><code>tokenizer_config.json</code> 是 Hugging Face Transformers 模型目录中的重要配置文件，它用于<strong>描述 tokenizer 的运行时行为和元信息</strong>，对加载、兼容性、推理行为等都有影响。</p>
+
+<hr />
+
+<h3 id="一句话理解">🧠 一句话理解</h3>
+
+<blockquote>
+<p><code>tokenizer_config.json</code> 是告诉 <code>AutoTokenizer</code>（或其它 Tokenizer 类）<strong>如何正确加载和使用分词器</strong>的说明书。</p>
+</blockquote>
+
+<hr />
+
+<h3 id="文件位置">📦 文件位置</h3>
+
+<p>在 Hugging Face 模型目录结构中，通常与下列文件位于同一目录下：</p>
+
+<pre><code class="language-plaintext">- config.json
+- tokenizer_config.json
+- tokenizer.json
+- merges.txt / vocab.json
+- special_tokens_map.json
+- model.safetensors
+- README.md
+
+</code></pre>
+
+<hr />
+
+<h3 id="典型内容示例">🧾 典型内容示例</h3>
+
+<pre><code class="language-json">{
+  // 是否在分词时添加前缀空格
+  &quot;add_prefix_space&quot;: false,
+  // 特殊token的解码器
+  &quot;added_tokens_decoder&quot;: {
+    // &lt;|endoftext|&gt; 结束文本的特殊token
+    &quot;151643&quot;: {
+      &quot;content&quot;: &quot;&lt;|endoftext|&gt;&quot;,
+      &quot;lstrip&quot;: false,
+      &quot;normalized&quot;: false,
+      &quot;rstrip&quot;: false,
+      &quot;single_word&quot;: false,
+      &quot;special&quot;: true
+    },
+    // &lt;|im_start|&gt; 对话开始的特殊token
+    &quot;151644&quot;: {
+      &quot;content&quot;: &quot;&lt;|im_start|&gt;&quot;,
+      &quot;lstrip&quot;: false,
+      &quot;normalized&quot;: false,
+      &quot;rstrip&quot;: false,
+      &quot;single_word&quot;: false,
+      &quot;special&quot;: true
+    },
+    // &lt;|im_end|&gt; 对话结束的特殊token
+    &quot;151645&quot;: {
+      &quot;content&quot;: &quot;&lt;|im_end|&gt;&quot;,
+      &quot;lstrip&quot;: false,
+      &quot;normalized&quot;: false,
+      &quot;rstrip&quot;: false,
+      &quot;single_word&quot;: false,
+      &quot;special&quot;: true
+    }
+  },
+  // 额外的特殊token列表
+  &quot;additional_special_tokens&quot;: [],
+  // 句子起始token（未设置）
+  &quot;bos_token&quot;: null,
+  // 聊天模板，定义消息格式
+  &quot;chat_template&quot;: &quot;{% for message in messages %}{% if loop.first and messages[0]['role'] != 'system' %}{{ '&lt;|im_start|&gt;system\nYou are a helpful assistant.&lt;|im_end|&gt;\n' }}{% endif %}{{'&lt;|im_start|&gt;' + message['role'] + '\n' + message['content'] + '&lt;|im_end|&gt;' + '\n'}}{% endfor %}{% if add_generation_prompt %}{{ '&lt;|im_start|&gt;assistant\n' }}{% endif %}&quot;,
+  // 是否清理分词空格
+  &quot;clean_up_tokenization_spaces&quot;: false,
+  // 句子结束token
+  &quot;eos_token&quot;: &quot;&lt;|im_end|&gt;&quot;,
+  // 错误处理方式
+  &quot;errors&quot;: &quot;replace&quot;,
+  // 模型最大长度
+  &quot;model_max_length&quot;: 32768,
+  // 填充token
+  &quot;pad_token&quot;: &quot;&lt;|endoftext|&gt;&quot;,
+  // 是否分割特殊token
+  &quot;split_special_tokens&quot;: false,
+  // 分词器类名
+  &quot;tokenizer_class&quot;: &quot;Qwen2Tokenizer&quot;,
+  // 未知token（未设置）
+  &quot;unk_token&quot;: null
+}
+</code></pre>
+
+<p>以一个用于文本生成的 tokenizer 为例：</p>
+
+<pre><code class="language-json">{
+  &quot;add_bos_token&quot;: true,
+  &quot;add_eos_token&quot;: false,
+  &quot;bos_token&quot;: &quot;&lt;s&gt;&quot;,
+  &quot;eos_token&quot;: &quot;&lt;/s&gt;&quot;,
+  &quot;unk_token&quot;: &quot;&lt;unk&gt;&quot;,
+  &quot;pad_token&quot;: &quot;&lt;pad&gt;&quot;,
+  &quot;cls_token&quot;: &quot;&lt;s&gt;&quot;,
+  &quot;sep_token&quot;: &quot;&lt;/s&gt;&quot;,
+  &quot;do_lower_case&quot;: false,
+  &quot;model_max_length&quot;: 2048,
+  &quot;tokenizer_class&quot;: &quot;LlamaTokenizer&quot;,
+  &quot;auto_map&quot;: {
+    &quot;AutoTokenizer&quot;: [&quot;tokenization_llama.LlamaTokenizer&quot;, null]
+  },
+  &quot;use_fast&quot;: false
+}
+
+</code></pre>
+
+<hr />
+
+<h3 id="字段说明">🔍 字段说明</h3>
+
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>add_bos_token</code></td>
+<td><code>bool</code></td>
+<td>是否在输入前添加 <code>&lt;s&gt;</code> 开头 token（通常用于 decoder-only 模型）</td>
+</tr>
+
+<tr>
+<td><code>add_eos_token</code></td>
+<td><code>bool</code></td>
+<td>是否自动在输入后添加 <code>&lt;/s&gt;</code>（终止符）</td>
+</tr>
+
+<tr>
+<td><code>bos_token</code>, <code>eos_token</code>, <code>unk_token</code>, <code>pad_token</code>, <code>cls_token</code>, <code>sep_token</code></td>
+<td><code>string</code></td>
+<td>特殊标记符定义，影响解码和处理</td>
+</tr>
+
+<tr>
+<td><code>do_lower_case</code></td>
+<td><code>bool</code></td>
+<td>是否将输入强制小写（常用于 BERT）</td>
+</tr>
+
+<tr>
+<td><code>model_max_length</code></td>
+<td><code>int</code></td>
+<td>默认支持的最大序列长度（超出时会报错或截断）</td>
+</tr>
+
+<tr>
+<td><code>tokenizer_class</code></td>
+<td><code>string</code></td>
+<td>指定用哪个 Tokenizer 类加载（如 <code>LlamaTokenizer</code>, <code>GPT2Tokenizer</code>）</td>
+</tr>
+
+<tr>
+<td><code>auto_map</code></td>
+<td><code>dict</code></td>
+<td>自定义 Tokenizer 类映射（用于私有 tokenizer 的注册）</td>
+</tr>
+
+<tr>
+<td><code>use_fast</code></td>
+<td><code>bool</code></td>
+<td>是否默认启用 <code>FastTokenizer</code>（Rust 实现，更快）</td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h3 id="和其它文件的关系">🚀 和其它文件的关系</h3>
+
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>作用</th>
+<th>相互关系</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>tokenizer.json</code></td>
+<td>主要的序列化分词器模型</td>
+<td><code>tokenizer_config.json</code> 指定如何加载它</td>
+</tr>
+
+<tr>
+<td><code>vocab.json</code>, <code>merges.txt</code></td>
+<td>适用于 BPE tokenizer（如 GPT-2）</td>
+<td>低层词表配置文件</td>
+</tr>
+
+<tr>
+<td><code>special_tokens_map.json</code></td>
+<td>映射特殊 token 到实际字符串（例如 <code>&lt;pad&gt;</code> 对应 ID）</td>
+<td>可与本文件内容重叠，但也可独立覆盖</td>
+</tr>
+
+<tr>
+<td><code>config.json</code></td>
+<td>模型结构（层数、头数等）</td>
+<td>和 tokenizer 配套使用，但用途不同</td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h3 id="示例-加载方式受-tokenizer-config-json-影响">✅ 示例：加载方式受 <code>**tokenizer_config.json**</code> 影响</h3>
+
+<pre><code class="language-python">from transformers import AutoTokenizer
+
+tokenizer = AutoTokenizer.from_pretrained(&quot;Qwen/Qwen2-7B-Chat&quot;)
+
+# 会优先读取 tokenizer_config.json 中的信息
+# 决定是否加载 fast tokenizer、默认特殊符号、是否添加 bos_token 等
+
+</code></pre>
+
+<hr />
+
+<h3 id="编辑或自定义使用场景">🛠️ 编辑或自定义使用场景</h3>
+
+<p>你可能会想修改它的场景包括：</p>
+
+<ul>
+<li><p>为 tokenizer 添加 pad_token 或 eos_token</p></li>
+
+<li><p>调整 <code>model_max_length</code> 以适配 longer context</p></li>
+
+<li><p>替换 tokenizer 类名（如加载自定义的分词器逻辑）</p></li>
+
+<li><p>禁用 fast tokenizer（当 fast 模型存在 bug）</p></li>
+</ul>
+
+<p>例如：</p>
+
+<pre><code class="language-json">{
+  &quot;pad_token&quot;: &quot;&lt;|pad|&gt;&quot;,
+  &quot;model_max_length&quot;: 4096,
+  &quot;tokenizer_class&quot;: &quot;MyCustomTokenizer&quot;,
+  &quot;use_fast&quot;: false
+}
+
+</code></pre>
+
+<hr />
+
+<h3 id="总结-3">总结 ✅</h3>
+
+<table>
+<thead>
+<tr>
+<th>功能</th>
+<th>说明</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>核心作用</td>
+<td>告诉 <code>AutoTokenizer</code> 如何加载、配置、初始化</td>
+</tr>
+
+<tr>
+<td>关键字段</td>
+<td>特殊符号、是否 lower-case、最大长度、fast/slow 模式</td>
+</tr>
+
+<tr>
+<td>和其它文件关系</td>
+<td>配合 <code>tokenizer.json</code> 和 <code>special_tokens_map.json</code> 等文件共同使用</td>
+</tr>
+
+<tr>
+<td>是否可选</td>
+<td>是，但缺失时会采用默认推断逻辑，可能导致不一致行为</td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h2 id="3-8-tokenizer-json">3.8 tokenizer.json</h2>
+
+<p><code>tokenizer.json</code> 是 Hugging Face Transformers 分词器目录中最核心的文件之一，它是<strong>Tokenizer 的完整序列化文件</strong>，包括词表、预处理规则、正则、特殊 token 映射、分词算法逻辑等。</p>
+
+<hr />
+
+<h3 id="一句话理解-1">🧠 一句话理解</h3>
+
+<blockquote>
+<p><code>tokenizer.json</code> 是 <strong>tokenizer 的所有行为和词表信息的统一打包版本</strong>，用于快速加载和复现 tokenizer 行为，尤其在使用 <code>fast tokenizer</code> 时。</p>
+</blockquote>
+
+<hr />
+
+<h3 id="它和其它文件有何区别">🔍 它和其它文件有何区别？</h3>
+
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>作用</th>
+<th>说明</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>tokenizer_config.json</code></td>
+<td>参数设置</td>
+<td>控制 tokenizer 运行行为（如是否加 bos_token）</td>
+</tr>
+
+<tr>
+<td><code>tokenizer.json</code></td>
+<td>主体</td>
+<td>保存完整 fast tokenizer 定义，包括词表、merge、pretokenizer 等</td>
+</tr>
+
+<tr>
+<td><code>vocab.json</code> + <code>merges.txt</code></td>
+<td>GPT/BPE 模型词表</td>
+<td>用于 slow tokenizer 的构建</td>
+</tr>
+
+<tr>
+<td><code>special_tokens_map.json</code></td>
+<td>映射</td>
+<td><code>&lt;pad&gt;</code>、<code>&lt;eos&gt;</code> 这些符号的实际字符串/ID</td>
+</tr>
+</tbody>
+</table>
+
+<p><code>tokenizer.json</code> 是 Fast Tokenizer（Rust 实现）专用文件，可以<strong>替代 vocab.json 和 merges.txt</strong>，因此更快、更便携。</p>
+
+<hr />
+
+<h3 id="典型结构内容">📦 典型结构内容</h3>
+
+<pre><code class="language-json">shengping.mo@y108p30:/data2/huggingface/Qwen/Qwen1.5-32B-Chat-AWQ$ head  -n 100 tokenizer.json 
+{
+  &quot;version&quot;: &quot;1.0&quot;,
+  &quot;truncation&quot;: null, // 截断设置
+  &quot;padding&quot;: null,    // 填充设置
+  &quot;added_tokens&quot;: [   // 新增的特殊token
+    {
+      &quot;id&quot;: 151643,
+      &quot;content&quot;: &quot;&lt;|endoftext|&gt;&quot;, // 文本结束标记
+      &quot;single_word&quot;: false,
+      &quot;lstrip&quot;: false,
+      &quot;rstrip&quot;: false,
+      &quot;normalized&quot;: false,
+      &quot;special&quot;: true
+    },
+    {
+      &quot;id&quot;: 151644,
+      &quot;content&quot;: &quot;&lt;|im_start|&gt;&quot;, // 对话开始标记
+      &quot;single_word&quot;: false,
+      &quot;lstrip&quot;: false,
+      &quot;rstrip&quot;: false,
+      &quot;normalized&quot;: false,
+      &quot;special&quot;: true
+    },
+    {
+      &quot;id&quot;: 151645,
+      &quot;content&quot;: &quot;&lt;|im_end|&gt;&quot;, // 对话结束标记
+      &quot;single_word&quot;: false,
+      &quot;lstrip&quot;: false,
+      &quot;rstrip&quot;: false,
+      &quot;normalized&quot;: false,
+      &quot;special&quot;: true
+    }
+  ],
+  &quot;normalizer&quot;: {
+    &quot;type&quot;: &quot;NFC&quot; // 归一化类型
+  },
+  &quot;pre_tokenizer&quot;: { // 分词前处理
+    &quot;type&quot;: &quot;Sequence&quot;,
+    &quot;pretokenizers&quot;: [
+      {
+        &quot;type&quot;: &quot;Split&quot;,
+        &quot;pattern&quot;: {
+          &quot;Regex&quot;: &quot;(?i:'s|'t|'re|'ve|'m|'ll|'d)|[^\r\n\p{L}\p{N}]?\p{L}+|\p{N}| ?[^\s\p{L}\p{N}]+[\r\n]*|\s*[\r\n]+|\s+(?!\S)|\s+&quot;
+        },
+        &quot;behavior&quot;: &quot;Isolated&quot;,
+        &quot;invert&quot;: false
+      },
+      {
+        &quot;type&quot;: &quot;ByteLevel&quot;,
+        &quot;add_prefix_space&quot;: false,
+        &quot;trim_offsets&quot;: false,
+        &quot;use_regex&quot;: false
+      }
+    ]
+  },
+  &quot;post_processor&quot;: { // 分词后处理
+    &quot;type&quot;: &quot;ByteLevel&quot;,
+    &quot;add_prefix_space&quot;: false,
+    &quot;trim_offsets&quot;: false,
+    &quot;use_regex&quot;: false
+  },
+  &quot;decoder&quot;: { // 解码器
+    &quot;type&quot;: &quot;ByteLevel&quot;,
+    &quot;add_prefix_space&quot;: false,
+    &quot;trim_offsets&quot;: false,
+    &quot;use_regex&quot;: false
+  },
+  &quot;model&quot;: { // 模型相关配置
+    &quot;type&quot;: &quot;BPE&quot;,
+    &quot;dropout&quot;: null,
+    &quot;unk_token&quot;: null,
+    &quot;continuing_subword_prefix&quot;: &quot;&quot;,
+    &quot;end_of_word_suffix&quot;: &quot;&quot;,
+    &quot;fuse_unk&quot;: false,
+    &quot;byte_fallback&quot;: false,
+    &quot;vocab&quot;: { // 词表
+      &quot;!&quot;: 0,
+      &quot;\&quot;&quot;: 1,
+      &quot;#&quot;: 2,
+      &quot;$&quot;: 3,
+      &quot;%&quot;: 4,
+      &quot;&amp;&quot;: 5,
+      &quot;'&quot;: 6,
+      &quot;(&quot;: 7,
+      &quot;)&quot;: 8,
+      &quot;*&quot;: 9,
+      &quot;+&quot;: 10,
+      &quot;,&quot;: 11,
+      &quot;-&quot;: 12,
+      &quot;.&quot;: 13,
+      &quot;/&quot;: 14,
+      &quot;0&quot;: 15,
+      &quot;1&quot;: 16,
+      &quot;2&quot;: 17,
+      &quot;3&quot;: 18,
+      &quot;4&quot;: 19,
+      &quot;5&quot;: 20,
+      &quot;6&quot;: 21,
+      &quot;7&quot;: 22,
+      &quot;8&quot;: 23,
+</code></pre>
+
+<p>一个 <code>tokenizer.json</code> 是一个大型 JSON 文件，通常包含以下字段：</p>
+
+<pre><code class="language-jsonc">{
+  &quot;version&quot;: &quot;1.0&quot;,
+  &quot;truncation&quot;: { ... },
+  &quot;padding&quot;: { ... },
+  &quot;added_tokens&quot;: [ ... ],
+  &quot;normalizer&quot;: { ... },
+  &quot;pre_tokenizer&quot;: { ... },
+  &quot;post_processor&quot;: { ... },
+  &quot;decoder&quot;: { ... },
+  &quot;model&quot;: {
+    &quot;type&quot;: &quot;BPE&quot;,
+    &quot;vocab&quot;: {
+      &quot;the&quot;: 0,
+      &quot;a&quot;: 1,
+      ...
+    },
+    &quot;merges&quot;: [
+      [&quot;t&quot;, &quot;h&quot;],
+      [&quot;th&quot;, &quot;e&quot;],
+      ...
+    ]
+  }
+}
+
+</code></pre>
+
+<hr />
+
+<h4 id="关键字段解释">🔧 关键字段解释</h4>
+
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>说明</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>model</code></td>
+<td>分词模型结构，如 <code>BPE</code> / <code>WordPiece</code>，含词表和合并规则</td>
+</tr>
+
+<tr>
+<td><code>vocab</code></td>
+<td>单词到 token ID 的映射</td>
+</tr>
+
+<tr>
+<td><code>merges</code></td>
+<td>合并规则（仅用于 BPE）</td>
+</tr>
+
+<tr>
+<td><code>normalizer</code></td>
+<td>正规化规则，如 Unicode 规范化、lowercasing 等</td>
+</tr>
+
+<tr>
+<td><code>pre_tokenizer</code></td>
+<td>分词前的处理，如空格拆分、正则</td>
+</tr>
+
+<tr>
+<td><code>post_processor</code></td>
+<td>分词后的处理，如添加 <code>&lt;bos&gt;</code>、<code>&lt;/s&gt;</code> 等特殊 token</td>
+</tr>
+
+<tr>
+<td><code>decoder</code></td>
+<td>将 token ID 序列还原为字符串</td>
+</tr>
+
+<tr>
+<td><code>added_tokens</code></td>
+<td>用户添加的特殊 token，比如 <code>&lt;user&gt;</code>, <code>&lt;bot&gt;</code> 等</td>
+</tr>
+
+<tr>
+<td><code>padding</code> / <code>truncation</code></td>
+<td>padding 和截断规则，决定输入对齐策略</td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h3 id="加载示例">✅ 加载示例</h3>
+
+<pre><code class="language-python">from transformers import PreTrainedTokenizerFast
+
+tokenizer = PreTrainedTokenizerFast(tokenizer_file=&quot;path/to/tokenizer.json&quot;)
+print(tokenizer.tokenize(&quot;你好，世界！&quot;))
+
+</code></pre>
+
+<p>你也可以使用：</p>
+
+<pre><code class="language-python">tokenizer = AutoTokenizer.from_pretrained(&quot;模型路径或Hub名&quot;)
+
+</code></pre>
+
+<p>背后就是调用 <code>tokenizer.json</code> 加载逻辑。</p>
+
+<hr />
+
+<h3 id="应用场景">🚀 应用场景</h3>
+
+<h4 id="使用-rust-实现的-fast-tokenizer-默认-hugging-face-会优先加载-tokenizer-json">✅ 使用 Rust 实现的 fast tokenizer（默认 Hugging Face 会优先加载 <code>**tokenizer.json**</code>）</h4>
+
+<ul>
+<li><p>更快的批量 tokenization</p></li>
+
+<li><p>支持 pretokenizer + postprocessor 全流程定制</p></li>
+
+<li><p>更容易部署（打包成 ONNX 或导出）</p></li>
+</ul>
+
+<h4 id="自定义-tokenizer-时生成这个文件">✅ 自定义 tokenizer 时生成这个文件：</h4>
+
+<pre><code class="language-python">from tokenizers import Tokenizer, trainers, models
+
+# 训练 BPE 模型
+tokenizer = Tokenizer(models.BPE())
+# ...
+tokenizer.train(...)  # 自定义训练
+tokenizer.save(&quot;tokenizer.json&quot;)
+
+</code></pre>
+
+<hr />
+
+<h3 id="和-fast-tokenizer-的关系">📝 和 fast tokenizer 的关系</h3>
+
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>slow tokenizer</th>
+<th>fast tokenizer (<code>tokenizer.json</code>)</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>加载速度</td>
+<td>慢</td>
+<td>快（Rust 实现）</td>
+</tr>
+
+<tr>
+<td>是否需要 vocab/merges</td>
+<td>是</td>
+<td>不需要（已合并到 tokenizer.json）</td>
+</tr>
+
+<tr>
+<td>多语言支持</td>
+<td>有</td>
+<td>更强</td>
+</tr>
+
+<tr>
+<td>正则/pipeline 细节可配置性</td>
+<td>较弱</td>
+<td>很强（支持 pretokenizer/normalizer/postprocessor）</td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h3 id="总结-4">总结 ✅</h3>
+
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>内容</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>文件类型</td>
+<td>JSON</td>
+</tr>
+
+<tr>
+<td>用途</td>
+<td>描述 tokenizer 全部行为，用于 fast tokenizer 加载</td>
+</tr>
+
+<tr>
+<td>是否必须</td>
+<td>不是必须，但存在时优先使用</td>
+</tr>
+
+<tr>
+<td>和 vocab/merges 的关系</td>
+<td>可以替代，功能更完整</td>
+</tr>
+
+<tr>
+<td>修改方式</td>
+<td>可通过 <code>tokenizers</code> 库创建或修改</td>
+</tr>
+
+<tr>
+<td>建议</td>
+<td>模型训练或部署推荐使用 <code>tokenizer.json</code>，尤其在需要高性能时</td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h2 id="3-9-vocab-json">3.9 vocab.json</h2>
+
+<p><code>vocab.json</code> 是 Hugging Face Tokenizer 模型中用于存储**词汇表（vocabulary）**的文件，常见于基于 BPE（Byte Pair Encoding）或 WordPiece 等子词分词算法的模型，例如 GPT、BERT、Roberta、LLaMA 等。</p>
+
+<hr />
+
+<h3 id="一句话理解-2">✅ 一句话理解</h3>
+
+<blockquote>
+<p><code>vocab.json</code> 定义了「<strong>token 到 ID 的映射关系</strong>」，是分词器的核心文件之一。</p>
+</blockquote>
+
+<hr />
+
+<h3 id="文件结构示例">📦 文件结构示例</h3>
+
+<pre><code class="language-json">{
+  &quot;the&quot;: 0,
+  &quot;Ġthe&quot;: 1,
+  &quot;a&quot;: 2,
+  &quot;Ġa&quot;: 3,
+  &quot;apple&quot;: 1000,
+  &quot;##ple&quot;: 1001,
+  &quot;&lt;pad&gt;&quot;: 50256,
+  &quot;&lt;eos&gt;&quot;: 50257
+}
+
+</code></pre>
+
+<ul>
+<li><p>key：<strong>token（字符串）</strong>，可以是单词、子词、符号或特殊 token</p></li>
+
+<li><p>value：<strong>整型 ID</strong>，用于将 token 转为模型可用的输入</p></li>
+</ul>
+
+<blockquote>
+<p><code>Ġ</code> 表示前面有空格（在 Roberta/BPE 中常见） <code>##</code> 表示这个词是接在前一个词后面的（WordPiece 标记）</p>
+</blockquote>
+
+<hr />
+
+<h3 id="它与其它文件的区别">🔍 它与其它文件的区别</h3>
+
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>作用</th>
+<th>是否必须</th>
+<th>快速说明</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>vocab.json</code></td>
+<td>token ➜ ID 映射</td>
+<td>是（slow tokenizer）</td>
+<td>分词后映射成整数 token ID</td>
+</tr>
+
+<tr>
+<td><code>merges.txt</code></td>
+<td>BPE 合并规则</td>
+<td>是（BPE 模型）</td>
+<td>指定如何从字符对合并出 token</td>
+</tr>
+
+<tr>
+<td><code>tokenizer.json</code></td>
+<td>Fast tokenizer 全部行为</td>
+<td>否</td>
+<td>打包了 vocab 和 merges，也更快</td>
+</tr>
+
+<tr>
+<td><code>tokenizer_config.json</code></td>
+<td>加载 tokenizer 的配置项</td>
+<td>否</td>
+<td>控制是否添加特殊 token 等行为</td>
+</tr>
+
+<tr>
+<td><code>special_tokens_map.json</code></td>
+<td>特殊 token 的 ID/映射</td>
+<td>否</td>
+<td>控制 ,  等的定义</td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h3 id="应用方式">🔧 应用方式</h3>
+
+<p>加载模型 tokenizer 时会自动用到：</p>
+
+<pre><code class="language-python">from transformers import AutoTokenizer
+
+tokenizer = AutoTokenizer.from_pretrained(&quot;gpt2&quot;)  # 会读取 vocab.json + merges.txt
+tokens = tokenizer.tokenize(&quot;The apple is red.&quot;)
+ids = tokenizer.convert_tokens_to_ids(tokens)
+
+</code></pre>
+
+<p>你也可以手动加载：</p>
+
+<pre><code class="language-python">import json
+
+with open(&quot;vocab.json&quot;) as f:
+    vocab = json.load(f)
+print(vocab[&quot;apple&quot;])  # 输出对应的 token ID
+
+</code></pre>
+
+<hr />
+
+<h3 id="如何生成-vocab-json">🏗 如何生成 vocab.json？</h3>
+
+<p>通常是通过训练分词器：</p>
+
+<pre><code class="language-python">from tokenizers import Tokenizer, models, trainers, pre_tokenizers
+
+tokenizer = Tokenizer(models.BPE())
+tokenizer.pre_tokenizer = pre_tokenizers.Whitespace()
+
+trainer = trainers.BpeTrainer(vocab_size=10000, special_tokens=[&quot;&lt;pad&gt;&quot;, &quot;&lt;eos&gt;&quot;])
+tokenizer.train([&quot;corpus.txt&quot;], trainer)
+
+tokenizer.model.save(&quot;.&quot;, &quot;my-tokenizer&quot;)  # 输出 vocab.json + merges.txt
+
+</code></pre>
+
+<hr />
+
+<h3 id="在推理中的作用">🚀 在推理中的作用</h3>
+
+<p>在推理时，文本输入流程如下：</p>
+
+<pre><code class="language-plaintext">文本输入 → 分词器 → token 序列 → vocab.json 查 ID → 模型输入
+
+</code></pre>
+
+<p>反向输出流程：</p>
+
+<pre><code class="language-plaintext">模型输出 token ID → vocab.json 反查 token → 拼接成文本
+
+</code></pre>
+
+<p>所以它是编码与解码的基础。</p>
+
+<hr />
+
+<h3 id="总结-5">✅ 总结</h3>
+
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>文件类型</td>
+<td>JSON（键为字符串 token，值为整数 ID）</td>
+</tr>
+
+<tr>
+<td>用途</td>
+<td>供 slow tokenizer 使用；token ↔ ID 映射</td>
+</tr>
+
+<tr>
+<td>依赖</td>
+<td>通常与 merges.txt 配合使用</td>
+</tr>
+
+<tr>
+<td>被谁用</td>
+<td><code>AutoTokenizer</code>, <code>PreTrainedTokenizer</code> 等</td>
+</tr>
+
+<tr>
+<td>是否可替代</td>
+<td>若有 <code>tokenizer.json</code>，则可不再使用它</td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h1 id="4-总结">4、总结</h1>
+
+<p>Hugging Face 模型目录结构是用于保存一个预训练模型（及其 tokenizer、配置等）的完整打包形式，目的是为了方便模型的加载、共享、部署和推理。下面为你总结模型目录的<strong>标准构成</strong>、每个文件的作用、是否必须、以及它们之间的关系。</p>
+
+<hr />
+
+<h2 id="1-目录结构总览">✅ 1. 目录结构总览</h2>
+
+<p>一个典型的 Hugging Face 模型目录如下：</p>
+
+<pre><code class="language-plaintext">/your-model-dir/
+├── config.json
+├── generation_config.json
+├── pytorch_model.bin / model.safetensors
+├── model.safetensors.index.json (如为分片模型)
+├── tokenizer_config.json
+├── tokenizer.json
+├── vocab.json
+├── merges.txt (如为 BPE)
+├── special_tokens_map.json
+├── README.md
+
+</code></pre>
+
+<hr />
+
+<h2 id="2-各文件功能详解">📁 2. 各文件功能详解</h2>
+
+<table>
+<thead>
+<tr>
+<th>文件名</th>
+<th>必须</th>
+<th>类型</th>
+<th>作用</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>config.json</strong></td>
+<td>✅ 是</td>
+<td>模型配置</td>
+<td>定义模型架构参数（层数、隐藏维度、dropout 等）</td>
+</tr>
+
+<tr>
+<td><strong>pytorch_model.bin</strong> / <strong>model.safetensors</strong></td>
+<td>✅ 是</td>
+<td>模型权重</td>
+<td>保存模型的预训练参数（PyTorch 格式 / safetensors 更安全）</td>
+</tr>
+
+<tr>
+<td><strong>model.safetensors.index.json</strong></td>
+<td>🚫 否</td>
+<td>权重索引</td>
+<td>用于分片模型（多块 .safetensors 的索引信息）</td>
+</tr>
+
+<tr>
+<td><strong>tokenizer_config.json</strong></td>
+<td>✅ 是</td>
+<td>tokenizer 配置</td>
+<td>控制 tokenizer 行为，比如是否小写、是否添加 BOS/EOS 等</td>
+</tr>
+
+<tr>
+<td><strong>tokenizer.json</strong></td>
+<td>🚫 否</td>
+<td>Fast tokenizer</td>
+<td>Hugging Face 的 Rust 实现 tokenizer，速度快，包含 vocab+merges</td>
+</tr>
+
+<tr>
+<td><strong>vocab.json</strong></td>
+<td>✅ 是</td>
+<td>词表（token → id）</td>
+<td>分词器词典，主要用于 slow tokenizer</td>
+</tr>
+
+<tr>
+<td><strong>merges.txt</strong></td>
+<td>⚠️ 视分词器类型</td>
+<td>BPE 合并规则</td>
+<td>仅用于 BPE（GPT、Roberta 等）</td>
+</tr>
+
+<tr>
+<td><strong>special_tokens_map.json</strong></td>
+<td>🚫 否</td>
+<td>特殊 token 映射</td>
+<td>映射 、、 等到对应 ID</td>
+</tr>
+
+<tr>
+<td><strong>generation_config.json</strong></td>
+<td>🚫 否</td>
+<td>推理配置</td>
+<td>定义采样策略（如 temperature, top_k, repetition_penalty 等）</td>
+</tr>
+
+<tr>
+<td><strong>README.md</strong></td>
+<td>🚫 否</td>
+<td>文档</td>
+<td>模型说明文档（在 Hugging Face hub 上展示）</td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h2 id="3-必须-vs-可选文件汇总">🧠 3. 必须 vs 可选文件汇总</h2>
+
+<h3 id="必须文件-用于模型加载">✅ 必须文件（用于模型加载）</h3>
+
+<ul>
+<li><p><code>config.json</code></p></li>
+
+<li><p><code>pytorch_model.bin</code> 或 <code>model.safetensors</code></p></li>
+
+<li><p><code>tokenizer_config.json</code></p></li>
+
+<li><p><code>vocab.json</code></p></li>
+</ul>
+
+<h3 id="根据模型类型必须">⚠️ 根据模型类型必须</h3>
+
+<ul>
+<li><code>merges.txt</code>：如果使用 BPE tokenizer（如 GPT、Roberta）
+<br /></li>
+</ul>
+
+<h3 id="可选但推荐">🚫 可选但推荐</h3>
+
+<ul>
+<li><p><code>tokenizer.json</code>：推荐用于 fast tokenizer，加快速度</p></li>
+
+<li><p><code>generation_config.json</code>：如模型用于生成任务（文本生成、聊天）</p></li>
+
+<li><p><code>special_tokens_map.json</code>：对话模型、翻译、QA 常用</p></li>
+
+<li><p><code>README.md</code>：用于模型说明和文档展示</p></li>
+
+<li><p><code>model.safetensors.index.json</code>：当模型是分片结构（sharded）时才出现</p></li>
+</ul>
+
+<hr />
+
+<h2 id="4-加载时工作机制">📦 4. 加载时工作机制</h2>
+
+<p>Hugging Face 的 <code>AutoModel</code> 和 <code>AutoTokenizer</code> 会根据目录内容自动判断使用哪种文件：</p>
+
+<pre><code class="language-python">from transformers import AutoModelForCausalLM, AutoTokenizer
+
+model = AutoModelForCausalLM.from_pretrained(&quot;./your-model-dir&quot;)
+tokenizer = AutoTokenizer.from_pretrained(&quot;./your-model-dir&quot;)
+
+</code></pre>
+
+<p>它会依次尝试加载：</p>
+
+<ul>
+<li><p>权重：<code>model.safetensors</code> &gt; <code>pytorch_model.bin</code></p></li>
+
+<li><p>tokenizer：<code>tokenizer.json</code> &gt; <code>vocab.json + merges.txt</code></p></li>
+
+<li><p>特殊 token：<code>special_tokens_map.json</code></p></li>
+
+<li><p>推理策略：<code>generation_config.json</code></p></li>
+</ul>
+
+<hr />
+
+<h2 id="5-示例应用流程">🔍 5. 示例应用流程</h2>
+
+<pre><code class="language-txt">文本 → tokenizer.json/vocab.json → token ID → 模型(config+权重) → 输出 token ID → 反向 tokenizer → 文本输出
+
+</code></pre>
+
+<hr />
+
+<h2 id="总结一句话-1">✅ 总结一句话</h2>
+
+<blockquote>
+<p>Hugging Face 模型目录包含了“模型结构（config）+权重+分词器+推理策略”的完整组件，是部署、共享、加载模型的标准打包格式。</p>
+</blockquote>
+
+<hr />
+
+    <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+  <div style="float:right;margin-top:0px;">
+    <img src="/img/qrcode.jpg" width="129px" height="129px"/>
+    <div style="text-align:center;">微信扫一扫</div>
+  </div>
+  <div style="float:left;margin-top:0px;">
+    <img src="/img/rewardcode.jpg" width="129px" height="129px"/>
+  </div>
+  <div>
+    <p style="margin-top:0px;">作者：<a target="_blank" href="http://blog.mospan.cn/">mospan</a>
+      <br />微信关注：墨斯潘園
+      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2025/11/09/hugging-face/">http://mospany.github.io/2025/11/09/hugging-face/</a>
+      <br />
+      文章版权归本人所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+  </div>
+</div>
+
+
+	</div>
+  <footer class="article-footer clearfix">
+  
+
+<div class="article-tags">
+  <span></span>
+  
+  <a href="/tags/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0">技术文章</a>
+  
+  <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD">人工智能</a>
+  
+</div>
+
+
+
+<div class="article-categories">
+  <span></span>
+  
+  <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0">技术文章</a>
+  
+  <a class="article-category-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD">人工智能</a>
+  
+</div>
+
+
+
+  <div class="article-share" id="share">
+    <div data-url="http://mospany.github.io/2025/11/09/hugging-face/" data-title="大模型权重文件解析" data-tsina="3833537679" class="share clearfix">
+    </div>
+  </div>
+</footer>
+
+	</article>
+  
+
+
+
+
+
+<div id="git-comments"></div>
+<link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
+<script src="https://billts.site/js/gitment.js"></script>
+<script>
+var gitment = new Gitment({
+  id: '<%= page.date %>',
+  owner: 'mospany',
+  repo: 'mospan-hugo-blog-gitment',
+  oauth: {
+    client_id: '0cafe299c964f0af2d1e',
+    client_secret: 'ec47ee9481210935a662298791c31da203694a8f',
+  },
+})
+gitment.render('git-comments')
+</script>    
+
+
+</div>
+
+    <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+  
+
+<div class="categorieslist">
+  <p class="asidetitle">分类</p>
+  <ul>
+    
+    <li><a href="http://mospany.github.io/categories/%e4%ba%91%e8%ae%a1%e7%ae%97" title="云计算">云计算<sup>7</sup></a></li>
+    
+    <li><a href="http://mospany.github.io/categories/%e4%ba%ba%e5%b7%a5%e6%99%ba%e8%83%bd" title="人工智能">人工智能<sup>14</sup></a></li>
+    
+    <li><a href="http://mospany.github.io/categories/%e5%b7%a5%e5%85%b7%e4%bd%bf%e7%94%a8" title="工具使用">工具使用<sup>3</sup></a></li>
+    
+    <li><a href="http://mospany.github.io/categories/%e6%8a%80%e6%9c%af%e6%96%87%e7%ab%a0" title="技术文章">技术文章<sup>49</sup></a></li>
+    
+    <li><a href="http://mospany.github.io/categories/%e7%94%9f%e6%b4%bb%e8%ae%b0%e5%bd%95" title="生活记录">生活记录<sup>1</sup></a></li>
+    
+    <li><a href="http://mospany.github.io/categories/%e8%81%8c%e5%9c%ba%e4%ba%ba%e7%94%9f" title="职场人生">职场人生<sup>1</sup></a></li>
+    
+    <li><a href="http://mospany.github.io/categories/%e8%af%bb%e4%b9%a6%e7%ac%94%e8%ae%b0" title="读书笔记">读书笔记<sup>2</sup></a></li>
+    
+  </ul>
+</div>
+
+
+
+  
+
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+      
+			<li><a href="http://mospany.github.io/tags/" title=""><sup>8</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/dns" title="dns">dns<sup>2</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/dpdk" title="dpdk">dpdk<sup>2</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/emacs" title="emacs">emacs<sup>5</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/gpu" title="gpu">gpu<sup>6</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/hugo" title="hugo">hugo<sup>3</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/ipv6" title="ipv6">ipv6<sup>2</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/k8s" title="k8s">k8s<sup>20</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/linux" title="linux">linux<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/openresty" title="openresty">openresty<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/org-mode" title="org-mode">org-mode<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/pango" title="pango">pango<sup>2</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/redis" title="redis">redis<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/spacemacs" title="spacemacs">spacemacs<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/vim" title="vim">vim<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/vue" title="vue">vue<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/xns" title="xns">xns<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/yaml" title="yaml">yaml<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e4%ba%91%e8%ae%a1%e7%ae%97" title="云计算">云计算<sup>6</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e4%ba%92%e8%81%94%e7%bd%91" title="互联网">互联网<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e4%ba%ba%e5%b7%a5%e6%99%ba%e8%83%bd" title="人工智能">人工智能<sup>3</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e5%89%8d%e7%ab%af" title="前端">前端<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e5%8d%9a%e5%ae%a2" title="博客">博客<sup>7</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e5%ad%98%e5%82%a8" title="存储">存储<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e5%b7%a5%e5%85%b7" title="工具">工具<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e5%be%ae%e4%bf%a1" title="微信">微信<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e6%8a%80%e6%9c%af%e6%96%87%e7%ab%a0" title="技术文章">技术文章<sup>5</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e6%9e%b6%e6%9e%84" title="架构">架构<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e7%8b%ac%e7%ab%8b" title="独立">独立<sup>3</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e7%94%9f%e6%b4%bb%e8%ae%b0%e5%bd%95" title="生活记录">生活记录<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e8%81%8c%e5%9c%ba%e4%ba%ba%e7%94%9f" title="职场人生">职场人生<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e8%af%bb%e4%b9%a6%e7%ac%94%e8%ae%b0" title="读书笔记">读书笔记<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e9%82%ae%e7%ae%b1" title="邮箱">邮箱<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e9%9d%a2%e8%af%95" title="面试">面试<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e9%a1%b9%e7%9b%ae%e5%ae%9e%e8%b7%b5" title="项目实践">项目实践<sup>4</sup></a></li>
+      
+		</ul>
+</div>
+
+
+
+    <div class="linkslist">
+  <p class="asidetitle">我的关注</p>
+    <ul>
+          <li>
+            	<a href="http://www.csdn.net/" target="_blank" title="中国软件开发网(CSDN)">中国软件开发网(CSDN)</a>
+          </li>
+          <li>
+            	<a href="http://www.golangtc.com/" target="_blank" title="Golang中国">Golang中国</a>
+          </li>
+          <li>
+            	<a href="http://blog.qiniu.com/" target="_blank" title="七牛团队博客">七牛团队博客</a>
+          </li>
+          <li>
+            	<a href="http://csrd.aliapp.com/" target="_blank" title="阿里核心系统团队博客">阿里核心系统团队博客</a>
+          </li>
+          <li>
+            	<a href="http://coolshell.cn/" target="_blank" title="酷壳－陈浩">酷壳－陈浩</a>
+          </li>
+          <li>
+            	<a href="http://www.ruanyifeng.com/blog/" target="_blank" title="阮一峰的网络日志">阮一峰的网络日志</a>
+          </li>
+          <li>
+            	<a href="https://blog.dandyweng.com/" target="_blank" title="homeschooler－翁天信的博客">homeschooler－翁天信的博客</a>
+          </li>
+          <li>
+            	<a href="http://www.jeffjade.com/" target="_blank" title="晚晴幽草轩">晚晴幽草轩</a>
+          </li>
+          <li>
+            	<a href="https://nicejade.github.io/index.html" target="_blank" title="天意人间舫">天意人间舫</a>
+          </li>
+    </ul>
+</div>
+
+    <div class="linkslist">
+  <p class="asidetitle">在线书籍</p>
+    <ul>
+          <li>
+            	<a href="https://docs.ruanjiadeng.com/gopl-zh/index.html" target="_blank" title="Go语言圣经（中文版）">Go语言圣经（中文版）</a>
+          </li>
+          <li>
+            	<a href="http://studygolang.com/pkgdoc" target="_blank" title="Go语言标准库">Go语言标准库</a>
+          </li>
+          <li>
+            	<a href="http://www.w3school.com.cn/" target="_blank" title="w3school 在线教程">w3school 在线教程</a>
+          </li>
+    </ul>
+</div>
+
+    <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+          <li>
+            	<a href="http://www.cloudxns.net/" target="_blank" title="CloudXNS官网">CloudXNS官网</a>
+          </li>
+          <li>
+            	<a href="http://www.chinatesters.com/" target="_blank" title="华夏评测师家园">华夏评测师家园</a>
+          </li>
+    </ul>
+</div>
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle">归档</p>
+    <ul class="archive-list">
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2025-11">2025年11月</a><span class="archive-list-count">10</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2025-08">2025年08月</a><span class="archive-list-count">2</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2025-07">2025年07月</a><span class="archive-list-count">4</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2024-02">2024年02月</a><span class="archive-list-count">4</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2024-01">2024年01月</a><span class="archive-list-count">7</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2023-06">2023年06月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2023-03">2023年03月</a><span class="archive-list-count">2</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2023-01">2023年01月</a><span class="archive-list-count">3</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2022-12">2022年12月</a><span class="archive-list-count">3</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2022-11">2022年11月</a><span class="archive-list-count">2</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2022-10">2022年10月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2022-09">2022年09月</a><span class="archive-list-count">7</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2019-11">2019年11月</a><span class="archive-list-count">3</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2019-10">2019年10月</a><span class="archive-list-count">8</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2019-08">2019年08月</a><span class="archive-list-count">4</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2019-02">2019年02月</a><span class="archive-list-count">3</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2018-02">2018年02月</a><span class="archive-list-count">3</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2017-08">2017年08月</a><span class="archive-list-count">4</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2017-07">2017年07月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2017-03">2017年03月</a><span class="archive-list-count">8</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-09">2016年09月</a><span class="archive-list-count">2</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-05">2016年05月</a><span class="archive-list-count">4</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-03">2016年03月</a><span class="archive-list-count">5</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-02">2016年02月</a><span class="archive-list-count">11</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-01">2016年01月</a><span class="archive-list-count">6</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#0001-01">0001年01月</a><span class="archive-list-count">1</span>
+      </li>
+      
+    </ul>
+
+  </div>
+
+
+  
+
+<div class="tagcloudlist">
+  <p class="asidetitle">标签云</p>
+  <div class="tagcloudlist clearfix">
+    
+    <a href="http://mospany.github.io/tags/" style="font-size: 12px;"></a>
+    
+    <a href="http://mospany.github.io/tags/dns" style="font-size: 12px;">dns</a>
+    
+    <a href="http://mospany.github.io/tags/dpdk" style="font-size: 12px;">dpdk</a>
+    
+    <a href="http://mospany.github.io/tags/emacs" style="font-size: 12px;">emacs</a>
+    
+    <a href="http://mospany.github.io/tags/gpu" style="font-size: 12px;">gpu</a>
+    
+    <a href="http://mospany.github.io/tags/hugo" style="font-size: 12px;">hugo</a>
+    
+    <a href="http://mospany.github.io/tags/ipv6" style="font-size: 12px;">ipv6</a>
+    
+    <a href="http://mospany.github.io/tags/k8s" style="font-size: 12px;">k8s</a>
+    
+    <a href="http://mospany.github.io/tags/linux" style="font-size: 12px;">linux</a>
+    
+    <a href="http://mospany.github.io/tags/openresty" style="font-size: 12px;">openresty</a>
+    
+    <a href="http://mospany.github.io/tags/org-mode" style="font-size: 12px;">org-mode</a>
+    
+    <a href="http://mospany.github.io/tags/pango" style="font-size: 12px;">pango</a>
+    
+    <a href="http://mospany.github.io/tags/redis" style="font-size: 12px;">redis</a>
+    
+    <a href="http://mospany.github.io/tags/spacemacs" style="font-size: 12px;">spacemacs</a>
+    
+    <a href="http://mospany.github.io/tags/vim" style="font-size: 12px;">vim</a>
+    
+    <a href="http://mospany.github.io/tags/vue" style="font-size: 12px;">vue</a>
+    
+    <a href="http://mospany.github.io/tags/xns" style="font-size: 12px;">xns</a>
+    
+    <a href="http://mospany.github.io/tags/yaml" style="font-size: 12px;">yaml</a>
+    
+    <a href="http://mospany.github.io/tags/%e4%ba%91%e8%ae%a1%e7%ae%97" style="font-size: 12px;">云计算</a>
+    
+    <a href="http://mospany.github.io/tags/%e4%ba%92%e8%81%94%e7%bd%91" style="font-size: 12px;">互联网</a>
+    
+    <a href="http://mospany.github.io/tags/%e4%ba%ba%e5%b7%a5%e6%99%ba%e8%83%bd" style="font-size: 12px;">人工智能</a>
+    
+    <a href="http://mospany.github.io/tags/%e5%89%8d%e7%ab%af" style="font-size: 12px;">前端</a>
+    
+    <a href="http://mospany.github.io/tags/%e5%8d%9a%e5%ae%a2" style="font-size: 12px;">博客</a>
+    
+    <a href="http://mospany.github.io/tags/%e5%ad%98%e5%82%a8" style="font-size: 12px;">存储</a>
+    
+    <a href="http://mospany.github.io/tags/%e5%b7%a5%e5%85%b7" style="font-size: 12px;">工具</a>
+    
+    <a href="http://mospany.github.io/tags/%e5%be%ae%e4%bf%a1" style="font-size: 12px;">微信</a>
+    
+    <a href="http://mospany.github.io/tags/%e6%8a%80%e6%9c%af%e6%96%87%e7%ab%a0" style="font-size: 12px;">技术文章</a>
+    
+    <a href="http://mospany.github.io/tags/%e6%9e%b6%e6%9e%84" style="font-size: 12px;">架构</a>
+    
+    <a href="http://mospany.github.io/tags/%e7%8b%ac%e7%ab%8b" style="font-size: 12px;">独立</a>
+    
+    <a href="http://mospany.github.io/tags/%e7%94%9f%e6%b4%bb%e8%ae%b0%e5%bd%95" style="font-size: 12px;">生活记录</a>
+    
+    <a href="http://mospany.github.io/tags/%e8%81%8c%e5%9c%ba%e4%ba%ba%e7%94%9f" style="font-size: 12px;">职场人生</a>
+    
+    <a href="http://mospany.github.io/tags/%e8%af%bb%e4%b9%a6%e7%ac%94%e8%ae%b0" style="font-size: 12px;">读书笔记</a>
+    
+    <a href="http://mospany.github.io/tags/%e9%82%ae%e7%ae%b1" style="font-size: 12px;">邮箱</a>
+    
+    <a href="http://mospany.github.io/tags/%e9%9d%a2%e8%af%95" style="font-size: 12px;">面试</a>
+    
+    <a href="http://mospany.github.io/tags/%e9%a1%b9%e7%9b%ae%e5%ae%9e%e8%b7%b5" style="font-size: 12px;">项目实践</a>
+    
+  </div>
+</div>
+
+
+
+  
+</aside>
+</div>
+
+  </div>
+  <footer><div id="footer" >
+  
+  <div class="line">
+    <span></span>
+    <div style='background:no-repeat url("http://mospany.github.io/img/author.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  <div class="line">
+    <div style='background:no-repeat url("http://mospany.github.io/img/qiniu_logo.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  <div class="line">
+    <div style='background:no-repeat url("http://mospany.github.io/img/fastweb_logo.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  <div class="line">
+    <div style='background:no-repeat url("http://mospany.github.io/img/leadsec_logo.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  <div class="line">
+    <div style='background:no-repeat url("http://mospany.github.io/img/raisecom_logo.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  <div class="line">
+    <div style='background:no-repeat url("http://mospany.github.io/img/jbt_logo.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  
+  
+  <div class="social-font clearfix">
+    
+    <a href="http://weibo.com/mospan" target="_blank" title="weibo"></a>
+    
+    
+    <a href="https://twitter.com/mospan" target="_blank" title="twitter"></a>
+    
+    
+    <a href="https://github.com/mospany" target="_blank" title="github"></a>
+    
+    
+    <a href="https://www.facebook.com/mospan" target="_blank" title="facebook"></a>
+    
+    
+    <a href="https://www.linkedin.com/mospan" target="_blank" title="linkedin"></a>
+    
+  </div>
+  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/mospany/mospan-hugo-blog/tree/master/themes/hugo-panman-theme" target="_blank" title="hugo-panman-theme">hugo-panman-theme</a> © 2025
+    
+    <a href="http://mospany.github.io/" target="_blank" title="mospan">mospan</a>
+    
+  </p>
+</div>
+</footer>
+  <script src="http://mospany.github.io/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+done = false;
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  $('form.search').on('submit', function (event) {
+    if (false === done) {
+      event.preventDefault();
+      var orgVal = $(this).find('#search').val();
+      $(this).find('#search').val('site:http:\/\/mospany.github.io\/ ' + orgVal);
+      done = true;
+      $(this).submit();
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});
+</script>
+
+
+<link rel="stylesheet" href="http://mospany.github.io/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="http://mospany.github.io/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+
+</body>
+</html>
