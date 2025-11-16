@@ -6,10 +6,19 @@
     <description>Recent content in Posts on 墨斯潘園</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sun, 09 Nov 2025 11:24:40 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 15 Nov 2025 12:03:56 +0800</lastBuildDate>
     
 	<atom:link href="http://mospany.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>大模型从0到1训练推理入门</title>
+      <link>http://mospany.github.io/2025/11/15/llm-0-to-1/</link>
+      <pubDate>Sat, 15 Nov 2025 12:03:56 +0800</pubDate>
+      
+      <guid>http://mospany.github.io/2025/11/15/llm-0-to-1/</guid>
+      <description>数据准备 模型微调 如果您希望模型在特定领域表现更好，可以通过在该领域的数据集上对模型微调来实现。本文以如下场景为例为您介绍模型微调的作用和步骤</description>
+    </item>
     
     <item>
       <title>大模型权重文件解析</title>

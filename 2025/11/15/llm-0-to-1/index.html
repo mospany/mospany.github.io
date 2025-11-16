@@ -1,0 +1,2396 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <base href="http://mospany.github.io/">
+  <title>大模型从0到1训练推理入门 - 墨斯潘園</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+  <meta name="keywords" content=",,">
+  <meta name="description" content="数据准备 模型微调 如果您希望模型在特定领域表现更好，可以通过在该领域的数据集上对模型微调来实现。本文以如下场景为例为您介绍模型微调的作用和步骤">
+  <meta name="author" content="mospan">
+  <meta itemprop="name" content="大模型从0到1训练推理入门 - 墨斯潘園">
+  <meta itemprop="description" content="数据准备 模型微调 如果您希望模型在特定领域表现更好，可以通过在该领域的数据集上对模型微调来实现。本文以如下场景为例为您介绍模型微调的作用和步骤">
+  <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@mospan" />
+  <meta name="twitter:title" content="大模型从0到1训练推理入门 - 墨斯潘園" />
+  
+  <meta name="twitter:description" content="">
+  <link rel="shortcut icon" href="img/favicon.ico"/>
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png" />
+  <link rel="stylesheet" href="highlight/styles/github.css">
+  <script src="highlight/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <link rel="stylesheet" href="font/hack/css/hack.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <header>
+    <div>
+  
+  <div id="imglogo">
+    <a href="http://mospany.github.io/"><img src="http://mospany.github.io/img/logo.jpg" alt="墨斯潘園" title="墨斯潘園"/></a>
+  </div>
+  
+  <div id="textlogo">
+    <h1 class="site-name"><a href="http://mospany.github.io/" title="墨斯潘園">墨斯潘園</a></h1>
+    <h2 class="blog-motto">技术改变生活，学习成就未来</h2>
+  </div>
+  <div class="navbar"><a class="navbutton navmobile" href="#" title="menu"></a></div>
+  <nav class="animated">
+    <ul>
+      
+      <li><a href="/">首页</a></li> 
+      
+      <li><a href="/about">关于</a></li> 
+      
+      <li>
+        <form class="search" method="get" action="https://www.google.com/search">
+          <div>
+            <input type="text" id="search" name="q" placeholder="搜索">
+          </div>
+        </form>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+  </header>
+  <div id="container">
+    <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody">
+    <header class="article-info clearfix">
+  <h1 itemprop="name">
+      <a href="http://mospany.github.io/2025/11/15/llm-0-to-1/" title="大模型从0到1训练推理入门" itemprop="url">大模型从0到1训练推理入门</a>
+  </h1>
+  <p class="article-author">By 
+    
+      <a href="http://blog.mospan.cn" title="mospan">mospan</a>
+    
+  </p>
+  <p class="article-time">
+    <time datetime="2025-11-15 12:03:56 &#43;0800 CST" itemprop="datePublished">2025年11月15日</time>
+  </p>
+</header>
+
+	<div class="article-content">
+    
+    
+
+<h1 id="数据准备">数据准备</h1>
+
+<h1 id="模型微调">模型微调</h1>
+
+<p>如果您希望模型在特定领域表现更好，可以通过在该领域的数据集上对模型微调来实现。本文以如下场景为例为您介绍模型微调的作用和步骤。</p>
+
+<h2 id="场景示例">场景示例</h2>
+
+<p>在物流领域，常需要从自然语言中提取结构化信息（如收件人、地址、电话）。直接使用大参数模型（如：Qwen3-235B-A22B）效果好，但成本高、响应慢。为兼顾效果与成本，可先用大参数模型标注数据，再用这些数据微调小参数模型（如 Qwen3-0.6B），使其在相同任务上达到相近表现。此过程也被称为模型蒸馏。</p>
+
+<blockquote>
+<p>相同结构化信息提取任务，使用原始的Qwen3-0.6B模型准确率14%，微调后准确率可达90%以上。</p>
+</blockquote>
+
+<p>例如：收件人地址信息示例</p>
+
+<pre><code>长沙市岳麓区桃花岭路189号润丰园B座1202室 | 电话021-17613435 | 联系人江雨桐
+</code></pre>
+
+<p>结构化信息提取示例</p>
+
+<pre><code class="language-json">{
+  &quot;province&quot;: &quot;湖南省&quot;,
+  &quot;city&quot;: &quot;长沙市&quot;,
+  &quot;district&quot;: &quot;岳麓区&quot;,
+  &quot;specific_location&quot;: &quot;桃花岭路189号润丰园B座1202室&quot;,
+  &quot;name&quot;: &quot;江雨桐&quot;,
+  &quot;phone&quot;: &quot;021-17613435&quot;
+}
+</code></pre>
+
+<h2 id="数据准备-1">数据准备</h2>
+
+<p>为将教师模型（Qwen3-235B-A22B）在该任务中的知识蒸馏到 Qwen3-0.6B，需先通过教师模型的 API，将收件人的地址信息抽取为结构化 JSON 数据。模型生成这些 JSON 数据可能需要较长时间，因此，本文已为您准备好了示例训练集<a href="https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250612/ojiiaq/train_qwen3.json?spm=a2c4g.11186623.0.0.327f71a1RknQE0&amp;file=train_qwen3.json">train_qwen3.json</a>和验证集<a href="https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250619/cxusce/eval_qwen3.json?spm=a2c4g.11186623.0.0.327f71a1RknQE0&amp;file=eval_qwen3.json">eval_qwen3.json</a>，您可以直接下载使用。</p>
+
+<blockquote>
+<p>在模型蒸馏中大参数量模型也被称为教师模型。本文所用数据均为大模型模拟生成，不涉及用户敏感信息。</p>
+</blockquote>
+
+<h2 id="微调模型">微调模型</h2>
+
+<ol>
+<li><p>在左侧导航栏单击<strong>Model Gallery</strong>，搜索并找到<strong>Qwen3-0.6B</strong>选项卡，然后单击<strong>训练</strong>。
+<img src="post/2025/images/2025-11-15-llm-0-to-1/IMG_20251115-211530190.png" alt="图 1" /></p></li>
+
+<li><p>配置训练任务参数。只需配置如下关键参数，其他参数默认即可。</p></li>
+</ol>
+
+<p><strong>训练方式</strong>：默认选择SFT监督微调，LoRA微调方法。</p>
+
+<blockquote>
+<p>LoRA是一种高效的模型微调技术，仅修改模型的部分参数，以节省训练使用的资源。</p>
+</blockquote>
+
+<p><strong>训练数据集</strong>：先单击下载示例训练集train_qwen3.json，然后配置页面选择OSS文件或目录，单击image图标选择Bucket，单击上传文件将下载训练集上传到OSS中，并选择该文件。
+   <img src="post/2025/images/2025-11-15-llm-0-to-1/IMG_20251115-214930421.png" alt="图 2" /></p>
+
+<p><strong>验证数据集</strong>：先单击下载验证集<a href="https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250619/cxusce/eval_qwen3.json?spm=a2c4g.11186623.0.0.7f6b14a8bKIWvn&amp;file=eval_qwen3.json">eval_qwen3.json</a>，然后单击<strong>添加验证数据集</strong>，按照和配置训练集相同的操作，上传并选择该文件。</p>
+
+<blockquote>
+<p>验证集用于在训练过程中判断模型的性能，帮助评估模型在未见过的数据上的表现。</p>
+</blockquote>
+
+<p><strong>模型输出路径</strong>：默认会将微调后的模型存储到OSS中，如果OSS目录为空，请您新建目录并指定该目录。</p>
+
+<p><strong>资源组类型</strong>：选择使用公共资源组，本次微调大约需要5GB显存，控制台中已经为您筛选出满足要求的规格，选择如：ecs.gn7i-c16g1.4xlarge。</p>
+
+<pre><code>&gt; 后续部署其他模型时，您可参考估算大模型所需显存，计算模型训练需要的显存大小。
+</code></pre>
+
+<p><strong>超参数配置</strong>：
+    - learning_rate: 设置为0.0005
+    - num_train_epochs：设置为4
+    - per_device_train_batch_size：设置为8
+    - seq_length：设置为512</p>
+
+<blockquote>
+<p>此超参数配置下模型在本文的测试数据上表现较好。当您使用模型微调解决您自己的业务问题时，如果准确率不高，也可以尝试调整超参数。您可以通过学习<a href="https://edu.aliyun.com/course/3130200/lesson/343270950?spm=a2c4g.11186623.0.0.7f6b14a8bKIWvn">阿里云大模型 ACP 课程</a>，深入了解超参数的作用，以及如何通过损失曲线来判断超参数的调整方向。</p>
+</blockquote>
+
+<p>然后单击<strong>训练</strong> &gt; <strong>确定</strong>，训练任务进入<strong>创建中</strong>状态，当处于<strong>运行中</strong>时，开始微调模型。
+<img src="post/2025/images/2025-11-15-llm-0-to-1/IMG_20251116-213024083.png" alt="图 3" /><br />
+<img src="post/2025/images/2025-11-15-llm-0-to-1/IMG_20251116-213100548.png" alt="图 4" /><br />
+<img src="post/2025/images/2025-11-15-llm-0-to-1/IMG_20251116-213128668.png" alt="图 5" /><br />
+<img src="post/2025/images/2025-11-15-llm-0-to-1/IMG_20251116-213157667.png" alt="图 6" /><br />
+<img src="post/2025/images/2025-11-15-llm-0-to-1/IMG_20251116-213239359.png" alt="图 7" /><br />
+<img src="post/2025/images/2025-11-15-llm-0-to-1/IMG_20251116-213301657.png" alt="图 8" /><br />
+<img src="post/2025/images/2025-11-15-llm-0-to-1/IMG_20251116-213343666.png" alt="图 9" /><br />
+模型开始训练：
+<img src="post/2025/images/2025-11-15-llm-0-to-1/IMG_20251116-214244338.png" alt="图 11" /><br />
+<img src="post/2025/images/2025-11-15-llm-0-to-1/IMG_20251116-214334001.png" alt="图 12" /><br />
+<img src="post/2025/images/2025-11-15-llm-0-to-1/IMG_20251116-214439911.png" alt="图 13" /></p>
+
+<p>训练日志如下：</p>
+
+<pre><code class="language-text">TrainingJob launch starting
+PAI_HPS={&quot;apply_chat_template&quot;:&quot;true&quot;,&quot;dpo_beta&quot;:&quot;0.1&quot;,&quot;gradient_accumulation_steps&quot;:&quot;8&quot;,&quot;learning_rate&quot;:&quot;5e-5&quot;,&quot;load_in_4bit&quot;:&quot;false&quot;,&quot;load_in_8bit&quot;:&quot;false&quot;,&quot;lora_alpha&quot;:&quot;32&quot;,&quot;lora_dim&quot;:&quot;32&quot;,&quot;num_train_epochs&quot;:&quot;4&quot;,&quot;per_device_train_batch_size&quot;:&quot;8&quot;,&quot;seq_length&quot;:&quot;512&quot;,&quot;split_ratio&quot;:&quot;0&quot;,&quot;system_prompt&quot;:&quot;You are a helpful assistant&quot;,&quot;training_strategy&quot;:&quot;sft&quot;}
+PET_NNODES=1
+NV_LIBCUBLAS_VERSION=12.4.2.65-1
+NVIDIA_VISIBLE_DEVICES=0
+KUBERNETES_SERVICE_PORT_HTTPS=6443
+NCCL_IB_TC=136
+REGION=cn-shanghai
+NV_NVML_DEV_VERSION=12.4.99-1
+KUBERNETES_SERVICE_PORT=6443
+PYTHONUNBUFFERED=1
+NV_LIBNCCL_DEV_PACKAGE=libnccl-dev=2.20.5-1+cuda12.4
+NV_LIBNCCL_DEV_PACKAGE_VERSION=2.20.5-1
+CLUSTER_NAME=asi_cn-shanghai_pai_g01
+KUBERNETES_CONTAINER_RESOURCE_GPU=1
+HOSTNAME=dlc1lm8dmxok7cfj-master-0
+PYTHON_VERSION=3.11.11
+LANGUAGE=zh_CN.UTF-8
+PET_NODE_RANK=0
+ACCL_IB_GID_INDEX_FIX=1
+MASTER_PORT=23456
+NVIDIA_REQUIRE_CUDA=cuda&gt;=12.4 brand=tesla,driver&gt;=470,driver&lt;471 brand=unknown,driver&gt;=470,driver&lt;471 brand=nvidia,driver&gt;=470,driver&lt;471 brand=nvidiartx,driver&gt;=470,driver&lt;471 brand=geforce,driver&gt;=470,driver&lt;471 brand=geforcertx,driver&gt;=470,driver&lt;471 brand=quadro,driver&gt;=470,driver&lt;471 brand=quadrortx,driver&gt;=470,driver&lt;471 brand=titan,driver&gt;=470,driver&lt;471 brand=titanrtx,driver&gt;=470,driver&lt;471 brand=tesla,driver&gt;=525,driver&lt;526 brand=unknown,driver&gt;=525,driver&lt;526 brand=nvidia,driver&gt;=525,driver&lt;526 brand=nvidiartx,driver&gt;=525,driver&lt;526 brand=geforce,driver&gt;=525,driver&lt;526 brand=geforcertx,driver&gt;=525,driver&lt;526 brand=quadro,driver&gt;=525,driver&lt;526 brand=quadrortx,driver&gt;=525,driver&lt;526 brand=titan,driver&gt;=525,driver&lt;526 brand=titanrtx,driver&gt;=525,driver&lt;526 brand=tesla,driver&gt;=535,driver&lt;536 brand=unknown,driver&gt;=535,driver&lt;536 brand=nvidia,driver&gt;=535,driver&lt;536 brand=nvidiartx,driver&gt;=535,driver&lt;536 brand=geforce,driver&gt;=535,driver&lt;536 brand=geforcertx,driver&gt;=535,driver&lt;536 brand=quadro,driver&gt;=535,driver&lt;536 brand=quadrortx,driver&gt;=535,driver&lt;536 brand=titan,driver&gt;=535,driver&lt;536 brand=titanrtx,driver&gt;=535,driver&lt;536
+SCRAPE_PROMETHEUS_METRICS=yes
+ACCL_IB_SPLIT_DATA_NUM=4
+NV_LIBCUBLAS_DEV_PACKAGE=libcublas-dev-12-4=12.4.2.65-1
+NV_NVTX_VERSION=12.4.99-1
+PAI_HPS_NUM_TRAIN_EPOCHS=4
+NCCL_MIN_NCHANNELS=16
+NCCL_NET_PLUGIN=none
+POD_NAME=dlc1lm8dmxok7cfj-master-0
+NV_CUDA_CUDART_DEV_VERSION=12.4.99-1
+NV_LIBCUSPARSE_VERSION=12.3.0.142-1
+PAI_OUTPUT_MODEL=/ml/output/model/
+NV_LIBNPP_VERSION=12.2.5.2-1
+POD_NAMESPACE=t1218357510451250
+NCCL_VERSION=2.20.5-1
+ACCL_IB_QPS_LOAD_BALANCE=1
+NCCL_SOCKET_IFNAME=eth0
+REGION_ID=cn-shanghai
+PWD=/root
+PAI_HPS_APPLY_CHAT_TEMPLATE=true
+NVIDIA_DRIVER_CAPABILITIES=compute,utility
+NV_NVPROF_DEV_PACKAGE=cuda-nvprof-12-4=12.4.99-1
+PAI_USER_ID=204828862223716692
+NV_LIBNPP_PACKAGE=libnpp-12-4=12.2.5.2-1
+NCCL_DEBUG=INFO
+PYTHON_SETUPTOOLS_VERSION=65.5.1
+NV_LIBNCCL_DEV_PACKAGE_NAME=libnccl-dev
+ECI_CONTAINER_TYPE=normal
+TZ=Asia/Shanghai
+PET_MASTER_PORT=23456
+NV_LIBCUBLAS_DEV_VERSION=12.4.2.65-1
+VLLM_USE_MODELSCOPE=True
+NCCL_IB_HCA=erdma
+WORLD_SIZE=1
+PAI_HPS_SYSTEM_PROMPT=You are a helpful assistant
+NVIDIA_PRODUCT_NAME=CUDA
+ACCL_C4_STATS_MODE=CONN
+NV_LIBCUBLAS_DEV_PACKAGE_NAME=libcublas-dev-12-4
+ACCL_LOG_TIME=1
+NV_CUDA_CUDART_VERSION=12.4.99-1
+HOME=/root
+LANG=C.UTF-8
+PAI_HPS_DPO_BETA=0.1
+KUBERNETES_PORT_443_TCP=tcp://10.192.0.1:443
+NCCL_IB_GID_INDEX=1
+PAI_TRAINING_JOB_ID=train1lc8s95geb9
+PET_MASTER_ADDR=dlc1lm8dmxok7cfj-master-0
+CUDA_VERSION=12.4.0
+NV_LIBCUBLAS_PACKAGE=libcublas-12-4=12.4.2.65-1
+PIP_TRUSTED_HOST=mirrors.cloud.aliyuncs.com
+PAI_INPUT_TRAIN=/ml/input/data/train/train_qwen3.json
+NV_CUDA_NSIGHT_COMPUTE_DEV_PACKAGE=cuda-nsight-compute-12-4=12.4.0-1
+GPG_KEY=A035C8C19219BA821ECEA86B64E628F8D684696D
+PAI_HPS_TRAINING_STRATEGY=sft
+NV_LIBNPP_DEV_PACKAGE=libnpp-dev-12-4=12.2.5.2-1
+PAI_HPS_LEARNING_RATE=5e-5
+NV_LIBCUBLAS_PACKAGE_NAME=libcublas-12-4
+PAI_INPUT_MODEL=/ml/input/data/model
+NV_LIBNPP_DEV_VERSION=12.2.5.2-1
+PAI_CONFIG_DIR=/ml/input/config/
+MASTER_ADDR=dlc1lm8dmxok7cfj-master-0
+PAI_INPUT_VALIDATION=/ml/input/data/validation/train_qwen3.json
+NCCL_IB_QPS_PER_CONNECTION=8
+PAI_WORKING_DIR=/ml/code/
+PYTHONPATH=/ml/code
+SETUPTOOLS_USE_DISTUTILS=stdlib
+NV_LIBCUSPARSE_DEV_VERSION=12.3.0.142-1
+MODELSCOPE_CACHE=/mnt/workspace/.cache/modelscope/hub
+LIBRARY_PATH=/usr/local/cuda/lib64/stubs
+PYTHONIOENCODING=utf-8
+PAI_ODPS_CREDENTIAL=/ml/input/credential/odps.json
+PIP_INDEX_URL=https://mirrors.cloud.aliyuncs.com/pypi/simple
+NCCL_IB_TIMEOUT=22
+SHLVL=1
+PAI_HPS_SPLIT_RATIO=0
+NV_CUDA_LIB_VERSION=12.4.0-1
+NVARCH=x86_64
+KUBERNETES_PORT_443_TCP_PROTO=tcp
+PAI_HPS_GRADIENT_ACCUMULATION_STEPS=8
+PAI_HPS_LORA_DIM=32
+PAI_HPS_PER_DEVICE_TRAIN_BATCH_SIZE=8
+DLC_JOB_ID=dlc1lm8dmxok7cfj
+PYTHON_PIP_VERSION=23.0.1
+NCCL_IB_SL=5
+KUBERNETES_PORT_443_TCP_ADDR=10.192.0.1
+TENANT_API_SERVER_URL=https://10.224.176.2:6443
+NV_CUDA_COMPAT_PACKAGE=cuda-compat-12-4
+ECI_CONTAINER_ENABLE_ERDMA=true
+NV_LIBNCCL_PACKAGE=libnccl2=2.20.5-1+cuda12.4
+LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64
+RANK=0
+PAI_HPS_LORA_ALPHA=32
+LMDEPLOY_USE_MODELSCOPE=True
+PYTHON_GET_PIP_SHA256=dfe9fd5c28dc98b5ac17979a953ea550cec37ae1b47a5116007395bfacff2ab9
+NV_CUDA_NSIGHT_COMPUTE_VERSION=12.4.0-1
+PAI_USER_ARGS=--seq_length 512 --lora_dim 32 --lora_alpha 32 --load_in_8bit false --learning_rate 5e-5 --per_device_train_batch_size 8 --apply_chat_template true --split_ratio 0 --load_in_4bit false --gradient_accumulation_steps 8 --training_strategy sft --dpo_beta 0.1 --num_train_epochs 4 --system_prompt 'You are a helpful assistant'
+PAI_WORKSPACE_ID=1026689
+ALIBABA_CLOUD_CREDENTIALS_URI=http://localhost:7002/api/v1/credentials/0
+KUBERNETES_SERVICE_HOST=10.224.176.2
+NV_NVPROF_VERSION=12.4.99-1
+LC_ALL=zh_CN.UTF-8
+PET_NPROC_PER_NODE=1
+KUBERNETES_PORT=tcp://10.192.0.1:443
+KUBERNETES_PORT_443_TCP_PORT=443
+arch=x86_64
+PYTHON_GET_PIP_URL=https://github.com/pypa/get-pip/raw/dbf0c85f76fb6e1ab42aa672ffca6f0a675d9ee4/public/get-pip.py
+NPROC_PER_NODE=1
+PATH=/usr/local/bin:/usr/local/bin:/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+NV_LIBNCCL_PACKAGE_NAME=libnccl2
+NV_LIBNCCL_PACKAGE_VERSION=2.20.5-1
+PAI_HPS_SEQ_LENGTH=512
+PAI_HPS_LOAD_IN_8BIT=false
+PAI_HPS_LOAD_IN_4BIT=false
+_=/usr/bin/env
+Change to Working Directory, /ml/code/
+User program launching
+-----------------------------------------------------------------
+2025/11/16 21:38:24 INFO: training_utils version: 1.0.4
+2025/11/16 21:38:24 INFO: Env PAI_INPUT_MODEL=/ml/input/data/model
+2025/11/16 21:38:24 INFO: Env LIBRARY_PATH=/usr/local/cuda/lib64/stubs
+2025/11/16 21:38:24 INFO: Env PAI_HPS_PER_DEVICE_TRAIN_BATCH_SIZE=8
+2025/11/16 21:38:24 INFO: Env NV_LIBCUBLAS_VERSION=12.4.2.65-1
+2025/11/16 21:38:24 INFO: Env KUBERNETES_SERVICE_PORT=6443
+2025/11/16 21:38:24 INFO: Env ACCL_IB_GID_INDEX_FIX=1
+2025/11/16 21:38:24 INFO: Env NV_NVPROF_DEV_PACKAGE=cuda-nvprof-12-4=12.4.99-1
+2025/11/16 21:38:24 INFO: Env NCCL_DEBUG=INFO
+2025/11/16 21:38:24 INFO: Env PYTHONIOENCODING=utf-8
+2025/11/16 21:38:24 INFO: Env NV_CUDA_COMPAT_PACKAGE=cuda-compat-12-4
+2025/11/16 21:38:24 INFO: Env LMDEPLOY_USE_MODELSCOPE=True
+2025/11/16 21:38:24 INFO: Env KUBERNETES_PORT=tcp://10.192.0.1:443
+2025/11/16 21:38:24 INFO: Env LANGUAGE=zh_CN.UTF-8
+2025/11/16 21:38:24 INFO: Env NCCL_NET_PLUGIN=none
+2025/11/16 21:38:24 INFO: Env NCCL_SOCKET_IFNAME=eth0
+2025/11/16 21:38:24 INFO: Env PAI_HPS_APPLY_CHAT_TEMPLATE=true
+2025/11/16 21:38:24 INFO: Env NCCL_IB_HCA=erdma
+2025/11/16 21:38:24 INFO: Env PIP_TRUSTED_HOST=mirrors.cloud.aliyuncs.com
+2025/11/16 21:38:24 INFO: Env NV_CUDA_NSIGHT_COMPUTE_VERSION=12.4.0-1
+2025/11/16 21:38:24 INFO: Env SCRAPE_PROMETHEUS_METRICS=yes
+2025/11/16 21:38:24 INFO: Env PAI_USER_ID=204828862223716692
+2025/11/16 21:38:24 INFO: Env MASTER_ADDR=dlc1lm8dmxok7cfj-master-0
+2025/11/16 21:38:24 INFO: Env PAI_HPS_LORA_DIM=32
+2025/11/16 21:38:24 INFO: Env HOSTNAME=dlc1lm8dmxok7cfj-master-0
+2025/11/16 21:38:24 INFO: Env ECI_CONTAINER_TYPE=normal
+2025/11/16 21:38:24 INFO: Env ACCL_IB_QPS_LOAD_BALANCE=1
+2025/11/16 21:38:24 INFO: Env SHLVL=0
+2025/11/16 21:38:24 INFO: Env PYTHON_PIP_VERSION=23.0.1
+2025/11/16 21:38:24 INFO: Env LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64
+2025/11/16 21:38:24 INFO: Env NV_LIBNCCL_PACKAGE_VERSION=2.20.5-1
+2025/11/16 21:38:24 INFO: Env MASTER_PORT=23456
+2025/11/16 21:38:24 INFO: Env ACCL_LOG_TIME=1
+2025/11/16 21:38:24 INFO: Env HOME=/root
+2025/11/16 21:38:24 INFO: Env NCCL_IB_QPS_PER_CONNECTION=8
+2025/11/16 21:38:24 INFO: Env OLDPWD=/root
+2025/11/16 21:38:24 INFO: Env NCCL_MIN_NCHANNELS=16
+2025/11/16 21:38:24 INFO: Env NV_LIBCUBLAS_DEV_VERSION=12.4.2.65-1
+2025/11/16 21:38:24 INFO: Env PAI_USER_ARGS=--seq_length 512 --lora_dim 32 --lora_alpha 32 --load_in_8bit false --learning_rate 5e-5 --per_device_train_batch_size 8 --apply_chat_template true --split_ratio 0 --load_in_4bit false --gradient_accumulation_steps 8 --training_strategy sft --dpo_beta 0.1 --num_train_epochs 4 --system_prompt 'You are a helpful assistant'
+2025/11/16 21:38:24 INFO: Env PYTHONUNBUFFERED=1
+2025/11/16 21:38:24 INFO: Env REGION=cn-shanghai
+2025/11/16 21:38:24 INFO: Env GPG_KEY=A035C8C19219BA821ECEA86B64E628F8D684696D
+2025/11/16 21:38:24 INFO: Env PAI_CONFIG_DIR=/ml/input/config/
+2025/11/16 21:38:24 INFO: Env NPROC_PER_NODE=1
+2025/11/16 21:38:24 INFO: Env WORLD_SIZE=1
+2025/11/16 21:38:24 INFO: Env PAI_HPS_SEQ_LENGTH=512
+2025/11/16 21:38:24 INFO: Env NV_LIBNCCL_DEV_PACKAGE_VERSION=2.20.5-1
+2025/11/16 21:38:24 INFO: Env REGION_ID=cn-shanghai
+2025/11/16 21:38:24 INFO: Env NV_LIBNPP_PACKAGE=libnpp-12-4=12.2.5.2-1
+2025/11/16 21:38:24 INFO: Env PAI_HPS_TRAINING_STRATEGY=sft
+2025/11/16 21:38:24 INFO: Env CLUSTER_NAME=asi_cn-shanghai_pai_g01
+2025/11/16 21:38:24 INFO: Env NCCL_IB_GID_INDEX=1
+2025/11/16 21:38:24 INFO: Env CUDA_VERSION=12.4.0
+2025/11/16 21:38:24 INFO: Env PAI_INPUT_TRAIN=/ml/input/data/train/train_qwen3.json
+2025/11/16 21:38:24 INFO: Env RANK=0
+2025/11/16 21:38:24 INFO: Env NV_NVPROF_VERSION=12.4.99-1
+2025/11/16 21:38:24 INFO: Env NV_LIBCUBLAS_PACKAGE_NAME=libcublas-12-4
+2025/11/16 21:38:24 INFO: Env ECI_CONTAINER_ENABLE_ERDMA=true
+2025/11/16 21:38:24 INFO: Env NVIDIA_REQUIRE_CUDA=cuda&gt;=12.4 brand=tesla,driver&gt;=470,driver&lt;471 brand=unknown,driver&gt;=470,driver&lt;471 brand=nvidia,driver&gt;=470,driver&lt;471 brand=nvidiartx,driver&gt;=470,driver&lt;471 brand=geforce,driver&gt;=470,driver&lt;471 brand=geforcertx,driver&gt;=470,driver&lt;471 brand=quadro,driver&gt;=470,driver&lt;471 brand=quadrortx,driver&gt;=470,driver&lt;471 brand=titan,driver&gt;=470,driver&lt;471 brand=titanrtx,driver&gt;=470,driver&lt;471 brand=tesla,driver&gt;=525,driver&lt;526 brand=unknown,driver&gt;=525,driver&lt;526 brand=nvidia,driver&gt;=525,driver&lt;526 brand=nvidiartx,driver&gt;=525,driver&lt;526 brand=geforce,driver&gt;=525,driver&lt;526 brand=geforcertx,driver&gt;=525,driver&lt;526 brand=quadro,driver&gt;=525,driver&lt;526 brand=quadrortx,driver&gt;=525,driver&lt;526 brand=titan,driver&gt;=525,driver&lt;526 brand=titanrtx,driver&gt;=525,driver&lt;526 brand=tesla,driver&gt;=535,driver&lt;536 brand=unknown,driver&gt;=535,driver&lt;536 brand=nvidia,driver&gt;=535,driver&lt;536 brand=nvidiartx,driver&gt;=535,driver&lt;536 brand=geforce,driver&gt;=535,driver&lt;536 brand=geforcertx,driver&gt;=535,driver&lt;536 brand=quadro,driver&gt;=535,driver&lt;536 brand=quadrortx,driver&gt;=535,driver&lt;536 brand=titan,driver&gt;=535,driver&lt;536 brand=titanrtx,driver&gt;=535,driver&lt;536
+2025/11/16 21:38:24 INFO: Env DLC_JOB_ID=dlc1lm8dmxok7cfj
+2025/11/16 21:38:24 INFO: Env TENANT_API_SERVER_URL=https://10.224.176.2:6443
+2025/11/16 21:38:24 INFO: Env arch=x86_64
+2025/11/16 21:38:24 INFO: Env _=/usr/bin/sh
+2025/11/16 21:38:24 INFO: Env NV_LIBCUSPARSE_VERSION=12.3.0.142-1
+2025/11/16 21:38:24 INFO: Env NVIDIA_DRIVER_CAPABILITIES=compute,utility
+2025/11/16 21:38:24 INFO: Env PAI_TRAINING_JOB_ID=train1lc8s95geb9
+2025/11/16 21:38:24 INFO: Env NV_CUDA_LIB_VERSION=12.4.0-1
+2025/11/16 21:38:24 INFO: Env PYTHON_GET_PIP_URL=https://github.com/pypa/get-pip/raw/dbf0c85f76fb6e1ab42aa672ffca6f0a675d9ee4/public/get-pip.py
+2025/11/16 21:38:24 INFO: Env NV_LIBNCCL_PACKAGE_NAME=libnccl2
+2025/11/16 21:38:24 INFO: Env NV_NVML_DEV_VERSION=12.4.99-1
+2025/11/16 21:38:24 INFO: Env VLLM_USE_MODELSCOPE=True
+2025/11/16 21:38:24 INFO: Env NV_LIBNPP_DEV_PACKAGE=libnpp-dev-12-4=12.2.5.2-1
+2025/11/16 21:38:24 INFO: Env PET_NPROC_PER_NODE=1
+2025/11/16 21:38:24 INFO: Env POD_NAME=dlc1lm8dmxok7cfj-master-0
+2025/11/16 21:38:24 INFO: Env PAI_OUTPUT_MODEL=/ml/output/model/
+2025/11/16 21:38:24 INFO: Env NV_CUDA_CUDART_VERSION=12.4.99-1
+2025/11/16 21:38:24 INFO: Env KUBERNETES_PORT_443_TCP_ADDR=10.192.0.1
+2025/11/16 21:38:24 INFO: Env PAI_HPS_LOAD_IN_4BIT=false
+2025/11/16 21:38:24 INFO: Env PAI_WORKSPACE_ID=1026689
+2025/11/16 21:38:24 INFO: Env PATH=/usr/local/bin:/usr/local/bin:/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+2025/11/16 21:38:24 INFO: Env PAI_HPS_SYSTEM_PROMPT=You are a helpful assistant
+2025/11/16 21:38:24 INFO: Env NV_LIBCUBLAS_DEV_PACKAGE_NAME=libcublas-dev-12-4
+2025/11/16 21:38:24 INFO: Env NV_LIBCUBLAS_PACKAGE=libcublas-12-4=12.4.2.65-1
+2025/11/16 21:38:24 INFO: Env PIP_INDEX_URL=https://mirrors.cloud.aliyuncs.com/pypi/simple
+2025/11/16 21:38:24 INFO: Env NVARCH=x86_64
+2025/11/16 21:38:24 INFO: Env ACCL_IB_SPLIT_DATA_NUM=4
+2025/11/16 21:38:24 INFO: Env KUBERNETES_PORT_443_TCP_PORT=443
+2025/11/16 21:38:24 INFO: Env NV_LIBNCCL_DEV_PACKAGE_NAME=libnccl-dev
+2025/11/16 21:38:24 INFO: Env NV_LIBCUSPARSE_DEV_VERSION=12.3.0.142-1
+2025/11/16 21:38:24 INFO: Env KUBERNETES_PORT_443_TCP_PROTO=tcp
+2025/11/16 21:38:24 INFO: Env NV_LIBNCCL_PACKAGE=libnccl2=2.20.5-1+cuda12.4
+2025/11/16 21:38:24 INFO: Env PAI_HPS_LOAD_IN_8BIT=false
+2025/11/16 21:38:24 INFO: Env NVIDIA_PRODUCT_NAME=CUDA
+2025/11/16 21:38:24 INFO: Env LANG=C.UTF-8
+2025/11/16 21:38:24 INFO: Env PAI_HPS_LEARNING_RATE=5e-5
+2025/11/16 21:38:24 INFO: Env NV_CUDA_CUDART_DEV_VERSION=12.4.99-1
+2025/11/16 21:38:24 INFO: Env PAI_HPS_GRADIENT_ACCUMULATION_STEPS=8
+2025/11/16 21:38:24 INFO: Env PAI_HPS_NUM_TRAIN_EPOCHS=4
+2025/11/16 21:38:24 INFO: Env PAI_HPS_LORA_ALPHA=32
+2025/11/16 21:38:24 INFO: Env NCCL_IB_TC=136
+2025/11/16 21:38:24 INFO: Env NV_LIBCUBLAS_DEV_PACKAGE=libcublas-dev-12-4=12.4.2.65-1
+2025/11/16 21:38:24 INFO: Env PAI_INPUT_VALIDATION=/ml/input/data/validation/train_qwen3.json
+2025/11/16 21:38:24 INFO: Env KUBERNETES_CONTAINER_RESOURCE_GPU=1
+2025/11/16 21:38:24 INFO: Env PYTHON_VERSION=3.11.11
+2025/11/16 21:38:24 INFO: Env PYTHON_SETUPTOOLS_VERSION=65.5.1
+2025/11/16 21:38:24 INFO: Env PET_MASTER_ADDR=dlc1lm8dmxok7cfj-master-0
+2025/11/16 21:38:24 INFO: Env NV_CUDA_NSIGHT_COMPUTE_DEV_PACKAGE=cuda-nsight-compute-12-4=12.4.0-1
+2025/11/16 21:38:24 INFO: Env PAI_HPS_SPLIT_RATIO=0
+2025/11/16 21:38:24 INFO: Env NV_LIBNCCL_DEV_PACKAGE=libnccl-dev=2.20.5-1+cuda12.4
+2025/11/16 21:38:24 INFO: Env SETUPTOOLS_USE_DISTUTILS=stdlib
+2025/11/16 21:38:24 INFO: Env KUBERNETES_SERVICE_PORT_HTTPS=6443
+2025/11/16 21:38:24 INFO: Env NV_NVTX_VERSION=12.4.99-1
+2025/11/16 21:38:24 INFO: Env NV_LIBNPP_VERSION=12.2.5.2-1
+2025/11/16 21:38:24 INFO: Env PET_MASTER_PORT=23456
+2025/11/16 21:38:24 INFO: Env KUBERNETES_PORT_443_TCP=tcp://10.192.0.1:443
+2025/11/16 21:38:24 INFO: Env POD_NAMESPACE=t1218357510451250
+2025/11/16 21:38:24 INFO: Env ACCL_C4_STATS_MODE=CONN
+2025/11/16 21:38:24 INFO: Env ALIBABA_CLOUD_CREDENTIALS_URI=http://localhost:7002/api/v1/credentials/0
+2025/11/16 21:38:24 INFO: Env PWD=/ml/code
+2025/11/16 21:38:24 INFO: Env PAI_HPS_DPO_BETA=0.1
+2025/11/16 21:38:24 INFO: Env KUBERNETES_SERVICE_HOST=10.224.176.2
+2025/11/16 21:38:24 INFO: Env LC_ALL=zh_CN.UTF-8
+2025/11/16 21:38:24 INFO: Env PAI_HPS={&quot;apply_chat_template&quot;:&quot;true&quot;,&quot;dpo_beta&quot;:&quot;0.1&quot;,&quot;gradient_accumulation_steps&quot;:&quot;8&quot;,&quot;learning_rate&quot;:&quot;5e-5&quot;,&quot;load_in_4bit&quot;:&quot;false&quot;,&quot;load_in_8bit&quot;:&quot;false&quot;,&quot;lora_alpha&quot;:&quot;32&quot;,&quot;lora_dim&quot;:&quot;32&quot;,&quot;num_train_epochs&quot;:&quot;4&quot;,&quot;per_device_train_batch_size&quot;:&quot;8&quot;,&quot;seq_length&quot;:&quot;512&quot;,&quot;split_ratio&quot;:&quot;0&quot;,&quot;system_prompt&quot;:&quot;You are a helpful assistant&quot;,&quot;training_strategy&quot;:&quot;sft&quot;}
+2025/11/16 21:38:24 INFO: Env PYTHON_GET_PIP_SHA256=dfe9fd5c28dc98b5ac17979a953ea550cec37ae1b47a5116007395bfacff2ab9
+2025/11/16 21:38:24 INFO: Env PET_NNODES=1
+2025/11/16 21:38:24 INFO: Env PET_NODE_RANK=0
+2025/11/16 21:38:24 INFO: Env PYTHONPATH=/ml/code
+2025/11/16 21:38:24 INFO: Env MODELSCOPE_CACHE=/mnt/workspace/.cache/modelscope/hub
+2025/11/16 21:38:24 INFO: Env NCCL_IB_SL=5
+2025/11/16 21:38:24 INFO: Env NVIDIA_VISIBLE_DEVICES=0
+2025/11/16 21:38:24 INFO: Env NCCL_VERSION=2.20.5-1
+2025/11/16 21:38:24 INFO: Env TZ=Asia/Shanghai
+2025/11/16 21:38:24 INFO: Env NV_LIBNPP_DEV_VERSION=12.2.5.2-1
+2025/11/16 21:38:24 INFO: Env NCCL_IB_TIMEOUT=22
+2025/11/16 21:38:24 INFO: Env PAI_WORKING_DIR=/ml/code/
+2025/11/16 21:38:24 INFO: Env PAI_ODPS_CREDENTIAL=/ml/input/credential/odps.json
+2025/11/16 21:38:24 INFO: launch: launcherType=PythonLauncher, cmd=['/usr/local/bin/python', '-m', 'train', '--apply_chat_template', 'true', '--dpo_beta', '0.1', '--gradient_accumulation_steps', '8', '--learning_rate', '5e-5', '--load_in_4bit', 'false', '--load_in_8bit', 'false', '--lora_alpha', '32', '--lora_dim', '32', '--num_train_epochs', '4', '--per_device_train_batch_size', '8', '--seq_length', '512', '--split_ratio', '0', '--system_prompt', 'You are a helpful assistant', '--training_strategy', 'sft']
+2025/11/16 21:38:24 INFO: launch: parameters={'apply_chat_template': 'true', 'dpo_beta': '0.1', 'gradient_accumulation_steps': '8', 'learning_rate': '5e-5', 'load_in_4bit': 'false', 'load_in_8bit': 'false', 'lora_alpha': '32', 'lora_dim': '32', 'num_train_epochs': '4', 'per_device_train_batch_size': '8', 'seq_length': '512', 'split_ratio': '0', 'system_prompt': 'You are a helpful assistant', 'training_strategy': 'sft'}
+2025/11/16 21:38:24 INFO: hyper_params: {'apply_chat_template': 'true', 'dpo_beta': 0.1, 'gradient_accumulation_steps': 8, 'learning_rate': 5e-05, 'load_in_4bit': 'false', 'load_in_8bit': 'false', 'lora_alpha': 32, 'lora_dim': 32, 'num_train_epochs': 4, 'per_device_train_batch_size': 8, 'seq_length': 512, 'split_ratio': 0, 'system_prompt': 'You are a helpful assistant', 'training_strategy': 'sft'}
+2025/11/16 21:38:24 INFO: Get hostname dlc1lm8dmxok7cfj-master-0 succeed. retry times: 0
+2025/11/16 21:38:24 INFO: execute command: mkdir -p /tmp/input_model/
+2025/11/16 21:38:24 INFO: execute command succeed
+2025/11/16 21:38:24 INFO: execute command: cp -R /ml/input/data/model/* /tmp/input_model/
+2025/11/16 21:38:27 INFO: execute command succeed
+2025/11/16 21:38:27 INFO: Training command: ['accelerate', 'launch', '--num_processes', '1', '--config_file', 'multi_gpu.yaml', 'sft.py', '--model_name', '/tmp/input_model/', '--model_type', 'qwen3', '--train_dataset_name', '/ml/input/data/train/train_qwen3.json', '--num_train_epochs', '4', '--batch_size', '8', '--gradient_accumulation_steps', '8', '--seq_length', '512', '--learning_rate', '5e-05', '--system_prompt', 'You are a helpful assistant', '--eval_dataset_name', '/ml/input/data/validation/train_qwen3.json', '--apply_chat_template', '--use_peft', '--target_modules', 'k_proj', 'o_proj', 'q_proj', 'v_proj', '--peft_lora_r', '32', '--peft_lora_alpha', '32', '--output_dir', '/tmp/adapter/']
+2025/11/16 21:38:27 INFO: execute command: mkdir -p /tmp/model/
+2025/11/16 21:38:27 INFO: execute command succeed
+2025/11/16 21:38:27 INFO: execute command: mkdir -p /tmp/adapter/
+2025/11/16 21:38:27 INFO: execute command succeed
+[2025-11-16 21:38:33,007] [INFO] [real_accelerator.py:239:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+df: /root/.triton/autotune: 没有那个文件或目录
+[2025-11-16 21:38:37,576] [INFO] [real_accelerator.py:239:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+
+Generating train split: 0 examples [00:00, ? examples/s]
+Generating train split: 1600 examples [00:00, 16821.96 examples/s]
+
+Generating train split: 0 examples [00:00, ? examples/s]
+Generating train split: 1600 examples [00:00, 18845.93 examples/s]
+[2025-11-16 21:38:42,362] [INFO] [comm.py:669:init_distributed] cdb=None
+[2025-11-16 21:38:42,362] [INFO] [comm.py:700:init_distributed] Initializing TorchBackend in DeepSpeed with backend nccl
+
+Applying formatting function to train dataset:   0%|          | 0/1600 [00:00&lt;?, ? examples/s]
+Applying formatting function to train dataset: 100%|██████████| 1600/1600 [00:00&lt;00:00, 39825.56 examples/s]
+
+Converting train dataset to ChatML:   0%|          | 0/1600 [00:00&lt;?, ? examples/s]
+Converting train dataset to ChatML: 100%|██████████| 1600/1600 [00:00&lt;00:00, 43505.43 examples/s]
+
+Adding EOS to train dataset:   0%|          | 0/1600 [00:00&lt;?, ? examples/s]
+Adding EOS to train dataset: 100%|██████████| 1600/1600 [00:00&lt;00:00, 34724.11 examples/s]
+
+Tokenizing train dataset:   0%|          | 0/1600 [00:00&lt;?, ? examples/s]
+Tokenizing train dataset:  22%|██▏       | 351/1600 [00:00&lt;00:00, 3489.79 examples/s]
+Tokenizing train dataset:  45%|████▍     | 718/1600 [00:00&lt;00:00, 3587.32 examples/s]
+Tokenizing train dataset:  74%|███████▎  | 1176/1600 [00:00&lt;00:00, 3101.77 examples/s]
+Tokenizing train dataset:  96%|█████████▌| 1535/1600 [00:00&lt;00:00, 3260.76 examples/s]
+Tokenizing train dataset: 100%|██████████| 1600/1600 [00:00&lt;00:00, 3141.33 examples/s]
+
+Truncating train dataset:   0%|          | 0/1600 [00:00&lt;?, ? examples/s]
+Truncating train dataset: 100%|██████████| 1600/1600 [00:00&lt;00:00, 336874.98 examples/s]
+[rank0]:[W1116 21:38:43.428342223 ProcessGroupNCCL.cpp:4561] [PG ID 0 PG GUID 0 Rank 0]  using GPU 0 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect. Specify device_ids in barrier() to force use of a particular device, or call init_process_group() with a device_id.
+dlc1lm8dmxok7cfj-master-0:133:133 [0] NCCL INFO NCCL_SOCKET_IFNAME set by environment to eth0
+dlc1lm8dmxok7cfj-master-0:133:133 [0] NCCL INFO Bootstrap : Using eth0:10.224.160.180&lt;0&gt;
+dlc1lm8dmxok7cfj-master-0:133:133 [0] NCCL INFO NET/Plugin: No plugin found (none)
+dlc1lm8dmxok7cfj-master-0:133:133 [0] NCCL INFO NET/Plugin: No plugin found (libnccl-net-none.so)
+dlc1lm8dmxok7cfj-master-0:133:133 [0] NCCL INFO NET/Plugin: Plugin load returned 2 : libnccl-net-none.so: cannot open shared object file: No such file or directory : when loading none
+dlc1lm8dmxok7cfj-master-0:133:133 [0] NCCL INFO NET/Plugin: Using internal network plugin.
+dlc1lm8dmxok7cfj-master-0:133:133 [0] NCCL INFO cudaDriverVersion 12040
+NCCL version 2.21.5+cuda12.4
+dlc1lm8dmxok7cfj-master-0:133:133 [0] NCCL INFO Comm config Blocking set to 1
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO NCCL_SOCKET_IFNAME set by environment to eth0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO NCCL_IB_HCA set to erdma
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO NET/IB : No device found.
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO NCCL_SOCKET_IFNAME set by environment to eth0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO NET/Socket : Using [0]eth0:10.224.160.180&lt;0&gt;
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Using non-device net plugin version 0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Using network Socket
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO ncclCommInitRank comm 0x5603c0703fe0 rank 0 nranks 1 cudaDev 0 nvmlDev 0 busId 30 commId 0x431046bfc5d31cfe - Init START
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO comm 0x5603c0703fe0 rank 0 nRanks 1 nNodes 1 localRanks 1 localRank 0 MNNVL 0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO NCCL_MIN_NCHANNELS set by environment to 16.
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 00/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 01/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 02/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 03/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 04/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 05/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 06/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 07/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 08/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 09/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 10/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 11/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 12/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 13/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 14/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 15/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 16/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 17/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 18/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 19/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 20/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 21/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 22/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 23/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 24/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 25/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 26/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 27/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 28/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 29/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 30/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 31/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Trees [0] -1/-1/-1-&gt;0-&gt;-1 [1] -1/-1/-1-&gt;0-&gt;-1 [2] -1/-1/-1-&gt;0-&gt;-1 [3] -1/-1/-1-&gt;0-&gt;-1 [4] -1/-1/-1-&gt;0-&gt;-1 [5] -1/-1/-1-&gt;0-&gt;-1 [6] -1/-1/-1-&gt;0-&gt;-1 [7] -1/-1/-1-&gt;0-&gt;-1 [8] -1/-1/-1-&gt;0-&gt;-1 [9] -1/-1/-1-&gt;0-&gt;-1 [10] -1/-1/-1-&gt;0-&gt;-1 [11] -1/-1/-1-&gt;0-&gt;-1 [12] -1/-1/-1-&gt;0-&gt;-1 [13] -1/-1/-1-&gt;0-&gt;-1 [14] -1/-1/-1-&gt;0-&gt;-1 [15] -1/-1/-1-&gt;0-&gt;-1 [16] -1/-1/-1-&gt;0-&gt;-1 [17] -1/-1/-1-&gt;0-&gt;-1 [18] -1/-1/-1-&gt;0-&gt;-1 [19] -1/-1/-1-&gt;0-&gt;-1 [20] -1/-1/-1-&gt;0-&gt;-1 [21] -1/-1/-1-&gt;0-&gt;-1 [22] -1/-1/-1-&gt;0-&gt;-1 [23] -1/-1/-1-&gt;0-&gt;-1 [24] -1/-1/-1-&gt;0-&gt;-1 [25] -1/-1/-1-&gt;0-&gt;-1 [26] -1/-1/-1-&gt;0-&gt;-1 [27] -1/-1/-1-&gt;0-&gt;-1 [28] -1/-1/-1-&gt;0-&gt;-1 [29] -1/-1/-1-&gt;0-&gt;-1 [30] -1/-1/-1-&gt;0-&gt;-1 [31] -1/-1/-1-&gt;0-&gt;-1
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO P2P Chunksize set to 131072
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Connected all rings
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Connected all trees
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO 32 coll channels, 32 collnet channels, 0 nvls channels, 32 p2p channels, 32 p2p channels per peer
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO TUNER/Plugin: Most recent plugin load returned 2 : libnccl-net-none.so: cannot open shared object file: No such file or directory. All attempts to load 'libnccl-tuner.so none' also failed.
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO TUNER/Plugin: Using internal tuner plugin.
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO ncclCommInitRank comm 0x5603c0703fe0 rank 0 nranks 1 cudaDev 0 nvmlDev 0 busId 30 commId 0x431046bfc5d31cfe - Init COMPLETE
+
+Applying formatting function to eval dataset:   0%|          | 0/1600 [00:00&lt;?, ? examples/s]
+Applying formatting function to eval dataset: 100%|██████████| 1600/1600 [00:00&lt;00:00, 40597.73 examples/s]
+
+Converting eval dataset to ChatML:   0%|          | 0/1600 [00:00&lt;?, ? examples/s]
+Converting eval dataset to ChatML: 100%|██████████| 1600/1600 [00:00&lt;00:00, 44469.76 examples/s]
+
+Adding EOS to eval dataset:   0%|          | 0/1600 [00:00&lt;?, ? examples/s]
+Adding EOS to eval dataset: 100%|██████████| 1600/1600 [00:00&lt;00:00, 37549.30 examples/s]
+
+Tokenizing eval dataset:   0%|          | 0/1600 [00:00&lt;?, ? examples/s]
+Tokenizing eval dataset:  25%|██▍       | 397/1600 [00:00&lt;00:00, 3954.38 examples/s]
+Tokenizing eval dataset:  61%|██████    | 975/1600 [00:00&lt;00:00, 3881.21 examples/s]
+Tokenizing eval dataset:  89%|████████▉ | 1422/1600 [00:00&lt;00:00, 3432.48 examples/s]
+Tokenizing eval dataset: 100%|██████████| 1600/1600 [00:00&lt;00:00, 3409.79 examples/s]
+
+Truncating eval dataset:   0%|          | 0/1600 [00:00&lt;?, ? examples/s]
+Truncating eval dataset: 100%|██████████| 1600/1600 [00:00&lt;00:00, 380889.18 examples/s]
+Using /root/.cache/torch_extensions/py311_cu124 as PyTorch extensions root...
+Creating extension directory /root/.cache/torch_extensions/py311_cu124/cpu_adam...
+Emitting ninja build file /root/.cache/torch_extensions/py311_cu124/cpu_adam/build.ninja...
+Building extension module cpu_adam...
+Allowing ninja to set a default number of workers... (overridable by setting the environment variable MAX_JOBS=N)
+[1/3] c++ -MMD -MF cpu_adam.o.d -DTORCH_EXTENSION_NAME=cpu_adam -DTORCH_API_INCLUDE_EXTENSION_H -DPYBIND11_COMPILER_TYPE=\&quot;_gcc\&quot; -DPYBIND11_STDLIB=\&quot;_libstdcpp\&quot; -DPYBIND11_BUILD_ABI=\&quot;_cxxabi1011\&quot; -I/usr/local/lib/python3.11/site-packages/deepspeed/ops/csrc/includes -isystem /usr/local/lib/python3.11/site-packages/torch/include -isystem /usr/local/lib/python3.11/site-packages/torch/include/torch/csrc/api/include -isystem /usr/local/lib/python3.11/site-packages/torch/include/TH -isystem /usr/local/lib/python3.11/site-packages/torch/include/THC -isystem /usr/local/include/python3.11 -D_GLIBCXX_USE_CXX11_ABI=0 -fPIC -std=c++17 -O3 -std=c++17 -g -Wno-reorder -L/usr/local/cuda/lib64 -lcudart -lcublas -g -march=native -fopenmp -D__AVX512__ -D__ENABLE_CUDA__ -DBF16_AVAILABLE -c /usr/local/lib/python3.11/site-packages/deepspeed/ops/csrc/adam/cpu_adam.cpp -o cpu_adam.o 
+[2/3] c++ -MMD -MF cpu_adam_impl.o.d -DTORCH_EXTENSION_NAME=cpu_adam -DTORCH_API_INCLUDE_EXTENSION_H -DPYBIND11_COMPILER_TYPE=\&quot;_gcc\&quot; -DPYBIND11_STDLIB=\&quot;_libstdcpp\&quot; -DPYBIND11_BUILD_ABI=\&quot;_cxxabi1011\&quot; -I/usr/local/lib/python3.11/site-packages/deepspeed/ops/csrc/includes -isystem /usr/local/lib/python3.11/site-packages/torch/include -isystem /usr/local/lib/python3.11/site-packages/torch/include/torch/csrc/api/include -isystem /usr/local/lib/python3.11/site-packages/torch/include/TH -isystem /usr/local/lib/python3.11/site-packages/torch/include/THC -isystem /usr/local/include/python3.11 -D_GLIBCXX_USE_CXX11_ABI=0 -fPIC -std=c++17 -O3 -std=c++17 -g -Wno-reorder -L/usr/local/cuda/lib64 -lcudart -lcublas -g -march=native -fopenmp -D__AVX512__ -D__ENABLE_CUDA__ -DBF16_AVAILABLE -c /usr/local/lib/python3.11/site-packages/deepspeed/ops/csrc/adam/cpu_adam_impl.cpp -o cpu_adam_impl.o 
+[3/3] c++ cpu_adam.o cpu_adam_impl.o -shared -lcurand -L/usr/local/cuda/lib64 -L/usr/local/lib/python3.11/site-packages/torch/lib -lc10 -ltorch_cpu -ltorch -ltorch_python -o cpu_adam.so
+Loading extension module cpu_adam...
+Time to load cpu_adam op: 25.448318243026733 seconds
+dlc1lm8dmxok7cfj-master-0:133:133 [0] NCCL INFO Comm config Blocking set to 1
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Using non-device net plugin version 0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Using network Socket
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO ncclCommInitRank comm 0x5603c0bfdac0 rank 0 nranks 1 cudaDev 0 nvmlDev 0 busId 30 commId 0x9cbcac870fd5ec63 - Init START
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO comm 0x5603c0bfdac0 rank 0 nRanks 1 nNodes 1 localRanks 1 localRank 0 MNNVL 0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 00/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 01/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 02/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 03/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 04/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 05/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 06/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 07/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 08/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 09/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 10/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 11/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 12/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 13/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 14/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 15/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 16/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 17/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 18/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 19/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 20/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 21/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 22/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 23/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 24/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 25/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 26/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 27/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 28/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 29/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 30/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 31/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Trees [0] -1/-1/-1-&gt;0-&gt;-1 [1] -1/-1/-1-&gt;0-&gt;-1 [2] -1/-1/-1-&gt;0-&gt;-1 [3] -1/-1/-1-&gt;0-&gt;-1 [4] -1/-1/-1-&gt;0-&gt;-1 [5] -1/-1/-1-&gt;0-&gt;-1 [6] -1/-1/-1-&gt;0-&gt;-1 [7] -1/-1/-1-&gt;0-&gt;-1 [8] -1/-1/-1-&gt;0-&gt;-1 [9] -1/-1/-1-&gt;0-&gt;-1 [10] -1/-1/-1-&gt;0-&gt;-1 [11] -1/-1/-1-&gt;0-&gt;-1 [12] -1/-1/-1-&gt;0-&gt;-1 [13] -1/-1/-1-&gt;0-&gt;-1 [14] -1/-1/-1-&gt;0-&gt;-1 [15] -1/-1/-1-&gt;0-&gt;-1 [16] -1/-1/-1-&gt;0-&gt;-1 [17] -1/-1/-1-&gt;0-&gt;-1 [18] -1/-1/-1-&gt;0-&gt;-1 [19] -1/-1/-1-&gt;0-&gt;-1 [20] -1/-1/-1-&gt;0-&gt;-1 [21] -1/-1/-1-&gt;0-&gt;-1 [22] -1/-1/-1-&gt;0-&gt;-1 [23] -1/-1/-1-&gt;0-&gt;-1 [24] -1/-1/-1-&gt;0-&gt;-1 [25] -1/-1/-1-&gt;0-&gt;-1 [26] -1/-1/-1-&gt;0-&gt;-1 [27] -1/-1/-1-&gt;0-&gt;-1 [28] -1/-1/-1-&gt;0-&gt;-1 [29] -1/-1/-1-&gt;0-&gt;-1 [30] -1/-1/-1-&gt;0-&gt;-1 [31] -1/-1/-1-&gt;0-&gt;-1
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO P2P Chunksize set to 131072
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Connected all rings
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Connected all trees
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO 32 coll channels, 32 collnet channels, 0 nvls channels, 32 p2p channels, 32 p2p channels per peer
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO ncclCommInitRank comm 0x5603c0bfdac0 rank 0 nranks 1 cudaDev 0 nvmlDev 0 busId 30 commId 0x9cbcac870fd5ec63 - Init COMPLETE
+
+  0%|          | 0/100 [00:00&lt;?, ?it/s]`use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
+
+  1%|          | 1/100 [00:01&lt;02:53,  1.76s/it]
+                                               
+{'loss': 2.9969, 'grad_norm': 0.6156104803085327, 'learning_rate': 0.0, 'num_tokens': 12395.0, 'mean_token_accuracy': 0.557265505194664, 'epoch': 0.04}
+
+  1%|          | 1/100 [00:01&lt;02:53,  1.76s/it]
+  2%|▏         | 2/100 [00:03&lt;02:25,  1.49s/it]
+                                               
+{'loss': 3.0022, 'grad_norm': 0.6304222345352173, 'learning_rate': 5e-05, 'num_tokens': 24663.0, 'mean_token_accuracy': 0.5569408759474754, 'epoch': 0.08}
+
+  2%|▏         | 2/100 [00:03&lt;02:25,  1.49s/it]
+  3%|▎         | 3/100 [00:04&lt;02:15,  1.40s/it]
+                                               
+{'loss': 2.9518, 'grad_norm': 0.5929722189903259, 'learning_rate': 4.9987413559579636e-05, 'num_tokens': 36927.0, 'mean_token_accuracy': 0.5601871758699417, 'epoch': 0.12}
+
+  3%|▎         | 3/100 [00:04&lt;02:15,  1.40s/it]
+  4%|▍         | 4/100 [00:05&lt;02:10,  1.35s/it]
+                                               
+{'loss': 2.8384, 'grad_norm': 0.5077946186065674, 'learning_rate': 4.994966691179711e-05, 'num_tokens': 49324.0, 'mean_token_accuracy': 0.5842191278934479, 'epoch': 0.16}
+
+  4%|▍         | 4/100 [00:05&lt;02:10,  1.35s/it]
+  5%|▌         | 5/100 [00:06&lt;02:06,  1.33s/it]
+                                               
+{'loss': 2.7403, 'grad_norm': 0.47692668437957764, 'learning_rate': 4.988679806432712e-05, 'num_tokens': 61656.0, 'mean_token_accuracy': 0.5848015174269676, 'epoch': 0.2}
+
+  5%|▌         | 5/100 [00:06&lt;02:06,  1.33s/it]
+  6%|▌         | 6/100 [00:08&lt;02:03,  1.32s/it]
+                                               
+{'loss': 2.6408, 'grad_norm': 0.4504166841506958, 'learning_rate': 4.9798870320769886e-05, 'num_tokens': 74040.0, 'mean_token_accuracy': 0.5917089208960533, 'epoch': 0.24}
+
+  6%|▌         | 6/100 [00:08&lt;02:03,  1.32s/it]
+  7%|▋         | 7/100 [00:09&lt;02:02,  1.32s/it]
+                                               
+{'loss': 2.5569, 'grad_norm': 0.43109777569770813, 'learning_rate': 4.968597221690986e-05, 'num_tokens': 86402.0, 'mean_token_accuracy': 0.6047331020236015, 'epoch': 0.28}
+
+  7%|▋         | 7/100 [00:09&lt;02:02,  1.32s/it]
+  8%|▊         | 8/100 [00:10&lt;02:00,  1.31s/it]
+                                               
+{'loss': 2.4599, 'grad_norm': 0.4197584092617035, 'learning_rate': 4.9548217431567665e-05, 'num_tokens': 98815.0, 'mean_token_accuracy': 0.6172997951507568, 'epoch': 0.32}
+
+  8%|▊         | 8/100 [00:10&lt;02:00,  1.31s/it]
+  9%|▉         | 9/100 [00:12&lt;01:58,  1.30s/it]
+                                               
+{'loss': 2.3896, 'grad_norm': 0.4105101525783539, 'learning_rate': 4.938574467213518e-05, 'num_tokens': 111181.0, 'mean_token_accuracy': 0.6319251507520676, 'epoch': 0.36}
+
+  9%|▉         | 9/100 [00:12&lt;01:58,  1.30s/it]
+ 10%|█         | 10/100 [00:13&lt;01:56,  1.30s/it]
+                                                
+{'loss': 2.295, 'grad_norm': 0.4044440984725952, 'learning_rate': 4.919871753490891e-05, 'num_tokens': 123497.0, 'mean_token_accuracy': 0.6286465525627136, 'epoch': 0.4}
+
+ 10%|█         | 10/100 [00:13&lt;01:56,  1.30s/it]
+ 11%|█         | 11/100 [00:14&lt;01:55,  1.30s/it]
+                                                
+{'loss': 2.1899, 'grad_norm': 0.4107915163040161, 'learning_rate': 4.898732434036244e-05, 'num_tokens': 135987.0, 'mean_token_accuracy': 0.6360785737633705, 'epoch': 0.44}
+
+ 11%|█         | 11/100 [00:14&lt;01:55,  1.30s/it]
+ 12%|█▏        | 12/100 [00:15&lt;01:53,  1.30s/it]
+                                                
+{'loss': 2.1242, 'grad_norm': 0.4469277262687683, 'learning_rate': 4.8751777943523634e-05, 'num_tokens': 148455.0, 'mean_token_accuracy': 0.649301253259182, 'epoch': 0.48}
+
+ 12%|█▏        | 12/100 [00:15&lt;01:53,  1.30s/it]
+ 13%|█▎        | 13/100 [00:17&lt;01:52,  1.29s/it]
+                                                
+{'loss': 2.0296, 'grad_norm': 0.3584776222705841, 'learning_rate': 4.849231551964771e-05, 'num_tokens': 160848.0, 'mean_token_accuracy': 0.654139406979084, 'epoch': 0.52}
+
+ 13%|█▎        | 13/100 [00:17&lt;01:52,  1.29s/it]
+ 14%|█▍        | 14/100 [00:18&lt;01:51,  1.29s/it]
+                                                
+{'loss': 1.9926, 'grad_norm': 0.3459338843822479, 'learning_rate': 4.8209198325401815e-05, 'num_tokens': 173176.0, 'mean_token_accuracy': 0.6589227616786957, 'epoch': 0.56}
+
+ 14%|█▍        | 14/100 [00:18&lt;01:51,  1.29s/it]
+ 15%|█▌        | 15/100 [00:19&lt;01:49,  1.29s/it]
+                                                
+{'loss': 1.9241, 'grad_norm': 0.3389168679714203, 'learning_rate': 4.790271143580174e-05, 'num_tokens': 185528.0, 'mean_token_accuracy': 0.6655279397964478, 'epoch': 0.6}
+
+ 15%|█▌        | 15/100 [00:19&lt;01:49,  1.29s/it]
+ 16%|█▌        | 16/100 [00:21&lt;01:48,  1.29s/it]
+                                                
+{'loss': 1.8466, 'grad_norm': 0.3481423258781433, 'learning_rate': 4.7573163457165534e-05, 'num_tokens': 197848.0, 'mean_token_accuracy': 0.6780158132314682, 'epoch': 0.64}
+
+ 16%|█▌        | 16/100 [00:21&lt;01:48,  1.29s/it]
+ 17%|█▋        | 17/100 [00:22&lt;01:47,  1.29s/it]
+                                                
+{'loss': 1.7937, 'grad_norm': 0.350722074508667, 'learning_rate': 4.722088621637309e-05, 'num_tokens': 210208.0, 'mean_token_accuracy': 0.6687768772244453, 'epoch': 0.68}
+
+ 17%|█▋        | 17/100 [00:22&lt;01:47,  1.29s/it]
+ 18%|█▊        | 18/100 [00:23&lt;01:45,  1.29s/it]
+                                                
+{'loss': 1.7131, 'grad_norm': 0.3526684641838074, 'learning_rate': 4.684623442674463e-05, 'num_tokens': 222596.0, 'mean_token_accuracy': 0.669261246919632, 'epoch': 0.72}
+
+ 18%|█▊        | 18/100 [00:23&lt;01:45,  1.29s/it]
+ 19%|█▉        | 19/100 [00:25&lt;01:44,  1.29s/it]
+                                                
+{'loss': 1.6793, 'grad_norm': 0.3442957401275635, 'learning_rate': 4.644958533087443e-05, 'num_tokens': 235010.0, 'mean_token_accuracy': 0.6730949878692627, 'epoch': 0.76}
+
+ 19%|█▉        | 19/100 [00:25&lt;01:44,  1.29s/it]
+ 20%|██        | 20/100 [00:26&lt;01:43,  1.29s/it]
+                                                
+{'loss': 1.608, 'grad_norm': 0.31706002354621887, 'learning_rate': 4.6031338320779534e-05, 'num_tokens': 247478.0, 'mean_token_accuracy': 0.6819775551557541, 'epoch': 0.8}
+
+ 20%|██        | 20/100 [00:26&lt;01:43,  1.29s/it]
+ 21%|██        | 21/100 [00:27&lt;01:42,  1.29s/it]
+                                                
+{'loss': 1.5786, 'grad_norm': 0.3038071393966675, 'learning_rate': 4.559191453574582e-05, 'num_tokens': 259806.0, 'mean_token_accuracy': 0.6907401010394096, 'epoch': 0.84}
+
+ 21%|██        | 21/100 [00:27&lt;01:42,  1.29s/it]
+ 22%|██▏       | 22/100 [00:28&lt;01:40,  1.29s/it]
+                                                
+{'loss': 1.5251, 'grad_norm': 0.28096795082092285, 'learning_rate': 4.513175643827647e-05, 'num_tokens': 272161.0, 'mean_token_accuracy': 0.7046292722225189, 'epoch': 0.88}
+
+ 22%|██▏       | 22/100 [00:28&lt;01:40,  1.29s/it]
+ 23%|██▎       | 23/100 [00:30&lt;01:38,  1.29s/it]
+                                                
+{'loss': 1.4769, 'grad_norm': 0.276657372713089, 'learning_rate': 4.465132736856969e-05, 'num_tokens': 284510.0, 'mean_token_accuracy': 0.7159407809376717, 'epoch': 0.92}
+
+ 23%|██▎       | 23/100 [00:30&lt;01:38,  1.29s/it]
+ 24%|██▍       | 24/100 [00:31&lt;01:37,  1.29s/it]
+                                                
+{'loss': 1.4424, 'grad_norm': 0.25698068737983704, 'learning_rate': 4.415111107797445e-05, 'num_tokens': 296882.0, 'mean_token_accuracy': 0.7303404361009598, 'epoch': 0.96}
+
+ 24%|██▍       | 24/100 [00:31&lt;01:37,  1.29s/it]
+ 25%|██▌       | 25/100 [00:32&lt;01:36,  1.28s/it]
+                                                
+{'loss': 1.4216, 'grad_norm': 0.25088033080101013, 'learning_rate': 4.3631611241893874e-05, 'num_tokens': 309282.0, 'mean_token_accuracy': 0.7428581342101097, 'epoch': 1.0}
+
+ 25%|██▌       | 25/100 [00:32&lt;01:36,  1.28s/it]
+
+  0%|          | 0/200 [00:00&lt;?, ?it/s][A
+
+  2%|▏         | 4/200 [00:00&lt;00:06, 30.36it/s][A
+
+  4%|▍         | 8/200 [00:00&lt;00:07, 25.48it/s][A
+
+  6%|▌         | 11/200 [00:00&lt;00:07, 24.52it/s][A
+
+  7%|▋         | 14/200 [00:00&lt;00:07, 23.83it/s][A
+
+  8%|▊         | 17/200 [00:00&lt;00:07, 23.52it/s][A
+
+ 10%|█         | 20/200 [00:00&lt;00:07, 23.25it/s][A
+
+ 12%|█▏        | 23/200 [00:00&lt;00:07, 22.90it/s][A
+
+ 13%|█▎        | 26/200 [00:01&lt;00:07, 22.99it/s][A
+
+ 14%|█▍        | 29/200 [00:01&lt;00:07, 22.96it/s][A
+
+ 16%|█▌        | 32/200 [00:01&lt;00:07, 22.84it/s][A
+
+ 18%|█▊        | 35/200 [00:01&lt;00:07, 22.72it/s][A
+
+ 19%|█▉        | 38/200 [00:01&lt;00:07, 22.70it/s][A
+
+ 20%|██        | 41/200 [00:01&lt;00:06, 22.75it/s][A
+
+ 22%|██▏       | 44/200 [00:01&lt;00:06, 22.75it/s][A
+
+ 24%|██▎       | 47/200 [00:02&lt;00:06, 22.72it/s][A
+
+ 25%|██▌       | 50/200 [00:02&lt;00:06, 22.67it/s][A
+
+ 26%|██▋       | 53/200 [00:02&lt;00:06, 22.72it/s][A
+
+ 28%|██▊       | 56/200 [00:02&lt;00:06, 22.68it/s][A
+
+ 30%|██▉       | 59/200 [00:02&lt;00:06, 22.70it/s][A
+
+ 31%|███       | 62/200 [00:02&lt;00:06, 22.80it/s][A
+
+ 32%|███▎      | 65/200 [00:02&lt;00:05, 22.86it/s][A
+
+ 34%|███▍      | 68/200 [00:02&lt;00:05, 22.73it/s][A
+
+ 36%|███▌      | 71/200 [00:03&lt;00:05, 22.83it/s][A
+
+ 37%|███▋      | 74/200 [00:03&lt;00:05, 22.90it/s][A
+
+ 38%|███▊      | 77/200 [00:03&lt;00:05, 22.81it/s][A
+
+ 40%|████      | 80/200 [00:03&lt;00:05, 22.72it/s][A
+
+ 42%|████▏     | 83/200 [00:03&lt;00:05, 22.84it/s][A
+
+ 43%|████▎     | 86/200 [00:03&lt;00:05, 22.77it/s][A
+
+ 44%|████▍     | 89/200 [00:03&lt;00:04, 22.88it/s][A
+
+ 46%|████▌     | 92/200 [00:03&lt;00:04, 22.90it/s][A
+
+ 48%|████▊     | 95/200 [00:04&lt;00:04, 22.92it/s][A
+
+ 49%|████▉     | 98/200 [00:04&lt;00:04, 22.96it/s][A
+
+ 50%|█████     | 101/200 [00:04&lt;00:04, 22.84it/s][A
+
+ 52%|█████▏    | 104/200 [00:04&lt;00:04, 22.67it/s][A
+
+ 54%|█████▎    | 107/200 [00:04&lt;00:04, 22.77it/s][A
+
+ 55%|█████▌    | 110/200 [00:04&lt;00:03, 22.75it/s][A
+
+ 56%|█████▋    | 113/200 [00:04&lt;00:03, 22.64it/s][A
+
+ 58%|█████▊    | 116/200 [00:05&lt;00:03, 22.76it/s][A
+
+ 60%|█████▉    | 119/200 [00:05&lt;00:03, 22.87it/s][A
+
+ 61%|██████    | 122/200 [00:05&lt;00:03, 22.89it/s][A
+
+ 62%|██████▎   | 125/200 [00:05&lt;00:03, 22.71it/s][A
+
+ 64%|██████▍   | 128/200 [00:05&lt;00:03, 22.69it/s][A
+
+ 66%|██████▌   | 131/200 [00:05&lt;00:03, 22.68it/s][A
+
+ 67%|██████▋   | 134/200 [00:05&lt;00:02, 22.69it/s][A
+
+ 68%|██████▊   | 137/200 [00:05&lt;00:02, 22.65it/s][A
+
+ 70%|███████   | 140/200 [00:06&lt;00:02, 22.79it/s][A
+
+ 72%|███████▏  | 143/200 [00:06&lt;00:02, 22.83it/s][A
+
+ 73%|███████▎  | 146/200 [00:06&lt;00:02, 22.77it/s][A
+
+ 74%|███████▍  | 149/200 [00:06&lt;00:02, 22.73it/s][A
+
+ 76%|███████▌  | 152/200 [00:06&lt;00:02, 22.81it/s][A
+
+ 78%|███████▊  | 155/200 [00:06&lt;00:01, 22.78it/s][A
+
+ 79%|███████▉  | 158/200 [00:06&lt;00:01, 22.89it/s][A
+
+ 80%|████████  | 161/200 [00:07&lt;00:01, 22.93it/s][A
+
+ 82%|████████▏ | 164/200 [00:07&lt;00:01, 22.88it/s][A
+
+ 84%|████████▎ | 167/200 [00:07&lt;00:01, 22.95it/s][A
+
+ 85%|████████▌ | 170/200 [00:07&lt;00:01, 22.92it/s][A
+
+ 86%|████████▋ | 173/200 [00:07&lt;00:01, 22.75it/s][A
+
+ 88%|████████▊ | 176/200 [00:07&lt;00:01, 22.84it/s][A
+
+ 90%|████████▉ | 179/200 [00:07&lt;00:00, 22.77it/s][A
+
+ 91%|█████████ | 182/200 [00:07&lt;00:00, 22.83it/s][A
+
+ 92%|█████████▎| 185/200 [00:08&lt;00:00, 22.77it/s][A
+
+ 94%|█████████▍| 188/200 [00:08&lt;00:00, 22.64it/s][A
+
+ 96%|█████████▌| 191/200 [00:08&lt;00:00, 22.67it/s][A
+
+ 97%|█████████▋| 194/200 [00:08&lt;00:00, 22.68it/s][A
+
+ 98%|█████████▊| 197/200 [00:08&lt;00:00, 22.57it/s][A
+
+100%|██████████| 200/200 [00:08&lt;00:00, 22.78it/s][A
+                                                
+
+                                                 
+[A{'eval_loss': 1.380300760269165, 'eval_runtime': 8.7868, 'eval_samples_per_second': 182.091, 'eval_steps_per_second': 22.761, 'eval_num_tokens': 309282.0, 'eval_mean_token_accuracy': 0.7480635163187981, 'epoch': 1.0}
+
+ 25%|██▌       | 25/100 [00:41&lt;01:36,  1.28s/it]
+
+100%|██████████| 200/200 [00:08&lt;00:00, 22.78it/s][A
+
+                                                 [A
+ 26%|██▌       | 26/100 [00:42&lt;04:50,  3.92s/it]
+                                                
+{'loss': 1.3642, 'grad_norm': 0.23684436082839966, 'learning_rate': 4.309335095262676e-05, 'num_tokens': 321611.0, 'mean_token_accuracy': 0.7474109008908272, 'epoch': 1.04}
+
+ 26%|██▌       | 26/100 [00:42&lt;04:50,  3.92s/it]
+ 27%|██▋       | 27/100 [00:44&lt;03:48,  3.13s/it]
+                                                
+{'loss': 1.3367, 'grad_norm': 0.24372604489326477, 'learning_rate': 4.2536872192658036e-05, 'num_tokens': 333958.0, 'mean_token_accuracy': 0.7538925781846046, 'epoch': 1.08}
+
+ 27%|██▋       | 27/100 [00:44&lt;03:48,  3.13s/it]
+ 28%|██▊       | 28/100 [00:45&lt;03:05,  2.58s/it]
+                                                
+{'loss': 1.3164, 'grad_norm': 0.22672152519226074, 'learning_rate': 4.1962735288928305e-05, 'num_tokens': 346363.0, 'mean_token_accuracy': 0.7542992457747459, 'epoch': 1.12}
+
+ 28%|██▊       | 28/100 [00:45&lt;03:05,  2.58s/it]
+ 29%|██▉       | 29/100 [00:46&lt;02:35,  2.19s/it]
+                                                
+{'loss': 1.2815, 'grad_norm': 0.22313237190246582, 'learning_rate': 4.137151834863213e-05, 'num_tokens': 358740.0, 'mean_token_accuracy': 0.7578952461481094, 'epoch': 1.16}
+
+ 29%|██▉       | 29/100 [00:46&lt;02:35,  2.19s/it]
+ 30%|███       | 30/100 [00:47&lt;02:14,  1.92s/it]
+                                                
+{'loss': 1.272, 'grad_norm': 0.21239323914051056, 'learning_rate': 4.0763816677113064e-05, 'num_tokens': 371163.0, 'mean_token_accuracy': 0.7672104388475418, 'epoch': 1.2}
+
+ 30%|███       | 30/100 [00:47&lt;02:14,  1.92s/it]
+ 31%|███       | 31/100 [00:49&lt;01:59,  1.73s/it]
+                                                
+{'loss': 1.2363, 'grad_norm': 0.21683549880981445, 'learning_rate': 4.014024217844167e-05, 'num_tokens': 383524.0, 'mean_token_accuracy': 0.7794611379504204, 'epoch': 1.24}
+
+ 31%|███       | 31/100 [00:49&lt;01:59,  1.73s/it]
+ 32%|███▏      | 32/100 [00:50&lt;01:48,  1.59s/it]
+                                                
+{'loss': 1.2006, 'grad_norm': 0.21469290554523468, 'learning_rate': 3.9501422739279956e-05, 'num_tokens': 395924.0, 'mean_token_accuracy': 0.7862255200743675, 'epoch': 1.28}
+
+ 32%|███▏      | 32/100 [00:50&lt;01:48,  1.59s/it]
+ 33%|███▎      | 33/100 [00:51&lt;01:41,  1.51s/it]
+                                                
+{'loss': 1.1771, 'grad_norm': 0.21210847795009613, 'learning_rate': 3.884800159665276e-05, 'num_tokens': 408322.0, 'mean_token_accuracy': 0.7854267209768295, 'epoch': 1.32}
+
+ 33%|███▎      | 33/100 [00:51&lt;01:41,  1.51s/it]
+ 34%|███▍      | 34/100 [00:53&lt;01:35,  1.45s/it]
+                                                
+{'loss': 1.1582, 'grad_norm': 0.20535743236541748, 'learning_rate': 3.818063669026256e-05, 'num_tokens': 420776.0, 'mean_token_accuracy': 0.7891717627644539, 'epoch': 1.36}
+
+ 34%|███▍      | 34/100 [00:53&lt;01:35,  1.45s/it]
+ 35%|███▌      | 35/100 [00:54&lt;01:30,  1.39s/it]
+                                                
+{'loss': 1.1326, 'grad_norm': 0.20486287772655487, 'learning_rate': 3.7500000000000003e-05, 'num_tokens': 433218.0, 'mean_token_accuracy': 0.7905180305242538, 'epoch': 1.4}
+
+ 35%|███▌      | 35/100 [00:54&lt;01:30,  1.39s/it]
+ 36%|███▌      | 36/100 [00:55&lt;01:26,  1.36s/it]
+                                                
+{'loss': 1.1095, 'grad_norm': 0.20110926032066345, 'learning_rate': 3.680677686931707e-05, 'num_tokens': 445548.0, 'mean_token_accuracy': 0.7904055789113045, 'epoch': 1.44}
+
+ 36%|███▌      | 36/100 [00:55&lt;01:26,  1.36s/it]
+ 37%|███▋      | 37/100 [00:56&lt;01:24,  1.33s/it]
+                                                
+{'loss': 1.0912, 'grad_norm': 0.20082473754882812, 'learning_rate': 3.610166531514436e-05, 'num_tokens': 457982.0, 'mean_token_accuracy': 0.7945679351687431, 'epoch': 1.48}
+
+ 37%|███▋      | 37/100 [00:56&lt;01:24,  1.33s/it]
+ 38%|███▊      | 38/100 [00:58&lt;01:22,  1.32s/it]
+                                                
+{'loss': 1.0757, 'grad_norm': 0.20655913650989532, 'learning_rate': 3.5385375325047166e-05, 'num_tokens': 470302.0, 'mean_token_accuracy': 0.8008103594183922, 'epoch': 1.52}
+
+ 38%|███▊      | 38/100 [00:58&lt;01:22,  1.32s/it]
+ 39%|███▉      | 39/100 [00:59&lt;01:20,  1.31s/it]
+                                                
+{'loss': 1.0475, 'grad_norm': 0.21213574707508087, 'learning_rate': 3.465862814232822e-05, 'num_tokens': 482652.0, 'mean_token_accuracy': 0.8052932694554329, 'epoch': 1.56}
+
+ 39%|███▉      | 39/100 [00:59&lt;01:20,  1.31s/it]
+ 40%|████      | 40/100 [01:00&lt;01:18,  1.30s/it]
+                                                
+{'loss': 1.0193, 'grad_norm': 0.2088337391614914, 'learning_rate': 3.392215553979679e-05, 'num_tokens': 494935.0, 'mean_token_accuracy': 0.8083378374576569, 'epoch': 1.6}
+
+ 40%|████      | 40/100 [01:00&lt;01:18,  1.30s/it]
+ 41%|████      | 41/100 [01:02&lt;01:16,  1.30s/it]
+                                                
+{'loss': 0.9896, 'grad_norm': 0.20944200456142426, 'learning_rate': 3.3176699082935545e-05, 'num_tokens': 507306.0, 'mean_token_accuracy': 0.8125813230872154, 'epoch': 1.64}
+
+ 41%|████      | 41/100 [01:02&lt;01:16,  1.30s/it]
+ 42%|████▏     | 42/100 [01:03&lt;01:15,  1.30s/it]
+                                                
+{'loss': 0.9567, 'grad_norm': 0.208340585231781, 'learning_rate': 3.2423009383206876e-05, 'num_tokens': 519659.0, 'mean_token_accuracy': 0.8086286038160324, 'epoch': 1.68}
+
+ 42%|████▏     | 42/100 [01:03&lt;01:15,  1.30s/it]
+ 43%|████▎     | 43/100 [01:04&lt;01:13,  1.29s/it]
+                                                
+{'loss': 0.9799, 'grad_norm': 0.21747039258480072, 'learning_rate': 3.166184534225087e-05, 'num_tokens': 532016.0, 'mean_token_accuracy': 0.8070342764258385, 'epoch': 1.72}
+
+ 43%|████▎     | 43/100 [01:04&lt;01:13,  1.29s/it]
+ 44%|████▍     | 44/100 [01:05&lt;01:12,  1.29s/it]
+                                                
+{'loss': 0.9411, 'grad_norm': 0.21131806075572968, 'learning_rate': 3.0893973387735687e-05, 'num_tokens': 544451.0, 'mean_token_accuracy': 0.8081119135022163, 'epoch': 1.76}
+
+ 44%|████▍     | 44/100 [01:05&lt;01:12,  1.29s/it]
+ 45%|████▌     | 45/100 [01:07&lt;01:10,  1.29s/it]
+                                                
+{'loss': 0.9102, 'grad_norm': 0.20553453266620636, 'learning_rate': 3.012016670162977e-05, 'num_tokens': 556764.0, 'mean_token_accuracy': 0.8155807703733444, 'epoch': 1.8}
+
+ 45%|████▌     | 45/100 [01:07&lt;01:10,  1.29s/it]
+ 46%|████▌     | 46/100 [01:08&lt;01:09,  1.29s/it]
+                                                
+{'loss': 0.8995, 'grad_norm': 0.20625217258930206, 'learning_rate': 2.9341204441673266e-05, 'num_tokens': 569095.0, 'mean_token_accuracy': 0.8212151899933815, 'epoch': 1.84}
+
+ 46%|████▌     | 46/100 [01:08&lt;01:09,  1.29s/it]
+ 47%|████▋     | 47/100 [01:09&lt;01:08,  1.29s/it]
+                                                
+{'loss': 0.8756, 'grad_norm': 0.20689339935779572, 'learning_rate': 2.8557870956832132e-05, 'num_tokens': 581369.0, 'mean_token_accuracy': 0.824812762439251, 'epoch': 1.88}
+
+ 47%|████▋     | 47/100 [01:09&lt;01:08,  1.29s/it]
+ 48%|████▊     | 48/100 [01:11&lt;01:06,  1.28s/it]
+                                                
+{'loss': 0.8715, 'grad_norm': 0.19971652328968048, 'learning_rate': 2.7770954997525277e-05, 'num_tokens': 593861.0, 'mean_token_accuracy': 0.8196996673941612, 'epoch': 1.92}
+
+ 48%|████▊     | 48/100 [01:11&lt;01:06,  1.28s/it]
+ 49%|████▉     | 49/100 [01:12&lt;01:05,  1.28s/it]
+                                                
+{'loss': 0.8449, 'grad_norm': 0.19617316126823425, 'learning_rate': 2.698124892141971e-05, 'num_tokens': 606239.0, 'mean_token_accuracy': 0.8340854272246361, 'epoch': 1.96}
+
+ 49%|████▉     | 49/100 [01:12&lt;01:05,  1.28s/it]
+ 50%|█████     | 50/100 [01:13&lt;01:04,  1.28s/it]
+                                                
+{'loss': 0.8372, 'grad_norm': 0.2008523941040039, 'learning_rate': 2.6189547895593562e-05, 'num_tokens': 618564.0, 'mean_token_accuracy': 0.8334235697984695, 'epoch': 2.0}
+
+ 50%|█████     | 50/100 [01:13&lt;01:04,  1.28s/it]
+
+  0%|          | 0/200 [00:00&lt;?, ?it/s][A
+
+  2%|▏         | 4/200 [00:00&lt;00:06, 30.52it/s][A
+
+  4%|▍         | 8/200 [00:00&lt;00:07, 25.60it/s][A
+
+  6%|▌         | 11/200 [00:00&lt;00:07, 24.64it/s][A
+
+  7%|▋         | 14/200 [00:00&lt;00:07, 23.94it/s][A
+
+  8%|▊         | 17/200 [00:00&lt;00:07, 23.61it/s][A
+
+ 10%|█         | 20/200 [00:00&lt;00:07, 23.33it/s][A
+
+ 12%|█▏        | 23/200 [00:00&lt;00:07, 22.98it/s][A
+
+ 13%|█▎        | 26/200 [00:01&lt;00:07, 23.08it/s][A
+
+ 14%|█▍        | 29/200 [00:01&lt;00:07, 23.05it/s][A
+
+ 16%|█▌        | 32/200 [00:01&lt;00:07, 22.93it/s][A
+
+ 18%|█▊        | 35/200 [00:01&lt;00:07, 22.83it/s][A
+
+ 19%|█▉        | 38/200 [00:01&lt;00:07, 22.79it/s][A
+
+ 20%|██        | 41/200 [00:01&lt;00:06, 22.85it/s][A
+
+ 22%|██▏       | 44/200 [00:01&lt;00:06, 22.88it/s][A
+
+ 24%|██▎       | 47/200 [00:02&lt;00:06, 22.82it/s][A
+
+ 25%|██▌       | 50/200 [00:02&lt;00:06, 22.77it/s][A
+
+ 26%|██▋       | 53/200 [00:02&lt;00:06, 22.83it/s][A
+
+ 28%|██▊       | 56/200 [00:02&lt;00:06, 22.81it/s][A
+
+ 30%|██▉       | 59/200 [00:02&lt;00:06, 22.80it/s][A
+
+ 31%|███       | 62/200 [00:02&lt;00:06, 22.84it/s][A
+
+ 32%|███▎      | 65/200 [00:02&lt;00:05, 22.89it/s][A
+
+ 34%|███▍      | 68/200 [00:02&lt;00:05, 22.75it/s][A
+
+ 36%|███▌      | 71/200 [00:03&lt;00:05, 22.85it/s][A
+
+ 37%|███▋      | 74/200 [00:03&lt;00:05, 22.93it/s][A
+
+ 38%|███▊      | 77/200 [00:03&lt;00:05, 22.85it/s][A
+
+ 40%|████      | 80/200 [00:03&lt;00:05, 22.80it/s][A
+
+ 42%|████▏     | 83/200 [00:03&lt;00:05, 22.85it/s][A
+
+ 43%|████▎     | 86/200 [00:03&lt;00:05, 22.78it/s][A
+
+ 44%|████▍     | 89/200 [00:03&lt;00:04, 22.89it/s][A
+
+ 46%|████▌     | 92/200 [00:03&lt;00:04, 22.91it/s][A
+
+ 48%|████▊     | 95/200 [00:04&lt;00:04, 22.93it/s][A
+
+ 49%|████▉     | 98/200 [00:04&lt;00:04, 22.98it/s][A
+
+ 50%|█████     | 101/200 [00:04&lt;00:04, 22.85it/s][A
+
+ 52%|█████▏    | 104/200 [00:04&lt;00:04, 22.68it/s][A
+
+ 54%|█████▎    | 107/200 [00:04&lt;00:04, 22.80it/s][A
+
+ 55%|█████▌    | 110/200 [00:04&lt;00:03, 22.76it/s][A
+
+ 56%|█████▋    | 113/200 [00:04&lt;00:03, 22.66it/s][A
+
+ 58%|█████▊    | 116/200 [00:05&lt;00:03, 22.78it/s][A
+
+ 60%|█████▉    | 119/200 [00:05&lt;00:03, 22.88it/s][A
+
+ 61%|██████    | 122/200 [00:05&lt;00:03, 22.91it/s][A
+
+ 62%|██████▎   | 125/200 [00:05&lt;00:03, 22.75it/s][A
+
+ 64%|██████▍   | 128/200 [00:05&lt;00:03, 22.75it/s][A
+
+ 66%|██████▌   | 131/200 [00:05&lt;00:03, 22.70it/s][A
+
+ 67%|██████▋   | 134/200 [00:05&lt;00:02, 22.73it/s][A
+
+ 68%|██████▊   | 137/200 [00:05&lt;00:02, 22.72it/s][A
+
+ 70%|███████   | 140/200 [00:06&lt;00:02, 22.83it/s][A
+
+ 72%|███████▏  | 143/200 [00:06&lt;00:02, 22.82it/s][A
+
+ 73%|███████▎  | 146/200 [00:06&lt;00:02, 22.77it/s][A
+
+ 74%|███████▍  | 149/200 [00:06&lt;00:02, 22.73it/s][A
+
+ 76%|███████▌  | 152/200 [00:06&lt;00:02, 22.82it/s][A
+
+ 78%|███████▊  | 155/200 [00:06&lt;00:01, 22.77it/s][A
+
+ 79%|███████▉  | 158/200 [00:06&lt;00:01, 22.90it/s][A
+
+ 80%|████████  | 161/200 [00:07&lt;00:01, 22.97it/s][A
+
+ 82%|████████▏ | 164/200 [00:07&lt;00:01, 22.87it/s][A
+
+ 84%|████████▎ | 167/200 [00:07&lt;00:01, 22.94it/s][A
+
+ 85%|████████▌ | 170/200 [00:07&lt;00:01, 22.91it/s][A
+
+ 86%|████████▋ | 173/200 [00:07&lt;00:01, 22.74it/s][A
+
+ 88%|████████▊ | 176/200 [00:07&lt;00:01, 22.83it/s][A
+
+ 90%|████████▉ | 179/200 [00:07&lt;00:00, 22.77it/s][A
+
+ 91%|█████████ | 182/200 [00:07&lt;00:00, 22.81it/s][A
+
+ 92%|█████████▎| 185/200 [00:08&lt;00:00, 22.77it/s][A
+
+ 94%|█████████▍| 188/200 [00:08&lt;00:00, 22.64it/s][A
+
+ 96%|█████████▌| 191/200 [00:08&lt;00:00, 22.68it/s][A
+
+ 97%|█████████▋| 194/200 [00:08&lt;00:00, 22.68it/s][A
+
+ 98%|█████████▊| 197/200 [00:08&lt;00:00, 22.56it/s][A
+
+100%|██████████| 200/200 [00:08&lt;00:00, 22.78it/s][A
+                                                
+
+                                                 
+[A{'eval_loss': 0.832106351852417, 'eval_runtime': 8.7725, 'eval_samples_per_second': 182.388, 'eval_steps_per_second': 22.798, 'eval_num_tokens': 618564.0, 'eval_mean_token_accuracy': 0.8328079205751419, 'epoch': 2.0}
+
+ 50%|█████     | 50/100 [01:22&lt;01:04,  1.28s/it]
+
+100%|██████████| 200/200 [00:08&lt;00:00, 22.78it/s][A
+
+                                                 [A
+ 51%|█████     | 51/100 [01:23&lt;03:11,  3.91s/it]
+                                                
+{'loss': 0.8343, 'grad_norm': 0.19672958552837372, 'learning_rate': 2.5396649095870202e-05, 'num_tokens': 630924.0, 'mean_token_accuracy': 0.8327541872859001, 'epoch': 2.04}
+
+ 51%|█████     | 51/100 [01:23&lt;03:11,  3.91s/it]
+ 52%|█████▏    | 52/100 [01:25&lt;02:30,  3.13s/it]
+                                                
+{'loss': 0.8031, 'grad_norm': 0.19217002391815186, 'learning_rate': 2.46033509041298e-05, 'num_tokens': 643260.0, 'mean_token_accuracy': 0.8392890691757202, 'epoch': 2.08}
+
+ 52%|█████▏    | 52/100 [01:25&lt;02:30,  3.13s/it]
+ 53%|█████▎    | 53/100 [01:26&lt;02:01,  2.58s/it]
+                                                
+{'loss': 0.8031, 'grad_norm': 0.19064681231975555, 'learning_rate': 2.3810452104406444e-05, 'num_tokens': 655664.0, 'mean_token_accuracy': 0.8399832472205162, 'epoch': 2.12}
+
+ 53%|█████▎    | 53/100 [01:26&lt;02:01,  2.58s/it]
+ 54%|█████▍    | 54/100 [01:27&lt;01:40,  2.20s/it]
+                                                
+{'loss': 0.7971, 'grad_norm': 0.18536289036273956, 'learning_rate': 2.3018751078580287e-05, 'num_tokens': 668139.0, 'mean_token_accuracy': 0.8374352976679802, 'epoch': 2.16}
+
+ 54%|█████▍    | 54/100 [01:27&lt;01:40,  2.20s/it]
+ 55%|█████▌    | 55/100 [01:28&lt;01:26,  1.92s/it]
+                                                
+{'loss': 0.7709, 'grad_norm': 0.1924009621143341, 'learning_rate': 2.222904500247473e-05, 'num_tokens': 680479.0, 'mean_token_accuracy': 0.840285949409008, 'epoch': 2.2}
+
+ 55%|█████▌    | 55/100 [01:28&lt;01:26,  1.92s/it]
+ 56%|█████▌    | 56/100 [01:30&lt;01:16,  1.74s/it]
+                                                
+{'loss': 0.7821, 'grad_norm': 0.2057674378156662, 'learning_rate': 2.1442129043167874e-05, 'num_tokens': 692908.0, 'mean_token_accuracy': 0.8382995650172234, 'epoch': 2.24}
+
+ 56%|█████▌    | 56/100 [01:30&lt;01:16,  1.74s/it]
+ 57%|█████▋    | 57/100 [01:31&lt;01:08,  1.60s/it]
+                                                
+{'loss': 0.7624, 'grad_norm': 0.18855980038642883, 'learning_rate': 2.0658795558326743e-05, 'num_tokens': 705288.0, 'mean_token_accuracy': 0.8444176241755486, 'epoch': 2.28}
+
+ 57%|█████▋    | 57/100 [01:31&lt;01:08,  1.60s/it]
+ 58%|█████▊    | 58/100 [01:32&lt;01:03,  1.51s/it]
+                                                
+{'loss': 0.7663, 'grad_norm': 0.1674283891916275, 'learning_rate': 1.9879833298370238e-05, 'num_tokens': 717657.0, 'mean_token_accuracy': 0.8422146812081337, 'epoch': 2.32}
+
+ 58%|█████▊    | 58/100 [01:32&lt;01:03,  1.51s/it]
+ 59%|█████▉    | 59/100 [01:34&lt;00:59,  1.46s/it]
+                                                
+{'loss': 0.727, 'grad_norm': 0.14157968759536743, 'learning_rate': 1.9106026612264316e-05, 'num_tokens': 729966.0, 'mean_token_accuracy': 0.8482123836874962, 'epoch': 2.36}
+
+ 59%|█████▉    | 59/100 [01:34&lt;00:59,  1.46s/it]
+ 60%|██████    | 60/100 [01:35&lt;00:56,  1.41s/it]
+                                                
+{'loss': 0.7415, 'grad_norm': 0.12936082482337952, 'learning_rate': 1.8338154657749128e-05, 'num_tokens': 742278.0, 'mean_token_accuracy': 0.8452928811311722, 'epoch': 2.4}
+
+ 60%|██████    | 60/100 [01:35&lt;00:56,  1.41s/it]
+ 61%|██████    | 61/100 [01:36&lt;00:53,  1.37s/it]
+                                                
+{'loss': 0.7487, 'grad_norm': 0.12007677555084229, 'learning_rate': 1.7576990616793137e-05, 'num_tokens': 754708.0, 'mean_token_accuracy': 0.8431602641940117, 'epoch': 2.44}
+
+ 61%|██████    | 61/100 [01:36&lt;00:53,  1.37s/it]
+ 62%|██████▏   | 62/100 [01:37&lt;00:51,  1.34s/it]
+                                                
+{'loss': 0.7237, 'grad_norm': 0.12370007485151291, 'learning_rate': 1.682330091706446e-05, 'num_tokens': 767047.0, 'mean_token_accuracy': 0.8453052863478661, 'epoch': 2.48}
+
+ 62%|██████▏   | 62/100 [01:37&lt;00:51,  1.34s/it]
+ 63%|██████▎   | 63/100 [01:39&lt;00:49,  1.33s/it]
+                                                
+{'loss': 0.7118, 'grad_norm': 0.11554520577192307, 'learning_rate': 1.6077844460203206e-05, 'num_tokens': 779363.0, 'mean_token_accuracy': 0.8485653474926949, 'epoch': 2.52}
+
+ 63%|██████▎   | 63/100 [01:39&lt;00:49,  1.33s/it]
+ 64%|██████▍   | 64/100 [01:40&lt;00:47,  1.32s/it]
+                                                
+{'loss': 0.7284, 'grad_norm': 0.12923835217952728, 'learning_rate': 1.5341371857671782e-05, 'num_tokens': 791688.0, 'mean_token_accuracy': 0.8447374626994133, 'epoch': 2.56}
+
+ 64%|██████▍   | 64/100 [01:40&lt;00:47,  1.32s/it]
+ 65%|██████▌   | 65/100 [01:41&lt;00:45,  1.31s/it]
+                                                
+{'loss': 0.7302, 'grad_norm': 0.11769213527441025, 'learning_rate': 1.4614624674952842e-05, 'num_tokens': 804034.0, 'mean_token_accuracy': 0.8439726531505585, 'epoch': 2.6}
+
+ 65%|██████▌   | 65/100 [01:41&lt;00:45,  1.31s/it]
+ 66%|██████▌   | 66/100 [01:43&lt;00:44,  1.30s/it]
+                                                
+{'loss': 0.7408, 'grad_norm': 0.12309098243713379, 'learning_rate': 1.3898334684855647e-05, 'num_tokens': 816457.0, 'mean_token_accuracy': 0.8421422615647316, 'epoch': 2.64}
+
+ 66%|██████▌   | 66/100 [01:43&lt;00:44,  1.30s/it]
+ 67%|██████▋   | 67/100 [01:44&lt;00:42,  1.29s/it]
+                                                
+{'loss': 0.7206, 'grad_norm': 0.11818303912878036, 'learning_rate': 1.3193223130682936e-05, 'num_tokens': 828875.0, 'mean_token_accuracy': 0.8433116152882576, 'epoch': 2.68}
+
+ 67%|██████▋   | 67/100 [01:44&lt;00:42,  1.29s/it]
+ 68%|██████▊   | 68/100 [01:45&lt;00:41,  1.29s/it]
+                                                
+{'loss': 0.7203, 'grad_norm': 0.10981553792953491, 'learning_rate': 1.2500000000000006e-05, 'num_tokens': 841193.0, 'mean_token_accuracy': 0.8448885753750801, 'epoch': 2.72}
+
+ 68%|██████▊   | 68/100 [01:45&lt;00:41,  1.29s/it]
+ 69%|██████▉   | 69/100 [01:46&lt;00:39,  1.29s/it]
+                                                
+{'loss': 0.7169, 'grad_norm': 0.11943168938159943, 'learning_rate': 1.181936330973744e-05, 'num_tokens': 853487.0, 'mean_token_accuracy': 0.8476847633719444, 'epoch': 2.76}
+
+ 69%|██████▉   | 69/100 [01:46&lt;00:39,  1.29s/it]
+ 70%|███████   | 70/100 [01:48&lt;00:38,  1.29s/it]
+                                                
+{'loss': 0.7179, 'grad_norm': 0.10694629698991776, 'learning_rate': 1.1151998403347244e-05, 'num_tokens': 865933.0, 'mean_token_accuracy': 0.8449734374880791, 'epoch': 2.8}
+
+ 70%|███████   | 70/100 [01:48&lt;00:38,  1.29s/it]
+ 71%|███████   | 71/100 [01:49&lt;00:37,  1.29s/it]
+                                                
+{'loss': 0.7184, 'grad_norm': 0.11949411779642105, 'learning_rate': 1.049857726072005e-05, 'num_tokens': 878273.0, 'mean_token_accuracy': 0.8473017513751984, 'epoch': 2.84}
+
+ 71%|███████   | 71/100 [01:49&lt;00:37,  1.29s/it]
+ 72%|███████▏  | 72/100 [01:50&lt;00:36,  1.29s/it]
+                                                
+{'loss': 0.7053, 'grad_norm': 0.10539913177490234, 'learning_rate': 9.859757821558337e-06, 'num_tokens': 890669.0, 'mean_token_accuracy': 0.8475821688771248, 'epoch': 2.88}
+
+ 72%|███████▏  | 72/100 [01:50&lt;00:36,  1.29s/it]
+ 73%|███████▎  | 73/100 [01:52&lt;00:35,  1.30s/it]
+                                                
+{'loss': 0.7228, 'grad_norm': 0.11216222494840622, 'learning_rate': 9.236183322886945e-06, 'num_tokens': 903150.0, 'mean_token_accuracy': 0.8438336625695229, 'epoch': 2.92}
+
+ 73%|███████▎  | 73/100 [01:52&lt;00:35,  1.30s/it]
+ 74%|███████▍  | 74/100 [01:53&lt;00:33,  1.30s/it]
+                                                
+{'loss': 0.7107, 'grad_norm': 0.11380290240049362, 'learning_rate': 8.628481651367876e-06, 'num_tokens': 915529.0, 'mean_token_accuracy': 0.8479492291808128, 'epoch': 2.96}
+
+ 74%|███████▍  | 74/100 [01:53&lt;00:33,  1.30s/it]
+ 75%|███████▌  | 75/100 [01:54&lt;00:32,  1.29s/it]
+                                                
+{'loss': 0.7052, 'grad_norm': 0.10310018062591553, 'learning_rate': 8.0372647110717e-06, 'num_tokens': 927846.0, 'mean_token_accuracy': 0.845212772488594, 'epoch': 3.0}
+
+ 75%|███████▌  | 75/100 [01:54&lt;00:32,  1.29s/it]
+
+  0%|          | 0/200 [00:00&lt;?, ?it/s][A
+
+  2%|▏         | 4/200 [00:00&lt;00:06, 30.59it/s][A
+
+  4%|▍         | 8/200 [00:00&lt;00:07, 25.65it/s][A
+
+  6%|▌         | 11/200 [00:00&lt;00:07, 24.67it/s][A
+
+  7%|▋         | 14/200 [00:00&lt;00:07, 23.95it/s][A
+
+  8%|▊         | 17/200 [00:00&lt;00:07, 23.62it/s][A
+
+ 10%|█         | 20/200 [00:00&lt;00:07, 23.33it/s][A
+
+ 12%|█▏        | 23/200 [00:00&lt;00:07, 22.97it/s][A
+
+ 13%|█▎        | 26/200 [00:01&lt;00:07, 23.07it/s][A
+
+ 14%|█▍        | 29/200 [00:01&lt;00:07, 23.05it/s][A
+
+ 16%|█▌        | 32/200 [00:01&lt;00:07, 22.93it/s][A
+
+ 18%|█▊        | 35/200 [00:01&lt;00:07, 22.83it/s][A
+
+ 19%|█▉        | 38/200 [00:01&lt;00:07, 22.76it/s][A
+
+ 20%|██        | 41/200 [00:01&lt;00:06, 22.81it/s][A
+
+ 22%|██▏       | 44/200 [00:01&lt;00:06, 22.87it/s][A
+
+ 24%|██▎       | 47/200 [00:02&lt;00:06, 22.82it/s][A
+
+ 25%|██▌       | 50/200 [00:02&lt;00:06, 22.77it/s][A
+
+ 26%|██▋       | 53/200 [00:02&lt;00:06, 22.79it/s][A
+
+ 28%|██▊       | 56/200 [00:02&lt;00:06, 22.78it/s][A
+
+ 30%|██▉       | 59/200 [00:02&lt;00:06, 22.74it/s][A
+
+ 31%|███       | 62/200 [00:02&lt;00:06, 22.79it/s][A
+
+ 32%|███▎      | 65/200 [00:02&lt;00:05, 22.86it/s][A
+
+ 34%|███▍      | 68/200 [00:02&lt;00:05, 22.73it/s][A
+
+ 36%|███▌      | 71/200 [00:03&lt;00:05, 22.83it/s][A
+
+ 37%|███▋      | 74/200 [00:03&lt;00:05, 22.90it/s][A
+
+ 38%|███▊      | 77/200 [00:03&lt;00:05, 22.82it/s][A
+
+ 40%|████      | 80/200 [00:03&lt;00:05, 22.77it/s][A
+
+ 42%|████▏     | 83/200 [00:03&lt;00:05, 22.86it/s][A
+
+ 43%|████▎     | 86/200 [00:03&lt;00:05, 22.79it/s][A
+
+ 44%|████▍     | 89/200 [00:03&lt;00:04, 22.90it/s][A
+
+ 46%|████▌     | 92/200 [00:03&lt;00:04, 22.90it/s][A
+
+ 48%|████▊     | 95/200 [00:04&lt;00:04, 22.89it/s][A
+
+ 49%|████▉     | 98/200 [00:04&lt;00:04, 22.88it/s][A
+
+ 50%|█████     | 101/200 [00:04&lt;00:04, 22.77it/s][A
+
+ 52%|█████▏    | 104/200 [00:04&lt;00:04, 22.60it/s][A
+
+ 54%|█████▎    | 107/200 [00:04&lt;00:04, 22.73it/s][A
+
+ 55%|█████▌    | 110/200 [00:04&lt;00:03, 22.70it/s][A
+
+ 56%|█████▋    | 113/200 [00:04&lt;00:03, 22.60it/s][A
+
+ 58%|█████▊    | 116/200 [00:05&lt;00:03, 22.71it/s][A
+
+ 60%|█████▉    | 119/200 [00:05&lt;00:03, 22.80it/s][A
+
+ 61%|██████    | 122/200 [00:05&lt;00:03, 22.85it/s][A
+
+ 62%|██████▎   | 125/200 [00:05&lt;00:03, 22.69it/s][A
+
+ 64%|██████▍   | 128/200 [00:05&lt;00:03, 22.70it/s][A
+
+ 66%|██████▌   | 131/200 [00:05&lt;00:03, 22.67it/s][A
+
+ 67%|██████▋   | 134/200 [00:05&lt;00:02, 22.71it/s][A
+
+ 68%|██████▊   | 137/200 [00:05&lt;00:02, 22.70it/s][A
+
+ 70%|███████   | 140/200 [00:06&lt;00:02, 22.82it/s][A
+
+ 72%|███████▏  | 143/200 [00:06&lt;00:02, 22.81it/s][A
+
+ 73%|███████▎  | 146/200 [00:06&lt;00:02, 22.77it/s][A
+
+ 74%|███████▍  | 149/200 [00:06&lt;00:02, 22.72it/s][A
+
+ 76%|███████▌  | 152/200 [00:06&lt;00:02, 22.81it/s][A
+
+ 78%|███████▊  | 155/200 [00:06&lt;00:01, 22.78it/s][A
+
+ 79%|███████▉  | 158/200 [00:06&lt;00:01, 22.90it/s][A
+
+ 80%|████████  | 161/200 [00:07&lt;00:01, 22.97it/s][A
+
+ 82%|████████▏ | 164/200 [00:07&lt;00:01, 22.87it/s][A
+
+ 84%|████████▎ | 167/200 [00:07&lt;00:01, 22.95it/s][A
+
+ 85%|████████▌ | 170/200 [00:07&lt;00:01, 22.91it/s][A
+
+ 86%|████████▋ | 173/200 [00:07&lt;00:01, 22.74it/s][A
+
+ 88%|████████▊ | 176/200 [00:07&lt;00:01, 22.83it/s][A
+
+ 90%|████████▉ | 179/200 [00:07&lt;00:00, 22.76it/s][A
+
+ 91%|█████████ | 182/200 [00:07&lt;00:00, 22.81it/s][A
+
+ 92%|█████████▎| 185/200 [00:08&lt;00:00, 22.74it/s][A
+
+ 94%|█████████▍| 188/200 [00:08&lt;00:00, 22.59it/s][A
+
+ 96%|█████████▌| 191/200 [00:08&lt;00:00, 22.65it/s][A
+
+ 97%|█████████▋| 194/200 [00:08&lt;00:00, 22.66it/s][A
+
+ 98%|█████████▊| 197/200 [00:08&lt;00:00, 22.54it/s][A
+
+100%|██████████| 200/200 [00:08&lt;00:00, 22.75it/s][A
+                                                
+
+                                                 
+[A{'eval_loss': 0.7123968601226807, 'eval_runtime': 8.7811, 'eval_samples_per_second': 182.209, 'eval_steps_per_second': 22.776, 'eval_num_tokens': 927846.0, 'eval_mean_token_accuracy': 0.84687136054039, 'epoch': 3.0}
+
+ 75%|███████▌  | 75/100 [02:03&lt;00:32,  1.29s/it]
+
+100%|██████████| 200/200 [00:08&lt;00:00, 22.75it/s][A
+
+                                                 [A
+ 76%|███████▌  | 76/100 [02:04&lt;01:34,  3.93s/it]
+                                                
+{'loss': 0.7017, 'grad_norm': 0.11179792135953903, 'learning_rate': 7.463127807341966e-06, 'num_tokens': 940209.0, 'mean_token_accuracy': 0.8499162197113037, 'epoch': 3.04}
+
+ 76%|███████▌  | 76/100 [02:04&lt;01:34,  3.93s/it]
+ 77%|███████▋  | 77/100 [02:06&lt;01:12,  3.14s/it]
+                                                
+{'loss': 0.705, 'grad_norm': 0.10462603718042374, 'learning_rate': 6.906649047373246e-06, 'num_tokens': 952553.0, 'mean_token_accuracy': 0.8468690812587738, 'epoch': 3.08}
+
+ 77%|███████▋  | 77/100 [02:06&lt;01:12,  3.14s/it]
+ 78%|███████▊  | 78/100 [02:07&lt;00:56,  2.58s/it]
+                                                
+{'loss': 0.7063, 'grad_norm': 0.10219854861497879, 'learning_rate': 6.368388758106133e-06, 'num_tokens': 964949.0, 'mean_token_accuracy': 0.8474109619855881, 'epoch': 3.12}
+
+ 78%|███████▊  | 78/100 [02:07&lt;00:56,  2.58s/it]
+ 79%|███████▉  | 79/100 [02:08&lt;00:46,  2.20s/it]
+                                                
+{'loss': 0.7133, 'grad_norm': 0.10548188537359238, 'learning_rate': 5.848888922025553e-06, 'num_tokens': 977387.0, 'mean_token_accuracy': 0.846750982105732, 'epoch': 3.16}
+
+ 79%|███████▉  | 79/100 [02:08&lt;00:46,  2.20s/it]
+ 80%|████████  | 80/100 [02:09&lt;00:38,  1.92s/it]
+                                                
+{'loss': 0.7017, 'grad_norm': 0.11375600844621658, 'learning_rate': 5.348672631430318e-06, 'num_tokens': 989763.0, 'mean_token_accuracy': 0.84575305134058, 'epoch': 3.2}
+
+ 80%|████████  | 80/100 [02:09&lt;00:38,  1.92s/it]
+ 81%|████████  | 81/100 [02:11&lt;00:32,  1.73s/it]
+                                                
+{'loss': 0.7071, 'grad_norm': 0.10798640549182892, 'learning_rate': 4.868243561723535e-06, 'num_tokens': 1002130.0, 'mean_token_accuracy': 0.8462942466139793, 'epoch': 3.24}
+
+ 81%|████████  | 81/100 [02:11&lt;00:32,  1.73s/it]
+ 82%|████████▏ | 82/100 [02:12&lt;00:28,  1.60s/it]
+                                                
+{'loss': 0.6985, 'grad_norm': 0.1166706532239914, 'learning_rate': 4.408085464254183e-06, 'num_tokens': 1014499.0, 'mean_token_accuracy': 0.8511309772729874, 'epoch': 3.28}
+
+ 82%|████████▏ | 82/100 [02:12&lt;00:28,  1.60s/it]
+ 83%|████████▎ | 83/100 [02:13&lt;00:25,  1.50s/it]
+                                                
+{'loss': 0.7077, 'grad_norm': 0.09920177608728409, 'learning_rate': 3.968661679220468e-06, 'num_tokens': 1026907.0, 'mean_token_accuracy': 0.846180722117424, 'epoch': 3.32}
+
+ 83%|████████▎ | 83/100 [02:13&lt;00:25,  1.50s/it]
+ 84%|████████▍ | 84/100 [02:15&lt;00:22,  1.43s/it]
+                                                
+{'loss': 0.6979, 'grad_norm': 0.10761214792728424, 'learning_rate': 3.5504146691255736e-06, 'num_tokens': 1039315.0, 'mean_token_accuracy': 0.8476870656013489, 'epoch': 3.36}
+
+ 84%|████████▍ | 84/100 [02:15&lt;00:22,  1.43s/it]
+ 85%|████████▌ | 85/100 [02:16&lt;00:20,  1.38s/it]
+                                                
+{'loss': 0.7012, 'grad_norm': 0.09792429208755493, 'learning_rate': 3.1537655732553768e-06, 'num_tokens': 1051706.0, 'mean_token_accuracy': 0.8467400893568993, 'epoch': 3.4}
+
+ 85%|████████▌ | 85/100 [02:16&lt;00:20,  1.38s/it]
+ 86%|████████▌ | 86/100 [02:17&lt;00:19,  1.36s/it]
+                                                
+{'loss': 0.6794, 'grad_norm': 0.10248725116252899, 'learning_rate': 2.779113783626916e-06, 'num_tokens': 1063972.0, 'mean_token_accuracy': 0.8509822189807892, 'epoch': 3.44}
+
+ 86%|████████▌ | 86/100 [02:17&lt;00:19,  1.36s/it]
+ 87%|████████▋ | 87/100 [02:18&lt;00:17,  1.34s/it]
+                                                
+{'loss': 0.7087, 'grad_norm': 0.10411231964826584, 'learning_rate': 2.4268365428344736e-06, 'num_tokens': 1076372.0, 'mean_token_accuracy': 0.8476828411221504, 'epoch': 3.48}
+
+ 87%|████████▋ | 87/100 [02:18&lt;00:17,  1.34s/it]
+ 88%|████████▊ | 88/100 [02:20&lt;00:15,  1.32s/it]
+                                                
+{'loss': 0.695, 'grad_norm': 0.09845604747533798, 'learning_rate': 2.09728856419826e-06, 'num_tokens': 1088667.0, 'mean_token_accuracy': 0.8476302772760391, 'epoch': 3.52}
+
+ 88%|████████▊ | 88/100 [02:20&lt;00:15,  1.32s/it]
+ 89%|████████▉ | 89/100 [02:21&lt;00:14,  1.31s/it]
+                                                
+{'loss': 0.6951, 'grad_norm': 0.10748502612113953, 'learning_rate': 1.790801674598186e-06, 'num_tokens': 1101068.0, 'mean_token_accuracy': 0.8479525744915009, 'epoch': 3.56}
+
+ 89%|████████▉ | 89/100 [02:21&lt;00:14,  1.31s/it]
+ 90%|█████████ | 90/100 [02:22&lt;00:13,  1.30s/it]
+                                                
+{'loss': 0.6911, 'grad_norm': 0.10413651913404465, 'learning_rate': 1.5076844803522922e-06, 'num_tokens': 1113361.0, 'mean_token_accuracy': 0.8491488546133041, 'epoch': 3.6}
+
+ 90%|█████████ | 90/100 [02:22&lt;00:13,  1.30s/it]
+ 91%|█████████ | 91/100 [02:24&lt;00:11,  1.30s/it]
+                                                
+{'loss': 0.7179, 'grad_norm': 0.10528236627578735, 'learning_rate': 1.248222056476367e-06, 'num_tokens': 1125801.0, 'mean_token_accuracy': 0.845989890396595, 'epoch': 3.64}
+
+ 91%|█████████ | 91/100 [02:24&lt;00:11,  1.30s/it]
+ 92%|█████████▏| 92/100 [02:25&lt;00:10,  1.30s/it]
+                                                
+{'loss': 0.7221, 'grad_norm': 0.09716542065143585, 'learning_rate': 1.0126756596375686e-06, 'num_tokens': 1138163.0, 'mean_token_accuracy': 0.8444727882742882, 'epoch': 3.68}
+
+ 92%|█████████▏| 92/100 [02:25&lt;00:10,  1.30s/it]
+ 93%|█████████▎| 93/100 [02:26&lt;00:09,  1.29s/it]
+                                                
+{'loss': 0.6987, 'grad_norm': 0.1005888283252716, 'learning_rate': 8.012824650910938e-07, 'num_tokens': 1150607.0, 'mean_token_accuracy': 0.8478176221251488, 'epoch': 3.72}
+
+ 93%|█████████▎| 93/100 [02:26&lt;00:09,  1.29s/it]
+ 94%|█████████▍| 94/100 [02:27&lt;00:07,  1.29s/it]
+                                                
+{'loss': 0.7198, 'grad_norm': 0.09514491260051727, 'learning_rate': 6.142553278648239e-07, 'num_tokens': 1162963.0, 'mean_token_accuracy': 0.8451517522335052, 'epoch': 3.76}
+
+ 94%|█████████▍| 94/100 [02:27&lt;00:07,  1.29s/it]
+ 95%|█████████▌| 95/100 [02:29&lt;00:06,  1.29s/it]
+                                                
+{'loss': 0.704, 'grad_norm': 0.10339541733264923, 'learning_rate': 4.517825684323324e-07, 'num_tokens': 1175339.0, 'mean_token_accuracy': 0.8451466336846352, 'epoch': 3.8}
+
+ 95%|█████████▌| 95/100 [02:29&lt;00:06,  1.29s/it]
+ 96%|█████████▌| 96/100 [02:30&lt;00:05,  1.29s/it]
+                                                
+{'loss': 0.7149, 'grad_norm': 0.10203055292367935, 'learning_rate': 3.140277830901428e-07, 'num_tokens': 1187665.0, 'mean_token_accuracy': 0.8476828783750534, 'epoch': 3.84}
+
+ 96%|█████████▌| 96/100 [02:30&lt;00:05,  1.29s/it]
+ 97%|█████████▋| 97/100 [02:31&lt;00:03,  1.29s/it]
+                                                
+{'loss': 0.7048, 'grad_norm': 0.0932934507727623, 'learning_rate': 2.011296792301165e-07, 'num_tokens': 1200128.0, 'mean_token_accuracy': 0.8435055613517761, 'epoch': 3.88}
+
+ 97%|█████████▋| 97/100 [02:31&lt;00:03,  1.29s/it]
+ 98%|█████████▊| 98/100 [02:33&lt;00:02,  1.29s/it]
+                                                
+{'loss': 0.703, 'grad_norm': 0.10292600840330124, 'learning_rate': 1.1320193567288529e-07, 'num_tokens': 1212457.0, 'mean_token_accuracy': 0.8458232879638672, 'epoch': 3.92}
+
+ 98%|█████████▊| 98/100 [02:33&lt;00:02,  1.29s/it]
+ 99%|█████████▉| 99/100 [02:34&lt;00:01,  1.29s/it]
+                                                
+{'loss': 0.6991, 'grad_norm': 0.10709496587514877, 'learning_rate': 5.033308820289184e-08, 'num_tokens': 1224822.0, 'mean_token_accuracy': 0.8467075452208519, 'epoch': 3.96}
+
+ 99%|█████████▉| 99/100 [02:34&lt;00:01,  1.29s/it]
+100%|██████████| 100/100 [02:35&lt;00:00,  1.29s/it]
+                                                 
+{'loss': 0.6888, 'grad_norm': 0.12091183662414551, 'learning_rate': 1.2586440420372936e-08, 'num_tokens': 1237128.0, 'mean_token_accuracy': 0.8510910719633102, 'epoch': 4.0}
+
+100%|██████████| 100/100 [02:35&lt;00:00,  1.29s/it]
+
+  0%|          | 0/200 [00:00&lt;?, ?it/s][A
+
+  2%|▏         | 4/200 [00:00&lt;00:06, 30.62it/s][A
+
+  4%|▍         | 8/200 [00:00&lt;00:07, 25.67it/s][A
+
+  6%|▌         | 11/200 [00:00&lt;00:07, 24.69it/s][A
+
+  7%|▋         | 14/200 [00:00&lt;00:07, 23.97it/s][A
+
+  8%|▊         | 17/200 [00:00&lt;00:07, 23.64it/s][A
+
+ 10%|█         | 20/200 [00:00&lt;00:07, 23.36it/s][A
+
+ 12%|█▏        | 23/200 [00:00&lt;00:07, 23.00it/s][A
+
+ 13%|█▎        | 26/200 [00:01&lt;00:07, 23.09it/s][A
+
+ 14%|█▍        | 29/200 [00:01&lt;00:07, 23.08it/s][A
+
+ 16%|█▌        | 32/200 [00:01&lt;00:07, 22.95it/s][A
+
+ 18%|█▊        | 35/200 [00:01&lt;00:07, 22.86it/s][A
+
+ 19%|█▉        | 38/200 [00:01&lt;00:07, 22.82it/s][A
+
+ 20%|██        | 41/200 [00:01&lt;00:06, 22.87it/s][A
+
+ 22%|██▏       | 44/200 [00:01&lt;00:06, 22.90it/s][A
+
+ 24%|██▎       | 47/200 [00:02&lt;00:06, 22.83it/s][A
+
+ 25%|██▌       | 50/200 [00:02&lt;00:06, 22.77it/s][A
+
+ 26%|██▋       | 53/200 [00:02&lt;00:06, 22.84it/s][A
+
+ 28%|██▊       | 56/200 [00:02&lt;00:06, 22.83it/s][A
+
+ 30%|██▉       | 59/200 [00:02&lt;00:06, 22.82it/s][A
+
+ 31%|███       | 62/200 [00:02&lt;00:06, 22.88it/s][A
+
+ 32%|███▎      | 65/200 [00:02&lt;00:05, 22.94it/s][A
+
+ 34%|███▍      | 68/200 [00:02&lt;00:05, 22.79it/s][A
+
+ 36%|███▌      | 71/200 [00:03&lt;00:05, 22.88it/s][A
+
+ 37%|███▋      | 74/200 [00:03&lt;00:05, 22.94it/s][A
+
+ 38%|███▊      | 77/200 [00:03&lt;00:05, 22.87it/s][A
+
+ 40%|████      | 80/200 [00:03&lt;00:05, 22.82it/s][A
+
+ 42%|████▏     | 83/200 [00:03&lt;00:05, 22.89it/s][A
+
+ 43%|████▎     | 86/200 [00:03&lt;00:04, 22.82it/s][A
+
+ 44%|████▍     | 89/200 [00:03&lt;00:04, 22.93it/s][A
+
+ 46%|████▌     | 92/200 [00:03&lt;00:04, 22.95it/s][A
+
+ 48%|████▊     | 95/200 [00:04&lt;00:04, 22.96it/s][A
+
+ 49%|████▉     | 98/200 [00:04&lt;00:04, 23.02it/s][A
+
+ 50%|█████     | 101/200 [00:04&lt;00:04, 22.89it/s][A
+
+ 52%|█████▏    | 104/200 [00:04&lt;00:04, 22.70it/s][A
+
+ 54%|█████▎    | 107/200 [00:04&lt;00:04, 22.79it/s][A
+
+ 55%|█████▌    | 110/200 [00:04&lt;00:03, 22.76it/s][A
+
+ 56%|█████▋    | 113/200 [00:04&lt;00:03, 22.65it/s][A
+
+ 58%|█████▊    | 116/200 [00:05&lt;00:03, 22.78it/s][A
+
+ 60%|█████▉    | 119/200 [00:05&lt;00:03, 22.87it/s][A
+
+ 61%|██████    | 122/200 [00:05&lt;00:03, 22.90it/s][A
+
+ 62%|██████▎   | 125/200 [00:05&lt;00:03, 22.76it/s][A
+
+ 64%|██████▍   | 128/200 [00:05&lt;00:03, 22.76it/s][A
+
+ 66%|██████▌   | 131/200 [00:05&lt;00:03, 22.69it/s][A
+
+ 67%|██████▋   | 134/200 [00:05&lt;00:02, 22.72it/s][A
+
+ 68%|██████▊   | 137/200 [00:05&lt;00:02, 22.71it/s][A
+
+ 70%|███████   | 140/200 [00:06&lt;00:02, 22.84it/s][A
+
+ 72%|███████▏  | 143/200 [00:06&lt;00:02, 22.87it/s][A
+
+ 73%|███████▎  | 146/200 [00:06&lt;00:02, 22.80it/s][A
+
+ 74%|███████▍  | 149/200 [00:06&lt;00:02, 22.76it/s][A
+
+ 76%|███████▌  | 152/200 [00:06&lt;00:02, 22.84it/s][A
+
+ 78%|███████▊  | 155/200 [00:06&lt;00:01, 22.80it/s][A
+
+ 79%|███████▉  | 158/200 [00:06&lt;00:01, 22.91it/s][A
+
+ 80%|████████  | 161/200 [00:07&lt;00:01, 22.98it/s][A
+
+ 82%|████████▏ | 164/200 [00:07&lt;00:01, 22.90it/s][A
+
+ 84%|████████▎ | 167/200 [00:07&lt;00:01, 22.95it/s][A
+
+ 85%|████████▌ | 170/200 [00:07&lt;00:01, 22.92it/s][A
+
+ 86%|████████▋ | 173/200 [00:07&lt;00:01, 22.75it/s][A
+
+ 88%|████████▊ | 176/200 [00:07&lt;00:01, 22.84it/s][A
+
+ 90%|████████▉ | 179/200 [00:07&lt;00:00, 22.77it/s][A
+
+ 91%|█████████ | 182/200 [00:07&lt;00:00, 22.84it/s][A
+
+ 92%|█████████▎| 185/200 [00:08&lt;00:00, 22.79it/s][A
+
+ 94%|█████████▍| 188/200 [00:08&lt;00:00, 22.62it/s][A
+
+ 96%|█████████▌| 191/200 [00:08&lt;00:00, 22.68it/s][A
+
+ 97%|█████████▋| 194/200 [00:08&lt;00:00, 22.69it/s][A
+
+ 98%|█████████▊| 197/200 [00:08&lt;00:00, 22.57it/s][A
+
+100%|██████████| 200/200 [00:08&lt;00:00, 22.79it/s][A
+                                                 
+
+                                                 
+[A{'eval_loss': 0.7050034999847412, 'eval_runtime': 8.7663, 'eval_samples_per_second': 182.518, 'eval_steps_per_second': 22.815, 'eval_num_tokens': 1237128.0, 'eval_mean_token_accuracy': 0.8474910864233971, 'epoch': 4.0}
+
+100%|██████████| 100/100 [02:45&lt;00:00,  1.29s/it]
+
+100%|██████████| 200/200 [00:08&lt;00:00, 22.79it/s][A
+
+                                                 [A
+                                                 
+{'train_runtime': 165.094, 'train_samples_per_second': 38.766, 'train_steps_per_second': 0.606, 'train_loss': 1.1633441585302353, 'epoch': 4.0}
+
+100%|██████████| 100/100 [02:45&lt;00:00,  1.29s/it]
+100%|██████████| 100/100 [02:45&lt;00:00,  1.65s/it]
+[rank0]:[W1116 21:41:58.014854057 ProcessGroupNCCL.cpp:1496] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+dlc1lm8dmxok7cfj-master-0:133:394 [0] NCCL INFO [Service thread] Connection closed by localRank 0
+dlc1lm8dmxok7cfj-master-0:133:454 [0] NCCL INFO comm 0x5603c0703fe0 rank 0 nranks 1 cudaDev 0 busId 30 - Abort COMPLETE
+2025/11/16 21:42:00 INFO: Covert command: ['python', 'convert.py', '--model_name', '/tmp/input_model/', '--model_type', 'qwen3', '--output_dir', '/tmp/model/', '--adapter_dir', '/tmp/adapter/']
+[2025-11-16 21:42:03,497] [INFO] [real_accelerator.py:239:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+2025/11/16 21:42:11 INFO: execute command: mkdir -p  /ml/output/model/adapter/
+2025/11/16 21:42:12 INFO: execute command succeed
+2025/11/16 21:42:12 INFO: execute command: cp -R /tmp/adapter/* /ml/output/model/adapter/
+2025/11/16 21:42:15 INFO: execute command succeed
+2025/11/16 21:42:15 INFO: execute command: cp -r /tmp/model/ /ml/output/
+2025/11/16 21:42:17 INFO: execute command succeed
+User program finished!
+</code></pre>
+
+<p>训练监控：
+<img src="post/2025/images/2025-11-15-llm-0-to-1/IMG_20251116-222654776.png" alt="图 14" /></p>
+
+<h1 id="模型评测">模型评测</h1>
+
+<h1 id="模型部署">模型部署</h1>
+
+<h1 id="参考资料">参考资料</h1>
+
+<p>【01】<a href="https://help.aliyun.com/zh/pai/getting-started/model-gallery-quick-start?spm=a2c4g.11186623.0.0.689d14a8kHCMo0#4c930eb6efvjf">Model Gallery 快速入门</a></p>
+
+    <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
+  <div style="float:right;margin-top:0px;">
+    <img src="/img/qrcode.jpg" width="129px" height="129px"/>
+    <div style="text-align:center;">微信扫一扫</div>
+  </div>
+  <div style="float:left;margin-top:0px;">
+    <img src="/img/rewardcode.jpg" width="129px" height="129px"/>
+  </div>
+  <div>
+    <p style="margin-top:0px;">作者：<a target="_blank" href="http://blog.mospan.cn/">mospan</a>
+      <br />微信关注：墨斯潘園
+      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2025/11/15/llm-0-to-1/">http://mospany.github.io/2025/11/15/llm-0-to-1/</a>
+      <br />
+      文章版权归本人所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+  </div>
+</div>
+
+
+	</div>
+  <footer class="article-footer clearfix">
+  
+
+<div class="article-tags">
+  <span></span>
+  
+  <a href="/tags/"></a>
+  
+  <a href="/tags/"></a>
+  
+</div>
+
+
+
+<div class="article-categories">
+  <span></span>
+  
+  <a class="article-category-link" href="/categories/"></a>
+  
+  <a class="article-category-link" href="/categories/"></a>
+  
+</div>
+
+
+
+  <div class="article-share" id="share">
+    <div data-url="http://mospany.github.io/2025/11/15/llm-0-to-1/" data-title="大模型从0到1训练推理入门" data-tsina="3833537679" class="share clearfix">
+    </div>
+  </div>
+</footer>
+
+	</article>
+  
+
+
+
+
+
+<div id="git-comments"></div>
+<link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
+<script src="https://billts.site/js/gitment.js"></script>
+<script>
+var gitment = new Gitment({
+  id: '<%= page.date %>',
+  owner: 'mospany',
+  repo: 'mospan-hugo-blog-gitment',
+  oauth: {
+    client_id: '0cafe299c964f0af2d1e',
+    client_secret: 'ec47ee9481210935a662298791c31da203694a8f',
+  },
+})
+gitment.render('git-comments')
+</script>    
+
+
+</div>
+
+    <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+  
+
+<div class="categorieslist">
+  <p class="asidetitle">分类</p>
+  <ul>
+    
+    <li><a href="http://mospany.github.io/categories/" title=""><sup>1</sup></a></li>
+    
+    <li><a href="http://mospany.github.io/categories/%e4%ba%91%e8%ae%a1%e7%ae%97" title="云计算">云计算<sup>7</sup></a></li>
+    
+    <li><a href="http://mospany.github.io/categories/%e4%ba%ba%e5%b7%a5%e6%99%ba%e8%83%bd" title="人工智能">人工智能<sup>14</sup></a></li>
+    
+    <li><a href="http://mospany.github.io/categories/%e5%b7%a5%e5%85%b7%e4%bd%bf%e7%94%a8" title="工具使用">工具使用<sup>3</sup></a></li>
+    
+    <li><a href="http://mospany.github.io/categories/%e6%8a%80%e6%9c%af%e6%96%87%e7%ab%a0" title="技术文章">技术文章<sup>50</sup></a></li>
+    
+    <li><a href="http://mospany.github.io/categories/%e7%94%9f%e6%b4%bb%e8%ae%b0%e5%bd%95" title="生活记录">生活记录<sup>1</sup></a></li>
+    
+    <li><a href="http://mospany.github.io/categories/%e8%81%8c%e5%9c%ba%e4%ba%ba%e7%94%9f" title="职场人生">职场人生<sup>1</sup></a></li>
+    
+    <li><a href="http://mospany.github.io/categories/%e8%af%bb%e4%b9%a6%e7%ac%94%e8%ae%b0" title="读书笔记">读书笔记<sup>2</sup></a></li>
+    
+  </ul>
+</div>
+
+
+
+  
+
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+      
+			<li><a href="http://mospany.github.io/tags/" title=""><sup>10</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/dns" title="dns">dns<sup>2</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/dpdk" title="dpdk">dpdk<sup>2</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/emacs" title="emacs">emacs<sup>5</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/gpu" title="gpu">gpu<sup>6</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/hugo" title="hugo">hugo<sup>3</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/ipv6" title="ipv6">ipv6<sup>2</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/k8s" title="k8s">k8s<sup>20</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/linux" title="linux">linux<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/openresty" title="openresty">openresty<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/org-mode" title="org-mode">org-mode<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/pango" title="pango">pango<sup>2</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/redis" title="redis">redis<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/spacemacs" title="spacemacs">spacemacs<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/vim" title="vim">vim<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/vue" title="vue">vue<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/xns" title="xns">xns<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/yaml" title="yaml">yaml<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e4%ba%91%e8%ae%a1%e7%ae%97" title="云计算">云计算<sup>6</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e4%ba%92%e8%81%94%e7%bd%91" title="互联网">互联网<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e4%ba%ba%e5%b7%a5%e6%99%ba%e8%83%bd" title="人工智能">人工智能<sup>3</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e5%89%8d%e7%ab%af" title="前端">前端<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e5%8d%9a%e5%ae%a2" title="博客">博客<sup>7</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e5%ad%98%e5%82%a8" title="存储">存储<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e5%b7%a5%e5%85%b7" title="工具">工具<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e5%be%ae%e4%bf%a1" title="微信">微信<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e6%8a%80%e6%9c%af%e6%96%87%e7%ab%a0" title="技术文章">技术文章<sup>5</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e6%9e%b6%e6%9e%84" title="架构">架构<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e7%8b%ac%e7%ab%8b" title="独立">独立<sup>3</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e7%94%9f%e6%b4%bb%e8%ae%b0%e5%bd%95" title="生活记录">生活记录<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e8%81%8c%e5%9c%ba%e4%ba%ba%e7%94%9f" title="职场人生">职场人生<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e8%af%bb%e4%b9%a6%e7%ac%94%e8%ae%b0" title="读书笔记">读书笔记<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e9%82%ae%e7%ae%b1" title="邮箱">邮箱<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e9%9d%a2%e8%af%95" title="面试">面试<sup>1</sup></a></li>
+      
+			<li><a href="http://mospany.github.io/tags/%e9%a1%b9%e7%9b%ae%e5%ae%9e%e8%b7%b5" title="项目实践">项目实践<sup>4</sup></a></li>
+      
+		</ul>
+</div>
+
+
+
+    <div class="linkslist">
+  <p class="asidetitle">我的关注</p>
+    <ul>
+          <li>
+            	<a href="http://www.csdn.net/" target="_blank" title="中国软件开发网(CSDN)">中国软件开发网(CSDN)</a>
+          </li>
+          <li>
+            	<a href="http://www.golangtc.com/" target="_blank" title="Golang中国">Golang中国</a>
+          </li>
+          <li>
+            	<a href="http://blog.qiniu.com/" target="_blank" title="七牛团队博客">七牛团队博客</a>
+          </li>
+          <li>
+            	<a href="http://csrd.aliapp.com/" target="_blank" title="阿里核心系统团队博客">阿里核心系统团队博客</a>
+          </li>
+          <li>
+            	<a href="http://coolshell.cn/" target="_blank" title="酷壳－陈浩">酷壳－陈浩</a>
+          </li>
+          <li>
+            	<a href="http://www.ruanyifeng.com/blog/" target="_blank" title="阮一峰的网络日志">阮一峰的网络日志</a>
+          </li>
+          <li>
+            	<a href="https://blog.dandyweng.com/" target="_blank" title="homeschooler－翁天信的博客">homeschooler－翁天信的博客</a>
+          </li>
+          <li>
+            	<a href="http://www.jeffjade.com/" target="_blank" title="晚晴幽草轩">晚晴幽草轩</a>
+          </li>
+          <li>
+            	<a href="https://nicejade.github.io/index.html" target="_blank" title="天意人间舫">天意人间舫</a>
+          </li>
+    </ul>
+</div>
+
+    <div class="linkslist">
+  <p class="asidetitle">在线书籍</p>
+    <ul>
+          <li>
+            	<a href="https://docs.ruanjiadeng.com/gopl-zh/index.html" target="_blank" title="Go语言圣经（中文版）">Go语言圣经（中文版）</a>
+          </li>
+          <li>
+            	<a href="http://studygolang.com/pkgdoc" target="_blank" title="Go语言标准库">Go语言标准库</a>
+          </li>
+          <li>
+            	<a href="http://www.w3school.com.cn/" target="_blank" title="w3school 在线教程">w3school 在线教程</a>
+          </li>
+    </ul>
+</div>
+
+    <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+          <li>
+            	<a href="http://www.cloudxns.net/" target="_blank" title="CloudXNS官网">CloudXNS官网</a>
+          </li>
+          <li>
+            	<a href="http://www.chinatesters.com/" target="_blank" title="华夏评测师家园">华夏评测师家园</a>
+          </li>
+    </ul>
+</div>
+
+  
+  <div class="archiveslist">
+    <p class="asidetitle">归档</p>
+    <ul class="archive-list">
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2025-11">2025年11月</a><span class="archive-list-count">12</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2025-08">2025年08月</a><span class="archive-list-count">2</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2025-07">2025年07月</a><span class="archive-list-count">4</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2024-02">2024年02月</a><span class="archive-list-count">4</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2024-01">2024年01月</a><span class="archive-list-count">7</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2023-06">2023年06月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2023-03">2023年03月</a><span class="archive-list-count">2</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2023-01">2023年01月</a><span class="archive-list-count">3</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2022-12">2022年12月</a><span class="archive-list-count">3</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2022-11">2022年11月</a><span class="archive-list-count">2</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2022-10">2022年10月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2022-09">2022年09月</a><span class="archive-list-count">7</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2019-11">2019年11月</a><span class="archive-list-count">3</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2019-10">2019年10月</a><span class="archive-list-count">8</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2019-08">2019年08月</a><span class="archive-list-count">4</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2019-02">2019年02月</a><span class="archive-list-count">3</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2018-02">2018年02月</a><span class="archive-list-count">3</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2017-08">2017年08月</a><span class="archive-list-count">4</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2017-07">2017年07月</a><span class="archive-list-count">1</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2017-03">2017年03月</a><span class="archive-list-count">8</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-09">2016年09月</a><span class="archive-list-count">2</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-05">2016年05月</a><span class="archive-list-count">4</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-03">2016年03月</a><span class="archive-list-count">5</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-02">2016年02月</a><span class="archive-list-count">11</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#2016-01">2016年01月</a><span class="archive-list-count">6</span>
+      </li>
+      
+      
+      <li class="archive-list-item">
+        <a class="archive-list-link" href="http://mospany.github.io/post/#0001-01">0001年01月</a><span class="archive-list-count">1</span>
+      </li>
+      
+    </ul>
+
+  </div>
+
+
+  
+
+<div class="tagcloudlist">
+  <p class="asidetitle">标签云</p>
+  <div class="tagcloudlist clearfix">
+    
+    <a href="http://mospany.github.io/tags/" style="font-size: 12px;"></a>
+    
+    <a href="http://mospany.github.io/tags/dns" style="font-size: 12px;">dns</a>
+    
+    <a href="http://mospany.github.io/tags/dpdk" style="font-size: 12px;">dpdk</a>
+    
+    <a href="http://mospany.github.io/tags/emacs" style="font-size: 12px;">emacs</a>
+    
+    <a href="http://mospany.github.io/tags/gpu" style="font-size: 12px;">gpu</a>
+    
+    <a href="http://mospany.github.io/tags/hugo" style="font-size: 12px;">hugo</a>
+    
+    <a href="http://mospany.github.io/tags/ipv6" style="font-size: 12px;">ipv6</a>
+    
+    <a href="http://mospany.github.io/tags/k8s" style="font-size: 12px;">k8s</a>
+    
+    <a href="http://mospany.github.io/tags/linux" style="font-size: 12px;">linux</a>
+    
+    <a href="http://mospany.github.io/tags/openresty" style="font-size: 12px;">openresty</a>
+    
+    <a href="http://mospany.github.io/tags/org-mode" style="font-size: 12px;">org-mode</a>
+    
+    <a href="http://mospany.github.io/tags/pango" style="font-size: 12px;">pango</a>
+    
+    <a href="http://mospany.github.io/tags/redis" style="font-size: 12px;">redis</a>
+    
+    <a href="http://mospany.github.io/tags/spacemacs" style="font-size: 12px;">spacemacs</a>
+    
+    <a href="http://mospany.github.io/tags/vim" style="font-size: 12px;">vim</a>
+    
+    <a href="http://mospany.github.io/tags/vue" style="font-size: 12px;">vue</a>
+    
+    <a href="http://mospany.github.io/tags/xns" style="font-size: 12px;">xns</a>
+    
+    <a href="http://mospany.github.io/tags/yaml" style="font-size: 12px;">yaml</a>
+    
+    <a href="http://mospany.github.io/tags/%e4%ba%91%e8%ae%a1%e7%ae%97" style="font-size: 12px;">云计算</a>
+    
+    <a href="http://mospany.github.io/tags/%e4%ba%92%e8%81%94%e7%bd%91" style="font-size: 12px;">互联网</a>
+    
+    <a href="http://mospany.github.io/tags/%e4%ba%ba%e5%b7%a5%e6%99%ba%e8%83%bd" style="font-size: 12px;">人工智能</a>
+    
+    <a href="http://mospany.github.io/tags/%e5%89%8d%e7%ab%af" style="font-size: 12px;">前端</a>
+    
+    <a href="http://mospany.github.io/tags/%e5%8d%9a%e5%ae%a2" style="font-size: 12px;">博客</a>
+    
+    <a href="http://mospany.github.io/tags/%e5%ad%98%e5%82%a8" style="font-size: 12px;">存储</a>
+    
+    <a href="http://mospany.github.io/tags/%e5%b7%a5%e5%85%b7" style="font-size: 12px;">工具</a>
+    
+    <a href="http://mospany.github.io/tags/%e5%be%ae%e4%bf%a1" style="font-size: 12px;">微信</a>
+    
+    <a href="http://mospany.github.io/tags/%e6%8a%80%e6%9c%af%e6%96%87%e7%ab%a0" style="font-size: 12px;">技术文章</a>
+    
+    <a href="http://mospany.github.io/tags/%e6%9e%b6%e6%9e%84" style="font-size: 12px;">架构</a>
+    
+    <a href="http://mospany.github.io/tags/%e7%8b%ac%e7%ab%8b" style="font-size: 12px;">独立</a>
+    
+    <a href="http://mospany.github.io/tags/%e7%94%9f%e6%b4%bb%e8%ae%b0%e5%bd%95" style="font-size: 12px;">生活记录</a>
+    
+    <a href="http://mospany.github.io/tags/%e8%81%8c%e5%9c%ba%e4%ba%ba%e7%94%9f" style="font-size: 12px;">职场人生</a>
+    
+    <a href="http://mospany.github.io/tags/%e8%af%bb%e4%b9%a6%e7%ac%94%e8%ae%b0" style="font-size: 12px;">读书笔记</a>
+    
+    <a href="http://mospany.github.io/tags/%e9%82%ae%e7%ae%b1" style="font-size: 12px;">邮箱</a>
+    
+    <a href="http://mospany.github.io/tags/%e9%9d%a2%e8%af%95" style="font-size: 12px;">面试</a>
+    
+    <a href="http://mospany.github.io/tags/%e9%a1%b9%e7%9b%ae%e5%ae%9e%e8%b7%b5" style="font-size: 12px;">项目实践</a>
+    
+  </div>
+</div>
+
+
+
+  
+</aside>
+</div>
+
+  </div>
+  <footer><div id="footer" >
+  
+  <div class="line">
+    <span></span>
+    <div style='background:no-repeat url("http://mospany.github.io/img/author.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  <div class="line">
+    <div style='background:no-repeat url("http://mospany.github.io/img/qiniu_logo.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  <div class="line">
+    <div style='background:no-repeat url("http://mospany.github.io/img/fastweb_logo.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  <div class="line">
+    <div style='background:no-repeat url("http://mospany.github.io/img/leadsec_logo.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  <div class="line">
+    <div style='background:no-repeat url("http://mospany.github.io/img/raisecom_logo.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  <div class="line">
+    <div style='background:no-repeat url("http://mospany.github.io/img/jbt_logo.jpg") left top;-webkit-background-size:6.875em 6.875em;-moz-background-size:6.875em 6.875em;background-size:6.875em 6.875em;' class="author" ></div>
+  </div>
+  
+  
+  <div class="social-font clearfix">
+    
+    <a href="http://weibo.com/mospan" target="_blank" title="weibo"></a>
+    
+    
+    <a href="https://twitter.com/mospan" target="_blank" title="twitter"></a>
+    
+    
+    <a href="https://github.com/mospany" target="_blank" title="github"></a>
+    
+    
+    <a href="https://www.facebook.com/mospan" target="_blank" title="facebook"></a>
+    
+    
+    <a href="https://www.linkedin.com/mospan" target="_blank" title="linkedin"></a>
+    
+  </div>
+  <p class="copyright">Powered by <a href="http://gohugo.io" target="_blank" title="hugo">hugo</a> and Theme by <a href="https://github.com/mospany/mospan-hugo-blog/tree/master/themes/hugo-panman-theme" target="_blank" title="hugo-panman-theme">hugo-panman-theme</a> © 2025
+    
+    <a href="http://mospany.github.io/" target="_blank" title="mospan">mospan</a>
+    
+  </p>
+</div>
+</footer>
+  <script src="http://mospany.github.io/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+done = false;
+$(document).ready(function(){
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize();
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  $('form.search').on('submit', function (event) {
+    if (false === done) {
+      event.preventDefault();
+      var orgVal = $(this).find('#search').val();
+      $(this).find('#search').val('site:http:\/\/mospany.github.io\/ ' + orgVal);
+      done = true;
+      $(this).submit();
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});
+</script>
+
+
+<link rel="stylesheet" href="http://mospany.github.io/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="http://mospany.github.io/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+});
+</script>
+
+
+
+
+</body>
+</html>

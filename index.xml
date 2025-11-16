@@ -5,7 +5,1669 @@
         <language>zh-CN</language>
         <author>Mospan</author>
         <rights>Copyright (c) 2016, mospan; all rights reserved.</rights>
-        <updated>Sun, 09 Nov 2025 11:24:40 CST</updated>
+        <updated>Sat, 15 Nov 2025 12:03:56 CST</updated>
+        
+        <item>
+            <title>大模型从0到1训练推理入门</title>
+            <link>http://mospany.github.io/2025/11/15/llm-0-to-1/</link>
+            <pubDate>Sat, 15 Nov 2025 12:03:56 CST</pubDate>
+            <author>Mospan</author>
+            <guid>http://mospany.github.io/2025/11/15/llm-0-to-1/</guid>
+            <description>
+
+&lt;h1 id=&#34;数据准备&#34;&gt;数据准备&lt;/h1&gt;
+
+&lt;h1 id=&#34;模型微调&#34;&gt;模型微调&lt;/h1&gt;
+
+&lt;p&gt;如果您希望模型在特定领域表现更好，可以通过在该领域的数据集上对模型微调来实现。本文以如下场景为例为您介绍模型微调的作用和步骤。&lt;/p&gt;
+
+&lt;h2 id=&#34;场景示例&#34;&gt;场景示例&lt;/h2&gt;
+
+&lt;p&gt;在物流领域，常需要从自然语言中提取结构化信息（如收件人、地址、电话）。直接使用大参数模型（如：Qwen3-235B-A22B）效果好，但成本高、响应慢。为兼顾效果与成本，可先用大参数模型标注数据，再用这些数据微调小参数模型（如 Qwen3-0.6B），使其在相同任务上达到相近表现。此过程也被称为模型蒸馏。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;相同结构化信息提取任务，使用原始的Qwen3-0.6B模型准确率14%，微调后准确率可达90%以上。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;例如：收件人地址信息示例&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;长沙市岳麓区桃花岭路189号润丰园B座1202室 | 电话021-17613435 | 联系人江雨桐
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;结构化信息提取示例&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
+  &amp;quot;province&amp;quot;: &amp;quot;湖南省&amp;quot;,
+  &amp;quot;city&amp;quot;: &amp;quot;长沙市&amp;quot;,
+  &amp;quot;district&amp;quot;: &amp;quot;岳麓区&amp;quot;,
+  &amp;quot;specific_location&amp;quot;: &amp;quot;桃花岭路189号润丰园B座1202室&amp;quot;,
+  &amp;quot;name&amp;quot;: &amp;quot;江雨桐&amp;quot;,
+  &amp;quot;phone&amp;quot;: &amp;quot;021-17613435&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;数据准备-1&#34;&gt;数据准备&lt;/h2&gt;
+
+&lt;p&gt;为将教师模型（Qwen3-235B-A22B）在该任务中的知识蒸馏到 Qwen3-0.6B，需先通过教师模型的 API，将收件人的地址信息抽取为结构化 JSON 数据。模型生成这些 JSON 数据可能需要较长时间，因此，本文已为您准备好了示例训练集&lt;a href=&#34;https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250612/ojiiaq/train_qwen3.json?spm=a2c4g.11186623.0.0.327f71a1RknQE0&amp;amp;file=train_qwen3.json&#34;&gt;train_qwen3.json&lt;/a&gt;和验证集&lt;a href=&#34;https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250619/cxusce/eval_qwen3.json?spm=a2c4g.11186623.0.0.327f71a1RknQE0&amp;amp;file=eval_qwen3.json&#34;&gt;eval_qwen3.json&lt;/a&gt;，您可以直接下载使用。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;在模型蒸馏中大参数量模型也被称为教师模型。本文所用数据均为大模型模拟生成，不涉及用户敏感信息。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&#34;微调模型&#34;&gt;微调模型&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;在左侧导航栏单击&lt;strong&gt;Model Gallery&lt;/strong&gt;，搜索并找到&lt;strong&gt;Qwen3-0.6B&lt;/strong&gt;选项卡，然后单击&lt;strong&gt;训练&lt;/strong&gt;。
+&lt;img src=&#34;post/2025/images/2025-11-15-llm-0-to-1/IMG_20251115-211530190.png&#34; alt=&#34;图 1&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;配置训练任务参数。只需配置如下关键参数，其他参数默认即可。&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;strong&gt;训练方式&lt;/strong&gt;：默认选择SFT监督微调，LoRA微调方法。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;LoRA是一种高效的模型微调技术，仅修改模型的部分参数，以节省训练使用的资源。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;strong&gt;训练数据集&lt;/strong&gt;：先单击下载示例训练集train_qwen3.json，然后配置页面选择OSS文件或目录，单击image图标选择Bucket，单击上传文件将下载训练集上传到OSS中，并选择该文件。
+   &lt;img src=&#34;post/2025/images/2025-11-15-llm-0-to-1/IMG_20251115-214930421.png&#34; alt=&#34;图 2&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;验证数据集&lt;/strong&gt;：先单击下载验证集&lt;a href=&#34;https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20250619/cxusce/eval_qwen3.json?spm=a2c4g.11186623.0.0.7f6b14a8bKIWvn&amp;amp;file=eval_qwen3.json&#34;&gt;eval_qwen3.json&lt;/a&gt;，然后单击&lt;strong&gt;添加验证数据集&lt;/strong&gt;，按照和配置训练集相同的操作，上传并选择该文件。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;验证集用于在训练过程中判断模型的性能，帮助评估模型在未见过的数据上的表现。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;strong&gt;模型输出路径&lt;/strong&gt;：默认会将微调后的模型存储到OSS中，如果OSS目录为空，请您新建目录并指定该目录。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;资源组类型&lt;/strong&gt;：选择使用公共资源组，本次微调大约需要5GB显存，控制台中已经为您筛选出满足要求的规格，选择如：ecs.gn7i-c16g1.4xlarge。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;gt; 后续部署其他模型时，您可参考估算大模型所需显存，计算模型训练需要的显存大小。
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;超参数配置&lt;/strong&gt;：
+    - learning_rate: 设置为0.0005
+    - num_train_epochs：设置为4
+    - per_device_train_batch_size：设置为8
+    - seq_length：设置为512&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;此超参数配置下模型在本文的测试数据上表现较好。当您使用模型微调解决您自己的业务问题时，如果准确率不高，也可以尝试调整超参数。您可以通过学习&lt;a href=&#34;https://edu.aliyun.com/course/3130200/lesson/343270950?spm=a2c4g.11186623.0.0.7f6b14a8bKIWvn&#34;&gt;阿里云大模型 ACP 课程&lt;/a&gt;，深入了解超参数的作用，以及如何通过损失曲线来判断超参数的调整方向。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;然后单击&lt;strong&gt;训练&lt;/strong&gt; &amp;gt; &lt;strong&gt;确定&lt;/strong&gt;，训练任务进入&lt;strong&gt;创建中&lt;/strong&gt;状态，当处于&lt;strong&gt;运行中&lt;/strong&gt;时，开始微调模型。
+&lt;img src=&#34;post/2025/images/2025-11-15-llm-0-to-1/IMG_20251116-213024083.png&#34; alt=&#34;图 3&#34; /&gt;&lt;br /&gt;
+&lt;img src=&#34;post/2025/images/2025-11-15-llm-0-to-1/IMG_20251116-213100548.png&#34; alt=&#34;图 4&#34; /&gt;&lt;br /&gt;
+&lt;img src=&#34;post/2025/images/2025-11-15-llm-0-to-1/IMG_20251116-213128668.png&#34; alt=&#34;图 5&#34; /&gt;&lt;br /&gt;
+&lt;img src=&#34;post/2025/images/2025-11-15-llm-0-to-1/IMG_20251116-213157667.png&#34; alt=&#34;图 6&#34; /&gt;&lt;br /&gt;
+&lt;img src=&#34;post/2025/images/2025-11-15-llm-0-to-1/IMG_20251116-213239359.png&#34; alt=&#34;图 7&#34; /&gt;&lt;br /&gt;
+&lt;img src=&#34;post/2025/images/2025-11-15-llm-0-to-1/IMG_20251116-213301657.png&#34; alt=&#34;图 8&#34; /&gt;&lt;br /&gt;
+&lt;img src=&#34;post/2025/images/2025-11-15-llm-0-to-1/IMG_20251116-213343666.png&#34; alt=&#34;图 9&#34; /&gt;&lt;br /&gt;
+模型开始训练：
+&lt;img src=&#34;post/2025/images/2025-11-15-llm-0-to-1/IMG_20251116-214244338.png&#34; alt=&#34;图 11&#34; /&gt;&lt;br /&gt;
+&lt;img src=&#34;post/2025/images/2025-11-15-llm-0-to-1/IMG_20251116-214334001.png&#34; alt=&#34;图 12&#34; /&gt;&lt;br /&gt;
+&lt;img src=&#34;post/2025/images/2025-11-15-llm-0-to-1/IMG_20251116-214439911.png&#34; alt=&#34;图 13&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;训练日志如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;TrainingJob launch starting
+PAI_HPS={&amp;quot;apply_chat_template&amp;quot;:&amp;quot;true&amp;quot;,&amp;quot;dpo_beta&amp;quot;:&amp;quot;0.1&amp;quot;,&amp;quot;gradient_accumulation_steps&amp;quot;:&amp;quot;8&amp;quot;,&amp;quot;learning_rate&amp;quot;:&amp;quot;5e-5&amp;quot;,&amp;quot;load_in_4bit&amp;quot;:&amp;quot;false&amp;quot;,&amp;quot;load_in_8bit&amp;quot;:&amp;quot;false&amp;quot;,&amp;quot;lora_alpha&amp;quot;:&amp;quot;32&amp;quot;,&amp;quot;lora_dim&amp;quot;:&amp;quot;32&amp;quot;,&amp;quot;num_train_epochs&amp;quot;:&amp;quot;4&amp;quot;,&amp;quot;per_device_train_batch_size&amp;quot;:&amp;quot;8&amp;quot;,&amp;quot;seq_length&amp;quot;:&amp;quot;512&amp;quot;,&amp;quot;split_ratio&amp;quot;:&amp;quot;0&amp;quot;,&amp;quot;system_prompt&amp;quot;:&amp;quot;You are a helpful assistant&amp;quot;,&amp;quot;training_strategy&amp;quot;:&amp;quot;sft&amp;quot;}
+PET_NNODES=1
+NV_LIBCUBLAS_VERSION=12.4.2.65-1
+NVIDIA_VISIBLE_DEVICES=0
+KUBERNETES_SERVICE_PORT_HTTPS=6443
+NCCL_IB_TC=136
+REGION=cn-shanghai
+NV_NVML_DEV_VERSION=12.4.99-1
+KUBERNETES_SERVICE_PORT=6443
+PYTHONUNBUFFERED=1
+NV_LIBNCCL_DEV_PACKAGE=libnccl-dev=2.20.5-1+cuda12.4
+NV_LIBNCCL_DEV_PACKAGE_VERSION=2.20.5-1
+CLUSTER_NAME=asi_cn-shanghai_pai_g01
+KUBERNETES_CONTAINER_RESOURCE_GPU=1
+HOSTNAME=dlc1lm8dmxok7cfj-master-0
+PYTHON_VERSION=3.11.11
+LANGUAGE=zh_CN.UTF-8
+PET_NODE_RANK=0
+ACCL_IB_GID_INDEX_FIX=1
+MASTER_PORT=23456
+NVIDIA_REQUIRE_CUDA=cuda&amp;gt;=12.4 brand=tesla,driver&amp;gt;=470,driver&amp;lt;471 brand=unknown,driver&amp;gt;=470,driver&amp;lt;471 brand=nvidia,driver&amp;gt;=470,driver&amp;lt;471 brand=nvidiartx,driver&amp;gt;=470,driver&amp;lt;471 brand=geforce,driver&amp;gt;=470,driver&amp;lt;471 brand=geforcertx,driver&amp;gt;=470,driver&amp;lt;471 brand=quadro,driver&amp;gt;=470,driver&amp;lt;471 brand=quadrortx,driver&amp;gt;=470,driver&amp;lt;471 brand=titan,driver&amp;gt;=470,driver&amp;lt;471 brand=titanrtx,driver&amp;gt;=470,driver&amp;lt;471 brand=tesla,driver&amp;gt;=525,driver&amp;lt;526 brand=unknown,driver&amp;gt;=525,driver&amp;lt;526 brand=nvidia,driver&amp;gt;=525,driver&amp;lt;526 brand=nvidiartx,driver&amp;gt;=525,driver&amp;lt;526 brand=geforce,driver&amp;gt;=525,driver&amp;lt;526 brand=geforcertx,driver&amp;gt;=525,driver&amp;lt;526 brand=quadro,driver&amp;gt;=525,driver&amp;lt;526 brand=quadrortx,driver&amp;gt;=525,driver&amp;lt;526 brand=titan,driver&amp;gt;=525,driver&amp;lt;526 brand=titanrtx,driver&amp;gt;=525,driver&amp;lt;526 brand=tesla,driver&amp;gt;=535,driver&amp;lt;536 brand=unknown,driver&amp;gt;=535,driver&amp;lt;536 brand=nvidia,driver&amp;gt;=535,driver&amp;lt;536 brand=nvidiartx,driver&amp;gt;=535,driver&amp;lt;536 brand=geforce,driver&amp;gt;=535,driver&amp;lt;536 brand=geforcertx,driver&amp;gt;=535,driver&amp;lt;536 brand=quadro,driver&amp;gt;=535,driver&amp;lt;536 brand=quadrortx,driver&amp;gt;=535,driver&amp;lt;536 brand=titan,driver&amp;gt;=535,driver&amp;lt;536 brand=titanrtx,driver&amp;gt;=535,driver&amp;lt;536
+SCRAPE_PROMETHEUS_METRICS=yes
+ACCL_IB_SPLIT_DATA_NUM=4
+NV_LIBCUBLAS_DEV_PACKAGE=libcublas-dev-12-4=12.4.2.65-1
+NV_NVTX_VERSION=12.4.99-1
+PAI_HPS_NUM_TRAIN_EPOCHS=4
+NCCL_MIN_NCHANNELS=16
+NCCL_NET_PLUGIN=none
+POD_NAME=dlc1lm8dmxok7cfj-master-0
+NV_CUDA_CUDART_DEV_VERSION=12.4.99-1
+NV_LIBCUSPARSE_VERSION=12.3.0.142-1
+PAI_OUTPUT_MODEL=/ml/output/model/
+NV_LIBNPP_VERSION=12.2.5.2-1
+POD_NAMESPACE=t1218357510451250
+NCCL_VERSION=2.20.5-1
+ACCL_IB_QPS_LOAD_BALANCE=1
+NCCL_SOCKET_IFNAME=eth0
+REGION_ID=cn-shanghai
+PWD=/root
+PAI_HPS_APPLY_CHAT_TEMPLATE=true
+NVIDIA_DRIVER_CAPABILITIES=compute,utility
+NV_NVPROF_DEV_PACKAGE=cuda-nvprof-12-4=12.4.99-1
+PAI_USER_ID=204828862223716692
+NV_LIBNPP_PACKAGE=libnpp-12-4=12.2.5.2-1
+NCCL_DEBUG=INFO
+PYTHON_SETUPTOOLS_VERSION=65.5.1
+NV_LIBNCCL_DEV_PACKAGE_NAME=libnccl-dev
+ECI_CONTAINER_TYPE=normal
+TZ=Asia/Shanghai
+PET_MASTER_PORT=23456
+NV_LIBCUBLAS_DEV_VERSION=12.4.2.65-1
+VLLM_USE_MODELSCOPE=True
+NCCL_IB_HCA=erdma
+WORLD_SIZE=1
+PAI_HPS_SYSTEM_PROMPT=You are a helpful assistant
+NVIDIA_PRODUCT_NAME=CUDA
+ACCL_C4_STATS_MODE=CONN
+NV_LIBCUBLAS_DEV_PACKAGE_NAME=libcublas-dev-12-4
+ACCL_LOG_TIME=1
+NV_CUDA_CUDART_VERSION=12.4.99-1
+HOME=/root
+LANG=C.UTF-8
+PAI_HPS_DPO_BETA=0.1
+KUBERNETES_PORT_443_TCP=tcp://10.192.0.1:443
+NCCL_IB_GID_INDEX=1
+PAI_TRAINING_JOB_ID=train1lc8s95geb9
+PET_MASTER_ADDR=dlc1lm8dmxok7cfj-master-0
+CUDA_VERSION=12.4.0
+NV_LIBCUBLAS_PACKAGE=libcublas-12-4=12.4.2.65-1
+PIP_TRUSTED_HOST=mirrors.cloud.aliyuncs.com
+PAI_INPUT_TRAIN=/ml/input/data/train/train_qwen3.json
+NV_CUDA_NSIGHT_COMPUTE_DEV_PACKAGE=cuda-nsight-compute-12-4=12.4.0-1
+GPG_KEY=A035C8C19219BA821ECEA86B64E628F8D684696D
+PAI_HPS_TRAINING_STRATEGY=sft
+NV_LIBNPP_DEV_PACKAGE=libnpp-dev-12-4=12.2.5.2-1
+PAI_HPS_LEARNING_RATE=5e-5
+NV_LIBCUBLAS_PACKAGE_NAME=libcublas-12-4
+PAI_INPUT_MODEL=/ml/input/data/model
+NV_LIBNPP_DEV_VERSION=12.2.5.2-1
+PAI_CONFIG_DIR=/ml/input/config/
+MASTER_ADDR=dlc1lm8dmxok7cfj-master-0
+PAI_INPUT_VALIDATION=/ml/input/data/validation/train_qwen3.json
+NCCL_IB_QPS_PER_CONNECTION=8
+PAI_WORKING_DIR=/ml/code/
+PYTHONPATH=/ml/code
+SETUPTOOLS_USE_DISTUTILS=stdlib
+NV_LIBCUSPARSE_DEV_VERSION=12.3.0.142-1
+MODELSCOPE_CACHE=/mnt/workspace/.cache/modelscope/hub
+LIBRARY_PATH=/usr/local/cuda/lib64/stubs
+PYTHONIOENCODING=utf-8
+PAI_ODPS_CREDENTIAL=/ml/input/credential/odps.json
+PIP_INDEX_URL=https://mirrors.cloud.aliyuncs.com/pypi/simple
+NCCL_IB_TIMEOUT=22
+SHLVL=1
+PAI_HPS_SPLIT_RATIO=0
+NV_CUDA_LIB_VERSION=12.4.0-1
+NVARCH=x86_64
+KUBERNETES_PORT_443_TCP_PROTO=tcp
+PAI_HPS_GRADIENT_ACCUMULATION_STEPS=8
+PAI_HPS_LORA_DIM=32
+PAI_HPS_PER_DEVICE_TRAIN_BATCH_SIZE=8
+DLC_JOB_ID=dlc1lm8dmxok7cfj
+PYTHON_PIP_VERSION=23.0.1
+NCCL_IB_SL=5
+KUBERNETES_PORT_443_TCP_ADDR=10.192.0.1
+TENANT_API_SERVER_URL=https://10.224.176.2:6443
+NV_CUDA_COMPAT_PACKAGE=cuda-compat-12-4
+ECI_CONTAINER_ENABLE_ERDMA=true
+NV_LIBNCCL_PACKAGE=libnccl2=2.20.5-1+cuda12.4
+LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64
+RANK=0
+PAI_HPS_LORA_ALPHA=32
+LMDEPLOY_USE_MODELSCOPE=True
+PYTHON_GET_PIP_SHA256=dfe9fd5c28dc98b5ac17979a953ea550cec37ae1b47a5116007395bfacff2ab9
+NV_CUDA_NSIGHT_COMPUTE_VERSION=12.4.0-1
+PAI_USER_ARGS=--seq_length 512 --lora_dim 32 --lora_alpha 32 --load_in_8bit false --learning_rate 5e-5 --per_device_train_batch_size 8 --apply_chat_template true --split_ratio 0 --load_in_4bit false --gradient_accumulation_steps 8 --training_strategy sft --dpo_beta 0.1 --num_train_epochs 4 --system_prompt &#39;You are a helpful assistant&#39;
+PAI_WORKSPACE_ID=1026689
+ALIBABA_CLOUD_CREDENTIALS_URI=http://localhost:7002/api/v1/credentials/0
+KUBERNETES_SERVICE_HOST=10.224.176.2
+NV_NVPROF_VERSION=12.4.99-1
+LC_ALL=zh_CN.UTF-8
+PET_NPROC_PER_NODE=1
+KUBERNETES_PORT=tcp://10.192.0.1:443
+KUBERNETES_PORT_443_TCP_PORT=443
+arch=x86_64
+PYTHON_GET_PIP_URL=https://github.com/pypa/get-pip/raw/dbf0c85f76fb6e1ab42aa672ffca6f0a675d9ee4/public/get-pip.py
+NPROC_PER_NODE=1
+PATH=/usr/local/bin:/usr/local/bin:/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+NV_LIBNCCL_PACKAGE_NAME=libnccl2
+NV_LIBNCCL_PACKAGE_VERSION=2.20.5-1
+PAI_HPS_SEQ_LENGTH=512
+PAI_HPS_LOAD_IN_8BIT=false
+PAI_HPS_LOAD_IN_4BIT=false
+_=/usr/bin/env
+Change to Working Directory, /ml/code/
+User program launching
+-----------------------------------------------------------------
+2025/11/16 21:38:24 INFO: training_utils version: 1.0.4
+2025/11/16 21:38:24 INFO: Env PAI_INPUT_MODEL=/ml/input/data/model
+2025/11/16 21:38:24 INFO: Env LIBRARY_PATH=/usr/local/cuda/lib64/stubs
+2025/11/16 21:38:24 INFO: Env PAI_HPS_PER_DEVICE_TRAIN_BATCH_SIZE=8
+2025/11/16 21:38:24 INFO: Env NV_LIBCUBLAS_VERSION=12.4.2.65-1
+2025/11/16 21:38:24 INFO: Env KUBERNETES_SERVICE_PORT=6443
+2025/11/16 21:38:24 INFO: Env ACCL_IB_GID_INDEX_FIX=1
+2025/11/16 21:38:24 INFO: Env NV_NVPROF_DEV_PACKAGE=cuda-nvprof-12-4=12.4.99-1
+2025/11/16 21:38:24 INFO: Env NCCL_DEBUG=INFO
+2025/11/16 21:38:24 INFO: Env PYTHONIOENCODING=utf-8
+2025/11/16 21:38:24 INFO: Env NV_CUDA_COMPAT_PACKAGE=cuda-compat-12-4
+2025/11/16 21:38:24 INFO: Env LMDEPLOY_USE_MODELSCOPE=True
+2025/11/16 21:38:24 INFO: Env KUBERNETES_PORT=tcp://10.192.0.1:443
+2025/11/16 21:38:24 INFO: Env LANGUAGE=zh_CN.UTF-8
+2025/11/16 21:38:24 INFO: Env NCCL_NET_PLUGIN=none
+2025/11/16 21:38:24 INFO: Env NCCL_SOCKET_IFNAME=eth0
+2025/11/16 21:38:24 INFO: Env PAI_HPS_APPLY_CHAT_TEMPLATE=true
+2025/11/16 21:38:24 INFO: Env NCCL_IB_HCA=erdma
+2025/11/16 21:38:24 INFO: Env PIP_TRUSTED_HOST=mirrors.cloud.aliyuncs.com
+2025/11/16 21:38:24 INFO: Env NV_CUDA_NSIGHT_COMPUTE_VERSION=12.4.0-1
+2025/11/16 21:38:24 INFO: Env SCRAPE_PROMETHEUS_METRICS=yes
+2025/11/16 21:38:24 INFO: Env PAI_USER_ID=204828862223716692
+2025/11/16 21:38:24 INFO: Env MASTER_ADDR=dlc1lm8dmxok7cfj-master-0
+2025/11/16 21:38:24 INFO: Env PAI_HPS_LORA_DIM=32
+2025/11/16 21:38:24 INFO: Env HOSTNAME=dlc1lm8dmxok7cfj-master-0
+2025/11/16 21:38:24 INFO: Env ECI_CONTAINER_TYPE=normal
+2025/11/16 21:38:24 INFO: Env ACCL_IB_QPS_LOAD_BALANCE=1
+2025/11/16 21:38:24 INFO: Env SHLVL=0
+2025/11/16 21:38:24 INFO: Env PYTHON_PIP_VERSION=23.0.1
+2025/11/16 21:38:24 INFO: Env LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64
+2025/11/16 21:38:24 INFO: Env NV_LIBNCCL_PACKAGE_VERSION=2.20.5-1
+2025/11/16 21:38:24 INFO: Env MASTER_PORT=23456
+2025/11/16 21:38:24 INFO: Env ACCL_LOG_TIME=1
+2025/11/16 21:38:24 INFO: Env HOME=/root
+2025/11/16 21:38:24 INFO: Env NCCL_IB_QPS_PER_CONNECTION=8
+2025/11/16 21:38:24 INFO: Env OLDPWD=/root
+2025/11/16 21:38:24 INFO: Env NCCL_MIN_NCHANNELS=16
+2025/11/16 21:38:24 INFO: Env NV_LIBCUBLAS_DEV_VERSION=12.4.2.65-1
+2025/11/16 21:38:24 INFO: Env PAI_USER_ARGS=--seq_length 512 --lora_dim 32 --lora_alpha 32 --load_in_8bit false --learning_rate 5e-5 --per_device_train_batch_size 8 --apply_chat_template true --split_ratio 0 --load_in_4bit false --gradient_accumulation_steps 8 --training_strategy sft --dpo_beta 0.1 --num_train_epochs 4 --system_prompt &#39;You are a helpful assistant&#39;
+2025/11/16 21:38:24 INFO: Env PYTHONUNBUFFERED=1
+2025/11/16 21:38:24 INFO: Env REGION=cn-shanghai
+2025/11/16 21:38:24 INFO: Env GPG_KEY=A035C8C19219BA821ECEA86B64E628F8D684696D
+2025/11/16 21:38:24 INFO: Env PAI_CONFIG_DIR=/ml/input/config/
+2025/11/16 21:38:24 INFO: Env NPROC_PER_NODE=1
+2025/11/16 21:38:24 INFO: Env WORLD_SIZE=1
+2025/11/16 21:38:24 INFO: Env PAI_HPS_SEQ_LENGTH=512
+2025/11/16 21:38:24 INFO: Env NV_LIBNCCL_DEV_PACKAGE_VERSION=2.20.5-1
+2025/11/16 21:38:24 INFO: Env REGION_ID=cn-shanghai
+2025/11/16 21:38:24 INFO: Env NV_LIBNPP_PACKAGE=libnpp-12-4=12.2.5.2-1
+2025/11/16 21:38:24 INFO: Env PAI_HPS_TRAINING_STRATEGY=sft
+2025/11/16 21:38:24 INFO: Env CLUSTER_NAME=asi_cn-shanghai_pai_g01
+2025/11/16 21:38:24 INFO: Env NCCL_IB_GID_INDEX=1
+2025/11/16 21:38:24 INFO: Env CUDA_VERSION=12.4.0
+2025/11/16 21:38:24 INFO: Env PAI_INPUT_TRAIN=/ml/input/data/train/train_qwen3.json
+2025/11/16 21:38:24 INFO: Env RANK=0
+2025/11/16 21:38:24 INFO: Env NV_NVPROF_VERSION=12.4.99-1
+2025/11/16 21:38:24 INFO: Env NV_LIBCUBLAS_PACKAGE_NAME=libcublas-12-4
+2025/11/16 21:38:24 INFO: Env ECI_CONTAINER_ENABLE_ERDMA=true
+2025/11/16 21:38:24 INFO: Env NVIDIA_REQUIRE_CUDA=cuda&amp;gt;=12.4 brand=tesla,driver&amp;gt;=470,driver&amp;lt;471 brand=unknown,driver&amp;gt;=470,driver&amp;lt;471 brand=nvidia,driver&amp;gt;=470,driver&amp;lt;471 brand=nvidiartx,driver&amp;gt;=470,driver&amp;lt;471 brand=geforce,driver&amp;gt;=470,driver&amp;lt;471 brand=geforcertx,driver&amp;gt;=470,driver&amp;lt;471 brand=quadro,driver&amp;gt;=470,driver&amp;lt;471 brand=quadrortx,driver&amp;gt;=470,driver&amp;lt;471 brand=titan,driver&amp;gt;=470,driver&amp;lt;471 brand=titanrtx,driver&amp;gt;=470,driver&amp;lt;471 brand=tesla,driver&amp;gt;=525,driver&amp;lt;526 brand=unknown,driver&amp;gt;=525,driver&amp;lt;526 brand=nvidia,driver&amp;gt;=525,driver&amp;lt;526 brand=nvidiartx,driver&amp;gt;=525,driver&amp;lt;526 brand=geforce,driver&amp;gt;=525,driver&amp;lt;526 brand=geforcertx,driver&amp;gt;=525,driver&amp;lt;526 brand=quadro,driver&amp;gt;=525,driver&amp;lt;526 brand=quadrortx,driver&amp;gt;=525,driver&amp;lt;526 brand=titan,driver&amp;gt;=525,driver&amp;lt;526 brand=titanrtx,driver&amp;gt;=525,driver&amp;lt;526 brand=tesla,driver&amp;gt;=535,driver&amp;lt;536 brand=unknown,driver&amp;gt;=535,driver&amp;lt;536 brand=nvidia,driver&amp;gt;=535,driver&amp;lt;536 brand=nvidiartx,driver&amp;gt;=535,driver&amp;lt;536 brand=geforce,driver&amp;gt;=535,driver&amp;lt;536 brand=geforcertx,driver&amp;gt;=535,driver&amp;lt;536 brand=quadro,driver&amp;gt;=535,driver&amp;lt;536 brand=quadrortx,driver&amp;gt;=535,driver&amp;lt;536 brand=titan,driver&amp;gt;=535,driver&amp;lt;536 brand=titanrtx,driver&amp;gt;=535,driver&amp;lt;536
+2025/11/16 21:38:24 INFO: Env DLC_JOB_ID=dlc1lm8dmxok7cfj
+2025/11/16 21:38:24 INFO: Env TENANT_API_SERVER_URL=https://10.224.176.2:6443
+2025/11/16 21:38:24 INFO: Env arch=x86_64
+2025/11/16 21:38:24 INFO: Env _=/usr/bin/sh
+2025/11/16 21:38:24 INFO: Env NV_LIBCUSPARSE_VERSION=12.3.0.142-1
+2025/11/16 21:38:24 INFO: Env NVIDIA_DRIVER_CAPABILITIES=compute,utility
+2025/11/16 21:38:24 INFO: Env PAI_TRAINING_JOB_ID=train1lc8s95geb9
+2025/11/16 21:38:24 INFO: Env NV_CUDA_LIB_VERSION=12.4.0-1
+2025/11/16 21:38:24 INFO: Env PYTHON_GET_PIP_URL=https://github.com/pypa/get-pip/raw/dbf0c85f76fb6e1ab42aa672ffca6f0a675d9ee4/public/get-pip.py
+2025/11/16 21:38:24 INFO: Env NV_LIBNCCL_PACKAGE_NAME=libnccl2
+2025/11/16 21:38:24 INFO: Env NV_NVML_DEV_VERSION=12.4.99-1
+2025/11/16 21:38:24 INFO: Env VLLM_USE_MODELSCOPE=True
+2025/11/16 21:38:24 INFO: Env NV_LIBNPP_DEV_PACKAGE=libnpp-dev-12-4=12.2.5.2-1
+2025/11/16 21:38:24 INFO: Env PET_NPROC_PER_NODE=1
+2025/11/16 21:38:24 INFO: Env POD_NAME=dlc1lm8dmxok7cfj-master-0
+2025/11/16 21:38:24 INFO: Env PAI_OUTPUT_MODEL=/ml/output/model/
+2025/11/16 21:38:24 INFO: Env NV_CUDA_CUDART_VERSION=12.4.99-1
+2025/11/16 21:38:24 INFO: Env KUBERNETES_PORT_443_TCP_ADDR=10.192.0.1
+2025/11/16 21:38:24 INFO: Env PAI_HPS_LOAD_IN_4BIT=false
+2025/11/16 21:38:24 INFO: Env PAI_WORKSPACE_ID=1026689
+2025/11/16 21:38:24 INFO: Env PATH=/usr/local/bin:/usr/local/bin:/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+2025/11/16 21:38:24 INFO: Env PAI_HPS_SYSTEM_PROMPT=You are a helpful assistant
+2025/11/16 21:38:24 INFO: Env NV_LIBCUBLAS_DEV_PACKAGE_NAME=libcublas-dev-12-4
+2025/11/16 21:38:24 INFO: Env NV_LIBCUBLAS_PACKAGE=libcublas-12-4=12.4.2.65-1
+2025/11/16 21:38:24 INFO: Env PIP_INDEX_URL=https://mirrors.cloud.aliyuncs.com/pypi/simple
+2025/11/16 21:38:24 INFO: Env NVARCH=x86_64
+2025/11/16 21:38:24 INFO: Env ACCL_IB_SPLIT_DATA_NUM=4
+2025/11/16 21:38:24 INFO: Env KUBERNETES_PORT_443_TCP_PORT=443
+2025/11/16 21:38:24 INFO: Env NV_LIBNCCL_DEV_PACKAGE_NAME=libnccl-dev
+2025/11/16 21:38:24 INFO: Env NV_LIBCUSPARSE_DEV_VERSION=12.3.0.142-1
+2025/11/16 21:38:24 INFO: Env KUBERNETES_PORT_443_TCP_PROTO=tcp
+2025/11/16 21:38:24 INFO: Env NV_LIBNCCL_PACKAGE=libnccl2=2.20.5-1+cuda12.4
+2025/11/16 21:38:24 INFO: Env PAI_HPS_LOAD_IN_8BIT=false
+2025/11/16 21:38:24 INFO: Env NVIDIA_PRODUCT_NAME=CUDA
+2025/11/16 21:38:24 INFO: Env LANG=C.UTF-8
+2025/11/16 21:38:24 INFO: Env PAI_HPS_LEARNING_RATE=5e-5
+2025/11/16 21:38:24 INFO: Env NV_CUDA_CUDART_DEV_VERSION=12.4.99-1
+2025/11/16 21:38:24 INFO: Env PAI_HPS_GRADIENT_ACCUMULATION_STEPS=8
+2025/11/16 21:38:24 INFO: Env PAI_HPS_NUM_TRAIN_EPOCHS=4
+2025/11/16 21:38:24 INFO: Env PAI_HPS_LORA_ALPHA=32
+2025/11/16 21:38:24 INFO: Env NCCL_IB_TC=136
+2025/11/16 21:38:24 INFO: Env NV_LIBCUBLAS_DEV_PACKAGE=libcublas-dev-12-4=12.4.2.65-1
+2025/11/16 21:38:24 INFO: Env PAI_INPUT_VALIDATION=/ml/input/data/validation/train_qwen3.json
+2025/11/16 21:38:24 INFO: Env KUBERNETES_CONTAINER_RESOURCE_GPU=1
+2025/11/16 21:38:24 INFO: Env PYTHON_VERSION=3.11.11
+2025/11/16 21:38:24 INFO: Env PYTHON_SETUPTOOLS_VERSION=65.5.1
+2025/11/16 21:38:24 INFO: Env PET_MASTER_ADDR=dlc1lm8dmxok7cfj-master-0
+2025/11/16 21:38:24 INFO: Env NV_CUDA_NSIGHT_COMPUTE_DEV_PACKAGE=cuda-nsight-compute-12-4=12.4.0-1
+2025/11/16 21:38:24 INFO: Env PAI_HPS_SPLIT_RATIO=0
+2025/11/16 21:38:24 INFO: Env NV_LIBNCCL_DEV_PACKAGE=libnccl-dev=2.20.5-1+cuda12.4
+2025/11/16 21:38:24 INFO: Env SETUPTOOLS_USE_DISTUTILS=stdlib
+2025/11/16 21:38:24 INFO: Env KUBERNETES_SERVICE_PORT_HTTPS=6443
+2025/11/16 21:38:24 INFO: Env NV_NVTX_VERSION=12.4.99-1
+2025/11/16 21:38:24 INFO: Env NV_LIBNPP_VERSION=12.2.5.2-1
+2025/11/16 21:38:24 INFO: Env PET_MASTER_PORT=23456
+2025/11/16 21:38:24 INFO: Env KUBERNETES_PORT_443_TCP=tcp://10.192.0.1:443
+2025/11/16 21:38:24 INFO: Env POD_NAMESPACE=t1218357510451250
+2025/11/16 21:38:24 INFO: Env ACCL_C4_STATS_MODE=CONN
+2025/11/16 21:38:24 INFO: Env ALIBABA_CLOUD_CREDENTIALS_URI=http://localhost:7002/api/v1/credentials/0
+2025/11/16 21:38:24 INFO: Env PWD=/ml/code
+2025/11/16 21:38:24 INFO: Env PAI_HPS_DPO_BETA=0.1
+2025/11/16 21:38:24 INFO: Env KUBERNETES_SERVICE_HOST=10.224.176.2
+2025/11/16 21:38:24 INFO: Env LC_ALL=zh_CN.UTF-8
+2025/11/16 21:38:24 INFO: Env PAI_HPS={&amp;quot;apply_chat_template&amp;quot;:&amp;quot;true&amp;quot;,&amp;quot;dpo_beta&amp;quot;:&amp;quot;0.1&amp;quot;,&amp;quot;gradient_accumulation_steps&amp;quot;:&amp;quot;8&amp;quot;,&amp;quot;learning_rate&amp;quot;:&amp;quot;5e-5&amp;quot;,&amp;quot;load_in_4bit&amp;quot;:&amp;quot;false&amp;quot;,&amp;quot;load_in_8bit&amp;quot;:&amp;quot;false&amp;quot;,&amp;quot;lora_alpha&amp;quot;:&amp;quot;32&amp;quot;,&amp;quot;lora_dim&amp;quot;:&amp;quot;32&amp;quot;,&amp;quot;num_train_epochs&amp;quot;:&amp;quot;4&amp;quot;,&amp;quot;per_device_train_batch_size&amp;quot;:&amp;quot;8&amp;quot;,&amp;quot;seq_length&amp;quot;:&amp;quot;512&amp;quot;,&amp;quot;split_ratio&amp;quot;:&amp;quot;0&amp;quot;,&amp;quot;system_prompt&amp;quot;:&amp;quot;You are a helpful assistant&amp;quot;,&amp;quot;training_strategy&amp;quot;:&amp;quot;sft&amp;quot;}
+2025/11/16 21:38:24 INFO: Env PYTHON_GET_PIP_SHA256=dfe9fd5c28dc98b5ac17979a953ea550cec37ae1b47a5116007395bfacff2ab9
+2025/11/16 21:38:24 INFO: Env PET_NNODES=1
+2025/11/16 21:38:24 INFO: Env PET_NODE_RANK=0
+2025/11/16 21:38:24 INFO: Env PYTHONPATH=/ml/code
+2025/11/16 21:38:24 INFO: Env MODELSCOPE_CACHE=/mnt/workspace/.cache/modelscope/hub
+2025/11/16 21:38:24 INFO: Env NCCL_IB_SL=5
+2025/11/16 21:38:24 INFO: Env NVIDIA_VISIBLE_DEVICES=0
+2025/11/16 21:38:24 INFO: Env NCCL_VERSION=2.20.5-1
+2025/11/16 21:38:24 INFO: Env TZ=Asia/Shanghai
+2025/11/16 21:38:24 INFO: Env NV_LIBNPP_DEV_VERSION=12.2.5.2-1
+2025/11/16 21:38:24 INFO: Env NCCL_IB_TIMEOUT=22
+2025/11/16 21:38:24 INFO: Env PAI_WORKING_DIR=/ml/code/
+2025/11/16 21:38:24 INFO: Env PAI_ODPS_CREDENTIAL=/ml/input/credential/odps.json
+2025/11/16 21:38:24 INFO: launch: launcherType=PythonLauncher, cmd=[&#39;/usr/local/bin/python&#39;, &#39;-m&#39;, &#39;train&#39;, &#39;--apply_chat_template&#39;, &#39;true&#39;, &#39;--dpo_beta&#39;, &#39;0.1&#39;, &#39;--gradient_accumulation_steps&#39;, &#39;8&#39;, &#39;--learning_rate&#39;, &#39;5e-5&#39;, &#39;--load_in_4bit&#39;, &#39;false&#39;, &#39;--load_in_8bit&#39;, &#39;false&#39;, &#39;--lora_alpha&#39;, &#39;32&#39;, &#39;--lora_dim&#39;, &#39;32&#39;, &#39;--num_train_epochs&#39;, &#39;4&#39;, &#39;--per_device_train_batch_size&#39;, &#39;8&#39;, &#39;--seq_length&#39;, &#39;512&#39;, &#39;--split_ratio&#39;, &#39;0&#39;, &#39;--system_prompt&#39;, &#39;You are a helpful assistant&#39;, &#39;--training_strategy&#39;, &#39;sft&#39;]
+2025/11/16 21:38:24 INFO: launch: parameters={&#39;apply_chat_template&#39;: &#39;true&#39;, &#39;dpo_beta&#39;: &#39;0.1&#39;, &#39;gradient_accumulation_steps&#39;: &#39;8&#39;, &#39;learning_rate&#39;: &#39;5e-5&#39;, &#39;load_in_4bit&#39;: &#39;false&#39;, &#39;load_in_8bit&#39;: &#39;false&#39;, &#39;lora_alpha&#39;: &#39;32&#39;, &#39;lora_dim&#39;: &#39;32&#39;, &#39;num_train_epochs&#39;: &#39;4&#39;, &#39;per_device_train_batch_size&#39;: &#39;8&#39;, &#39;seq_length&#39;: &#39;512&#39;, &#39;split_ratio&#39;: &#39;0&#39;, &#39;system_prompt&#39;: &#39;You are a helpful assistant&#39;, &#39;training_strategy&#39;: &#39;sft&#39;}
+2025/11/16 21:38:24 INFO: hyper_params: {&#39;apply_chat_template&#39;: &#39;true&#39;, &#39;dpo_beta&#39;: 0.1, &#39;gradient_accumulation_steps&#39;: 8, &#39;learning_rate&#39;: 5e-05, &#39;load_in_4bit&#39;: &#39;false&#39;, &#39;load_in_8bit&#39;: &#39;false&#39;, &#39;lora_alpha&#39;: 32, &#39;lora_dim&#39;: 32, &#39;num_train_epochs&#39;: 4, &#39;per_device_train_batch_size&#39;: 8, &#39;seq_length&#39;: 512, &#39;split_ratio&#39;: 0, &#39;system_prompt&#39;: &#39;You are a helpful assistant&#39;, &#39;training_strategy&#39;: &#39;sft&#39;}
+2025/11/16 21:38:24 INFO: Get hostname dlc1lm8dmxok7cfj-master-0 succeed. retry times: 0
+2025/11/16 21:38:24 INFO: execute command: mkdir -p /tmp/input_model/
+2025/11/16 21:38:24 INFO: execute command succeed
+2025/11/16 21:38:24 INFO: execute command: cp -R /ml/input/data/model/* /tmp/input_model/
+2025/11/16 21:38:27 INFO: execute command succeed
+2025/11/16 21:38:27 INFO: Training command: [&#39;accelerate&#39;, &#39;launch&#39;, &#39;--num_processes&#39;, &#39;1&#39;, &#39;--config_file&#39;, &#39;multi_gpu.yaml&#39;, &#39;sft.py&#39;, &#39;--model_name&#39;, &#39;/tmp/input_model/&#39;, &#39;--model_type&#39;, &#39;qwen3&#39;, &#39;--train_dataset_name&#39;, &#39;/ml/input/data/train/train_qwen3.json&#39;, &#39;--num_train_epochs&#39;, &#39;4&#39;, &#39;--batch_size&#39;, &#39;8&#39;, &#39;--gradient_accumulation_steps&#39;, &#39;8&#39;, &#39;--seq_length&#39;, &#39;512&#39;, &#39;--learning_rate&#39;, &#39;5e-05&#39;, &#39;--system_prompt&#39;, &#39;You are a helpful assistant&#39;, &#39;--eval_dataset_name&#39;, &#39;/ml/input/data/validation/train_qwen3.json&#39;, &#39;--apply_chat_template&#39;, &#39;--use_peft&#39;, &#39;--target_modules&#39;, &#39;k_proj&#39;, &#39;o_proj&#39;, &#39;q_proj&#39;, &#39;v_proj&#39;, &#39;--peft_lora_r&#39;, &#39;32&#39;, &#39;--peft_lora_alpha&#39;, &#39;32&#39;, &#39;--output_dir&#39;, &#39;/tmp/adapter/&#39;]
+2025/11/16 21:38:27 INFO: execute command: mkdir -p /tmp/model/
+2025/11/16 21:38:27 INFO: execute command succeed
+2025/11/16 21:38:27 INFO: execute command: mkdir -p /tmp/adapter/
+2025/11/16 21:38:27 INFO: execute command succeed
+[2025-11-16 21:38:33,007] [INFO] [real_accelerator.py:239:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+df: /root/.triton/autotune: 没有那个文件或目录
+[2025-11-16 21:38:37,576] [INFO] [real_accelerator.py:239:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+
+Generating train split: 0 examples [00:00, ? examples/s]
+Generating train split: 1600 examples [00:00, 16821.96 examples/s]
+
+Generating train split: 0 examples [00:00, ? examples/s]
+Generating train split: 1600 examples [00:00, 18845.93 examples/s]
+[2025-11-16 21:38:42,362] [INFO] [comm.py:669:init_distributed] cdb=None
+[2025-11-16 21:38:42,362] [INFO] [comm.py:700:init_distributed] Initializing TorchBackend in DeepSpeed with backend nccl
+
+Applying formatting function to train dataset:   0%|          | 0/1600 [00:00&amp;lt;?, ? examples/s]
+Applying formatting function to train dataset: 100%|██████████| 1600/1600 [00:00&amp;lt;00:00, 39825.56 examples/s]
+
+Converting train dataset to ChatML:   0%|          | 0/1600 [00:00&amp;lt;?, ? examples/s]
+Converting train dataset to ChatML: 100%|██████████| 1600/1600 [00:00&amp;lt;00:00, 43505.43 examples/s]
+
+Adding EOS to train dataset:   0%|          | 0/1600 [00:00&amp;lt;?, ? examples/s]
+Adding EOS to train dataset: 100%|██████████| 1600/1600 [00:00&amp;lt;00:00, 34724.11 examples/s]
+
+Tokenizing train dataset:   0%|          | 0/1600 [00:00&amp;lt;?, ? examples/s]
+Tokenizing train dataset:  22%|██▏       | 351/1600 [00:00&amp;lt;00:00, 3489.79 examples/s]
+Tokenizing train dataset:  45%|████▍     | 718/1600 [00:00&amp;lt;00:00, 3587.32 examples/s]
+Tokenizing train dataset:  74%|███████▎  | 1176/1600 [00:00&amp;lt;00:00, 3101.77 examples/s]
+Tokenizing train dataset:  96%|█████████▌| 1535/1600 [00:00&amp;lt;00:00, 3260.76 examples/s]
+Tokenizing train dataset: 100%|██████████| 1600/1600 [00:00&amp;lt;00:00, 3141.33 examples/s]
+
+Truncating train dataset:   0%|          | 0/1600 [00:00&amp;lt;?, ? examples/s]
+Truncating train dataset: 100%|██████████| 1600/1600 [00:00&amp;lt;00:00, 336874.98 examples/s]
+[rank0]:[W1116 21:38:43.428342223 ProcessGroupNCCL.cpp:4561] [PG ID 0 PG GUID 0 Rank 0]  using GPU 0 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect. Specify device_ids in barrier() to force use of a particular device, or call init_process_group() with a device_id.
+dlc1lm8dmxok7cfj-master-0:133:133 [0] NCCL INFO NCCL_SOCKET_IFNAME set by environment to eth0
+dlc1lm8dmxok7cfj-master-0:133:133 [0] NCCL INFO Bootstrap : Using eth0:10.224.160.180&amp;lt;0&amp;gt;
+dlc1lm8dmxok7cfj-master-0:133:133 [0] NCCL INFO NET/Plugin: No plugin found (none)
+dlc1lm8dmxok7cfj-master-0:133:133 [0] NCCL INFO NET/Plugin: No plugin found (libnccl-net-none.so)
+dlc1lm8dmxok7cfj-master-0:133:133 [0] NCCL INFO NET/Plugin: Plugin load returned 2 : libnccl-net-none.so: cannot open shared object file: No such file or directory : when loading none
+dlc1lm8dmxok7cfj-master-0:133:133 [0] NCCL INFO NET/Plugin: Using internal network plugin.
+dlc1lm8dmxok7cfj-master-0:133:133 [0] NCCL INFO cudaDriverVersion 12040
+NCCL version 2.21.5+cuda12.4
+dlc1lm8dmxok7cfj-master-0:133:133 [0] NCCL INFO Comm config Blocking set to 1
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO NCCL_SOCKET_IFNAME set by environment to eth0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO NCCL_IB_HCA set to erdma
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO NET/IB : No device found.
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO NCCL_SOCKET_IFNAME set by environment to eth0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO NET/Socket : Using [0]eth0:10.224.160.180&amp;lt;0&amp;gt;
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Using non-device net plugin version 0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Using network Socket
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO ncclCommInitRank comm 0x5603c0703fe0 rank 0 nranks 1 cudaDev 0 nvmlDev 0 busId 30 commId 0x431046bfc5d31cfe - Init START
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO comm 0x5603c0703fe0 rank 0 nRanks 1 nNodes 1 localRanks 1 localRank 0 MNNVL 0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO NCCL_MIN_NCHANNELS set by environment to 16.
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 00/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 01/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 02/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 03/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 04/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 05/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 06/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 07/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 08/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 09/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 10/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 11/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 12/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 13/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 14/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 15/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 16/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 17/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 18/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 19/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 20/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 21/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 22/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 23/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 24/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 25/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 26/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 27/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 28/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 29/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 30/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Channel 31/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Trees [0] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [1] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [2] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [3] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [4] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [5] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [6] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [7] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [8] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [9] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [10] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [11] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [12] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [13] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [14] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [15] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [16] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [17] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [18] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [19] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [20] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [21] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [22] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [23] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [24] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [25] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [26] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [27] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [28] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [29] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [30] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [31] -1/-1/-1-&amp;gt;0-&amp;gt;-1
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO P2P Chunksize set to 131072
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Connected all rings
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO Connected all trees
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO 32 coll channels, 32 collnet channels, 0 nvls channels, 32 p2p channels, 32 p2p channels per peer
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO TUNER/Plugin: Most recent plugin load returned 2 : libnccl-net-none.so: cannot open shared object file: No such file or directory. All attempts to load &#39;libnccl-tuner.so none&#39; also failed.
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO TUNER/Plugin: Using internal tuner plugin.
+dlc1lm8dmxok7cfj-master-0:133:393 [0] NCCL INFO ncclCommInitRank comm 0x5603c0703fe0 rank 0 nranks 1 cudaDev 0 nvmlDev 0 busId 30 commId 0x431046bfc5d31cfe - Init COMPLETE
+
+Applying formatting function to eval dataset:   0%|          | 0/1600 [00:00&amp;lt;?, ? examples/s]
+Applying formatting function to eval dataset: 100%|██████████| 1600/1600 [00:00&amp;lt;00:00, 40597.73 examples/s]
+
+Converting eval dataset to ChatML:   0%|          | 0/1600 [00:00&amp;lt;?, ? examples/s]
+Converting eval dataset to ChatML: 100%|██████████| 1600/1600 [00:00&amp;lt;00:00, 44469.76 examples/s]
+
+Adding EOS to eval dataset:   0%|          | 0/1600 [00:00&amp;lt;?, ? examples/s]
+Adding EOS to eval dataset: 100%|██████████| 1600/1600 [00:00&amp;lt;00:00, 37549.30 examples/s]
+
+Tokenizing eval dataset:   0%|          | 0/1600 [00:00&amp;lt;?, ? examples/s]
+Tokenizing eval dataset:  25%|██▍       | 397/1600 [00:00&amp;lt;00:00, 3954.38 examples/s]
+Tokenizing eval dataset:  61%|██████    | 975/1600 [00:00&amp;lt;00:00, 3881.21 examples/s]
+Tokenizing eval dataset:  89%|████████▉ | 1422/1600 [00:00&amp;lt;00:00, 3432.48 examples/s]
+Tokenizing eval dataset: 100%|██████████| 1600/1600 [00:00&amp;lt;00:00, 3409.79 examples/s]
+
+Truncating eval dataset:   0%|          | 0/1600 [00:00&amp;lt;?, ? examples/s]
+Truncating eval dataset: 100%|██████████| 1600/1600 [00:00&amp;lt;00:00, 380889.18 examples/s]
+Using /root/.cache/torch_extensions/py311_cu124 as PyTorch extensions root...
+Creating extension directory /root/.cache/torch_extensions/py311_cu124/cpu_adam...
+Emitting ninja build file /root/.cache/torch_extensions/py311_cu124/cpu_adam/build.ninja...
+Building extension module cpu_adam...
+Allowing ninja to set a default number of workers... (overridable by setting the environment variable MAX_JOBS=N)
+[1/3] c++ -MMD -MF cpu_adam.o.d -DTORCH_EXTENSION_NAME=cpu_adam -DTORCH_API_INCLUDE_EXTENSION_H -DPYBIND11_COMPILER_TYPE=\&amp;quot;_gcc\&amp;quot; -DPYBIND11_STDLIB=\&amp;quot;_libstdcpp\&amp;quot; -DPYBIND11_BUILD_ABI=\&amp;quot;_cxxabi1011\&amp;quot; -I/usr/local/lib/python3.11/site-packages/deepspeed/ops/csrc/includes -isystem /usr/local/lib/python3.11/site-packages/torch/include -isystem /usr/local/lib/python3.11/site-packages/torch/include/torch/csrc/api/include -isystem /usr/local/lib/python3.11/site-packages/torch/include/TH -isystem /usr/local/lib/python3.11/site-packages/torch/include/THC -isystem /usr/local/include/python3.11 -D_GLIBCXX_USE_CXX11_ABI=0 -fPIC -std=c++17 -O3 -std=c++17 -g -Wno-reorder -L/usr/local/cuda/lib64 -lcudart -lcublas -g -march=native -fopenmp -D__AVX512__ -D__ENABLE_CUDA__ -DBF16_AVAILABLE -c /usr/local/lib/python3.11/site-packages/deepspeed/ops/csrc/adam/cpu_adam.cpp -o cpu_adam.o 
+[2/3] c++ -MMD -MF cpu_adam_impl.o.d -DTORCH_EXTENSION_NAME=cpu_adam -DTORCH_API_INCLUDE_EXTENSION_H -DPYBIND11_COMPILER_TYPE=\&amp;quot;_gcc\&amp;quot; -DPYBIND11_STDLIB=\&amp;quot;_libstdcpp\&amp;quot; -DPYBIND11_BUILD_ABI=\&amp;quot;_cxxabi1011\&amp;quot; -I/usr/local/lib/python3.11/site-packages/deepspeed/ops/csrc/includes -isystem /usr/local/lib/python3.11/site-packages/torch/include -isystem /usr/local/lib/python3.11/site-packages/torch/include/torch/csrc/api/include -isystem /usr/local/lib/python3.11/site-packages/torch/include/TH -isystem /usr/local/lib/python3.11/site-packages/torch/include/THC -isystem /usr/local/include/python3.11 -D_GLIBCXX_USE_CXX11_ABI=0 -fPIC -std=c++17 -O3 -std=c++17 -g -Wno-reorder -L/usr/local/cuda/lib64 -lcudart -lcublas -g -march=native -fopenmp -D__AVX512__ -D__ENABLE_CUDA__ -DBF16_AVAILABLE -c /usr/local/lib/python3.11/site-packages/deepspeed/ops/csrc/adam/cpu_adam_impl.cpp -o cpu_adam_impl.o 
+[3/3] c++ cpu_adam.o cpu_adam_impl.o -shared -lcurand -L/usr/local/cuda/lib64 -L/usr/local/lib/python3.11/site-packages/torch/lib -lc10 -ltorch_cpu -ltorch -ltorch_python -o cpu_adam.so
+Loading extension module cpu_adam...
+Time to load cpu_adam op: 25.448318243026733 seconds
+dlc1lm8dmxok7cfj-master-0:133:133 [0] NCCL INFO Comm config Blocking set to 1
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Using non-device net plugin version 0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Using network Socket
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO ncclCommInitRank comm 0x5603c0bfdac0 rank 0 nranks 1 cudaDev 0 nvmlDev 0 busId 30 commId 0x9cbcac870fd5ec63 - Init START
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO comm 0x5603c0bfdac0 rank 0 nRanks 1 nNodes 1 localRanks 1 localRank 0 MNNVL 0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 00/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 01/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 02/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 03/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 04/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 05/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 06/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 07/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 08/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 09/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 10/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 11/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 12/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 13/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 14/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 15/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 16/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 17/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 18/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 19/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 20/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 21/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 22/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 23/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 24/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 25/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 26/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 27/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 28/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 29/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 30/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Channel 31/32 :    0
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Trees [0] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [1] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [2] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [3] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [4] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [5] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [6] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [7] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [8] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [9] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [10] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [11] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [12] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [13] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [14] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [15] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [16] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [17] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [18] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [19] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [20] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [21] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [22] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [23] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [24] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [25] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [26] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [27] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [28] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [29] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [30] -1/-1/-1-&amp;gt;0-&amp;gt;-1 [31] -1/-1/-1-&amp;gt;0-&amp;gt;-1
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO P2P Chunksize set to 131072
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Connected all rings
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO Connected all trees
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO 32 coll channels, 32 collnet channels, 0 nvls channels, 32 p2p channels, 32 p2p channels per peer
+dlc1lm8dmxok7cfj-master-0:133:444 [0] NCCL INFO ncclCommInitRank comm 0x5603c0bfdac0 rank 0 nranks 1 cudaDev 0 nvmlDev 0 busId 30 commId 0x9cbcac870fd5ec63 - Init COMPLETE
+
+  0%|          | 0/100 [00:00&amp;lt;?, ?it/s]`use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
+
+  1%|          | 1/100 [00:01&amp;lt;02:53,  1.76s/it]
+                                               
+{&#39;loss&#39;: 2.9969, &#39;grad_norm&#39;: 0.6156104803085327, &#39;learning_rate&#39;: 0.0, &#39;num_tokens&#39;: 12395.0, &#39;mean_token_accuracy&#39;: 0.557265505194664, &#39;epoch&#39;: 0.04}
+
+  1%|          | 1/100 [00:01&amp;lt;02:53,  1.76s/it]
+  2%|▏         | 2/100 [00:03&amp;lt;02:25,  1.49s/it]
+                                               
+{&#39;loss&#39;: 3.0022, &#39;grad_norm&#39;: 0.6304222345352173, &#39;learning_rate&#39;: 5e-05, &#39;num_tokens&#39;: 24663.0, &#39;mean_token_accuracy&#39;: 0.5569408759474754, &#39;epoch&#39;: 0.08}
+
+  2%|▏         | 2/100 [00:03&amp;lt;02:25,  1.49s/it]
+  3%|▎         | 3/100 [00:04&amp;lt;02:15,  1.40s/it]
+                                               
+{&#39;loss&#39;: 2.9518, &#39;grad_norm&#39;: 0.5929722189903259, &#39;learning_rate&#39;: 4.9987413559579636e-05, &#39;num_tokens&#39;: 36927.0, &#39;mean_token_accuracy&#39;: 0.5601871758699417, &#39;epoch&#39;: 0.12}
+
+  3%|▎         | 3/100 [00:04&amp;lt;02:15,  1.40s/it]
+  4%|▍         | 4/100 [00:05&amp;lt;02:10,  1.35s/it]
+                                               
+{&#39;loss&#39;: 2.8384, &#39;grad_norm&#39;: 0.5077946186065674, &#39;learning_rate&#39;: 4.994966691179711e-05, &#39;num_tokens&#39;: 49324.0, &#39;mean_token_accuracy&#39;: 0.5842191278934479, &#39;epoch&#39;: 0.16}
+
+  4%|▍         | 4/100 [00:05&amp;lt;02:10,  1.35s/it]
+  5%|▌         | 5/100 [00:06&amp;lt;02:06,  1.33s/it]
+                                               
+{&#39;loss&#39;: 2.7403, &#39;grad_norm&#39;: 0.47692668437957764, &#39;learning_rate&#39;: 4.988679806432712e-05, &#39;num_tokens&#39;: 61656.0, &#39;mean_token_accuracy&#39;: 0.5848015174269676, &#39;epoch&#39;: 0.2}
+
+  5%|▌         | 5/100 [00:06&amp;lt;02:06,  1.33s/it]
+  6%|▌         | 6/100 [00:08&amp;lt;02:03,  1.32s/it]
+                                               
+{&#39;loss&#39;: 2.6408, &#39;grad_norm&#39;: 0.4504166841506958, &#39;learning_rate&#39;: 4.9798870320769886e-05, &#39;num_tokens&#39;: 74040.0, &#39;mean_token_accuracy&#39;: 0.5917089208960533, &#39;epoch&#39;: 0.24}
+
+  6%|▌         | 6/100 [00:08&amp;lt;02:03,  1.32s/it]
+  7%|▋         | 7/100 [00:09&amp;lt;02:02,  1.32s/it]
+                                               
+{&#39;loss&#39;: 2.5569, &#39;grad_norm&#39;: 0.43109777569770813, &#39;learning_rate&#39;: 4.968597221690986e-05, &#39;num_tokens&#39;: 86402.0, &#39;mean_token_accuracy&#39;: 0.6047331020236015, &#39;epoch&#39;: 0.28}
+
+  7%|▋         | 7/100 [00:09&amp;lt;02:02,  1.32s/it]
+  8%|▊         | 8/100 [00:10&amp;lt;02:00,  1.31s/it]
+                                               
+{&#39;loss&#39;: 2.4599, &#39;grad_norm&#39;: 0.4197584092617035, &#39;learning_rate&#39;: 4.9548217431567665e-05, &#39;num_tokens&#39;: 98815.0, &#39;mean_token_accuracy&#39;: 0.6172997951507568, &#39;epoch&#39;: 0.32}
+
+  8%|▊         | 8/100 [00:10&amp;lt;02:00,  1.31s/it]
+  9%|▉         | 9/100 [00:12&amp;lt;01:58,  1.30s/it]
+                                               
+{&#39;loss&#39;: 2.3896, &#39;grad_norm&#39;: 0.4105101525783539, &#39;learning_rate&#39;: 4.938574467213518e-05, &#39;num_tokens&#39;: 111181.0, &#39;mean_token_accuracy&#39;: 0.6319251507520676, &#39;epoch&#39;: 0.36}
+
+  9%|▉         | 9/100 [00:12&amp;lt;01:58,  1.30s/it]
+ 10%|█         | 10/100 [00:13&amp;lt;01:56,  1.30s/it]
+                                                
+{&#39;loss&#39;: 2.295, &#39;grad_norm&#39;: 0.4044440984725952, &#39;learning_rate&#39;: 4.919871753490891e-05, &#39;num_tokens&#39;: 123497.0, &#39;mean_token_accuracy&#39;: 0.6286465525627136, &#39;epoch&#39;: 0.4}
+
+ 10%|█         | 10/100 [00:13&amp;lt;01:56,  1.30s/it]
+ 11%|█         | 11/100 [00:14&amp;lt;01:55,  1.30s/it]
+                                                
+{&#39;loss&#39;: 2.1899, &#39;grad_norm&#39;: 0.4107915163040161, &#39;learning_rate&#39;: 4.898732434036244e-05, &#39;num_tokens&#39;: 135987.0, &#39;mean_token_accuracy&#39;: 0.6360785737633705, &#39;epoch&#39;: 0.44}
+
+ 11%|█         | 11/100 [00:14&amp;lt;01:55,  1.30s/it]
+ 12%|█▏        | 12/100 [00:15&amp;lt;01:53,  1.30s/it]
+                                                
+{&#39;loss&#39;: 2.1242, &#39;grad_norm&#39;: 0.4469277262687683, &#39;learning_rate&#39;: 4.8751777943523634e-05, &#39;num_tokens&#39;: 148455.0, &#39;mean_token_accuracy&#39;: 0.649301253259182, &#39;epoch&#39;: 0.48}
+
+ 12%|█▏        | 12/100 [00:15&amp;lt;01:53,  1.30s/it]
+ 13%|█▎        | 13/100 [00:17&amp;lt;01:52,  1.29s/it]
+                                                
+{&#39;loss&#39;: 2.0296, &#39;grad_norm&#39;: 0.3584776222705841, &#39;learning_rate&#39;: 4.849231551964771e-05, &#39;num_tokens&#39;: 160848.0, &#39;mean_token_accuracy&#39;: 0.654139406979084, &#39;epoch&#39;: 0.52}
+
+ 13%|█▎        | 13/100 [00:17&amp;lt;01:52,  1.29s/it]
+ 14%|█▍        | 14/100 [00:18&amp;lt;01:51,  1.29s/it]
+                                                
+{&#39;loss&#39;: 1.9926, &#39;grad_norm&#39;: 0.3459338843822479, &#39;learning_rate&#39;: 4.8209198325401815e-05, &#39;num_tokens&#39;: 173176.0, &#39;mean_token_accuracy&#39;: 0.6589227616786957, &#39;epoch&#39;: 0.56}
+
+ 14%|█▍        | 14/100 [00:18&amp;lt;01:51,  1.29s/it]
+ 15%|█▌        | 15/100 [00:19&amp;lt;01:49,  1.29s/it]
+                                                
+{&#39;loss&#39;: 1.9241, &#39;grad_norm&#39;: 0.3389168679714203, &#39;learning_rate&#39;: 4.790271143580174e-05, &#39;num_tokens&#39;: 185528.0, &#39;mean_token_accuracy&#39;: 0.6655279397964478, &#39;epoch&#39;: 0.6}
+
+ 15%|█▌        | 15/100 [00:19&amp;lt;01:49,  1.29s/it]
+ 16%|█▌        | 16/100 [00:21&amp;lt;01:48,  1.29s/it]
+                                                
+{&#39;loss&#39;: 1.8466, &#39;grad_norm&#39;: 0.3481423258781433, &#39;learning_rate&#39;: 4.7573163457165534e-05, &#39;num_tokens&#39;: 197848.0, &#39;mean_token_accuracy&#39;: 0.6780158132314682, &#39;epoch&#39;: 0.64}
+
+ 16%|█▌        | 16/100 [00:21&amp;lt;01:48,  1.29s/it]
+ 17%|█▋        | 17/100 [00:22&amp;lt;01:47,  1.29s/it]
+                                                
+{&#39;loss&#39;: 1.7937, &#39;grad_norm&#39;: 0.350722074508667, &#39;learning_rate&#39;: 4.722088621637309e-05, &#39;num_tokens&#39;: 210208.0, &#39;mean_token_accuracy&#39;: 0.6687768772244453, &#39;epoch&#39;: 0.68}
+
+ 17%|█▋        | 17/100 [00:22&amp;lt;01:47,  1.29s/it]
+ 18%|█▊        | 18/100 [00:23&amp;lt;01:45,  1.29s/it]
+                                                
+{&#39;loss&#39;: 1.7131, &#39;grad_norm&#39;: 0.3526684641838074, &#39;learning_rate&#39;: 4.684623442674463e-05, &#39;num_tokens&#39;: 222596.0, &#39;mean_token_accuracy&#39;: 0.669261246919632, &#39;epoch&#39;: 0.72}
+
+ 18%|█▊        | 18/100 [00:23&amp;lt;01:45,  1.29s/it]
+ 19%|█▉        | 19/100 [00:25&amp;lt;01:44,  1.29s/it]
+                                                
+{&#39;loss&#39;: 1.6793, &#39;grad_norm&#39;: 0.3442957401275635, &#39;learning_rate&#39;: 4.644958533087443e-05, &#39;num_tokens&#39;: 235010.0, &#39;mean_token_accuracy&#39;: 0.6730949878692627, &#39;epoch&#39;: 0.76}
+
+ 19%|█▉        | 19/100 [00:25&amp;lt;01:44,  1.29s/it]
+ 20%|██        | 20/100 [00:26&amp;lt;01:43,  1.29s/it]
+                                                
+{&#39;loss&#39;: 1.608, &#39;grad_norm&#39;: 0.31706002354621887, &#39;learning_rate&#39;: 4.6031338320779534e-05, &#39;num_tokens&#39;: 247478.0, &#39;mean_token_accuracy&#39;: 0.6819775551557541, &#39;epoch&#39;: 0.8}
+
+ 20%|██        | 20/100 [00:26&amp;lt;01:43,  1.29s/it]
+ 21%|██        | 21/100 [00:27&amp;lt;01:42,  1.29s/it]
+                                                
+{&#39;loss&#39;: 1.5786, &#39;grad_norm&#39;: 0.3038071393966675, &#39;learning_rate&#39;: 4.559191453574582e-05, &#39;num_tokens&#39;: 259806.0, &#39;mean_token_accuracy&#39;: 0.6907401010394096, &#39;epoch&#39;: 0.84}
+
+ 21%|██        | 21/100 [00:27&amp;lt;01:42,  1.29s/it]
+ 22%|██▏       | 22/100 [00:28&amp;lt;01:40,  1.29s/it]
+                                                
+{&#39;loss&#39;: 1.5251, &#39;grad_norm&#39;: 0.28096795082092285, &#39;learning_rate&#39;: 4.513175643827647e-05, &#39;num_tokens&#39;: 272161.0, &#39;mean_token_accuracy&#39;: 0.7046292722225189, &#39;epoch&#39;: 0.88}
+
+ 22%|██▏       | 22/100 [00:28&amp;lt;01:40,  1.29s/it]
+ 23%|██▎       | 23/100 [00:30&amp;lt;01:38,  1.29s/it]
+                                                
+{&#39;loss&#39;: 1.4769, &#39;grad_norm&#39;: 0.276657372713089, &#39;learning_rate&#39;: 4.465132736856969e-05, &#39;num_tokens&#39;: 284510.0, &#39;mean_token_accuracy&#39;: 0.7159407809376717, &#39;epoch&#39;: 0.92}
+
+ 23%|██▎       | 23/100 [00:30&amp;lt;01:38,  1.29s/it]
+ 24%|██▍       | 24/100 [00:31&amp;lt;01:37,  1.29s/it]
+                                                
+{&#39;loss&#39;: 1.4424, &#39;grad_norm&#39;: 0.25698068737983704, &#39;learning_rate&#39;: 4.415111107797445e-05, &#39;num_tokens&#39;: 296882.0, &#39;mean_token_accuracy&#39;: 0.7303404361009598, &#39;epoch&#39;: 0.96}
+
+ 24%|██▍       | 24/100 [00:31&amp;lt;01:37,  1.29s/it]
+ 25%|██▌       | 25/100 [00:32&amp;lt;01:36,  1.28s/it]
+                                                
+{&#39;loss&#39;: 1.4216, &#39;grad_norm&#39;: 0.25088033080101013, &#39;learning_rate&#39;: 4.3631611241893874e-05, &#39;num_tokens&#39;: 309282.0, &#39;mean_token_accuracy&#39;: 0.7428581342101097, &#39;epoch&#39;: 1.0}
+
+ 25%|██▌       | 25/100 [00:32&amp;lt;01:36,  1.28s/it]
+
+  0%|          | 0/200 [00:00&amp;lt;?, ?it/s][A
+
+  2%|▏         | 4/200 [00:00&amp;lt;00:06, 30.36it/s][A
+
+  4%|▍         | 8/200 [00:00&amp;lt;00:07, 25.48it/s][A
+
+  6%|▌         | 11/200 [00:00&amp;lt;00:07, 24.52it/s][A
+
+  7%|▋         | 14/200 [00:00&amp;lt;00:07, 23.83it/s][A
+
+  8%|▊         | 17/200 [00:00&amp;lt;00:07, 23.52it/s][A
+
+ 10%|█         | 20/200 [00:00&amp;lt;00:07, 23.25it/s][A
+
+ 12%|█▏        | 23/200 [00:00&amp;lt;00:07, 22.90it/s][A
+
+ 13%|█▎        | 26/200 [00:01&amp;lt;00:07, 22.99it/s][A
+
+ 14%|█▍        | 29/200 [00:01&amp;lt;00:07, 22.96it/s][A
+
+ 16%|█▌        | 32/200 [00:01&amp;lt;00:07, 22.84it/s][A
+
+ 18%|█▊        | 35/200 [00:01&amp;lt;00:07, 22.72it/s][A
+
+ 19%|█▉        | 38/200 [00:01&amp;lt;00:07, 22.70it/s][A
+
+ 20%|██        | 41/200 [00:01&amp;lt;00:06, 22.75it/s][A
+
+ 22%|██▏       | 44/200 [00:01&amp;lt;00:06, 22.75it/s][A
+
+ 24%|██▎       | 47/200 [00:02&amp;lt;00:06, 22.72it/s][A
+
+ 25%|██▌       | 50/200 [00:02&amp;lt;00:06, 22.67it/s][A
+
+ 26%|██▋       | 53/200 [00:02&amp;lt;00:06, 22.72it/s][A
+
+ 28%|██▊       | 56/200 [00:02&amp;lt;00:06, 22.68it/s][A
+
+ 30%|██▉       | 59/200 [00:02&amp;lt;00:06, 22.70it/s][A
+
+ 31%|███       | 62/200 [00:02&amp;lt;00:06, 22.80it/s][A
+
+ 32%|███▎      | 65/200 [00:02&amp;lt;00:05, 22.86it/s][A
+
+ 34%|███▍      | 68/200 [00:02&amp;lt;00:05, 22.73it/s][A
+
+ 36%|███▌      | 71/200 [00:03&amp;lt;00:05, 22.83it/s][A
+
+ 37%|███▋      | 74/200 [00:03&amp;lt;00:05, 22.90it/s][A
+
+ 38%|███▊      | 77/200 [00:03&amp;lt;00:05, 22.81it/s][A
+
+ 40%|████      | 80/200 [00:03&amp;lt;00:05, 22.72it/s][A
+
+ 42%|████▏     | 83/200 [00:03&amp;lt;00:05, 22.84it/s][A
+
+ 43%|████▎     | 86/200 [00:03&amp;lt;00:05, 22.77it/s][A
+
+ 44%|████▍     | 89/200 [00:03&amp;lt;00:04, 22.88it/s][A
+
+ 46%|████▌     | 92/200 [00:03&amp;lt;00:04, 22.90it/s][A
+
+ 48%|████▊     | 95/200 [00:04&amp;lt;00:04, 22.92it/s][A
+
+ 49%|████▉     | 98/200 [00:04&amp;lt;00:04, 22.96it/s][A
+
+ 50%|█████     | 101/200 [00:04&amp;lt;00:04, 22.84it/s][A
+
+ 52%|█████▏    | 104/200 [00:04&amp;lt;00:04, 22.67it/s][A
+
+ 54%|█████▎    | 107/200 [00:04&amp;lt;00:04, 22.77it/s][A
+
+ 55%|█████▌    | 110/200 [00:04&amp;lt;00:03, 22.75it/s][A
+
+ 56%|█████▋    | 113/200 [00:04&amp;lt;00:03, 22.64it/s][A
+
+ 58%|█████▊    | 116/200 [00:05&amp;lt;00:03, 22.76it/s][A
+
+ 60%|█████▉    | 119/200 [00:05&amp;lt;00:03, 22.87it/s][A
+
+ 61%|██████    | 122/200 [00:05&amp;lt;00:03, 22.89it/s][A
+
+ 62%|██████▎   | 125/200 [00:05&amp;lt;00:03, 22.71it/s][A
+
+ 64%|██████▍   | 128/200 [00:05&amp;lt;00:03, 22.69it/s][A
+
+ 66%|██████▌   | 131/200 [00:05&amp;lt;00:03, 22.68it/s][A
+
+ 67%|██████▋   | 134/200 [00:05&amp;lt;00:02, 22.69it/s][A
+
+ 68%|██████▊   | 137/200 [00:05&amp;lt;00:02, 22.65it/s][A
+
+ 70%|███████   | 140/200 [00:06&amp;lt;00:02, 22.79it/s][A
+
+ 72%|███████▏  | 143/200 [00:06&amp;lt;00:02, 22.83it/s][A
+
+ 73%|███████▎  | 146/200 [00:06&amp;lt;00:02, 22.77it/s][A
+
+ 74%|███████▍  | 149/200 [00:06&amp;lt;00:02, 22.73it/s][A
+
+ 76%|███████▌  | 152/200 [00:06&amp;lt;00:02, 22.81it/s][A
+
+ 78%|███████▊  | 155/200 [00:06&amp;lt;00:01, 22.78it/s][A
+
+ 79%|███████▉  | 158/200 [00:06&amp;lt;00:01, 22.89it/s][A
+
+ 80%|████████  | 161/200 [00:07&amp;lt;00:01, 22.93it/s][A
+
+ 82%|████████▏ | 164/200 [00:07&amp;lt;00:01, 22.88it/s][A
+
+ 84%|████████▎ | 167/200 [00:07&amp;lt;00:01, 22.95it/s][A
+
+ 85%|████████▌ | 170/200 [00:07&amp;lt;00:01, 22.92it/s][A
+
+ 86%|████████▋ | 173/200 [00:07&amp;lt;00:01, 22.75it/s][A
+
+ 88%|████████▊ | 176/200 [00:07&amp;lt;00:01, 22.84it/s][A
+
+ 90%|████████▉ | 179/200 [00:07&amp;lt;00:00, 22.77it/s][A
+
+ 91%|█████████ | 182/200 [00:07&amp;lt;00:00, 22.83it/s][A
+
+ 92%|█████████▎| 185/200 [00:08&amp;lt;00:00, 22.77it/s][A
+
+ 94%|█████████▍| 188/200 [00:08&amp;lt;00:00, 22.64it/s][A
+
+ 96%|█████████▌| 191/200 [00:08&amp;lt;00:00, 22.67it/s][A
+
+ 97%|█████████▋| 194/200 [00:08&amp;lt;00:00, 22.68it/s][A
+
+ 98%|█████████▊| 197/200 [00:08&amp;lt;00:00, 22.57it/s][A
+
+100%|██████████| 200/200 [00:08&amp;lt;00:00, 22.78it/s][A
+                                                
+
+                                                 
+[A{&#39;eval_loss&#39;: 1.380300760269165, &#39;eval_runtime&#39;: 8.7868, &#39;eval_samples_per_second&#39;: 182.091, &#39;eval_steps_per_second&#39;: 22.761, &#39;eval_num_tokens&#39;: 309282.0, &#39;eval_mean_token_accuracy&#39;: 0.7480635163187981, &#39;epoch&#39;: 1.0}
+
+ 25%|██▌       | 25/100 [00:41&amp;lt;01:36,  1.28s/it]
+
+100%|██████████| 200/200 [00:08&amp;lt;00:00, 22.78it/s][A
+
+                                                 [A
+ 26%|██▌       | 26/100 [00:42&amp;lt;04:50,  3.92s/it]
+                                                
+{&#39;loss&#39;: 1.3642, &#39;grad_norm&#39;: 0.23684436082839966, &#39;learning_rate&#39;: 4.309335095262676e-05, &#39;num_tokens&#39;: 321611.0, &#39;mean_token_accuracy&#39;: 0.7474109008908272, &#39;epoch&#39;: 1.04}
+
+ 26%|██▌       | 26/100 [00:42&amp;lt;04:50,  3.92s/it]
+ 27%|██▋       | 27/100 [00:44&amp;lt;03:48,  3.13s/it]
+                                                
+{&#39;loss&#39;: 1.3367, &#39;grad_norm&#39;: 0.24372604489326477, &#39;learning_rate&#39;: 4.2536872192658036e-05, &#39;num_tokens&#39;: 333958.0, &#39;mean_token_accuracy&#39;: 0.7538925781846046, &#39;epoch&#39;: 1.08}
+
+ 27%|██▋       | 27/100 [00:44&amp;lt;03:48,  3.13s/it]
+ 28%|██▊       | 28/100 [00:45&amp;lt;03:05,  2.58s/it]
+                                                
+{&#39;loss&#39;: 1.3164, &#39;grad_norm&#39;: 0.22672152519226074, &#39;learning_rate&#39;: 4.1962735288928305e-05, &#39;num_tokens&#39;: 346363.0, &#39;mean_token_accuracy&#39;: 0.7542992457747459, &#39;epoch&#39;: 1.12}
+
+ 28%|██▊       | 28/100 [00:45&amp;lt;03:05,  2.58s/it]
+ 29%|██▉       | 29/100 [00:46&amp;lt;02:35,  2.19s/it]
+                                                
+{&#39;loss&#39;: 1.2815, &#39;grad_norm&#39;: 0.22313237190246582, &#39;learning_rate&#39;: 4.137151834863213e-05, &#39;num_tokens&#39;: 358740.0, &#39;mean_token_accuracy&#39;: 0.7578952461481094, &#39;epoch&#39;: 1.16}
+
+ 29%|██▉       | 29/100 [00:46&amp;lt;02:35,  2.19s/it]
+ 30%|███       | 30/100 [00:47&amp;lt;02:14,  1.92s/it]
+                                                
+{&#39;loss&#39;: 1.272, &#39;grad_norm&#39;: 0.21239323914051056, &#39;learning_rate&#39;: 4.0763816677113064e-05, &#39;num_tokens&#39;: 371163.0, &#39;mean_token_accuracy&#39;: 0.7672104388475418, &#39;epoch&#39;: 1.2}
+
+ 30%|███       | 30/100 [00:47&amp;lt;02:14,  1.92s/it]
+ 31%|███       | 31/100 [00:49&amp;lt;01:59,  1.73s/it]
+                                                
+{&#39;loss&#39;: 1.2363, &#39;grad_norm&#39;: 0.21683549880981445, &#39;learning_rate&#39;: 4.014024217844167e-05, &#39;num_tokens&#39;: 383524.0, &#39;mean_token_accuracy&#39;: 0.7794611379504204, &#39;epoch&#39;: 1.24}
+
+ 31%|███       | 31/100 [00:49&amp;lt;01:59,  1.73s/it]
+ 32%|███▏      | 32/100 [00:50&amp;lt;01:48,  1.59s/it]
+                                                
+{&#39;loss&#39;: 1.2006, &#39;grad_norm&#39;: 0.21469290554523468, &#39;learning_rate&#39;: 3.9501422739279956e-05, &#39;num_tokens&#39;: 395924.0, &#39;mean_token_accuracy&#39;: 0.7862255200743675, &#39;epoch&#39;: 1.28}
+
+ 32%|███▏      | 32/100 [00:50&amp;lt;01:48,  1.59s/it]
+ 33%|███▎      | 33/100 [00:51&amp;lt;01:41,  1.51s/it]
+                                                
+{&#39;loss&#39;: 1.1771, &#39;grad_norm&#39;: 0.21210847795009613, &#39;learning_rate&#39;: 3.884800159665276e-05, &#39;num_tokens&#39;: 408322.0, &#39;mean_token_accuracy&#39;: 0.7854267209768295, &#39;epoch&#39;: 1.32}
+
+ 33%|███▎      | 33/100 [00:51&amp;lt;01:41,  1.51s/it]
+ 34%|███▍      | 34/100 [00:53&amp;lt;01:35,  1.45s/it]
+                                                
+{&#39;loss&#39;: 1.1582, &#39;grad_norm&#39;: 0.20535743236541748, &#39;learning_rate&#39;: 3.818063669026256e-05, &#39;num_tokens&#39;: 420776.0, &#39;mean_token_accuracy&#39;: 0.7891717627644539, &#39;epoch&#39;: 1.36}
+
+ 34%|███▍      | 34/100 [00:53&amp;lt;01:35,  1.45s/it]
+ 35%|███▌      | 35/100 [00:54&amp;lt;01:30,  1.39s/it]
+                                                
+{&#39;loss&#39;: 1.1326, &#39;grad_norm&#39;: 0.20486287772655487, &#39;learning_rate&#39;: 3.7500000000000003e-05, &#39;num_tokens&#39;: 433218.0, &#39;mean_token_accuracy&#39;: 0.7905180305242538, &#39;epoch&#39;: 1.4}
+
+ 35%|███▌      | 35/100 [00:54&amp;lt;01:30,  1.39s/it]
+ 36%|███▌      | 36/100 [00:55&amp;lt;01:26,  1.36s/it]
+                                                
+{&#39;loss&#39;: 1.1095, &#39;grad_norm&#39;: 0.20110926032066345, &#39;learning_rate&#39;: 3.680677686931707e-05, &#39;num_tokens&#39;: 445548.0, &#39;mean_token_accuracy&#39;: 0.7904055789113045, &#39;epoch&#39;: 1.44}
+
+ 36%|███▌      | 36/100 [00:55&amp;lt;01:26,  1.36s/it]
+ 37%|███▋      | 37/100 [00:56&amp;lt;01:24,  1.33s/it]
+                                                
+{&#39;loss&#39;: 1.0912, &#39;grad_norm&#39;: 0.20082473754882812, &#39;learning_rate&#39;: 3.610166531514436e-05, &#39;num_tokens&#39;: 457982.0, &#39;mean_token_accuracy&#39;: 0.7945679351687431, &#39;epoch&#39;: 1.48}
+
+ 37%|███▋      | 37/100 [00:56&amp;lt;01:24,  1.33s/it]
+ 38%|███▊      | 38/100 [00:58&amp;lt;01:22,  1.32s/it]
+                                                
+{&#39;loss&#39;: 1.0757, &#39;grad_norm&#39;: 0.20655913650989532, &#39;learning_rate&#39;: 3.5385375325047166e-05, &#39;num_tokens&#39;: 470302.0, &#39;mean_token_accuracy&#39;: 0.8008103594183922, &#39;epoch&#39;: 1.52}
+
+ 38%|███▊      | 38/100 [00:58&amp;lt;01:22,  1.32s/it]
+ 39%|███▉      | 39/100 [00:59&amp;lt;01:20,  1.31s/it]
+                                                
+{&#39;loss&#39;: 1.0475, &#39;grad_norm&#39;: 0.21213574707508087, &#39;learning_rate&#39;: 3.465862814232822e-05, &#39;num_tokens&#39;: 482652.0, &#39;mean_token_accuracy&#39;: 0.8052932694554329, &#39;epoch&#39;: 1.56}
+
+ 39%|███▉      | 39/100 [00:59&amp;lt;01:20,  1.31s/it]
+ 40%|████      | 40/100 [01:00&amp;lt;01:18,  1.30s/it]
+                                                
+{&#39;loss&#39;: 1.0193, &#39;grad_norm&#39;: 0.2088337391614914, &#39;learning_rate&#39;: 3.392215553979679e-05, &#39;num_tokens&#39;: 494935.0, &#39;mean_token_accuracy&#39;: 0.8083378374576569, &#39;epoch&#39;: 1.6}
+
+ 40%|████      | 40/100 [01:00&amp;lt;01:18,  1.30s/it]
+ 41%|████      | 41/100 [01:02&amp;lt;01:16,  1.30s/it]
+                                                
+{&#39;loss&#39;: 0.9896, &#39;grad_norm&#39;: 0.20944200456142426, &#39;learning_rate&#39;: 3.3176699082935545e-05, &#39;num_tokens&#39;: 507306.0, &#39;mean_token_accuracy&#39;: 0.8125813230872154, &#39;epoch&#39;: 1.64}
+
+ 41%|████      | 41/100 [01:02&amp;lt;01:16,  1.30s/it]
+ 42%|████▏     | 42/100 [01:03&amp;lt;01:15,  1.30s/it]
+                                                
+{&#39;loss&#39;: 0.9567, &#39;grad_norm&#39;: 0.208340585231781, &#39;learning_rate&#39;: 3.2423009383206876e-05, &#39;num_tokens&#39;: 519659.0, &#39;mean_token_accuracy&#39;: 0.8086286038160324, &#39;epoch&#39;: 1.68}
+
+ 42%|████▏     | 42/100 [01:03&amp;lt;01:15,  1.30s/it]
+ 43%|████▎     | 43/100 [01:04&amp;lt;01:13,  1.29s/it]
+                                                
+{&#39;loss&#39;: 0.9799, &#39;grad_norm&#39;: 0.21747039258480072, &#39;learning_rate&#39;: 3.166184534225087e-05, &#39;num_tokens&#39;: 532016.0, &#39;mean_token_accuracy&#39;: 0.8070342764258385, &#39;epoch&#39;: 1.72}
+
+ 43%|████▎     | 43/100 [01:04&amp;lt;01:13,  1.29s/it]
+ 44%|████▍     | 44/100 [01:05&amp;lt;01:12,  1.29s/it]
+                                                
+{&#39;loss&#39;: 0.9411, &#39;grad_norm&#39;: 0.21131806075572968, &#39;learning_rate&#39;: 3.0893973387735687e-05, &#39;num_tokens&#39;: 544451.0, &#39;mean_token_accuracy&#39;: 0.8081119135022163, &#39;epoch&#39;: 1.76}
+
+ 44%|████▍     | 44/100 [01:05&amp;lt;01:12,  1.29s/it]
+ 45%|████▌     | 45/100 [01:07&amp;lt;01:10,  1.29s/it]
+                                                
+{&#39;loss&#39;: 0.9102, &#39;grad_norm&#39;: 0.20553453266620636, &#39;learning_rate&#39;: 3.012016670162977e-05, &#39;num_tokens&#39;: 556764.0, &#39;mean_token_accuracy&#39;: 0.8155807703733444, &#39;epoch&#39;: 1.8}
+
+ 45%|████▌     | 45/100 [01:07&amp;lt;01:10,  1.29s/it]
+ 46%|████▌     | 46/100 [01:08&amp;lt;01:09,  1.29s/it]
+                                                
+{&#39;loss&#39;: 0.8995, &#39;grad_norm&#39;: 0.20625217258930206, &#39;learning_rate&#39;: 2.9341204441673266e-05, &#39;num_tokens&#39;: 569095.0, &#39;mean_token_accuracy&#39;: 0.8212151899933815, &#39;epoch&#39;: 1.84}
+
+ 46%|████▌     | 46/100 [01:08&amp;lt;01:09,  1.29s/it]
+ 47%|████▋     | 47/100 [01:09&amp;lt;01:08,  1.29s/it]
+                                                
+{&#39;loss&#39;: 0.8756, &#39;grad_norm&#39;: 0.20689339935779572, &#39;learning_rate&#39;: 2.8557870956832132e-05, &#39;num_tokens&#39;: 581369.0, &#39;mean_token_accuracy&#39;: 0.824812762439251, &#39;epoch&#39;: 1.88}
+
+ 47%|████▋     | 47/100 [01:09&amp;lt;01:08,  1.29s/it]
+ 48%|████▊     | 48/100 [01:11&amp;lt;01:06,  1.28s/it]
+                                                
+{&#39;loss&#39;: 0.8715, &#39;grad_norm&#39;: 0.19971652328968048, &#39;learning_rate&#39;: 2.7770954997525277e-05, &#39;num_tokens&#39;: 593861.0, &#39;mean_token_accuracy&#39;: 0.8196996673941612, &#39;epoch&#39;: 1.92}
+
+ 48%|████▊     | 48/100 [01:11&amp;lt;01:06,  1.28s/it]
+ 49%|████▉     | 49/100 [01:12&amp;lt;01:05,  1.28s/it]
+                                                
+{&#39;loss&#39;: 0.8449, &#39;grad_norm&#39;: 0.19617316126823425, &#39;learning_rate&#39;: 2.698124892141971e-05, &#39;num_tokens&#39;: 606239.0, &#39;mean_token_accuracy&#39;: 0.8340854272246361, &#39;epoch&#39;: 1.96}
+
+ 49%|████▉     | 49/100 [01:12&amp;lt;01:05,  1.28s/it]
+ 50%|█████     | 50/100 [01:13&amp;lt;01:04,  1.28s/it]
+                                                
+{&#39;loss&#39;: 0.8372, &#39;grad_norm&#39;: 0.2008523941040039, &#39;learning_rate&#39;: 2.6189547895593562e-05, &#39;num_tokens&#39;: 618564.0, &#39;mean_token_accuracy&#39;: 0.8334235697984695, &#39;epoch&#39;: 2.0}
+
+ 50%|█████     | 50/100 [01:13&amp;lt;01:04,  1.28s/it]
+
+  0%|          | 0/200 [00:00&amp;lt;?, ?it/s][A
+
+  2%|▏         | 4/200 [00:00&amp;lt;00:06, 30.52it/s][A
+
+  4%|▍         | 8/200 [00:00&amp;lt;00:07, 25.60it/s][A
+
+  6%|▌         | 11/200 [00:00&amp;lt;00:07, 24.64it/s][A
+
+  7%|▋         | 14/200 [00:00&amp;lt;00:07, 23.94it/s][A
+
+  8%|▊         | 17/200 [00:00&amp;lt;00:07, 23.61it/s][A
+
+ 10%|█         | 20/200 [00:00&amp;lt;00:07, 23.33it/s][A
+
+ 12%|█▏        | 23/200 [00:00&amp;lt;00:07, 22.98it/s][A
+
+ 13%|█▎        | 26/200 [00:01&amp;lt;00:07, 23.08it/s][A
+
+ 14%|█▍        | 29/200 [00:01&amp;lt;00:07, 23.05it/s][A
+
+ 16%|█▌        | 32/200 [00:01&amp;lt;00:07, 22.93it/s][A
+
+ 18%|█▊        | 35/200 [00:01&amp;lt;00:07, 22.83it/s][A
+
+ 19%|█▉        | 38/200 [00:01&amp;lt;00:07, 22.79it/s][A
+
+ 20%|██        | 41/200 [00:01&amp;lt;00:06, 22.85it/s][A
+
+ 22%|██▏       | 44/200 [00:01&amp;lt;00:06, 22.88it/s][A
+
+ 24%|██▎       | 47/200 [00:02&amp;lt;00:06, 22.82it/s][A
+
+ 25%|██▌       | 50/200 [00:02&amp;lt;00:06, 22.77it/s][A
+
+ 26%|██▋       | 53/200 [00:02&amp;lt;00:06, 22.83it/s][A
+
+ 28%|██▊       | 56/200 [00:02&amp;lt;00:06, 22.81it/s][A
+
+ 30%|██▉       | 59/200 [00:02&amp;lt;00:06, 22.80it/s][A
+
+ 31%|███       | 62/200 [00:02&amp;lt;00:06, 22.84it/s][A
+
+ 32%|███▎      | 65/200 [00:02&amp;lt;00:05, 22.89it/s][A
+
+ 34%|███▍      | 68/200 [00:02&amp;lt;00:05, 22.75it/s][A
+
+ 36%|███▌      | 71/200 [00:03&amp;lt;00:05, 22.85it/s][A
+
+ 37%|███▋      | 74/200 [00:03&amp;lt;00:05, 22.93it/s][A
+
+ 38%|███▊      | 77/200 [00:03&amp;lt;00:05, 22.85it/s][A
+
+ 40%|████      | 80/200 [00:03&amp;lt;00:05, 22.80it/s][A
+
+ 42%|████▏     | 83/200 [00:03&amp;lt;00:05, 22.85it/s][A
+
+ 43%|████▎     | 86/200 [00:03&amp;lt;00:05, 22.78it/s][A
+
+ 44%|████▍     | 89/200 [00:03&amp;lt;00:04, 22.89it/s][A
+
+ 46%|████▌     | 92/200 [00:03&amp;lt;00:04, 22.91it/s][A
+
+ 48%|████▊     | 95/200 [00:04&amp;lt;00:04, 22.93it/s][A
+
+ 49%|████▉     | 98/200 [00:04&amp;lt;00:04, 22.98it/s][A
+
+ 50%|█████     | 101/200 [00:04&amp;lt;00:04, 22.85it/s][A
+
+ 52%|█████▏    | 104/200 [00:04&amp;lt;00:04, 22.68it/s][A
+
+ 54%|█████▎    | 107/200 [00:04&amp;lt;00:04, 22.80it/s][A
+
+ 55%|█████▌    | 110/200 [00:04&amp;lt;00:03, 22.76it/s][A
+
+ 56%|█████▋    | 113/200 [00:04&amp;lt;00:03, 22.66it/s][A
+
+ 58%|█████▊    | 116/200 [00:05&amp;lt;00:03, 22.78it/s][A
+
+ 60%|█████▉    | 119/200 [00:05&amp;lt;00:03, 22.88it/s][A
+
+ 61%|██████    | 122/200 [00:05&amp;lt;00:03, 22.91it/s][A
+
+ 62%|██████▎   | 125/200 [00:05&amp;lt;00:03, 22.75it/s][A
+
+ 64%|██████▍   | 128/200 [00:05&amp;lt;00:03, 22.75it/s][A
+
+ 66%|██████▌   | 131/200 [00:05&amp;lt;00:03, 22.70it/s][A
+
+ 67%|██████▋   | 134/200 [00:05&amp;lt;00:02, 22.73it/s][A
+
+ 68%|██████▊   | 137/200 [00:05&amp;lt;00:02, 22.72it/s][A
+
+ 70%|███████   | 140/200 [00:06&amp;lt;00:02, 22.83it/s][A
+
+ 72%|███████▏  | 143/200 [00:06&amp;lt;00:02, 22.82it/s][A
+
+ 73%|███████▎  | 146/200 [00:06&amp;lt;00:02, 22.77it/s][A
+
+ 74%|███████▍  | 149/200 [00:06&amp;lt;00:02, 22.73it/s][A
+
+ 76%|███████▌  | 152/200 [00:06&amp;lt;00:02, 22.82it/s][A
+
+ 78%|███████▊  | 155/200 [00:06&amp;lt;00:01, 22.77it/s][A
+
+ 79%|███████▉  | 158/200 [00:06&amp;lt;00:01, 22.90it/s][A
+
+ 80%|████████  | 161/200 [00:07&amp;lt;00:01, 22.97it/s][A
+
+ 82%|████████▏ | 164/200 [00:07&amp;lt;00:01, 22.87it/s][A
+
+ 84%|████████▎ | 167/200 [00:07&amp;lt;00:01, 22.94it/s][A
+
+ 85%|████████▌ | 170/200 [00:07&amp;lt;00:01, 22.91it/s][A
+
+ 86%|████████▋ | 173/200 [00:07&amp;lt;00:01, 22.74it/s][A
+
+ 88%|████████▊ | 176/200 [00:07&amp;lt;00:01, 22.83it/s][A
+
+ 90%|████████▉ | 179/200 [00:07&amp;lt;00:00, 22.77it/s][A
+
+ 91%|█████████ | 182/200 [00:07&amp;lt;00:00, 22.81it/s][A
+
+ 92%|█████████▎| 185/200 [00:08&amp;lt;00:00, 22.77it/s][A
+
+ 94%|█████████▍| 188/200 [00:08&amp;lt;00:00, 22.64it/s][A
+
+ 96%|█████████▌| 191/200 [00:08&amp;lt;00:00, 22.68it/s][A
+
+ 97%|█████████▋| 194/200 [00:08&amp;lt;00:00, 22.68it/s][A
+
+ 98%|█████████▊| 197/200 [00:08&amp;lt;00:00, 22.56it/s][A
+
+100%|██████████| 200/200 [00:08&amp;lt;00:00, 22.78it/s][A
+                                                
+
+                                                 
+[A{&#39;eval_loss&#39;: 0.832106351852417, &#39;eval_runtime&#39;: 8.7725, &#39;eval_samples_per_second&#39;: 182.388, &#39;eval_steps_per_second&#39;: 22.798, &#39;eval_num_tokens&#39;: 618564.0, &#39;eval_mean_token_accuracy&#39;: 0.8328079205751419, &#39;epoch&#39;: 2.0}
+
+ 50%|█████     | 50/100 [01:22&amp;lt;01:04,  1.28s/it]
+
+100%|██████████| 200/200 [00:08&amp;lt;00:00, 22.78it/s][A
+
+                                                 [A
+ 51%|█████     | 51/100 [01:23&amp;lt;03:11,  3.91s/it]
+                                                
+{&#39;loss&#39;: 0.8343, &#39;grad_norm&#39;: 0.19672958552837372, &#39;learning_rate&#39;: 2.5396649095870202e-05, &#39;num_tokens&#39;: 630924.0, &#39;mean_token_accuracy&#39;: 0.8327541872859001, &#39;epoch&#39;: 2.04}
+
+ 51%|█████     | 51/100 [01:23&amp;lt;03:11,  3.91s/it]
+ 52%|█████▏    | 52/100 [01:25&amp;lt;02:30,  3.13s/it]
+                                                
+{&#39;loss&#39;: 0.8031, &#39;grad_norm&#39;: 0.19217002391815186, &#39;learning_rate&#39;: 2.46033509041298e-05, &#39;num_tokens&#39;: 643260.0, &#39;mean_token_accuracy&#39;: 0.8392890691757202, &#39;epoch&#39;: 2.08}
+
+ 52%|█████▏    | 52/100 [01:25&amp;lt;02:30,  3.13s/it]
+ 53%|█████▎    | 53/100 [01:26&amp;lt;02:01,  2.58s/it]
+                                                
+{&#39;loss&#39;: 0.8031, &#39;grad_norm&#39;: 0.19064681231975555, &#39;learning_rate&#39;: 2.3810452104406444e-05, &#39;num_tokens&#39;: 655664.0, &#39;mean_token_accuracy&#39;: 0.8399832472205162, &#39;epoch&#39;: 2.12}
+
+ 53%|█████▎    | 53/100 [01:26&amp;lt;02:01,  2.58s/it]
+ 54%|█████▍    | 54/100 [01:27&amp;lt;01:40,  2.20s/it]
+                                                
+{&#39;loss&#39;: 0.7971, &#39;grad_norm&#39;: 0.18536289036273956, &#39;learning_rate&#39;: 2.3018751078580287e-05, &#39;num_tokens&#39;: 668139.0, &#39;mean_token_accuracy&#39;: 0.8374352976679802, &#39;epoch&#39;: 2.16}
+
+ 54%|█████▍    | 54/100 [01:27&amp;lt;01:40,  2.20s/it]
+ 55%|█████▌    | 55/100 [01:28&amp;lt;01:26,  1.92s/it]
+                                                
+{&#39;loss&#39;: 0.7709, &#39;grad_norm&#39;: 0.1924009621143341, &#39;learning_rate&#39;: 2.222904500247473e-05, &#39;num_tokens&#39;: 680479.0, &#39;mean_token_accuracy&#39;: 0.840285949409008, &#39;epoch&#39;: 2.2}
+
+ 55%|█████▌    | 55/100 [01:28&amp;lt;01:26,  1.92s/it]
+ 56%|█████▌    | 56/100 [01:30&amp;lt;01:16,  1.74s/it]
+                                                
+{&#39;loss&#39;: 0.7821, &#39;grad_norm&#39;: 0.2057674378156662, &#39;learning_rate&#39;: 2.1442129043167874e-05, &#39;num_tokens&#39;: 692908.0, &#39;mean_token_accuracy&#39;: 0.8382995650172234, &#39;epoch&#39;: 2.24}
+
+ 56%|█████▌    | 56/100 [01:30&amp;lt;01:16,  1.74s/it]
+ 57%|█████▋    | 57/100 [01:31&amp;lt;01:08,  1.60s/it]
+                                                
+{&#39;loss&#39;: 0.7624, &#39;grad_norm&#39;: 0.18855980038642883, &#39;learning_rate&#39;: 2.0658795558326743e-05, &#39;num_tokens&#39;: 705288.0, &#39;mean_token_accuracy&#39;: 0.8444176241755486, &#39;epoch&#39;: 2.28}
+
+ 57%|█████▋    | 57/100 [01:31&amp;lt;01:08,  1.60s/it]
+ 58%|█████▊    | 58/100 [01:32&amp;lt;01:03,  1.51s/it]
+                                                
+{&#39;loss&#39;: 0.7663, &#39;grad_norm&#39;: 0.1674283891916275, &#39;learning_rate&#39;: 1.9879833298370238e-05, &#39;num_tokens&#39;: 717657.0, &#39;mean_token_accuracy&#39;: 0.8422146812081337, &#39;epoch&#39;: 2.32}
+
+ 58%|█████▊    | 58/100 [01:32&amp;lt;01:03,  1.51s/it]
+ 59%|█████▉    | 59/100 [01:34&amp;lt;00:59,  1.46s/it]
+                                                
+{&#39;loss&#39;: 0.727, &#39;grad_norm&#39;: 0.14157968759536743, &#39;learning_rate&#39;: 1.9106026612264316e-05, &#39;num_tokens&#39;: 729966.0, &#39;mean_token_accuracy&#39;: 0.8482123836874962, &#39;epoch&#39;: 2.36}
+
+ 59%|█████▉    | 59/100 [01:34&amp;lt;00:59,  1.46s/it]
+ 60%|██████    | 60/100 [01:35&amp;lt;00:56,  1.41s/it]
+                                                
+{&#39;loss&#39;: 0.7415, &#39;grad_norm&#39;: 0.12936082482337952, &#39;learning_rate&#39;: 1.8338154657749128e-05, &#39;num_tokens&#39;: 742278.0, &#39;mean_token_accuracy&#39;: 0.8452928811311722, &#39;epoch&#39;: 2.4}
+
+ 60%|██████    | 60/100 [01:35&amp;lt;00:56,  1.41s/it]
+ 61%|██████    | 61/100 [01:36&amp;lt;00:53,  1.37s/it]
+                                                
+{&#39;loss&#39;: 0.7487, &#39;grad_norm&#39;: 0.12007677555084229, &#39;learning_rate&#39;: 1.7576990616793137e-05, &#39;num_tokens&#39;: 754708.0, &#39;mean_token_accuracy&#39;: 0.8431602641940117, &#39;epoch&#39;: 2.44}
+
+ 61%|██████    | 61/100 [01:36&amp;lt;00:53,  1.37s/it]
+ 62%|██████▏   | 62/100 [01:37&amp;lt;00:51,  1.34s/it]
+                                                
+{&#39;loss&#39;: 0.7237, &#39;grad_norm&#39;: 0.12370007485151291, &#39;learning_rate&#39;: 1.682330091706446e-05, &#39;num_tokens&#39;: 767047.0, &#39;mean_token_accuracy&#39;: 0.8453052863478661, &#39;epoch&#39;: 2.48}
+
+ 62%|██████▏   | 62/100 [01:37&amp;lt;00:51,  1.34s/it]
+ 63%|██████▎   | 63/100 [01:39&amp;lt;00:49,  1.33s/it]
+                                                
+{&#39;loss&#39;: 0.7118, &#39;grad_norm&#39;: 0.11554520577192307, &#39;learning_rate&#39;: 1.6077844460203206e-05, &#39;num_tokens&#39;: 779363.0, &#39;mean_token_accuracy&#39;: 0.8485653474926949, &#39;epoch&#39;: 2.52}
+
+ 63%|██████▎   | 63/100 [01:39&amp;lt;00:49,  1.33s/it]
+ 64%|██████▍   | 64/100 [01:40&amp;lt;00:47,  1.32s/it]
+                                                
+{&#39;loss&#39;: 0.7284, &#39;grad_norm&#39;: 0.12923835217952728, &#39;learning_rate&#39;: 1.5341371857671782e-05, &#39;num_tokens&#39;: 791688.0, &#39;mean_token_accuracy&#39;: 0.8447374626994133, &#39;epoch&#39;: 2.56}
+
+ 64%|██████▍   | 64/100 [01:40&amp;lt;00:47,  1.32s/it]
+ 65%|██████▌   | 65/100 [01:41&amp;lt;00:45,  1.31s/it]
+                                                
+{&#39;loss&#39;: 0.7302, &#39;grad_norm&#39;: 0.11769213527441025, &#39;learning_rate&#39;: 1.4614624674952842e-05, &#39;num_tokens&#39;: 804034.0, &#39;mean_token_accuracy&#39;: 0.8439726531505585, &#39;epoch&#39;: 2.6}
+
+ 65%|██████▌   | 65/100 [01:41&amp;lt;00:45,  1.31s/it]
+ 66%|██████▌   | 66/100 [01:43&amp;lt;00:44,  1.30s/it]
+                                                
+{&#39;loss&#39;: 0.7408, &#39;grad_norm&#39;: 0.12309098243713379, &#39;learning_rate&#39;: 1.3898334684855647e-05, &#39;num_tokens&#39;: 816457.0, &#39;mean_token_accuracy&#39;: 0.8421422615647316, &#39;epoch&#39;: 2.64}
+
+ 66%|██████▌   | 66/100 [01:43&amp;lt;00:44,  1.30s/it]
+ 67%|██████▋   | 67/100 [01:44&amp;lt;00:42,  1.29s/it]
+                                                
+{&#39;loss&#39;: 0.7206, &#39;grad_norm&#39;: 0.11818303912878036, &#39;learning_rate&#39;: 1.3193223130682936e-05, &#39;num_tokens&#39;: 828875.0, &#39;mean_token_accuracy&#39;: 0.8433116152882576, &#39;epoch&#39;: 2.68}
+
+ 67%|██████▋   | 67/100 [01:44&amp;lt;00:42,  1.29s/it]
+ 68%|██████▊   | 68/100 [01:45&amp;lt;00:41,  1.29s/it]
+                                                
+{&#39;loss&#39;: 0.7203, &#39;grad_norm&#39;: 0.10981553792953491, &#39;learning_rate&#39;: 1.2500000000000006e-05, &#39;num_tokens&#39;: 841193.0, &#39;mean_token_accuracy&#39;: 0.8448885753750801, &#39;epoch&#39;: 2.72}
+
+ 68%|██████▊   | 68/100 [01:45&amp;lt;00:41,  1.29s/it]
+ 69%|██████▉   | 69/100 [01:46&amp;lt;00:39,  1.29s/it]
+                                                
+{&#39;loss&#39;: 0.7169, &#39;grad_norm&#39;: 0.11943168938159943, &#39;learning_rate&#39;: 1.181936330973744e-05, &#39;num_tokens&#39;: 853487.0, &#39;mean_token_accuracy&#39;: 0.8476847633719444, &#39;epoch&#39;: 2.76}
+
+ 69%|██████▉   | 69/100 [01:46&amp;lt;00:39,  1.29s/it]
+ 70%|███████   | 70/100 [01:48&amp;lt;00:38,  1.29s/it]
+                                                
+{&#39;loss&#39;: 0.7179, &#39;grad_norm&#39;: 0.10694629698991776, &#39;learning_rate&#39;: 1.1151998403347244e-05, &#39;num_tokens&#39;: 865933.0, &#39;mean_token_accuracy&#39;: 0.8449734374880791, &#39;epoch&#39;: 2.8}
+
+ 70%|███████   | 70/100 [01:48&amp;lt;00:38,  1.29s/it]
+ 71%|███████   | 71/100 [01:49&amp;lt;00:37,  1.29s/it]
+                                                
+{&#39;loss&#39;: 0.7184, &#39;grad_norm&#39;: 0.11949411779642105, &#39;learning_rate&#39;: 1.049857726072005e-05, &#39;num_tokens&#39;: 878273.0, &#39;mean_token_accuracy&#39;: 0.8473017513751984, &#39;epoch&#39;: 2.84}
+
+ 71%|███████   | 71/100 [01:49&amp;lt;00:37,  1.29s/it]
+ 72%|███████▏  | 72/100 [01:50&amp;lt;00:36,  1.29s/it]
+                                                
+{&#39;loss&#39;: 0.7053, &#39;grad_norm&#39;: 0.10539913177490234, &#39;learning_rate&#39;: 9.859757821558337e-06, &#39;num_tokens&#39;: 890669.0, &#39;mean_token_accuracy&#39;: 0.8475821688771248, &#39;epoch&#39;: 2.88}
+
+ 72%|███████▏  | 72/100 [01:50&amp;lt;00:36,  1.29s/it]
+ 73%|███████▎  | 73/100 [01:52&amp;lt;00:35,  1.30s/it]
+                                                
+{&#39;loss&#39;: 0.7228, &#39;grad_norm&#39;: 0.11216222494840622, &#39;learning_rate&#39;: 9.236183322886945e-06, &#39;num_tokens&#39;: 903150.0, &#39;mean_token_accuracy&#39;: 0.8438336625695229, &#39;epoch&#39;: 2.92}
+
+ 73%|███████▎  | 73/100 [01:52&amp;lt;00:35,  1.30s/it]
+ 74%|███████▍  | 74/100 [01:53&amp;lt;00:33,  1.30s/it]
+                                                
+{&#39;loss&#39;: 0.7107, &#39;grad_norm&#39;: 0.11380290240049362, &#39;learning_rate&#39;: 8.628481651367876e-06, &#39;num_tokens&#39;: 915529.0, &#39;mean_token_accuracy&#39;: 0.8479492291808128, &#39;epoch&#39;: 2.96}
+
+ 74%|███████▍  | 74/100 [01:53&amp;lt;00:33,  1.30s/it]
+ 75%|███████▌  | 75/100 [01:54&amp;lt;00:32,  1.29s/it]
+                                                
+{&#39;loss&#39;: 0.7052, &#39;grad_norm&#39;: 0.10310018062591553, &#39;learning_rate&#39;: 8.0372647110717e-06, &#39;num_tokens&#39;: 927846.0, &#39;mean_token_accuracy&#39;: 0.845212772488594, &#39;epoch&#39;: 3.0}
+
+ 75%|███████▌  | 75/100 [01:54&amp;lt;00:32,  1.29s/it]
+
+  0%|          | 0/200 [00:00&amp;lt;?, ?it/s][A
+
+  2%|▏         | 4/200 [00:00&amp;lt;00:06, 30.59it/s][A
+
+  4%|▍         | 8/200 [00:00&amp;lt;00:07, 25.65it/s][A
+
+  6%|▌         | 11/200 [00:00&amp;lt;00:07, 24.67it/s][A
+
+  7%|▋         | 14/200 [00:00&amp;lt;00:07, 23.95it/s][A
+
+  8%|▊         | 17/200 [00:00&amp;lt;00:07, 23.62it/s][A
+
+ 10%|█         | 20/200 [00:00&amp;lt;00:07, 23.33it/s][A
+
+ 12%|█▏        | 23/200 [00:00&amp;lt;00:07, 22.97it/s][A
+
+ 13%|█▎        | 26/200 [00:01&amp;lt;00:07, 23.07it/s][A
+
+ 14%|█▍        | 29/200 [00:01&amp;lt;00:07, 23.05it/s][A
+
+ 16%|█▌        | 32/200 [00:01&amp;lt;00:07, 22.93it/s][A
+
+ 18%|█▊        | 35/200 [00:01&amp;lt;00:07, 22.83it/s][A
+
+ 19%|█▉        | 38/200 [00:01&amp;lt;00:07, 22.76it/s][A
+
+ 20%|██        | 41/200 [00:01&amp;lt;00:06, 22.81it/s][A
+
+ 22%|██▏       | 44/200 [00:01&amp;lt;00:06, 22.87it/s][A
+
+ 24%|██▎       | 47/200 [00:02&amp;lt;00:06, 22.82it/s][A
+
+ 25%|██▌       | 50/200 [00:02&amp;lt;00:06, 22.77it/s][A
+
+ 26%|██▋       | 53/200 [00:02&amp;lt;00:06, 22.79it/s][A
+
+ 28%|██▊       | 56/200 [00:02&amp;lt;00:06, 22.78it/s][A
+
+ 30%|██▉       | 59/200 [00:02&amp;lt;00:06, 22.74it/s][A
+
+ 31%|███       | 62/200 [00:02&amp;lt;00:06, 22.79it/s][A
+
+ 32%|███▎      | 65/200 [00:02&amp;lt;00:05, 22.86it/s][A
+
+ 34%|███▍      | 68/200 [00:02&amp;lt;00:05, 22.73it/s][A
+
+ 36%|███▌      | 71/200 [00:03&amp;lt;00:05, 22.83it/s][A
+
+ 37%|███▋      | 74/200 [00:03&amp;lt;00:05, 22.90it/s][A
+
+ 38%|███▊      | 77/200 [00:03&amp;lt;00:05, 22.82it/s][A
+
+ 40%|████      | 80/200 [00:03&amp;lt;00:05, 22.77it/s][A
+
+ 42%|████▏     | 83/200 [00:03&amp;lt;00:05, 22.86it/s][A
+
+ 43%|████▎     | 86/200 [00:03&amp;lt;00:05, 22.79it/s][A
+
+ 44%|████▍     | 89/200 [00:03&amp;lt;00:04, 22.90it/s][A
+
+ 46%|████▌     | 92/200 [00:03&amp;lt;00:04, 22.90it/s][A
+
+ 48%|████▊     | 95/200 [00:04&amp;lt;00:04, 22.89it/s][A
+
+ 49%|████▉     | 98/200 [00:04&amp;lt;00:04, 22.88it/s][A
+
+ 50%|█████     | 101/200 [00:04&amp;lt;00:04, 22.77it/s][A
+
+ 52%|█████▏    | 104/200 [00:04&amp;lt;00:04, 22.60it/s][A
+
+ 54%|█████▎    | 107/200 [00:04&amp;lt;00:04, 22.73it/s][A
+
+ 55%|█████▌    | 110/200 [00:04&amp;lt;00:03, 22.70it/s][A
+
+ 56%|█████▋    | 113/200 [00:04&amp;lt;00:03, 22.60it/s][A
+
+ 58%|█████▊    | 116/200 [00:05&amp;lt;00:03, 22.71it/s][A
+
+ 60%|█████▉    | 119/200 [00:05&amp;lt;00:03, 22.80it/s][A
+
+ 61%|██████    | 122/200 [00:05&amp;lt;00:03, 22.85it/s][A
+
+ 62%|██████▎   | 125/200 [00:05&amp;lt;00:03, 22.69it/s][A
+
+ 64%|██████▍   | 128/200 [00:05&amp;lt;00:03, 22.70it/s][A
+
+ 66%|██████▌   | 131/200 [00:05&amp;lt;00:03, 22.67it/s][A
+
+ 67%|██████▋   | 134/200 [00:05&amp;lt;00:02, 22.71it/s][A
+
+ 68%|██████▊   | 137/200 [00:05&amp;lt;00:02, 22.70it/s][A
+
+ 70%|███████   | 140/200 [00:06&amp;lt;00:02, 22.82it/s][A
+
+ 72%|███████▏  | 143/200 [00:06&amp;lt;00:02, 22.81it/s][A
+
+ 73%|███████▎  | 146/200 [00:06&amp;lt;00:02, 22.77it/s][A
+
+ 74%|███████▍  | 149/200 [00:06&amp;lt;00:02, 22.72it/s][A
+
+ 76%|███████▌  | 152/200 [00:06&amp;lt;00:02, 22.81it/s][A
+
+ 78%|███████▊  | 155/200 [00:06&amp;lt;00:01, 22.78it/s][A
+
+ 79%|███████▉  | 158/200 [00:06&amp;lt;00:01, 22.90it/s][A
+
+ 80%|████████  | 161/200 [00:07&amp;lt;00:01, 22.97it/s][A
+
+ 82%|████████▏ | 164/200 [00:07&amp;lt;00:01, 22.87it/s][A
+
+ 84%|████████▎ | 167/200 [00:07&amp;lt;00:01, 22.95it/s][A
+
+ 85%|████████▌ | 170/200 [00:07&amp;lt;00:01, 22.91it/s][A
+
+ 86%|████████▋ | 173/200 [00:07&amp;lt;00:01, 22.74it/s][A
+
+ 88%|████████▊ | 176/200 [00:07&amp;lt;00:01, 22.83it/s][A
+
+ 90%|████████▉ | 179/200 [00:07&amp;lt;00:00, 22.76it/s][A
+
+ 91%|█████████ | 182/200 [00:07&amp;lt;00:00, 22.81it/s][A
+
+ 92%|█████████▎| 185/200 [00:08&amp;lt;00:00, 22.74it/s][A
+
+ 94%|█████████▍| 188/200 [00:08&amp;lt;00:00, 22.59it/s][A
+
+ 96%|█████████▌| 191/200 [00:08&amp;lt;00:00, 22.65it/s][A
+
+ 97%|█████████▋| 194/200 [00:08&amp;lt;00:00, 22.66it/s][A
+
+ 98%|█████████▊| 197/200 [00:08&amp;lt;00:00, 22.54it/s][A
+
+100%|██████████| 200/200 [00:08&amp;lt;00:00, 22.75it/s][A
+                                                
+
+                                                 
+[A{&#39;eval_loss&#39;: 0.7123968601226807, &#39;eval_runtime&#39;: 8.7811, &#39;eval_samples_per_second&#39;: 182.209, &#39;eval_steps_per_second&#39;: 22.776, &#39;eval_num_tokens&#39;: 927846.0, &#39;eval_mean_token_accuracy&#39;: 0.84687136054039, &#39;epoch&#39;: 3.0}
+
+ 75%|███████▌  | 75/100 [02:03&amp;lt;00:32,  1.29s/it]
+
+100%|██████████| 200/200 [00:08&amp;lt;00:00, 22.75it/s][A
+
+                                                 [A
+ 76%|███████▌  | 76/100 [02:04&amp;lt;01:34,  3.93s/it]
+                                                
+{&#39;loss&#39;: 0.7017, &#39;grad_norm&#39;: 0.11179792135953903, &#39;learning_rate&#39;: 7.463127807341966e-06, &#39;num_tokens&#39;: 940209.0, &#39;mean_token_accuracy&#39;: 0.8499162197113037, &#39;epoch&#39;: 3.04}
+
+ 76%|███████▌  | 76/100 [02:04&amp;lt;01:34,  3.93s/it]
+ 77%|███████▋  | 77/100 [02:06&amp;lt;01:12,  3.14s/it]
+                                                
+{&#39;loss&#39;: 0.705, &#39;grad_norm&#39;: 0.10462603718042374, &#39;learning_rate&#39;: 6.906649047373246e-06, &#39;num_tokens&#39;: 952553.0, &#39;mean_token_accuracy&#39;: 0.8468690812587738, &#39;epoch&#39;: 3.08}
+
+ 77%|███████▋  | 77/100 [02:06&amp;lt;01:12,  3.14s/it]
+ 78%|███████▊  | 78/100 [02:07&amp;lt;00:56,  2.58s/it]
+                                                
+{&#39;loss&#39;: 0.7063, &#39;grad_norm&#39;: 0.10219854861497879, &#39;learning_rate&#39;: 6.368388758106133e-06, &#39;num_tokens&#39;: 964949.0, &#39;mean_token_accuracy&#39;: 0.8474109619855881, &#39;epoch&#39;: 3.12}
+
+ 78%|███████▊  | 78/100 [02:07&amp;lt;00:56,  2.58s/it]
+ 79%|███████▉  | 79/100 [02:08&amp;lt;00:46,  2.20s/it]
+                                                
+{&#39;loss&#39;: 0.7133, &#39;grad_norm&#39;: 0.10548188537359238, &#39;learning_rate&#39;: 5.848888922025553e-06, &#39;num_tokens&#39;: 977387.0, &#39;mean_token_accuracy&#39;: 0.846750982105732, &#39;epoch&#39;: 3.16}
+
+ 79%|███████▉  | 79/100 [02:08&amp;lt;00:46,  2.20s/it]
+ 80%|████████  | 80/100 [02:09&amp;lt;00:38,  1.92s/it]
+                                                
+{&#39;loss&#39;: 0.7017, &#39;grad_norm&#39;: 0.11375600844621658, &#39;learning_rate&#39;: 5.348672631430318e-06, &#39;num_tokens&#39;: 989763.0, &#39;mean_token_accuracy&#39;: 0.84575305134058, &#39;epoch&#39;: 3.2}
+
+ 80%|████████  | 80/100 [02:09&amp;lt;00:38,  1.92s/it]
+ 81%|████████  | 81/100 [02:11&amp;lt;00:32,  1.73s/it]
+                                                
+{&#39;loss&#39;: 0.7071, &#39;grad_norm&#39;: 0.10798640549182892, &#39;learning_rate&#39;: 4.868243561723535e-06, &#39;num_tokens&#39;: 1002130.0, &#39;mean_token_accuracy&#39;: 0.8462942466139793, &#39;epoch&#39;: 3.24}
+
+ 81%|████████  | 81/100 [02:11&amp;lt;00:32,  1.73s/it]
+ 82%|████████▏ | 82/100 [02:12&amp;lt;00:28,  1.60s/it]
+                                                
+{&#39;loss&#39;: 0.6985, &#39;grad_norm&#39;: 0.1166706532239914, &#39;learning_rate&#39;: 4.408085464254183e-06, &#39;num_tokens&#39;: 1014499.0, &#39;mean_token_accuracy&#39;: 0.8511309772729874, &#39;epoch&#39;: 3.28}
+
+ 82%|████████▏ | 82/100 [02:12&amp;lt;00:28,  1.60s/it]
+ 83%|████████▎ | 83/100 [02:13&amp;lt;00:25,  1.50s/it]
+                                                
+{&#39;loss&#39;: 0.7077, &#39;grad_norm&#39;: 0.09920177608728409, &#39;learning_rate&#39;: 3.968661679220468e-06, &#39;num_tokens&#39;: 1026907.0, &#39;mean_token_accuracy&#39;: 0.846180722117424, &#39;epoch&#39;: 3.32}
+
+ 83%|████████▎ | 83/100 [02:13&amp;lt;00:25,  1.50s/it]
+ 84%|████████▍ | 84/100 [02:15&amp;lt;00:22,  1.43s/it]
+                                                
+{&#39;loss&#39;: 0.6979, &#39;grad_norm&#39;: 0.10761214792728424, &#39;learning_rate&#39;: 3.5504146691255736e-06, &#39;num_tokens&#39;: 1039315.0, &#39;mean_token_accuracy&#39;: 0.8476870656013489, &#39;epoch&#39;: 3.36}
+
+ 84%|████████▍ | 84/100 [02:15&amp;lt;00:22,  1.43s/it]
+ 85%|████████▌ | 85/100 [02:16&amp;lt;00:20,  1.38s/it]
+                                                
+{&#39;loss&#39;: 0.7012, &#39;grad_norm&#39;: 0.09792429208755493, &#39;learning_rate&#39;: 3.1537655732553768e-06, &#39;num_tokens&#39;: 1051706.0, &#39;mean_token_accuracy&#39;: 0.8467400893568993, &#39;epoch&#39;: 3.4}
+
+ 85%|████████▌ | 85/100 [02:16&amp;lt;00:20,  1.38s/it]
+ 86%|████████▌ | 86/100 [02:17&amp;lt;00:19,  1.36s/it]
+                                                
+{&#39;loss&#39;: 0.6794, &#39;grad_norm&#39;: 0.10248725116252899, &#39;learning_rate&#39;: 2.779113783626916e-06, &#39;num_tokens&#39;: 1063972.0, &#39;mean_token_accuracy&#39;: 0.8509822189807892, &#39;epoch&#39;: 3.44}
+
+ 86%|████████▌ | 86/100 [02:17&amp;lt;00:19,  1.36s/it]
+ 87%|████████▋ | 87/100 [02:18&amp;lt;00:17,  1.34s/it]
+                                                
+{&#39;loss&#39;: 0.7087, &#39;grad_norm&#39;: 0.10411231964826584, &#39;learning_rate&#39;: 2.4268365428344736e-06, &#39;num_tokens&#39;: 1076372.0, &#39;mean_token_accuracy&#39;: 0.8476828411221504, &#39;epoch&#39;: 3.48}
+
+ 87%|████████▋ | 87/100 [02:18&amp;lt;00:17,  1.34s/it]
+ 88%|████████▊ | 88/100 [02:20&amp;lt;00:15,  1.32s/it]
+                                                
+{&#39;loss&#39;: 0.695, &#39;grad_norm&#39;: 0.09845604747533798, &#39;learning_rate&#39;: 2.09728856419826e-06, &#39;num_tokens&#39;: 1088667.0, &#39;mean_token_accuracy&#39;: 0.8476302772760391, &#39;epoch&#39;: 3.52}
+
+ 88%|████████▊ | 88/100 [02:20&amp;lt;00:15,  1.32s/it]
+ 89%|████████▉ | 89/100 [02:21&amp;lt;00:14,  1.31s/it]
+                                                
+{&#39;loss&#39;: 0.6951, &#39;grad_norm&#39;: 0.10748502612113953, &#39;learning_rate&#39;: 1.790801674598186e-06, &#39;num_tokens&#39;: 1101068.0, &#39;mean_token_accuracy&#39;: 0.8479525744915009, &#39;epoch&#39;: 3.56}
+
+ 89%|████████▉ | 89/100 [02:21&amp;lt;00:14,  1.31s/it]
+ 90%|█████████ | 90/100 [02:22&amp;lt;00:13,  1.30s/it]
+                                                
+{&#39;loss&#39;: 0.6911, &#39;grad_norm&#39;: 0.10413651913404465, &#39;learning_rate&#39;: 1.5076844803522922e-06, &#39;num_tokens&#39;: 1113361.0, &#39;mean_token_accuracy&#39;: 0.8491488546133041, &#39;epoch&#39;: 3.6}
+
+ 90%|█████████ | 90/100 [02:22&amp;lt;00:13,  1.30s/it]
+ 91%|█████████ | 91/100 [02:24&amp;lt;00:11,  1.30s/it]
+                                                
+{&#39;loss&#39;: 0.7179, &#39;grad_norm&#39;: 0.10528236627578735, &#39;learning_rate&#39;: 1.248222056476367e-06, &#39;num_tokens&#39;: 1125801.0, &#39;mean_token_accuracy&#39;: 0.845989890396595, &#39;epoch&#39;: 3.64}
+
+ 91%|█████████ | 91/100 [02:24&amp;lt;00:11,  1.30s/it]
+ 92%|█████████▏| 92/100 [02:25&amp;lt;00:10,  1.30s/it]
+                                                
+{&#39;loss&#39;: 0.7221, &#39;grad_norm&#39;: 0.09716542065143585, &#39;learning_rate&#39;: 1.0126756596375686e-06, &#39;num_tokens&#39;: 1138163.0, &#39;mean_token_accuracy&#39;: 0.8444727882742882, &#39;epoch&#39;: 3.68}
+
+ 92%|█████████▏| 92/100 [02:25&amp;lt;00:10,  1.30s/it]
+ 93%|█████████▎| 93/100 [02:26&amp;lt;00:09,  1.29s/it]
+                                                
+{&#39;loss&#39;: 0.6987, &#39;grad_norm&#39;: 0.1005888283252716, &#39;learning_rate&#39;: 8.012824650910938e-07, &#39;num_tokens&#39;: 1150607.0, &#39;mean_token_accuracy&#39;: 0.8478176221251488, &#39;epoch&#39;: 3.72}
+
+ 93%|█████████▎| 93/100 [02:26&amp;lt;00:09,  1.29s/it]
+ 94%|█████████▍| 94/100 [02:27&amp;lt;00:07,  1.29s/it]
+                                                
+{&#39;loss&#39;: 0.7198, &#39;grad_norm&#39;: 0.09514491260051727, &#39;learning_rate&#39;: 6.142553278648239e-07, &#39;num_tokens&#39;: 1162963.0, &#39;mean_token_accuracy&#39;: 0.8451517522335052, &#39;epoch&#39;: 3.76}
+
+ 94%|█████████▍| 94/100 [02:27&amp;lt;00:07,  1.29s/it]
+ 95%|█████████▌| 95/100 [02:29&amp;lt;00:06,  1.29s/it]
+                                                
+{&#39;loss&#39;: 0.704, &#39;grad_norm&#39;: 0.10339541733264923, &#39;learning_rate&#39;: 4.517825684323324e-07, &#39;num_tokens&#39;: 1175339.0, &#39;mean_token_accuracy&#39;: 0.8451466336846352, &#39;epoch&#39;: 3.8}
+
+ 95%|█████████▌| 95/100 [02:29&amp;lt;00:06,  1.29s/it]
+ 96%|█████████▌| 96/100 [02:30&amp;lt;00:05,  1.29s/it]
+                                                
+{&#39;loss&#39;: 0.7149, &#39;grad_norm&#39;: 0.10203055292367935, &#39;learning_rate&#39;: 3.140277830901428e-07, &#39;num_tokens&#39;: 1187665.0, &#39;mean_token_accuracy&#39;: 0.8476828783750534, &#39;epoch&#39;: 3.84}
+
+ 96%|█████████▌| 96/100 [02:30&amp;lt;00:05,  1.29s/it]
+ 97%|█████████▋| 97/100 [02:31&amp;lt;00:03,  1.29s/it]
+                                                
+{&#39;loss&#39;: 0.7048, &#39;grad_norm&#39;: 0.0932934507727623, &#39;learning_rate&#39;: 2.011296792301165e-07, &#39;num_tokens&#39;: 1200128.0, &#39;mean_token_accuracy&#39;: 0.8435055613517761, &#39;epoch&#39;: 3.88}
+
+ 97%|█████████▋| 97/100 [02:31&amp;lt;00:03,  1.29s/it]
+ 98%|█████████▊| 98/100 [02:33&amp;lt;00:02,  1.29s/it]
+                                                
+{&#39;loss&#39;: 0.703, &#39;grad_norm&#39;: 0.10292600840330124, &#39;learning_rate&#39;: 1.1320193567288529e-07, &#39;num_tokens&#39;: 1212457.0, &#39;mean_token_accuracy&#39;: 0.8458232879638672, &#39;epoch&#39;: 3.92}
+
+ 98%|█████████▊| 98/100 [02:33&amp;lt;00:02,  1.29s/it]
+ 99%|█████████▉| 99/100 [02:34&amp;lt;00:01,  1.29s/it]
+                                                
+{&#39;loss&#39;: 0.6991, &#39;grad_norm&#39;: 0.10709496587514877, &#39;learning_rate&#39;: 5.033308820289184e-08, &#39;num_tokens&#39;: 1224822.0, &#39;mean_token_accuracy&#39;: 0.8467075452208519, &#39;epoch&#39;: 3.96}
+
+ 99%|█████████▉| 99/100 [02:34&amp;lt;00:01,  1.29s/it]
+100%|██████████| 100/100 [02:35&amp;lt;00:00,  1.29s/it]
+                                                 
+{&#39;loss&#39;: 0.6888, &#39;grad_norm&#39;: 0.12091183662414551, &#39;learning_rate&#39;: 1.2586440420372936e-08, &#39;num_tokens&#39;: 1237128.0, &#39;mean_token_accuracy&#39;: 0.8510910719633102, &#39;epoch&#39;: 4.0}
+
+100%|██████████| 100/100 [02:35&amp;lt;00:00,  1.29s/it]
+
+  0%|          | 0/200 [00:00&amp;lt;?, ?it/s][A
+
+  2%|▏         | 4/200 [00:00&amp;lt;00:06, 30.62it/s][A
+
+  4%|▍         | 8/200 [00:00&amp;lt;00:07, 25.67it/s][A
+
+  6%|▌         | 11/200 [00:00&amp;lt;00:07, 24.69it/s][A
+
+  7%|▋         | 14/200 [00:00&amp;lt;00:07, 23.97it/s][A
+
+  8%|▊         | 17/200 [00:00&amp;lt;00:07, 23.64it/s][A
+
+ 10%|█         | 20/200 [00:00&amp;lt;00:07, 23.36it/s][A
+
+ 12%|█▏        | 23/200 [00:00&amp;lt;00:07, 23.00it/s][A
+
+ 13%|█▎        | 26/200 [00:01&amp;lt;00:07, 23.09it/s][A
+
+ 14%|█▍        | 29/200 [00:01&amp;lt;00:07, 23.08it/s][A
+
+ 16%|█▌        | 32/200 [00:01&amp;lt;00:07, 22.95it/s][A
+
+ 18%|█▊        | 35/200 [00:01&amp;lt;00:07, 22.86it/s][A
+
+ 19%|█▉        | 38/200 [00:01&amp;lt;00:07, 22.82it/s][A
+
+ 20%|██        | 41/200 [00:01&amp;lt;00:06, 22.87it/s][A
+
+ 22%|██▏       | 44/200 [00:01&amp;lt;00:06, 22.90it/s][A
+
+ 24%|██▎       | 47/200 [00:02&amp;lt;00:06, 22.83it/s][A
+
+ 25%|██▌       | 50/200 [00:02&amp;lt;00:06, 22.77it/s][A
+
+ 26%|██▋       | 53/200 [00:02&amp;lt;00:06, 22.84it/s][A
+
+ 28%|██▊       | 56/200 [00:02&amp;lt;00:06, 22.83it/s][A
+
+ 30%|██▉       | 59/200 [00:02&amp;lt;00:06, 22.82it/s][A
+
+ 31%|███       | 62/200 [00:02&amp;lt;00:06, 22.88it/s][A
+
+ 32%|███▎      | 65/200 [00:02&amp;lt;00:05, 22.94it/s][A
+
+ 34%|███▍      | 68/200 [00:02&amp;lt;00:05, 22.79it/s][A
+
+ 36%|███▌      | 71/200 [00:03&amp;lt;00:05, 22.88it/s][A
+
+ 37%|███▋      | 74/200 [00:03&amp;lt;00:05, 22.94it/s][A
+
+ 38%|███▊      | 77/200 [00:03&amp;lt;00:05, 22.87it/s][A
+
+ 40%|████      | 80/200 [00:03&amp;lt;00:05, 22.82it/s][A
+
+ 42%|████▏     | 83/200 [00:03&amp;lt;00:05, 22.89it/s][A
+
+ 43%|████▎     | 86/200 [00:03&amp;lt;00:04, 22.82it/s][A
+
+ 44%|████▍     | 89/200 [00:03&amp;lt;00:04, 22.93it/s][A
+
+ 46%|████▌     | 92/200 [00:03&amp;lt;00:04, 22.95it/s][A
+
+ 48%|████▊     | 95/200 [00:04&amp;lt;00:04, 22.96it/s][A
+
+ 49%|████▉     | 98/200 [00:04&amp;lt;00:04, 23.02it/s][A
+
+ 50%|█████     | 101/200 [00:04&amp;lt;00:04, 22.89it/s][A
+
+ 52%|█████▏    | 104/200 [00:04&amp;lt;00:04, 22.70it/s][A
+
+ 54%|█████▎    | 107/200 [00:04&amp;lt;00:04, 22.79it/s][A
+
+ 55%|█████▌    | 110/200 [00:04&amp;lt;00:03, 22.76it/s][A
+
+ 56%|█████▋    | 113/200 [00:04&amp;lt;00:03, 22.65it/s][A
+
+ 58%|█████▊    | 116/200 [00:05&amp;lt;00:03, 22.78it/s][A
+
+ 60%|█████▉    | 119/200 [00:05&amp;lt;00:03, 22.87it/s][A
+
+ 61%|██████    | 122/200 [00:05&amp;lt;00:03, 22.90it/s][A
+
+ 62%|██████▎   | 125/200 [00:05&amp;lt;00:03, 22.76it/s][A
+
+ 64%|██████▍   | 128/200 [00:05&amp;lt;00:03, 22.76it/s][A
+
+ 66%|██████▌   | 131/200 [00:05&amp;lt;00:03, 22.69it/s][A
+
+ 67%|██████▋   | 134/200 [00:05&amp;lt;00:02, 22.72it/s][A
+
+ 68%|██████▊   | 137/200 [00:05&amp;lt;00:02, 22.71it/s][A
+
+ 70%|███████   | 140/200 [00:06&amp;lt;00:02, 22.84it/s][A
+
+ 72%|███████▏  | 143/200 [00:06&amp;lt;00:02, 22.87it/s][A
+
+ 73%|███████▎  | 146/200 [00:06&amp;lt;00:02, 22.80it/s][A
+
+ 74%|███████▍  | 149/200 [00:06&amp;lt;00:02, 22.76it/s][A
+
+ 76%|███████▌  | 152/200 [00:06&amp;lt;00:02, 22.84it/s][A
+
+ 78%|███████▊  | 155/200 [00:06&amp;lt;00:01, 22.80it/s][A
+
+ 79%|███████▉  | 158/200 [00:06&amp;lt;00:01, 22.91it/s][A
+
+ 80%|████████  | 161/200 [00:07&amp;lt;00:01, 22.98it/s][A
+
+ 82%|████████▏ | 164/200 [00:07&amp;lt;00:01, 22.90it/s][A
+
+ 84%|████████▎ | 167/200 [00:07&amp;lt;00:01, 22.95it/s][A
+
+ 85%|████████▌ | 170/200 [00:07&amp;lt;00:01, 22.92it/s][A
+
+ 86%|████████▋ | 173/200 [00:07&amp;lt;00:01, 22.75it/s][A
+
+ 88%|████████▊ | 176/200 [00:07&amp;lt;00:01, 22.84it/s][A
+
+ 90%|████████▉ | 179/200 [00:07&amp;lt;00:00, 22.77it/s][A
+
+ 91%|█████████ | 182/200 [00:07&amp;lt;00:00, 22.84it/s][A
+
+ 92%|█████████▎| 185/200 [00:08&amp;lt;00:00, 22.79it/s][A
+
+ 94%|█████████▍| 188/200 [00:08&amp;lt;00:00, 22.62it/s][A
+
+ 96%|█████████▌| 191/200 [00:08&amp;lt;00:00, 22.68it/s][A
+
+ 97%|█████████▋| 194/200 [00:08&amp;lt;00:00, 22.69it/s][A
+
+ 98%|█████████▊| 197/200 [00:08&amp;lt;00:00, 22.57it/s][A
+
+100%|██████████| 200/200 [00:08&amp;lt;00:00, 22.79it/s][A
+                                                 
+
+                                                 
+[A{&#39;eval_loss&#39;: 0.7050034999847412, &#39;eval_runtime&#39;: 8.7663, &#39;eval_samples_per_second&#39;: 182.518, &#39;eval_steps_per_second&#39;: 22.815, &#39;eval_num_tokens&#39;: 1237128.0, &#39;eval_mean_token_accuracy&#39;: 0.8474910864233971, &#39;epoch&#39;: 4.0}
+
+100%|██████████| 100/100 [02:45&amp;lt;00:00,  1.29s/it]
+
+100%|██████████| 200/200 [00:08&amp;lt;00:00, 22.79it/s][A
+
+                                                 [A
+                                                 
+{&#39;train_runtime&#39;: 165.094, &#39;train_samples_per_second&#39;: 38.766, &#39;train_steps_per_second&#39;: 0.606, &#39;train_loss&#39;: 1.1633441585302353, &#39;epoch&#39;: 4.0}
+
+100%|██████████| 100/100 [02:45&amp;lt;00:00,  1.29s/it]
+100%|██████████| 100/100 [02:45&amp;lt;00:00,  1.65s/it]
+[rank0]:[W1116 21:41:58.014854057 ProcessGroupNCCL.cpp:1496] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+dlc1lm8dmxok7cfj-master-0:133:394 [0] NCCL INFO [Service thread] Connection closed by localRank 0
+dlc1lm8dmxok7cfj-master-0:133:454 [0] NCCL INFO comm 0x5603c0703fe0 rank 0 nranks 1 cudaDev 0 busId 30 - Abort COMPLETE
+2025/11/16 21:42:00 INFO: Covert command: [&#39;python&#39;, &#39;convert.py&#39;, &#39;--model_name&#39;, &#39;/tmp/input_model/&#39;, &#39;--model_type&#39;, &#39;qwen3&#39;, &#39;--output_dir&#39;, &#39;/tmp/model/&#39;, &#39;--adapter_dir&#39;, &#39;/tmp/adapter/&#39;]
+[2025-11-16 21:42:03,497] [INFO] [real_accelerator.py:239:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+2025/11/16 21:42:11 INFO: execute command: mkdir -p  /ml/output/model/adapter/
+2025/11/16 21:42:12 INFO: execute command succeed
+2025/11/16 21:42:12 INFO: execute command: cp -R /tmp/adapter/* /ml/output/model/adapter/
+2025/11/16 21:42:15 INFO: execute command succeed
+2025/11/16 21:42:15 INFO: execute command: cp -r /tmp/model/ /ml/output/
+2025/11/16 21:42:17 INFO: execute command succeed
+User program finished!
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;训练监控：
+&lt;img src=&#34;post/2025/images/2025-11-15-llm-0-to-1/IMG_20251116-222654776.png&#34; alt=&#34;图 14&#34; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;模型评测&#34;&gt;模型评测&lt;/h1&gt;
+
+&lt;h1 id=&#34;模型部署&#34;&gt;模型部署&lt;/h1&gt;
+
+&lt;h1 id=&#34;参考资料&#34;&gt;参考资料&lt;/h1&gt;
+
+&lt;p&gt;【01】&lt;a href=&#34;https://help.aliyun.com/zh/pai/getting-started/model-gallery-quick-start?spm=a2c4g.11186623.0.0.689d14a8kHCMo0#4c930eb6efvjf&#34;&gt;Model Gallery 快速入门&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
         
         <item>
             <title>大模型权重文件解析</title>
@@ -8553,154 +10215,6 @@ Commercial support is available at
 &lt;img src=&#34;post/2024/images/2024-01-15-kubeadm-install-k8s/IMG_20250116-220403508.png&#34; alt=&#34;picture 10&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;至此：kubeadm方式的k8s集群已经部署完成。&lt;/p&gt;
-</description>
-        </item>
-        
-        <item>
-            <title>如何安装使用newbing和chatgpt</title>
-            <link>http://mospany.github.io/2023/06/23/how-about-install-newbing-and-chatgpt/</link>
-            <pubDate>Fri, 23 Jun 2023 17:36:37 CST</pubDate>
-            <author>Mospan</author>
-            <guid>http://mospany.github.io/2023/06/23/how-about-install-newbing-and-chatgpt/</guid>
-            <description>
-
-&lt;p&gt;&lt;a id=&#34;org5c16ff5&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;简介&#34;&gt;简介&lt;/h1&gt;
-
-&lt;p&gt;chatgpt在2022年开始爆发，随着越来越多的人在使用，于是也打算尝试安装使用。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org53977af&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;chatgpt&#34;&gt;chatgpt&lt;/h2&gt;
-
-&lt;p&gt;ChatGPT是一种基于人工智能技术的聊天机器人，它可以与用户进行自然语言交互，回答用户的问题，提供有用的信息和建议，甚至玩一些有趣的游戏。ChatGPT是由OpenAI开发，使用了GPT（Generative Pre-trained Transformer）技术，这是一种具有强大生成能力的神经网络模型。ChatGPT通过学习海量的语言数据集来不断提高其对自然语言的理解能力，从而能够更好地理解和回答用户的问题。与其他聊天机器人相比，ChatGPT的对话流畅度和回答准确度都很高，因此备受用户欢迎。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org292f1ea&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;newbing&#34;&gt;newbing&lt;/h2&gt;
-
-&lt;p&gt;必应chat是微软旗下的聊天机器人服务，它是基于必应AI开发的一款智能对话系统。必应chat可以理解自然语言，能够回答用户的问题、提供服务、开玩笑等，使得用户可以与机器人进行自然的对话。必应chat的功能包括天气查询、地图导航、音乐播放、闲聊聊天、计算数学问题等，可帮助用户解决生活中的各种疑问和问题。必应chat还支持多种语言，包括英语、中文、西班牙语、法语、德语等。使用必应chat，您可以轻松地与机器人进行互动，获得便捷的服务和娱乐体验。&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org79da4ca&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;安装&#34;&gt;安装&lt;/h1&gt;
-
-&lt;p&gt;&lt;a id=&#34;org8197e6e&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;科学上网&#34;&gt;科学上网&lt;/h2&gt;
-
-&lt;p&gt;&lt;a id=&#34;org9014292&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;自由鲸&#34;&gt;自由鲸&lt;/h3&gt;
-
-&lt;p&gt;自由鲸 FreeWhale 是一家长期走中高端路线的 ShadowsocksR(SSR) 机场，也提供部分 V2Ray 线路，已经稳定运行多年。实际对比下来，它的性价比还是相当高的，线路又多，提供的流量也十分充足，主要推荐的套餐充分考虑了当前主流用户能够接受的价位，可以说是无可挑剔。&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;特点&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;封闭邀请机制&lt;/p&gt;
-
-&lt;p&gt;自由鲸 FreeWhale 需要邀请码才能注册成功，这样的注册机制一定程度确保了服务的稳定性。&lt;/p&gt;
-
-&lt;p&gt;如果需要邀请码，可以使用我的邀请码:&lt;/p&gt;
-
-&lt;p&gt;也可以直接点击我的邀请链接，进入注册。&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;套餐便宜&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/chatgpt/freewhale.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;使用&lt;/p&gt;
-
-&lt;p&gt;登录地址：&lt;a href=&#34;https://www.freewhale.world/auth/register?code=XXXX&#34;&gt;https://www.freewhale.world/auth/register?code=XXXX&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;选的是512G/360 天的套餐124元，相当于每月10元还算便宜。&lt;/p&gt;
-
-&lt;p&gt;购买成功后将出现一堆节点列表，在用户中心里将出现订阅地址用做vpn客户端的链接信息。&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;a id=&#34;org9d5fbb8&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;clash&#34;&gt;clash&lt;/h3&gt;
-
-&lt;p&gt;Clash是一款开源的多平台代理软件，支持 Windows、macOS、Linux、Android 等平台。Clash可以运行在本地并代理 HTTP、HTTPS、SOCKS5等协议，同时还支持 SS、V2Ray、Trojan 等协议，可以实现对于许多网站和应用的科学上网。Clash 的特点是支持多种协议，使用方便，功能强大，且更新频繁。Clash的开源代码托管在GitHub上，用户可以参与其开发和改进。&lt;/p&gt;
-
-&lt;p&gt;把freeWhale上面的订阅地址粘贴到clash的配置-&amp;gt;托管配置-&amp;gt;管理里， 配置名称写为xinjieCloud。&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/chatgpt/clash-face.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;使用科学上网时，查看 ip 地址可能显示在国内，以下是解决办法:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;一定挂全局模式 + 支持 OpenAI 的国家（目前中俄等国不支持，推荐北美、日本等国家）；&lt;/li&gt;
-&lt;li&gt;一定设置为系统代理 + 手动选择节点(DIRECT), 否则上不了外网。&lt;/li&gt;
-&lt;li&gt;上面步骤完成后依然不行的话，就清空浏览器缓存然后重启浏览器或者电脑；或者直接新开一个无痕模式的窗口。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a id=&#34;org208d97c&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;pchat&#34;&gt;Pchat&lt;/h2&gt;
-
-&lt;p&gt;Pchat 是一款可以免费、简单易用的聊天机器人，翻墙后可以使用，不用做任何配置。它包括Pchat free版、Pchat Pro高级版本。&lt;br /&gt;
-访问地址为：&lt;a href=&#34;https://www.promptboom.com&#34;&gt;https://www.promptboom.com&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://blog.mospan.cn/post/img/chatgpt/pchat.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Pchat Free，一个由PromptBoom和OpenAI合作开发的AI助手。&lt;/li&gt;
-&lt;li&gt;Pchat Pro，是Pchat免费版的高级版本。相比之下，Pchat免费版提供了基本的聊天功能，而Pchat Pro则包括更多的高级功能，例如语音和视频通话，自定义表情符号等等。此外，Pchat Pro还具有更高的智能和更好的性能，因为它采用了最先进的技术和算法。&lt;br /&gt;
-试用期为14天。在试用期结束之前，您可以决定是否购买Pchat Pro的许可证。如果您决定购买，您将获得无限制的访问权限，并可以享受Pchat Pro提供的所有功能。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;a id=&#34;org8b69e3f&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;newbing-1&#34;&gt;newBing&lt;/h2&gt;
-
-&lt;p&gt;微软 New Bing 是微软推出的全新搜索引擎，它使用了最新的人工智能技术和自然语言处理技术来提供更好的搜索结果和更智能的搜索体验。它可以帮助用户更快、更准确地找到他们需要的信息，并且能够根据用户的搜索历史和兴趣爱好提供更加个性化的搜索结果。&lt;/p&gt;
-
-&lt;p&gt;1、下载最新/已支持newbing的edge浏览器&lt;/p&gt;
-
-&lt;p&gt;2、设置bing4为默认搜索引擎&lt;br /&gt;
-   URL地址写为：&lt;a href=&#34;https://www4.bing.com/search?q=%s&amp;amp;PC=U316&amp;amp;FROM=CHROMN&#34;&gt;https://www4.bing.com/search?q=%s&amp;amp;PC=U316&amp;amp;FROM=CHROMN&lt;/a&gt;&lt;br /&gt;
-   &lt;img src=&#34;http://blog.mospan.cn/post/img/chatgpt/bing4-engine.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;3、设置外网DNS&lt;br /&gt;
-   选择openDNS&lt;br /&gt;
-   &lt;img src=&#34;http://blog.mospan.cn/post/img/chatgpt/select-dns.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;4、禁止和清理cookies&lt;br /&gt;
-   禁止保存一些cn.bing.com或c.bing.com的cookies，免得老跳转到国内bing上。&lt;br /&gt;
-   &lt;img src=&#34;http://blog.mospan.cn/post/img/chatgpt/forbiden-cookies.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;5、登录&lt;br /&gt;
-   新建标签页，把语言设置为非国内地区&lt;br /&gt;
-  &lt;img src=&#34;http://blog.mospan.cn/post/img/chatgpt/newbing-index.png&#34; alt=&#34;img&#34; /&gt;&lt;br /&gt;
-   登录账号，如我个人账号为: moshengping210@gmail.com&lt;/p&gt;
-
-&lt;p&gt;点击AI，就可以用bingChat了(不太正常，如跳转到国内bing后需清理cookies后重启浏览器)&lt;br /&gt;
-&lt;img src=&#34;http://blog.mospan.cn/post/img/chatgpt/newbing.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org554ec02&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;chatgpt-1&#34;&gt;chatgpt&lt;/h2&gt;
-
-&lt;p&gt;1、申请账号&lt;br /&gt;
-   某宝上购买账号&lt;/p&gt;
-
-&lt;p&gt;2、登录官网(需提前科学上网)&lt;br /&gt;
-   ChatGPT的官方网址： &lt;a href=&#34;https://chat.openai.com/auth/login&#34;&gt;https://chat.openai.com/auth/login&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;3、查询&lt;br /&gt;
-  &lt;img src=&#34;http://blog.mospan.cn/post/img/chatgpt/chatgpt.png&#34; alt=&#34;img&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a id=&#34;org415b7ac&#34;&gt;&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;参考资料&#34;&gt;参考资料&lt;/h1&gt;
-
-&lt;p&gt;【01】 &lt;a href=&#34;https://zhuanlan.zhihu.com/p/618495330&#34;&gt;当前最新稳定访问NewBing方法（操作简单）&lt;/a&gt;&lt;/p&gt;
 </description>
         </item>
         
