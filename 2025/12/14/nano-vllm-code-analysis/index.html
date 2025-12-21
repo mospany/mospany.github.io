@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <base href="http://mospany.github.io/">
-  <title>K8S项目实践(03): 随机调度器 - 墨斯潘園</title>
+  <title>nano-vllm源码分析 - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
-  <meta name="keywords" content="K8S,项目实践,">
-  <meta name="description" content="简介 POD创建过程 1、 由kubectl解析创建pod的yaml，发送创建pod请求到APIServer。 2、 APIServer首先做权限认证">
+  <meta name="keywords" content="技术文章,人工智能,">
+  <meta name="description" content="在大语言模型（LLM）的时代，推理效率成为了制约应用落地的关键瓶颈。想象一下，当你向 ChatGPT 提出问题时，它需要在几秒内处理数千个token，同时服">
   <meta name="author" content="mospan">
-  <meta itemprop="name" content="K8S项目实践(03): 随机调度器 - 墨斯潘園">
-  <meta itemprop="description" content="简介 POD创建过程 1、 由kubectl解析创建pod的yaml，发送创建pod请求到APIServer。 2、 APIServer首先做权限认证">
+  <meta itemprop="name" content="nano-vllm源码分析 - 墨斯潘園">
+  <meta itemprop="description" content="在大语言模型（LLM）的时代，推理效率成为了制约应用落地的关键瓶颈。想象一下，当你向 ChatGPT 提出问题时，它需要在几秒内处理数千个token，同时服">
   <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
-  <meta name="twitter:title" content="K8S项目实践(03): 随机调度器 - 墨斯潘園" />
+  <meta name="twitter:title" content="nano-vllm源码分析 - 墨斯潘園" />
   
   <meta name="twitter:description" content="">
   <link rel="shortcut icon" href="img/favicon.ico"/>
@@ -63,7 +63,7 @@
 	<article itemprop="articleBody">
     <header class="article-info clearfix">
   <h1 itemprop="name">
-      <a href="http://mospany.github.io/2022/12/11/k8s-random-scheduler/" title="K8S项目实践(03): 随机调度器" itemprop="url">K8S项目实践(03): 随机调度器</a>
+      <a href="http://mospany.github.io/2025/12/14/nano-vllm-code-analysis/" title="nano-vllm源码分析" itemprop="url">nano-vllm源码分析</a>
   </h1>
   <p class="article-author">By 
     
@@ -71,7 +71,7 @@
     
   </p>
   <p class="article-time">
-    <time datetime="2022-12-11 11:51:52 &#43;0800 CST" itemprop="datePublished">2022年12月11日</time>
+    <time datetime="2025-12-14 21:22:36 &#43;0800 CST" itemprop="datePublished">2025年12月14日</time>
   </p>
 </header>
 
@@ -79,288 +79,539 @@
     
     
 
-<p><a id="org3ccc143"></a></p>
+<p>在大语言模型（LLM）的时代，推理效率成为了制约应用落地的关键瓶颈。想象一下，当你向 ChatGPT 提出问题时，它需要在几秒内处理数千个token，同时服务数万名用户。这背后的技术挑战是什么？答案就是高效的推理引擎。</p>
 
-<h1 id="简介">简介</h1>
+<p>vLLM 作为当前最高效的 LLM 推理引擎之一，通过创新的 PagedAttention、KV Cache 管理、连续批处理等技术，将推理吞吐量提升了 24倍。然而，vLLM 的生产代码复杂庞大，包含大量工程优化和边界情况处理，对于初学者来说犹如迷宫。</p>
 
-<p><a id="org6748da5"></a></p>
+<p><a href="https://github.com/amulil/cleanvllm">cleanvllm</a> 项目应运而生——它承继了 <a href="https://github.com/vwxyzjn/cleanrl">CleanRL</a> 的教育理念，用单文件（1500行Python代码）实现了 vLLM 的核心概念，去除了工程复杂性，让我们能够专注于理解架构本质。正如 Linus Torvalds 所说：&rdquo;Talk is cheap. Show me the code.&rdquo;</p>
 
-<h2 id="pod创建过程">POD创建过程</h2>
-
-<p>1、 由kubectl解析创建pod的yaml，发送创建pod请求到APIServer。<br />
-2、 APIServer首先做权限认证，然后检查信息并把数据存储到ETCD里，创建deployment资源初始化。<br />
-3、 kube-controller通过list-watch机制，检查发现新的deployment，将资源加入到内部工作队列，检查到资源没有关联pod和replicaset,然后创建rs资源，rs controller监听到rs创建事件后再创建pod资源。<br />
-4、 scheduler 监听到pod创建事件，执行调度算法，将pod绑定到合适节点，然后告知APIServer更新pod的spec.nodeName<br />
-5、 kubelet 每隔一段时间通过其所在节点的NodeName向APIServer拉取绑定到它的pod清单，并更新本地缓存。<br />
-6、 kubelet发现新的pod属于自己，调用容器API来创建容器，并向APIService上报pod状态。<br />
-7、 Kub-proxy为新创建的pod注册动态DNS到CoreOS。为Service添加iptables/ipvs规则，用于服务发现和负载均衡。<br />
-8、 deploy controller对比pod的当前状态和期望来修正状态。</p>
-
-<p><img src="http://blog.mospan.cn/post/img/k8s/scheduler/pod-life-cycle.png" alt="img" /></p>
-
-<p><a id="org44af008"></a></p>
-
-<h2 id="调度器介绍">调度器介绍</h2>
-
-<p>从上述流程中，我们能大概清楚kube-scheduler的主要工作，负责整个k8s中pod选择和绑定node的工作，这个选择的过程就是应用调度策略，包括NodeAffinity、PodAffinity、节点资源筛选、调度优先级、公平调度等等，而绑定便就是将pod资源定义里的nodeName进行更新。</p>
-
-<p><a id="org39ad97e"></a></p>
-
-<h1 id="设计">设计</h1>
-
-<p>kube-scheduler的设计有两个历史阶段版本：</p>
+<p>本文将带你从零开始，逐步构建一个完整的 vLLM 推理引擎，揭示其背后的设计哲学和技术细节。读完本文，你将能够：</p>
 
 <ul>
-<li>基于谓词（predicate）和优先级（priority）的筛选。</li>
-<li>基于调度框架的调度器，新版本已经把所有的旧的设计都改造成扩展点插件形式(1.19+)。</li>
+<li>理解 vLLM 的核心架构和关键创新</li>
+<li>掌握 PagedAttention 的工作原理</li>
+<li>学会如何实现高效的 KV Cache 管理</li>
+<li>了解连续批处理的调度策略</li>
+<li>运行自己的 vLLM 实现</li>
 </ul>
 
-<p>所谓的谓词和优先级都是对调度算法的分类，在scheduler里，谓词调度算法是来选择出一组能够绑定pod的node，而优先级算法则是在这群node中进行打分，得出一个最高分的node。</p>
+<h1 id="vllm-的核心挑战与设计思路">vLLM 的核心挑战与设计思路</h1>
 
-<p>而调度框架的设计相比之前则更复杂一点，但确更加灵活和便于扩展，关于调度框架的设计细节可以查看官方文档——624-scheduling-framework，当然我也有一遍文章对其做了翻译还加了一些便于理解的补充——KEP: 624-scheduling-framework。总结来说调度框架的出现是为了解决以前webhooks扩展器的局限性，一个是扩展点只有：筛选、打分、抢占、绑定，而调度框架则在这之上又细分了11个扩展点；另一个则是通过http调用扩展进程的方式其实效率不高，调度框架的设计用的是静态编译的方式将扩展的程序代码和scheduler源码一起编译成新的scheduler，然后通过scheduler配置文件启用需要的插件，在进程内就能通过函数调用的方式执行插件。</p>
+<h2 id="传统-llm-推理的痛点">传统 LLM 推理的痛点</h2>
 
-<p><img src="http://blog.mospan.cn/post/img/k8s/scheduler/scheduler-startup.png" alt="img" /></p>
+<p>让我们以一个具体的例子来说明：假设你有一台 A100 GPU（80GB显存），要同时处理 100 个用户请求，每个请求平均生成 100 个token。</p>
 
-<p>上面是一个简略版的调度器处理pod流程：</p>
+<p>传统的推理方式会遇到以下问题：
+1. <strong>内存碎片化</strong>：每个序列的 KV Cache 需要连续内存，但序列长度不同导致严重的内存浪费。实际可用内存只有 <strong>60%</strong>！
+2. <strong>批处理困难</strong>：序列A需要10个token，序列B需要100个token，如何高效批处理？传统方法只能等最短序列完成。
+3. <strong>动态调度复杂</strong>：你无法预知用户会问多长的问题，资源调度变得极其困难。
+这些问题导致 GPU 利用率通常只有 <strong>30-40%</strong>，大量算力被浪费。</p>
 
-<p>首先scheduler会启动一个client-go的Informer来监听Pod事件（不只Pod其实还有Node等资源变更事件），这时候注册的Informer回调事件会区分Pod是否已经被调度（spec.nodeName），已经调度过的Pod则只是更新调度器缓存，而未被调度的Pod会加入到调度队列，然后经过调度框架执行注册的插件，在绑定周期前会进行Pod的假定动作，从而更新调度器缓存中该Pod状态，最后在绑定周期执行完向ApiServer发起BindAPI，从而完成了一次调度过程。</p>
+<h2 id="vllm-的解决方案">vLLM 的解决方案</h2>
 
-<p><a id="org8ebc078"></a></p>
+<p>vLLM 通过三个核心创新解决了这些问题：</p>
 
-<h1 id="实现">实现</h1>
+<ul>
+<li><strong>PagedAttention</strong>：将 KV Cache 分页管理，类似操作系统的虚拟内存</li>
+<li><strong>连续批处理</strong>：动态添加/移除序列，最大化 GPU 利用率</li>
+<li><strong>前缀缓存</strong>：复用相同前缀的 KV Cache，减少重复计算
+让我们在 cleanvllm 中看看这些概念是如何实现的。</li>
+</ul>
 
-<p><a id="org98f2089"></a></p>
+<h1 id="数据结构设计-vllm-的基石">数据结构设计 - vLLM 的基石</h1>
 
-<h2 id="创建调度器">创建调度器</h2>
+<h2 id="序列管理-sequence-类">序列管理：Sequence 类</h2>
 
-<p>1、获取集群kubeconfig配置。<br />
-2、调用client-go生成clientset。<br />
-3、填充调度器相关参数, 包含获取node列表和关注的POD。<br />
-4、返回调度器</p>
+<p>在 cleanvllm 中，每个用户请求被抽象为一个 Sequence 对象：</p>
 
-<pre><code> func NewScheduler(podQueue chan *v1.Pod, quit chan struct{}) Scheduler {
-  config, err := rest.InClusterConfig()
-  if err != nil {
-      log.Fatal(err)
-  }
+<pre><code class="language-python">class Sequence:
+    &quot;&quot;&quot;
+    序列类
+    
+    表示一个文本生成请求的序列，包含prompt tokens和生成的completion tokens。
+    管理序列的状态、token列表、块表（block table）等信息。
+    &quot;&quot;&quot;
+    block_size = 256  # KV缓存的块大小
+    counter = count()  # 序列ID计数器
 
-  clientset, err := kubernetes.NewForConfig(config)
-  if err != nil {
-      log.Fatal(err)
-  }
+    def __init__(self, token_ids: list[int], sampling_params = SamplingParams()):
+        &quot;&quot;&quot;
+        初始化序列
+        
+        Args:
+            token_ids: prompt的token ID列表
+            sampling_params: 采样参数
+        &quot;&quot;&quot;
+        self.seq_id = next(Sequence.counter)  # 序列的唯一ID
+        self.status = SequenceStatus.WAITING  # 初始状态为等待
+        self.token_ids = copy(token_ids)  # token ID列表的副本
+        self.last_token = token_ids[-1]  # 最后一个token
+        self.num_tokens = len(self.token_ids)  # token总数
+        self.num_prompt_tokens = len(token_ids)  # prompt token数量
+        self.num_cached_tokens = 0  # 已缓存的token数量（用于前缀缓存）
+        self.block_table = []  # 关键：**块表**，存储KV缓存块的索引, 映射逻辑块到物理块
+        self.temperature = sampling_params.temperature  # 采样温度
+        self.max_tokens = sampling_params.max_tokens  # 最大生成token数
+        self.ignore_eos = sampling_params.ignore_eos  # 是否忽略EOS token
 
-  return Scheduler{
-      clientset:  clientset,
-      podQueue:   podQueue,
-      nodeLister: initInformers(clientset, podQueue, quit),
-      predicates: []predicateFunc{
-          randomPredicate,
-      },
-      priorities: []priorityFunc{
-          randomPriority,
-      },
-  }
-}
+    def __len__(self):
+        &quot;&quot;&quot;返回序列的token数量&quot;&quot;&quot;
+        return self.num_tokens
+
+    def __getitem__(self, key):
+        &quot;&quot;&quot;支持索引访问token列表&quot;&quot;&quot;
+        return self.token_ids[key]
+
+    #@property 的核心作用: 把“计算得出的值”封装成只读属性，让接口更自然、更安全
+    # 调用方式是：seq.is_finished      # ✅ 像属性一样访问
+    #     而不是: seq.is_finished()    # ❌ 不需要加括号
+    @property
+    def is_finished(self):
+        &quot;&quot;&quot;检查序列是否已完成&quot;&quot;&quot;
+        return self.status == SequenceStatus.FINISHED
+
+    @property
+    def num_completion_tokens(self):
+        &quot;&quot;&quot;返回已生成的completion token数量&quot;&quot;&quot;
+        return self.num_tokens - self.num_prompt_tokens
+
+    @property
+    def prompt_token_ids(self):
+        &quot;&quot;&quot;返回prompt部分的token ID列表&quot;&quot;&quot;
+        return self.token_ids[:self.num_prompt_tokens]
+
+    @property
+    def completion_token_ids(self):
+        &quot;&quot;&quot;返回completion部分的token ID列表&quot;&quot;&quot;
+        return self.token_ids[self.num_prompt_tokens:]
+
+    @property
+    def num_cached_blocks(self):
+        &quot;&quot;&quot;返回已缓存的块数量&quot;&quot;&quot;
+        return self.num_cached_tokens // self.block_size
+
+    @property
+    def num_blocks(self):
+        &quot;&quot;&quot;返回序列需要的总块数量&quot;&quot;&quot;
+        return (self.num_tokens + self.block_size - 1) // self.block_size
+
+    @property
+    def last_block_num_tokens(self):
+        &quot;&quot;&quot;返回最后一个块中的token数量&quot;&quot;&quot;
+        return self.num_tokens - (self.num_blocks - 1) * self.block_size
+
+    def block(self, i):
+        &quot;&quot;&quot;
+        获取第i个块的token列表
+        
+        Args:
+            i: 块索引
+            
+        Returns:
+            该块的token ID列表
+        &quot;&quot;&quot;
+        assert 0 &lt;= i &lt; self.num_blocks
+        return self.token_ids[i*self.block_size: (i+1)*self.block_size]
+
+    def append_token(self, token_id: int):
+        &quot;&quot;&quot;
+        向序列追加一个新生成的token
+        
+        Args:
+            token_id: 新生成的token ID
+        &quot;&quot;&quot;
+        self.token_ids.append(token_id)
+        self.last_token = token_id
+        self.num_tokens += 1
+
+    def __getstate__(self):
+        &quot;&quot;&quot;
+        序列化函数，用于pickle
+        
+        为了节省内存，如果序列还没有生成completion tokens，则保存完整的token列表；
+        否则只保存最后一个token（因为prompt tokens可以从其他地方恢复）
+        &quot;&quot;&quot;
+        return (self.num_tokens, self.num_prompt_tokens, self.num_cached_tokens, self.block_table,
+                self.token_ids if self.num_completion_tokens == 0 else self.last_token)
+
+    def __setstate__(self, state):
+        &quot;&quot;&quot;
+        反序列化函数，用于pickle
+        
+        从序列化状态恢复序列对象
+        &quot;&quot;&quot;
+        self.num_tokens, self.num_prompt_tokens, self.num_cached_tokens, self.block_table = state[:-1]
+        if self.num_completion_tokens == 0:
+            self.token_ids = state[-1]
+        else:
+            self.last_token = state[-1]
 </code></pre>
 
-<p><a id="org7e3d0d6"></a></p>
+<p><strong>关键洞察</strong>：block_table 是 PagedAttention 的核心数据结构，类似操作系统的页表。它将序列的逻辑内存映射到物理内存块，实现了内存的灵活管理。</p>
 
-<h2 id="运行调度器">运行调度器</h2>
+<h2 id="执行上下文-context-类">执行上下文：Context 类</h2>
 
-<p>不间断的从关注的POD列表中选出进行调度。</p>
+<pre><code class="language-python">&quot;&quot;&quot;
+上下文管理模块
 
-<p><a id="org9082797"></a></p>
+实现了全局上下文管理，用于在模型推理过程中传递序列信息、KV缓存位置等。
+使用全局变量存储上下文，避免在函数间传递大量参数。
+&quot;&quot;&quot;
+from dataclasses import dataclass
+import torch
 
-<h3 id="找合适节点">找合适节点</h3>
+#@dataclass: 少写样板代码（boilerplate），让“装数据的类”更干净
+@dataclass
+class Context:
+    &quot;&quot;&quot;
+    上下文数据类
+    
+    存储当前推理步骤的上下文信息，包括：
+    - 是否为prefill阶段
+    - 序列长度信息
+    - KV缓存的slot映射
+    - 块表信息
+    &quot;&quot;&quot;
+    is_prefill: bool = False  # 是否为prefill阶段
+    cu_seqlens_q: torch.Tensor | None = None  # query的累积序列长度
+    cu_seqlens_k: torch.Tensor | None = None  # key的累积序列长度
+    max_seqlen_q: int = 0  # query的最大序列长度
+    max_seqlen_k: int = 0  # key的最大序列长度
+    slot_mapping: torch.Tensor | None = None  # KV缓存的slot映射
+    context_lens: torch.Tensor | None = None  # 每个序列的上下文长度（decode阶段使用）
+    block_tables: torch.Tensor | None = None  # 块表（用于前缀缓存和decode阶段）
 
-<p>1、找到可用节点列表<br />
-2、给节点随机打100以内的分数<br />
-3、选择分数最高的节点</p>
+_CONTEXT = Context()  # 全局上下文对象
 
-<pre><code>func (s *Scheduler) findFit(pod *v1.Pod) (string, error) {
-    nodes, err := s.nodeLister.List(labels.Everything())
-    if err != nil {
-        return &quot;&quot;, err
-    }
+def get_context():
+    &quot;&quot;&quot;
+    获取全局上下文
+    
+    Returns:
+        当前上下文对象
+    &quot;&quot;&quot;
+    return _CONTEXT
 
-    filteredNodes := s.runPredicates(nodes, pod)
-    if len(filteredNodes) == 0 {
-        return &quot;&quot;, errors.New(&quot;failed to find node that fits pod&quot;)
-    }
-    priorities := s.prioritize(filteredNodes, pod)
-    return s.findBestNode(priorities), nil
-}
+def set_context(is_prefill, cu_seqlens_q=None, cu_seqlens_k=None, max_seqlen_q=0, max_seqlen_k=0, slot_mapping=None, context_lens=None, block_tables=None):
+    &quot;&quot;&quot;
+    设置全局上下文
+    
+    Args:
+        is_prefill: 是否为prefill阶段
+        cu_seqlens_q: query的累积序列长度
+        cu_seqlens_k: key的累积序列长度
+        max_seqlen_q: query的最大序列长度
+        max_seqlen_k: key的最大序列长度
+        slot_mapping: KV缓存的slot映射
+        context_lens: 每个序列的上下文长度
+        block_tables: 块表
+    &quot;&quot;&quot;
+    global _CONTEXT
+    _CONTEXT = Context(is_prefill, cu_seqlens_q, cu_seqlens_k, max_seqlen_q, max_seqlen_k, slot_mapping, context_lens, block_tables)
+
+def reset_context():
+    &quot;&quot;&quot;重置全局上下文&quot;&quot;&quot;
+    global _CONTEXT
+    _CONTEXT = Context()
+
 </code></pre>
 
-<p><a id="org0354198"></a></p>
+<p>Context 存储当前推理步骤的全局状态，区分 Prefill（首次处理提示）和 Decode（逐token生成）两个阶段。</p>
 
-<h3 id="绑定pod">绑定POD</h3>
+<h2 id="配置管理-config-类">配置管理：Config 类</h2>
 
-<pre><code>func (s *Scheduler) bindPod(ctx context.Context, p *v1.Pod, node string) error {
-    opts := metav1.CreateOptions{}
-    return s.clientset.CoreV1().Pods(p.Namespace).Bind(ctx, &amp;v1.Binding{
-        ObjectMeta: metav1.ObjectMeta{
-            Name:      p.Name,
-            Namespace: p.Namespace,
-        },
-        Target: v1.ObjectReference{
-            APIVersion: &quot;v1&quot;,
-            Kind:       &quot;Node&quot;,
-            Name:       node,
-        },
-    }, opts)
-}
+<pre><code class="language-python">&quot;&quot;&quot;
+配置管理模块
+
+定义了nano-vllm系统的配置类，包含模型路径、批处理参数、GPU内存使用等配置项
+&quot;&quot;&quot;
+import os
+from dataclasses import dataclass
+from transformers import AutoConfig
+
+
+@dataclass
+class Config:
+    &quot;&quot;&quot;
+    系统配置类
+    
+    包含nano-vllm运行所需的所有配置参数，包括模型路径、批处理大小、
+    GPU内存使用率、张量并行大小等。
+    &quot;&quot;&quot;
+    model: str  # 模型路径
+    max_num_batched_tokens: int = 16384  # 批处理的最大token数量
+    max_num_seqs: int = 512  # 最大序列数量
+    max_model_len: int = 4096  # 模型支持的最大序列长度
+    gpu_memory_utilization: float = 0.9  # GPU内存使用率（0-1之间）
+    tensor_parallel_size: int = 1  # 张量并行大小，支持1-8
+    enforce_eager: bool = False  # 是否强制使用eager模式（不使用CUDA graph）
+    hf_config: AutoConfig | None = None  # HuggingFace配置对象
+    eos: int = -1  # 结束符token ID
+    kvcache_block_size: int = 256  # KV缓存块大小，必须是256的倍数
+    num_kvcache_blocks: int = -1  # KV缓存块数量，-1表示自动计算
+
+    def __post_init__(self):
+        &quot;&quot;&quot;
+        初始化后处理函数
+        
+        验证配置参数的有效性，并加载HuggingFace配置
+        &quot;&quot;&quot;
+        # 验证模型路径是否存在
+        assert os.path.isdir(self.model)
+        # 验证KV缓存块大小是256的倍数
+        assert self.kvcache_block_size % 256 == 0
+        # 验证张量并行大小在有效范围内
+        assert 1 &lt;= self.tensor_parallel_size &lt;= 8
+        # 加载HuggingFace配置
+        self.hf_config = AutoConfig.from_pretrained(self.model)
+        # 确保最大模型长度不超过配置中的最大位置嵌入
+        self.max_model_len = min(self.max_model_len, self.hf_config.max_position_embeddings)
+        # 确保批处理token数量至少等于最大模型长度
+        assert self.max_num_batched_tokens &gt;= self.max_model_len
 </code></pre>
 
-<p><a id="orgcdd0603"></a></p>
+<p>这些参数控制着系统的内存使用、并发能力和性能特征。</p>
 
-<h3 id="发送event事件">发送event事件</h3>
+<h1 id="内存管理-pagedattention-的实现">内存管理 - PagedAttention 的实现</h1>
 
-<pre><code>func (s *Scheduler) emitEvent(ctx context.Context, p *v1.Pod, message string) error {
-    timestamp := time.Now().UTC()
-    opts := metav1.CreateOptions{}
-    _, err := s.clientset.CoreV1().Events(p.Namespace).Create(ctx, &amp;v1.Event{
-        Count:          1,
-        Message:        message,
-        Reason:         &quot;Scheduled&quot;,
-        LastTimestamp:  metav1.NewTime(timestamp),
-        FirstTimestamp: metav1.NewTime(timestamp),
-        Type:           &quot;Normal&quot;,
-        Source: v1.EventSource{
-            Component: schedulerName,
-        },
-        InvolvedObject: v1.ObjectReference{
-            Kind:      &quot;Pod&quot;,
-            Name:      p.Name,
-            Namespace: p.Namespace,
-            UID:       p.UID,
-        },
-        ObjectMeta: metav1.ObjectMeta{
-            GenerateName: p.Name + &quot;-&quot;,
-        },
-    }, opts)
-    if err != nil {
-        return err
-    }
-    return nil
- }
+<h2 id="内存块抽象">内存块抽象</h2>
+
+<pre><code class="language-python">&quot;&quot;&quot;
+块管理器模块
+
+实现了KV缓存的块管理功能，包括块的分配、释放、哈希缓存等。
+支持前缀缓存（prefix caching）以提高性能。
+&quot;&quot;&quot;
+from collections import deque
+import xxhash
+import numpy as np
+
+from nanovllm.engine.sequence import Sequence
+
+
+class Block:
+    &quot;&quot;&quot;
+    KV缓存块类
+    
+    表示一个KV缓存块，包含块ID、引用计数、哈希值和token列表。
+    &quot;&quot;&quot;
+
+    def __init__(self, block_id):
+        &quot;&quot;&quot;
+        初始化块
+        
+        Args:
+            block_id: 块的唯一ID
+        &quot;&quot;&quot;
+        self.block_id = block_id  # 块的唯一ID
+        self.ref_count = 0  # 引用计数，表示有多少个序列在使用这个块
+        self.hash = -1  # 块的哈希值，用于前缀缓存查找
+        self.token_ids = []  # 块中存储的token ID列表
+
+    def update(self, hash: int, token_ids: list[int]):
+        &quot;&quot;&quot;
+        更新块的内容和哈希值
+        
+        Args:
+            hash: 块的哈希值
+            token_ids: token ID列表
+        &quot;&quot;&quot;
+        self.hash = hash
+        self.token_ids = token_ids
+
+    def reset(self):
+        &quot;&quot;&quot;重置块的状态&quot;&quot;&quot;
+        self.ref_count = 1
+        self.hash = -1
+        self.token_ids = []
+
+
+## 块管理器：PagedAttention 的核心
+class BlockManager:
+    &quot;&quot;&quot;
+    块管理器类
+    
+    管理KV缓存块的分配和释放，支持前缀缓存以提高性能。
+    通过哈希表快速查找已缓存的块，避免重复计算。
+    &quot;&quot;&quot;
+
+    def __init__(self, num_blocks: int, block_size: int):
+        &quot;&quot;&quot;
+        初始化块管理器
+        
+        Args:
+            num_blocks: 总块数量
+            block_size: 每个块的大小（token数量）
+        &quot;&quot;&quot;
+        self.block_size = block_size  # 块大小
+        self.blocks: list[Block] = [Block(i) for i in range(num_blocks)]  # 所有块的列表
+        self.hash_to_block_id: dict[int, int] = dict()  # 哈希值到块ID的映射，用于前缀缓存
+        self.free_block_ids: deque[int] = deque(range(num_blocks))  # 空闲块ID队列
+        self.used_block_ids: set[int] = set()  # 已使用块ID集合
+
+    @classmethod
+    def compute_hash(cls, token_ids: list[int], prefix: int = -1):
+        &quot;&quot;&quot;
+        计算token列表的哈希值
+        
+        Args:
+            token_ids: token ID列表
+            prefix: 前缀哈希值，用于链式哈希计算
+            
+        Returns:
+            计算得到的哈希值
+        &quot;&quot;&quot;
+        h = xxhash.xxh64()
+        if prefix != -1:
+            h.update(prefix.to_bytes(8, &quot;little&quot;))
+        h.update(np.array(token_ids).tobytes())
+        return h.intdigest()
+
+    def _allocate_block(self, block_id: int) -&gt; Block:
+        &quot;&quot;&quot;
+        分配一个块（内部方法）
+        
+        Args:
+            block_id: 要分配的块ID
+            
+        Returns:
+            分配得到的块对象
+        &quot;&quot;&quot;
+        block = self.blocks[block_id]
+        assert block.ref_count == 0
+        block.reset()
+        self.free_block_ids.remove(block_id)
+        self.used_block_ids.add(block_id)
+        return self.blocks[block_id]
+
+    def _deallocate_block(self, block_id: int) -&gt; Block:
+        &quot;&quot;&quot;
+        释放一个块（内部方法）
+        
+        Args:
+            block_id: 要释放的块ID
+        &quot;&quot;&quot;
+        assert self.blocks[block_id].ref_count == 0
+        self.used_block_ids.remove(block_id)
+        self.free_block_ids.append(block_id)
+
+    def can_allocate(self, seq: Sequence) -&gt; bool:
+        &quot;&quot;&quot;
+        检查是否有足够的空闲块来分配序列
+        
+        Args:
+            seq: 要检查的序列
+            
+        Returns:
+            如果有足够块则返回True，否则返回False
+        &quot;&quot;&quot;
+        return len(self.free_block_ids) &gt;= seq.num_blocks
+
+    def allocate(self, seq: Sequence):
+        &quot;&quot;&quot;
+        为序列分配KV缓存块
+        
+        支持前缀缓存：如果块的token序列已经在缓存中，则复用该块，避免重复计算。
+        
+        Args:
+            seq: 要分配块的序列
+        &quot;&quot;&quot;
+        assert not seq.block_table
+        h = -1  # 当前块的哈希值
+        cache_miss = False  # 是否发生缓存未命中
+        for i in range(seq.num_blocks):
+            token_ids = seq.block(i)
+            # 只有当块是完整大小（block_size）时才计算哈希值
+            h = self.compute_hash(token_ids, h) if len(token_ids) == self.block_size else -1
+            # 尝试从哈希表中查找已存在的块
+            block_id = self.hash_to_block_id.get(h, -1)
+            # 检查是否真的匹配（哈希碰撞检查）
+            if block_id == -1 or self.blocks[block_id].token_ids != token_ids:
+                cache_miss = True
+            if cache_miss:
+                # 缓存未命中，分配新块
+                block_id = self.free_block_ids[0]
+                block = self._allocate_block(block_id)
+            else:
+                # 缓存命中，复用已有块
+                seq.num_cached_tokens += self.block_size
+                if block_id in self.used_block_ids:
+                    # 块已被使用，增加引用计数
+                    block = self.blocks[block_id]
+                    block.ref_count += 1
+                else:
+                    # 块未被使用，分配它
+                    block = self._allocate_block(block_id)
+            # 如果计算了哈希值，更新块并记录到哈希表
+            if h != -1:
+                block.update(h, token_ids)
+                self.hash_to_block_id[h] = block_id
+            seq.block_table.append(block_id)
+
+    def deallocate(self, seq: Sequence):
+        &quot;&quot;&quot;
+        释放序列占用的所有块
+        
+        Args:
+            seq: 要释放块的序列
+        &quot;&quot;&quot;
+        # 从后往前遍历块表，减少引用计数
+        for block_id in reversed(seq.block_table):
+            block = self.blocks[block_id]
+            block.ref_count -= 1
+            # 如果引用计数为0，释放该块
+            if block.ref_count == 0:
+                self._deallocate_block(block_id)
+        seq.num_cached_tokens = 0
+        seq.block_table.clear()
+
+    def can_append(self, seq: Sequence) -&gt; bool:
+        &quot;&quot;&quot;
+        检查是否可以追加新token到序列（是否需要新块）
+        
+        Args:
+            seq: 要检查的序列
+            
+        Returns:
+            如果可以追加则返回True
+        &quot;&quot;&quot;
+        # 如果序列长度模block_size等于1，说明需要新块
+        return len(self.free_block_ids) &gt;= (len(seq) % self.block_size == 1)
+
+    def may_append(self, seq: Sequence):
+        &quot;&quot;&quot;
+        为序列追加新token做准备（如果需要新块则分配）
+        
+        当序列追加新token时，可能需要：
+        1. 分配新块（如果当前块已满）
+        2. 更新最后一个块的哈希值（如果块刚满）
+        
+        Args:
+            seq: 要追加token的序列
+        &quot;&quot;&quot;
+        block_table = seq.block_table
+        last_block = self.blocks[block_table[-1]]
+        if len(seq) % self.block_size == 1:
+            # 需要新块：当前块已满，需要分配新块
+            assert last_block.hash != -1
+            block_id = self.free_block_ids[0]
+            self._allocate_block(block_id)
+            block_table.append(block_id)
+        elif len(seq) % self.block_size == 0:
+            # 块刚满：更新最后一个块的哈希值
+            assert last_block.hash == -1
+            token_ids = seq.block(seq.num_blocks-1)
+            # 使用前一个块的哈希值作为前缀
+            prefix = self.blocks[block_table[-2]].hash if len(block_table) &gt; 1 else -1
+            h = self.compute_hash(token_ids, prefix)
+            last_block.update(h, token_ids)
+            self.hash_to_block_id[h] = last_block.block_id
+        else:
+            # 块未满：不需要操作
+            assert last_block.hash == -1
 </code></pre>
 
-<p>查看events信息可以看出random-scheduler打出的“laced pod [default/sleep-5b6fd9944c-5scxv] on k8s-master&rdquo;等信息。&rdquo;</p>
-
-<pre><code>27s         Normal    Scheduled           pod/sleep-5b6fd9944c-5scxv    Placed pod [default/sleep-5b6fd9944c-5scxv] on k8s-master
-</code></pre>
-
-<p><a id="org22e94bd"></a></p>
-
-<h1 id="验证">验证</h1>
-
-<p><a id="org7cc5355"></a></p>
-
-<h2 id="编译">编译</h2>
-
-<pre><code>$ make docker-image
-$ make docker-push
-</code></pre>
-
-<p><a id="orgede963d"></a></p>
-
-<h2 id="部署">部署</h2>
-
-<pre><code>$ kubectl apply -f rbac.yaml
-$ kubectl  apply -f deployment.yaml
-$ kubectl apply -f sleep.yaml
-</code></pre>
-
-<p>把sleep.yaml里改为schedulerName: random-scheduler就可以使用该调度器。</p>
-
-<pre><code>[root@k8s-master deployment]# kubectl  get pod -A -o wide
-NAMESPACE     NAME                                 READY   STATUS    RESTARTS       AGE     IP               NODE         NOMINATED NODE   READINESS GATES
-default       httpbin-master                       1/1     Running   2 (11h ago)    3d22h   10.244.0.36      k8s-master   &lt;none&gt;           &lt;none&gt;
-default       httpbin-worker                       1/1     Running   2 (11h ago)    3d22h   10.244.2.15      k8s-work2    &lt;none&gt;           &lt;none&gt;
-default       netshoot-master                      1/1     Running   2 (11h ago)    3d22h   10.244.0.35      k8s-master   &lt;none&gt;           &lt;none&gt;
-default       netshoot-worker                      1/1     Running   2 (11h ago)    3d22h   10.244.2.14      k8s-work2    &lt;none&gt;           &lt;none&gt;
-default       random-scheduler-6dc78999cc-vnxzg    1/1     Running   0              9m      10.244.0.37      k8s-master   &lt;none&gt;           &lt;none&gt;
-default       sleep-5b6fd9944c-7rn5m               1/1     Running   0              11h     10.244.1.6       k8s-work1    &lt;none&gt;           &lt;none&gt;
-default       sleep-5b6fd9944c-bwb9t               1/1     Running   0              11h     10.244.0.38      k8s-master   &lt;none&gt;           &lt;none&gt;
-kube-system   coredns-6d8c4cb4d-ck2x5              1/1     Running   20 (11h ago)   19d     10.244.0.34      k8s-master   &lt;none&gt;           &lt;none&gt;
-kube-system   coredns-6d8c4cb4d-mbctj              1/1     Running   20 (11h ago)   19d     10.244.0.33      k8s-master   &lt;none&gt;           &lt;none&gt;
-kube-system   etcd-k8s-master                      1/1     Running   22 (11h ago)   19d     172.25.140.216   k8s-master   &lt;none&gt;           &lt;none&gt;
-kube-system   kube-apiserver-k8s-master            1/1     Running   24 (11h ago)   19d     172.25.140.216   k8s-master   &lt;none&gt;           &lt;none&gt;
-kube-system   kube-controller-manager-k8s-master   1/1     Running   22 (11h ago)   19d     172.25.140.216   k8s-master   &lt;none&gt;           &lt;none&gt;
-kube-system   kube-proxy-dnsjg                     1/1     Running   21 (11h ago)   19d     172.25.140.215   k8s-work1    &lt;none&gt;           &lt;none&gt;
-kube-system   kube-proxy-r84lg                     1/1     Running   22 (11h ago)   19d     172.25.140.216   k8s-master   &lt;none&gt;           &lt;none&gt;
-kube-system   kube-proxy-tbkx2                     1/1     Running   20 (11h ago)   19d     172.25.140.214   k8s-work2    &lt;none&gt;           &lt;none&gt;
-kube-system   kube-scheduler-k8s-master            1/1     Running   22 (11h ago)   19d     172.25.140.216   k8s-master   &lt;none&gt;           &lt;none&gt;
-kube-system   minicni-node-2xq2d                   1/1     Running   2 (11h ago)    3d23h   172.25.140.214   k8s-work2    &lt;none&gt;           &lt;none&gt;
-kube-system   minicni-node-dsq8c                   1/1     Running   2 (11h ago)    3d23h   172.25.140.216   k8s-master   &lt;none&gt;           &lt;none&gt;
-kube-system   minicni-node-h8hm8                   1/1     Running   2 (11h ago)    3d23h   172.25.140.215   k8s-work1    &lt;none&gt;           &lt;none&gt;
-</code></pre>
-
-<p>可以看出, random-scheduler-6dc78999cc-vnxzg 和 sleep pod已正常变成Running状态。</p>
-
-<p><a id="orgdc135cc"></a></p>
-
-<h2 id="验证-1">验证</h2>
-
-<pre><code>[root@k8s-master deployment]# kubectl  logs random-scheduler-6dc78999cc-vnxzg
- I'm a scheduler!
- 2022/12/13 12:12:02 New Node Added to Store: k8s-master
- 2022/12/13 12:12:02 New Node Added to Store: k8s-work1
- 2022/12/13 12:12:02 New Node Added to Store: k8s-work2
- found a pod to schedule: default / sleep-5b6fd9944c-bwb9t
- 2022/12/13 12:12:02 nodes that fit:
- 2022/12/13 12:12:02 k8s-master
- 2022/12/13 12:12:02 k8s-work1
- 2022/12/13 12:12:02 k8s-work2
- 2022/12/13 12:12:02 calculated priorities: map[k8s-master:79 k8s-work1:68 k8s-work2:15]
- Placed pod [default/sleep-5b6fd9944c-bwb9t] on k8s-master
-
- found a pod to schedule: default / sleep-5b6fd9944c-7rn5m
- 2022/12/13 12:12:02 nodes that fit:
- 2022/12/13 12:12:02 k8s-master
- 2022/12/13 12:12:02 k8s-work1
- 2022/12/13 12:12:02 calculated priorities: map[k8s-master:26 k8s-work1:50]
- Placed pod [default/sleep-5b6fd9944c-7rn5m] on k8s-work1
-
- [root@k8s-master deployment]# kubectl logs sleep-5b6fd9944c-7rn5m
- [root@k8s-master deployment]# 
-</code></pre>
-
-<p>从random-scheduler日志看， sleep容器经过random-scheduler进行调度的。</p>
-
-<pre><code>[root@k8s-master deployment]# k get events
- - LAST SEEN   TYPE      REASON              OBJECT                        MESSAGE
- 39m         Normal    Pulled              pod/netshoot-master           Container image &quot;nicolaka/netshoot:latest&quot; already present on machine
- 39m         Normal    Created             pod/netshoot-master           Created container centos
- 39m         Normal    Started             pod/netshoot-master           Started container centos
- 39m         Normal    Pulled              pod/netshoot-worker           Container image &quot;nicolaka/netshoot:latest&quot; already present on machine
- 39m         Normal    Created             pod/netshoot-worker           Created container centos
- 39m         Normal    Started             pod/netshoot-worker           Started container centos
- 27s         Normal    Scheduled           pod/sleep-5b6fd9944c-5scxv    Placed pod [default/sleep-5b6fd9944c-5scxv] on k8s-master
- 26s         Normal    Pulled              pod/sleep-5b6fd9944c-5scxv    Container image &quot;tutum/curl&quot; already present on machine
- 26s         Normal    Created             pod/sleep-5b6fd9944c-5scxv    Created container sleep
- 26s         Normal    Started             pod/sleep-5b6fd9944c-5scxv    Started container sleep
- 50s         Normal    Killing             pod/sleep-5b6fd9944c-7rn5m    Stopping container sleep
- 50s         Normal    Killing             pod/sleep-5b6fd9944c-bwb9t    Stopping container sleep
- 27s         Normal    Scheduled           pod/sleep-5b6fd9944c-rccmj    Placed pod [default/sleep-5b6fd9944c-rccmj] on k8s-work2
- 26s         Normal    Pulling             pod/sleep-5b6fd9944c-rccmj    Pulling image &quot;tutum/curl&quot;
- 27s         Normal    SuccessfulCreate    replicaset/sleep-5b6fd9944c   Created pod: sleep-5b6fd9944c-rccmj
- 27s         Normal    SuccessfulCreate    replicaset/sleep-5b6fd9944c   Created pod: sleep-5b6fd9944c-5scxv
- 27s         Normal    ScalingReplicaSet   deployment/sleep              Scaled up replica set sleep-5b6fd9944c to 2
- [root@k8s-master deployment]#
-</code></pre>
-
-<p>查看events信息可以看出random-scheduler打出的“laced pod [default/sleep-5b6fd9944c-5scxv] on k8s-master&rdquo;等信息。&rdquo;</p>
-
-<p><a id="org008f2a0"></a></p>
-
-<h1 id="参考资料">参考资料</h1>
-
-<p>[01] <a href="https://www.cnblogs.com/z-gh/p/15409763.html">k8s调度器介绍（调度框架版本）</a><br />
-[02] <a href="https://zhuanlan.zhihu.com/p/400351590">client-go功能详解</a><br />
-[03] <a href="https://www.jb51.net/article/253965.htm">一篇文章搞懂Go语言中的Context</a>]<br />
-[04] <a href="https://www.cnblogs.com/yangyuliufeng/p/13611126.html">深入理解k8s中的informer机制</a>]</p>
+<p>每个 Block 代表一个固定大小（通常256个token）的内存块，可以存储 KV Cache。hash 字段支持前缀缓存优化。</p>
 
     <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
   <div style="float:right;margin-top:0px;">
@@ -373,7 +624,7 @@ kube-system   minicni-node-h8hm8                   1/1     Running   2 (11h ago)
   <div>
     <p style="margin-top:0px;">作者：<a target="_blank" href="http://blog.mospan.cn/">mospan</a>
       <br />微信关注：墨斯潘園
-      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2022/12/11/k8s-random-scheduler/">http://mospany.github.io/2022/12/11/k8s-random-scheduler/</a>
+      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2025/12/14/nano-vllm-code-analysis/">http://mospany.github.io/2025/12/14/nano-vllm-code-analysis/</a>
       <br />
       文章版权归本人所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
   </div>
@@ -387,9 +638,9 @@ kube-system   minicni-node-h8hm8                   1/1     Running   2 (11h ago)
 <div class="article-tags">
   <span></span>
   
-  <a href="/tags/k8s">K8S</a>
+  <a href="/tags/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0">技术文章</a>
   
-  <a href="/tags/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5">项目实践</a>
+  <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD">人工智能</a>
   
 </div>
 
@@ -398,16 +649,16 @@ kube-system   minicni-node-h8hm8                   1/1     Running   2 (11h ago)
 <div class="article-categories">
   <span></span>
   
-  <a class="article-category-link" href="/categories/k8s">K8S</a>
+  <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0">技术文章</a>
   
-  <a class="article-category-link" href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5">项目实践</a>
+  <a class="article-category-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD">人工智能</a>
   
 </div>
 
 
 
   <div class="article-share" id="share">
-    <div data-url="http://mospany.github.io/2022/12/11/k8s-random-scheduler/" data-title="K8S项目实践(03): 随机调度器" data-tsina="3833537679" class="share clearfix">
+    <div data-url="http://mospany.github.io/2025/12/14/nano-vllm-code-analysis/" data-title="nano-vllm源码分析" data-tsina="3833537679" class="share clearfix">
     </div>
   </div>
 </footer>

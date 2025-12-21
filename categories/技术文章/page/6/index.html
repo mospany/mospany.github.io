@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <base href="http://mospany.github.io/">
-  <title>K8S项目实践(03): 随机调度器 - 墨斯潘園</title>
+  <title>技术文章 - 墨斯潘園</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
-  <meta name="keywords" content="K8S,项目实践,">
-  <meta name="description" content="简介 POD创建过程 1、 由kubectl解析创建pod的yaml，发送创建pod请求到APIServer。 2、 APIServer首先做权限认证">
+  
+  <meta name="description" content="技术文章">
   <meta name="author" content="mospan">
-  <meta itemprop="name" content="K8S项目实践(03): 随机调度器 - 墨斯潘園">
-  <meta itemprop="description" content="简介 POD创建过程 1、 由kubectl解析创建pod的yaml，发送创建pod请求到APIServer。 2、 APIServer首先做权限认证">
+  <meta itemprop="name" content="技术文章 - 墨斯潘園">
+  <meta itemprop="description" content="技术文章">
   <meta itemprop="image" content="http://mospany.github.io/img/author.jpg">
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@mospan" />
-  <meta name="twitter:title" content="K8S项目实践(03): 随机调度器 - 墨斯潘園" />
+  <meta name="twitter:title" content="技术文章 - 墨斯潘園" />
   
   <meta name="twitter:description" content="">
   <link rel="shortcut icon" href="img/favicon.ico"/>
@@ -59,385 +59,157 @@
 
   </header>
   <div id="container">
-    <div id="main" class="post" itemscope itemprop="blogPost">
-	<article itemprop="articleBody">
-    <header class="article-info clearfix">
-  <h1 itemprop="name">
-      <a href="http://mospany.github.io/2022/12/11/k8s-random-scheduler/" title="K8S项目实践(03): 随机调度器" itemprop="url">K8S项目实践(03): 随机调度器</a>
-  </h1>
-  <p class="article-author">By 
-    
-      <a href="http://blog.mospan.cn" title="mospan">mospan</a>
-    
-  </p>
-  <p class="article-time">
-    <time datetime="2022-12-11 11:51:52 &#43;0800 CST" itemprop="datePublished">2022年12月11日</time>
-  </p>
-</header>
+    <div id="main">
+      
+      
+      <h2 id="2025-12">2025-12</h2>
+      
+        
+      <h2 id="2025-11">2025-11</h2>
+      
+       
+        
+      <h2 id="2025-08">2025-08</h2>
+      
+       
+        
+      <h2 id="2025-07">2025-07</h2>
+      
+       
+       
+       
+        
+      <h2 id="2023-06">2023-06</h2>
+      
+        
+      <h2 id="2023-03">2023-03</h2>
+      
+        
+      <h2 id="2023-01">2023-01</h2>
+      
+        
+      <h2 id="2022-12">2022-12</h2>
+      
+       
+       
+        
+      <h2 id="2022-11">2022-11</h2>
+      
+       
+        
+      <h2 id="2022-10">2022-10</h2>
+      
+        
+      <h2 id="2022-09">2022-09</h2>
+      
+       
+       
+       
+       
+       
+        
+      <h2 id="2019-11">2019-11</h2>
+      
+        
+      <h2 id="2019-10">2019-10</h2>
+      
+       
+       
+        
+      <h2 id="2019-08">2019-08</h2>
+      
+       
+       
+        
+      <h2 id="2019-02">2019-02</h2>
+      
+        
+      <h2 id="2018-02">2018-02</h2>
+      
+        
+      <h2 id="2017-08">2017-08</h2>
+      
+       
+       
+        
+      <h2 id="2017-07">2017-07</h2>
+      
+        
+      <h2 id="2017-03">2017-03</h2>
+      
+       
+        
+      <h2 id="2016-09">2016-09</h2>
+      
+        
+      <h2 id="2016-05">2016-05</h2>
+      
+       
+        
+      <h2 id="2016-03">2016-03</h2>
+      
+       
+        
+      <h2 id="2016-02">2016-02</h2>
+      
+       
+       
+       
+       
+        
+      <h2 id="2016-01">2016-01</h2>
+      
+       
+        
+      <nav id="page-nav" class="clearfix">
+          
 
-	<div class="article-content">
-    
-    
 
-<p><a id="org3ccc143"></a></p>
+<a aria-label="First" href="http://mospany.github.io//categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/">
+  <span aria-hidden="true">««</span>
+</a>
 
-<h1 id="简介">简介</h1>
+<a aria-label="Previous" href="http://mospany.github.io//categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/page/5/">
+  <span aria-hidden="true">«</span>
+</a>
 
-<p><a id="org6748da5"></a></p>
 
-<h2 id="pod创建过程">POD创建过程</h2>
+<a href="http://mospany.github.io//categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/">
+  1
+</a>
 
-<p>1、 由kubectl解析创建pod的yaml，发送创建pod请求到APIServer。<br />
-2、 APIServer首先做权限认证，然后检查信息并把数据存储到ETCD里，创建deployment资源初始化。<br />
-3、 kube-controller通过list-watch机制，检查发现新的deployment，将资源加入到内部工作队列，检查到资源没有关联pod和replicaset,然后创建rs资源，rs controller监听到rs创建事件后再创建pod资源。<br />
-4、 scheduler 监听到pod创建事件，执行调度算法，将pod绑定到合适节点，然后告知APIServer更新pod的spec.nodeName<br />
-5、 kubelet 每隔一段时间通过其所在节点的NodeName向APIServer拉取绑定到它的pod清单，并更新本地缓存。<br />
-6、 kubelet发现新的pod属于自己，调用容器API来创建容器，并向APIService上报pod状态。<br />
-7、 Kub-proxy为新创建的pod注册动态DNS到CoreOS。为Service添加iptables/ipvs规则，用于服务发现和负载均衡。<br />
-8、 deploy controller对比pod的当前状态和期望来修正状态。</p>
+<a href="http://mospany.github.io//categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/page/2/">
+  2
+</a>
 
-<p><img src="http://blog.mospan.cn/post/img/k8s/scheduler/pod-life-cycle.png" alt="img" /></p>
+<a href="http://mospany.github.io//categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/page/3/">
+  3
+</a>
 
-<p><a id="org44af008"></a></p>
+<a href="http://mospany.github.io//categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/page/4/">
+  4
+</a>
 
-<h2 id="调度器介绍">调度器介绍</h2>
+<a href="http://mospany.github.io//categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/page/5/">
+  5
+</a>
 
-<p>从上述流程中，我们能大概清楚kube-scheduler的主要工作，负责整个k8s中pod选择和绑定node的工作，这个选择的过程就是应用调度策略，包括NodeAffinity、PodAffinity、节点资源筛选、调度优先级、公平调度等等，而绑定便就是将pod资源定义里的nodeName进行更新。</p>
+<a class="active" href="http://mospany.github.io//categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/page/6/">
+  6
+</a>
 
-<p><a id="org39ad97e"></a></p>
 
-<h1 id="设计">设计</h1>
+<a class="disabled" aria-label="Next" href="#">
+  <span aria-hidden="true">»</span>
+</a>
 
-<p>kube-scheduler的设计有两个历史阶段版本：</p>
+<a aria-label="Last" href="http://mospany.github.io//categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/page/6/">
+  <span aria-hidden="true">»»</span>
+</a>
 
-<ul>
-<li>基于谓词（predicate）和优先级（priority）的筛选。</li>
-<li>基于调度框架的调度器，新版本已经把所有的旧的设计都改造成扩展点插件形式(1.19+)。</li>
-</ul>
 
-<p>所谓的谓词和优先级都是对调度算法的分类，在scheduler里，谓词调度算法是来选择出一组能够绑定pod的node，而优先级算法则是在这群node中进行打分，得出一个最高分的node。</p>
-
-<p>而调度框架的设计相比之前则更复杂一点，但确更加灵活和便于扩展，关于调度框架的设计细节可以查看官方文档——624-scheduling-framework，当然我也有一遍文章对其做了翻译还加了一些便于理解的补充——KEP: 624-scheduling-framework。总结来说调度框架的出现是为了解决以前webhooks扩展器的局限性，一个是扩展点只有：筛选、打分、抢占、绑定，而调度框架则在这之上又细分了11个扩展点；另一个则是通过http调用扩展进程的方式其实效率不高，调度框架的设计用的是静态编译的方式将扩展的程序代码和scheduler源码一起编译成新的scheduler，然后通过scheduler配置文件启用需要的插件，在进程内就能通过函数调用的方式执行插件。</p>
-
-<p><img src="http://blog.mospan.cn/post/img/k8s/scheduler/scheduler-startup.png" alt="img" /></p>
-
-<p>上面是一个简略版的调度器处理pod流程：</p>
-
-<p>首先scheduler会启动一个client-go的Informer来监听Pod事件（不只Pod其实还有Node等资源变更事件），这时候注册的Informer回调事件会区分Pod是否已经被调度（spec.nodeName），已经调度过的Pod则只是更新调度器缓存，而未被调度的Pod会加入到调度队列，然后经过调度框架执行注册的插件，在绑定周期前会进行Pod的假定动作，从而更新调度器缓存中该Pod状态，最后在绑定周期执行完向ApiServer发起BindAPI，从而完成了一次调度过程。</p>
-
-<p><a id="org8ebc078"></a></p>
-
-<h1 id="实现">实现</h1>
-
-<p><a id="org98f2089"></a></p>
-
-<h2 id="创建调度器">创建调度器</h2>
-
-<p>1、获取集群kubeconfig配置。<br />
-2、调用client-go生成clientset。<br />
-3、填充调度器相关参数, 包含获取node列表和关注的POD。<br />
-4、返回调度器</p>
-
-<pre><code> func NewScheduler(podQueue chan *v1.Pod, quit chan struct{}) Scheduler {
-  config, err := rest.InClusterConfig()
-  if err != nil {
-      log.Fatal(err)
-  }
-
-  clientset, err := kubernetes.NewForConfig(config)
-  if err != nil {
-      log.Fatal(err)
-  }
-
-  return Scheduler{
-      clientset:  clientset,
-      podQueue:   podQueue,
-      nodeLister: initInformers(clientset, podQueue, quit),
-      predicates: []predicateFunc{
-          randomPredicate,
-      },
-      priorities: []priorityFunc{
-          randomPriority,
-      },
-  }
-}
-</code></pre>
-
-<p><a id="org7e3d0d6"></a></p>
-
-<h2 id="运行调度器">运行调度器</h2>
-
-<p>不间断的从关注的POD列表中选出进行调度。</p>
-
-<p><a id="org9082797"></a></p>
-
-<h3 id="找合适节点">找合适节点</h3>
-
-<p>1、找到可用节点列表<br />
-2、给节点随机打100以内的分数<br />
-3、选择分数最高的节点</p>
-
-<pre><code>func (s *Scheduler) findFit(pod *v1.Pod) (string, error) {
-    nodes, err := s.nodeLister.List(labels.Everything())
-    if err != nil {
-        return &quot;&quot;, err
-    }
-
-    filteredNodes := s.runPredicates(nodes, pod)
-    if len(filteredNodes) == 0 {
-        return &quot;&quot;, errors.New(&quot;failed to find node that fits pod&quot;)
-    }
-    priorities := s.prioritize(filteredNodes, pod)
-    return s.findBestNode(priorities), nil
-}
-</code></pre>
-
-<p><a id="org0354198"></a></p>
-
-<h3 id="绑定pod">绑定POD</h3>
-
-<pre><code>func (s *Scheduler) bindPod(ctx context.Context, p *v1.Pod, node string) error {
-    opts := metav1.CreateOptions{}
-    return s.clientset.CoreV1().Pods(p.Namespace).Bind(ctx, &amp;v1.Binding{
-        ObjectMeta: metav1.ObjectMeta{
-            Name:      p.Name,
-            Namespace: p.Namespace,
-        },
-        Target: v1.ObjectReference{
-            APIVersion: &quot;v1&quot;,
-            Kind:       &quot;Node&quot;,
-            Name:       node,
-        },
-    }, opts)
-}
-</code></pre>
-
-<p><a id="orgcdd0603"></a></p>
-
-<h3 id="发送event事件">发送event事件</h3>
-
-<pre><code>func (s *Scheduler) emitEvent(ctx context.Context, p *v1.Pod, message string) error {
-    timestamp := time.Now().UTC()
-    opts := metav1.CreateOptions{}
-    _, err := s.clientset.CoreV1().Events(p.Namespace).Create(ctx, &amp;v1.Event{
-        Count:          1,
-        Message:        message,
-        Reason:         &quot;Scheduled&quot;,
-        LastTimestamp:  metav1.NewTime(timestamp),
-        FirstTimestamp: metav1.NewTime(timestamp),
-        Type:           &quot;Normal&quot;,
-        Source: v1.EventSource{
-            Component: schedulerName,
-        },
-        InvolvedObject: v1.ObjectReference{
-            Kind:      &quot;Pod&quot;,
-            Name:      p.Name,
-            Namespace: p.Namespace,
-            UID:       p.UID,
-        },
-        ObjectMeta: metav1.ObjectMeta{
-            GenerateName: p.Name + &quot;-&quot;,
-        },
-    }, opts)
-    if err != nil {
-        return err
-    }
-    return nil
- }
-</code></pre>
-
-<p>查看events信息可以看出random-scheduler打出的“laced pod [default/sleep-5b6fd9944c-5scxv] on k8s-master&rdquo;等信息。&rdquo;</p>
-
-<pre><code>27s         Normal    Scheduled           pod/sleep-5b6fd9944c-5scxv    Placed pod [default/sleep-5b6fd9944c-5scxv] on k8s-master
-</code></pre>
-
-<p><a id="org22e94bd"></a></p>
-
-<h1 id="验证">验证</h1>
-
-<p><a id="org7cc5355"></a></p>
-
-<h2 id="编译">编译</h2>
-
-<pre><code>$ make docker-image
-$ make docker-push
-</code></pre>
-
-<p><a id="orgede963d"></a></p>
-
-<h2 id="部署">部署</h2>
-
-<pre><code>$ kubectl apply -f rbac.yaml
-$ kubectl  apply -f deployment.yaml
-$ kubectl apply -f sleep.yaml
-</code></pre>
-
-<p>把sleep.yaml里改为schedulerName: random-scheduler就可以使用该调度器。</p>
-
-<pre><code>[root@k8s-master deployment]# kubectl  get pod -A -o wide
-NAMESPACE     NAME                                 READY   STATUS    RESTARTS       AGE     IP               NODE         NOMINATED NODE   READINESS GATES
-default       httpbin-master                       1/1     Running   2 (11h ago)    3d22h   10.244.0.36      k8s-master   &lt;none&gt;           &lt;none&gt;
-default       httpbin-worker                       1/1     Running   2 (11h ago)    3d22h   10.244.2.15      k8s-work2    &lt;none&gt;           &lt;none&gt;
-default       netshoot-master                      1/1     Running   2 (11h ago)    3d22h   10.244.0.35      k8s-master   &lt;none&gt;           &lt;none&gt;
-default       netshoot-worker                      1/1     Running   2 (11h ago)    3d22h   10.244.2.14      k8s-work2    &lt;none&gt;           &lt;none&gt;
-default       random-scheduler-6dc78999cc-vnxzg    1/1     Running   0              9m      10.244.0.37      k8s-master   &lt;none&gt;           &lt;none&gt;
-default       sleep-5b6fd9944c-7rn5m               1/1     Running   0              11h     10.244.1.6       k8s-work1    &lt;none&gt;           &lt;none&gt;
-default       sleep-5b6fd9944c-bwb9t               1/1     Running   0              11h     10.244.0.38      k8s-master   &lt;none&gt;           &lt;none&gt;
-kube-system   coredns-6d8c4cb4d-ck2x5              1/1     Running   20 (11h ago)   19d     10.244.0.34      k8s-master   &lt;none&gt;           &lt;none&gt;
-kube-system   coredns-6d8c4cb4d-mbctj              1/1     Running   20 (11h ago)   19d     10.244.0.33      k8s-master   &lt;none&gt;           &lt;none&gt;
-kube-system   etcd-k8s-master                      1/1     Running   22 (11h ago)   19d     172.25.140.216   k8s-master   &lt;none&gt;           &lt;none&gt;
-kube-system   kube-apiserver-k8s-master            1/1     Running   24 (11h ago)   19d     172.25.140.216   k8s-master   &lt;none&gt;           &lt;none&gt;
-kube-system   kube-controller-manager-k8s-master   1/1     Running   22 (11h ago)   19d     172.25.140.216   k8s-master   &lt;none&gt;           &lt;none&gt;
-kube-system   kube-proxy-dnsjg                     1/1     Running   21 (11h ago)   19d     172.25.140.215   k8s-work1    &lt;none&gt;           &lt;none&gt;
-kube-system   kube-proxy-r84lg                     1/1     Running   22 (11h ago)   19d     172.25.140.216   k8s-master   &lt;none&gt;           &lt;none&gt;
-kube-system   kube-proxy-tbkx2                     1/1     Running   20 (11h ago)   19d     172.25.140.214   k8s-work2    &lt;none&gt;           &lt;none&gt;
-kube-system   kube-scheduler-k8s-master            1/1     Running   22 (11h ago)   19d     172.25.140.216   k8s-master   &lt;none&gt;           &lt;none&gt;
-kube-system   minicni-node-2xq2d                   1/1     Running   2 (11h ago)    3d23h   172.25.140.214   k8s-work2    &lt;none&gt;           &lt;none&gt;
-kube-system   minicni-node-dsq8c                   1/1     Running   2 (11h ago)    3d23h   172.25.140.216   k8s-master   &lt;none&gt;           &lt;none&gt;
-kube-system   minicni-node-h8hm8                   1/1     Running   2 (11h ago)    3d23h   172.25.140.215   k8s-work1    &lt;none&gt;           &lt;none&gt;
-</code></pre>
-
-<p>可以看出, random-scheduler-6dc78999cc-vnxzg 和 sleep pod已正常变成Running状态。</p>
-
-<p><a id="orgdc135cc"></a></p>
-
-<h2 id="验证-1">验证</h2>
-
-<pre><code>[root@k8s-master deployment]# kubectl  logs random-scheduler-6dc78999cc-vnxzg
- I'm a scheduler!
- 2022/12/13 12:12:02 New Node Added to Store: k8s-master
- 2022/12/13 12:12:02 New Node Added to Store: k8s-work1
- 2022/12/13 12:12:02 New Node Added to Store: k8s-work2
- found a pod to schedule: default / sleep-5b6fd9944c-bwb9t
- 2022/12/13 12:12:02 nodes that fit:
- 2022/12/13 12:12:02 k8s-master
- 2022/12/13 12:12:02 k8s-work1
- 2022/12/13 12:12:02 k8s-work2
- 2022/12/13 12:12:02 calculated priorities: map[k8s-master:79 k8s-work1:68 k8s-work2:15]
- Placed pod [default/sleep-5b6fd9944c-bwb9t] on k8s-master
-
- found a pod to schedule: default / sleep-5b6fd9944c-7rn5m
- 2022/12/13 12:12:02 nodes that fit:
- 2022/12/13 12:12:02 k8s-master
- 2022/12/13 12:12:02 k8s-work1
- 2022/12/13 12:12:02 calculated priorities: map[k8s-master:26 k8s-work1:50]
- Placed pod [default/sleep-5b6fd9944c-7rn5m] on k8s-work1
-
- [root@k8s-master deployment]# kubectl logs sleep-5b6fd9944c-7rn5m
- [root@k8s-master deployment]# 
-</code></pre>
-
-<p>从random-scheduler日志看， sleep容器经过random-scheduler进行调度的。</p>
-
-<pre><code>[root@k8s-master deployment]# k get events
- - LAST SEEN   TYPE      REASON              OBJECT                        MESSAGE
- 39m         Normal    Pulled              pod/netshoot-master           Container image &quot;nicolaka/netshoot:latest&quot; already present on machine
- 39m         Normal    Created             pod/netshoot-master           Created container centos
- 39m         Normal    Started             pod/netshoot-master           Started container centos
- 39m         Normal    Pulled              pod/netshoot-worker           Container image &quot;nicolaka/netshoot:latest&quot; already present on machine
- 39m         Normal    Created             pod/netshoot-worker           Created container centos
- 39m         Normal    Started             pod/netshoot-worker           Started container centos
- 27s         Normal    Scheduled           pod/sleep-5b6fd9944c-5scxv    Placed pod [default/sleep-5b6fd9944c-5scxv] on k8s-master
- 26s         Normal    Pulled              pod/sleep-5b6fd9944c-5scxv    Container image &quot;tutum/curl&quot; already present on machine
- 26s         Normal    Created             pod/sleep-5b6fd9944c-5scxv    Created container sleep
- 26s         Normal    Started             pod/sleep-5b6fd9944c-5scxv    Started container sleep
- 50s         Normal    Killing             pod/sleep-5b6fd9944c-7rn5m    Stopping container sleep
- 50s         Normal    Killing             pod/sleep-5b6fd9944c-bwb9t    Stopping container sleep
- 27s         Normal    Scheduled           pod/sleep-5b6fd9944c-rccmj    Placed pod [default/sleep-5b6fd9944c-rccmj] on k8s-work2
- 26s         Normal    Pulling             pod/sleep-5b6fd9944c-rccmj    Pulling image &quot;tutum/curl&quot;
- 27s         Normal    SuccessfulCreate    replicaset/sleep-5b6fd9944c   Created pod: sleep-5b6fd9944c-rccmj
- 27s         Normal    SuccessfulCreate    replicaset/sleep-5b6fd9944c   Created pod: sleep-5b6fd9944c-5scxv
- 27s         Normal    ScalingReplicaSet   deployment/sleep              Scaled up replica set sleep-5b6fd9944c to 2
- [root@k8s-master deployment]#
-</code></pre>
-
-<p>查看events信息可以看出random-scheduler打出的“laced pod [default/sleep-5b6fd9944c-5scxv] on k8s-master&rdquo;等信息。&rdquo;</p>
-
-<p><a id="org008f2a0"></a></p>
-
-<h1 id="参考资料">参考资料</h1>
-
-<p>[01] <a href="https://www.cnblogs.com/z-gh/p/15409763.html">k8s调度器介绍（调度框架版本）</a><br />
-[02] <a href="https://zhuanlan.zhihu.com/p/400351590">client-go功能详解</a><br />
-[03] <a href="https://www.jb51.net/article/253965.htm">一篇文章搞懂Go语言中的Context</a>]<br />
-[04] <a href="https://www.cnblogs.com/yangyuliufeng/p/13611126.html">深入理解k8s中的informer机制</a>]</p>
-
-    <div style="border: 1px dashed #e0e0e0; padding: 10px 10px 10px 10px; background-color: #fffeee; background-repeat: no-repeat; background-attachment: scroll; background-position: 1% 50%; -moz-background-size: auto auto; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial;">
-  <div style="float:right;margin-top:0px;">
-    <img src="/img/qrcode.jpg" width="129px" height="129px"/>
-    <div style="text-align:center;">微信扫一扫</div>
-  </div>
-  <div style="float:left;margin-top:0px;">
-    <img src="/img/rewardcode.jpg" width="129px" height="129px"/>
-  </div>
-  <div>
-    <p style="margin-top:0px;">作者：<a target="_blank" href="http://blog.mospan.cn/">mospan</a>
-      <br />微信关注：墨斯潘園
-      <br />本文出处：<a target="_blank" href="http://mospany.github.io/2022/12/11/k8s-random-scheduler/">http://mospany.github.io/2022/12/11/k8s-random-scheduler/</a>
-      <br />
-      文章版权归本人所有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
-  </div>
-</div>
-
-
-	</div>
-  <footer class="article-footer clearfix">
-  
-
-<div class="article-tags">
-  <span></span>
-  
-  <a href="/tags/k8s">K8S</a>
-  
-  <a href="/tags/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5">项目实践</a>
-  
-</div>
-
-
-
-<div class="article-categories">
-  <span></span>
-  
-  <a class="article-category-link" href="/categories/k8s">K8S</a>
-  
-  <a class="article-category-link" href="/categories/%E9%A1%B9%E7%9B%AE%E5%AE%9E%E8%B7%B5">项目实践</a>
-  
-</div>
-
-
-
-  <div class="article-share" id="share">
-    <div data-url="http://mospany.github.io/2022/12/11/k8s-random-scheduler/" data-title="K8S项目实践(03): 随机调度器" data-tsina="3833537679" class="share clearfix">
+      </nav>
     </div>
-  </div>
-</footer>
-
-	</article>
-  
-
-
-
-
-
-<div id="git-comments"></div>
-<link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
-<script src="https://billts.site/js/gitment.js"></script>
-<script>
-var gitment = new Gitment({
-  id: '<%= page.date %>',
-  owner: 'mospany',
-  repo: 'mospan-hugo-blog-gitment',
-  oauth: {
-    client_id: '0cafe299c964f0af2d1e',
-    client_secret: 'ec47ee9481210935a662298791c31da203694a8f',
-  },
-})
-gitment.render('git-comments')
-</script>    
-
-
-</div>
-
     <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
 <div id="asidepart">
 <div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
@@ -945,38 +717,6 @@ $(document).ready(function(){
 
 <script type="text/javascript">
 $(document).ready(function(){
-  var ai = $('.article-content>iframe'),
-      ae = $('.article-content>embed'),
-      t  = $('#toc'),
-      h  = $('article h2')
-      ah = $('article h2'),
-      ta = $('#toc.toc-aside'),
-      o  = $('.openaside'),
-      c  = $('.closeaside');
-  if(ai.length>0){
-    ai.wrap('<div class="video-container" />');
-  };
-  if(ae.length>0){
-   ae.wrap('<div class="video-container" />');
-  };
-  if(ah.length==0){
-    t.css('display','none');
-  }else{
-    c.click(function(){
-      ta.css('display', 'block').addClass('fadeIn');
-    });
-    o.click(function(){
-      ta.css('display', 'none');
-    });
-    $(window).scroll(function(){
-      ta.css("top",Math.max(140,320-$(this).scrollTop()));
-    });
-  };
-});
-</script>
-
-<script type="text/javascript">
-$(document).ready(function(){
   var $this = $('.share'),
       url = $this.attr('data-url'),
       encodedUrl = encodeURIComponent(url),
@@ -1003,27 +743,6 @@ $(document).ready(function(){
 });
 </script>
 
-
-<link rel="stylesheet" href="http://mospany.github.io/fancybox/jquery.fancybox.css" media="screen" type="text/css">
-<script src="http://mospany.github.io/fancybox/jquery.fancybox.pack.js"></script>
-<script type="text/javascript">
-$(document).ready(function(){
-  $('.article-content').each(function(i){
-    $(this).find('img').each(function(){
-      if ($(this).parent().hasClass('fancybox')) return;
-      var alt = this.alt;
-      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
-      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
-    });
-    $(this).find('.fancybox').each(function(){
-      $(this).attr('rel', 'article' + i);
-    });
-  });
-  if($.fancybox){
-    $('.fancybox').fancybox();
-  }
-});
-</script>
 
 
 
